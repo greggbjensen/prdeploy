@@ -50,8 +50,8 @@ builds:
 slack:
   notificationsEnabled: true
   channels:
-    deploy: 'https://hooks.slack.com/services/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'
-    release: 'https://hooks.slack.com/services/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'
+    deploy: '<SECRET NAME>'
+    release: '<SECRET NAME>'
 badge:
   statusColors:
     error: 'cc2900'
