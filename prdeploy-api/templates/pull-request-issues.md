@@ -1,12 +1,9 @@
 {{#if issues}}
-
-<!-- ISSUES_START:{{branchName}} --><table><tr><td>
-
+<!-- ISSUES_START:{{branchName}} -->
 {{#each issues}}
 ![{{type}}]({{iconUrl}}) [{{key}}]({{url}}) {{{summary}}}
 {{/each}}
-
-</td></tr></table><!-- ISSUES_END -->
+<!-- ISSUES_END -->
 {{/if}}
 
 {{{pullBody}}}
