@@ -14,7 +14,7 @@
     "format-check": "prettier --check src/**/*.ts",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
-    "test": "cross-env USE_MOCKS=true jest",
+    "test": "cross-env USE_MOCKS=true npx jest",
     "checks": "npm-run-all lint build test"
   },
   "devDependencies": {
@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-ssm": "^3.616.0",
-    "@octokit/rest": "^21.0.1",
+    "@octokit/rest": "^20.0.2",
     "adm-zip": "^0.5.14",
     "async-lock": "^1.4.1",
     "dotenv": "^16.4.5",
