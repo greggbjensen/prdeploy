@@ -19,7 +19,7 @@ export class StatusManager {
     private _settings: RepoSettings
   ) {}
 
-  async processWorkflowRun(run: WorkflowRun, action: string): Promise<void> {
+  async processWorkflowRun(run: WorkflowRun | any, action: string): Promise<void> {
     let pullNumber = run.pull_requests.length > 0 ? run.pull_requests[0].number : 0;
     if (!pullNumber && action === 'requested') {
       // Attempt to get updated workflow name.

@@ -1,10 +1,9 @@
 import { Repository } from '@octokit/webhooks-types';
 import { REPOSITORY, DEFAULT_SETTINGS_FILE } from '@src/injection-tokens';
 import { EmailAliases, RepoSettings } from '@src/models';
-import { Octokit } from 'octokit';
+import { Octokit, RestEndpointMethodTypes } from '@octokit/rest';
 import { Lifecycle, inject, scoped } from 'tsyringe';
 import yaml from 'js-yaml';
-import { RestEndpointMethodTypes } from '@octokit/rest';
 import cache from 'memory-cache';
 import fs from 'fs/promises';
 import { LogService } from './log-service';

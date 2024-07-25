@@ -1,10 +1,10 @@
 import dotenv from 'dotenv';
 import fs from 'fs';
+import { pathsToModuleNameMapper } from 'ts-jest';
+import type { JestConfigWithTsJest } from 'ts-jest';
 
 dotenv.config({ path: './.env' });
 
-import { pathsToModuleNameMapper } from 'ts-jest';
-import type { JestConfigWithTsJest } from 'ts-jest';
 const jsConfig = JSON.parse(fs.readFileSync('./tsconfig.json').toString());
 const compilerOptions = jsConfig.compilerOptions;
 

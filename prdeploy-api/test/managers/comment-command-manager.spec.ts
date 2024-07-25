@@ -4,7 +4,7 @@ import { CommentCommandManager } from '@src/managers';
 import { CreateForIssueCommentParams, CreateWorkflowDispatchParams, PullRequest } from '@src/models';
 import { ContainerHelper } from '@test/helpers';
 import { container } from 'tsyringe';
-import { Octokit } from 'octokit';
+import { Octokit } from '@octokit/rest';
 
 const commentId = 2015899564;
 const pullNumber = 8;
@@ -94,7 +94,8 @@ describe('processComment', () => {
       });
 
       Object.assign(octokit.rest.issues, {
-        setLabels: jest.fn().mockResolvedValueOnce({})
+        setLabels: jest.fn().mockResolvedValueOnce({}),
+        createComment: jest.fn().mockResolvedValueOnce({})
       });
 
       Object.assign(octokit.rest.checks, {

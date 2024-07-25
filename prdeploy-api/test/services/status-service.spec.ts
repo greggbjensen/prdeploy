@@ -4,7 +4,7 @@ import { CreateCommentParams, PullRequest } from '@src/models';
 import { StatusService } from '@src/services';
 import { ContainerHelper } from '@test/helpers';
 import { container } from 'tsyringe';
-import { Octokit } from 'octokit';
+import { Octokit } from '@octokit/rest';
 
 const pullNumber = 3097;
 const useMocks = !process.env.GITHUB_TOKEN || process.env.USE_MOCKS === 'true';

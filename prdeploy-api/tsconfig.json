@@ -5,7 +5,7 @@
       "@src/*": ["src/*"],
       "@test/*": ["test/*"]
     },
-    "target": "ES6",
+    "target": "es2020",
     "module": "CommonJS",
     "rootDir": ".",
     "outDir": "./dist",

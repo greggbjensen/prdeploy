@@ -1,4 +1,4 @@
-import { Octokit } from 'octokit';
+import { Octokit } from '@octokit/rest';
 import { Build } from '../models/build';
 import { BuildDetails } from '../models/build-details';
 import AdmZip from 'adm-zip';

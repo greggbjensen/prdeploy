@@ -1,7 +1,7 @@
 import { PullRequest, RepoSettings, WorkflowInputs } from '@src/models';
 import { WorkflowRun } from '@octokit/webhooks-types';
 import { EnvironmentUtil } from '@src/utils';
-import { Octokit } from 'octokit';
+import { Octokit } from '@octokit/rest';
 import { Lifecycle, scoped } from 'tsyringe';
 import { LogService } from './log-service';
 import _ from 'lodash';

@@ -80,7 +80,7 @@ app.webhooks.on(
 );
 
 app.webhooks.onError(error => {
-  if (error.name === 'AggregateError') {
+  if (error.event) {
     // Log Secret verification errors
     console.error(`Error processing request: ${error.event}`, error);
   } else {

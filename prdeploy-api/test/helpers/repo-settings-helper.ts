@@ -2,7 +2,7 @@ import { SSM_CLIENT } from '@src/injection-tokens';
 import { GetContentParams, RepoSettings } from '@src/models';
 import { RepoSettingsService } from '@src/services';
 import { SSMClientMock } from '@test/mocks';
-import { Octokit } from 'octokit';
+import { Octokit } from '@octokit/rest';
 import { container } from 'tsyringe';
 
 export class RepoSettingsHelper {
