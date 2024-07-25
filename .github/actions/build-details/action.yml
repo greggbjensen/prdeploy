@@ -1,0 +1,13 @@
+name: 'Build details'
+description: 'Creates a summary of your build with version information attached.'
+author: 'greggbjensen'
+inputs:
+  version:
+    required: true
+    description: 'The semantic build version'
+  token:
+    required: true
+    description: 'The GitHub token to use for authentication'
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
