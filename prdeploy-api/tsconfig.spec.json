@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "paths": {
+      "@src/*": ["src/*"],
+      "@test/*": ["test/*"]
+    },
+    "experimentalDecorators": true,
+    "outDir": "./out/test",
+    "types": [
+      "jest",
+      "node"
+    ]
+  },
+  "include": ["./src/**/*", "./test/**/*.ts"]
+}

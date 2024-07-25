@@ -1,0 +1,27 @@
+{
+    "[typescript]": {
+      "editor.tabSize": 2,
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+      "editor.tabSize": 2,
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[yaml]": {
+        "editor.tabSize": 2
+    },
+    "[yml]": {
+        "editor.tabSize": 2
+    },
+    "editor.detectIndentation": false,
+    "editor.indentSize": "tabSize",
+    "jest.runMode": "deferred",
+    "prettier.singleQuote": true,
+    "search.exclude": {
+      "**/dist": true,
+      "**/package-lock.json": true
+    },
+    "files.eol": "\n"
+  }

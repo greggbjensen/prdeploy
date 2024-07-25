@@ -1,0 +1,1 @@
+[![{{environment.name}}](https://badgen.net/badge/{{environment.name}}/Rollback%20Complete/{{badge.statusColors.success}}?labelColor={{environment.color}}&icon=github&scale=1.2)](https://github.com/{{owner}}/{{repo}}/actions/runs/{{run.id}}/attempts/{{run.run_attempt}} 'Open the deploy')

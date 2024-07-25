@@ -1,0 +1,42 @@
+{
+    "blocks": [
+        {
+            "type": "context",
+            "elements": [
+                {
+                  "type": "image",
+                  "image_url": "https://via.placeholder.com/32/{{environment.color}}/ffffff?text={{environment.name}}",
+                  "alt_text": "{{environment.name}}"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "{{#if isRollback}}*ROLLBACK* {{/if}}<https://github.com/{{owner}}/{{repo}}/actions/runs/{{run.id}}/attempts/{{run.run_attempt}}|Deployment> to *<{{environment.url}}|{{environment.name}}>* for {{#if slackUser.id}}<@{{slackUser.id}}>{{else}}*{{slackUser.name}}*{{/if}} {{{status}}}:"
+                }
+            ]
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "<{{pull.html_url}}|#{{pull.number}}> {{{pull.title}}}"
+            }
+        },
+        {
+            "type": "divider"
+        },
+        {{#each builds}}
+        {
+            "type": "context",
+            "elements": [
+                {
+                    "type": "mrkdwn",
+                    "text": "{{name}} <https://github.com/{{../owner}}/{{../repo}}/actions/runs/{{runId}}|{{version}}>"
+                }
+            ]
+        },
+        {{/each}}
+        {
+            "type": "divider"
+        }
+    ]
+}
