@@ -5,7 +5,7 @@
       "@src/*": ["src/*"],
       "@test/*": ["test/*"]
     },
-    "target": "es2020",
+    "target": "es2022",
     "module": "CommonJS",
     "rootDir": ".",
     "outDir": "./dist",
@@ -15,7 +15,7 @@
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
-    "moduleResolution": "node",
+    "moduleResolution": "Node",
     "importHelpers": true,
     "useDefineForClassFields": false,
     "esModuleInterop": true,
