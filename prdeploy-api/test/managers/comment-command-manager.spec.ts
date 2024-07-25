@@ -94,7 +94,8 @@ describe('processComment', () => {
       });
 
       Object.assign(octokit.rest.issues, {
-        setLabels: jest.fn().mockResolvedValueOnce({})
+        setLabels: jest.fn().mockResolvedValueOnce({}),
+        createComment: jest.fn().mockResolvedValueOnce({})
       });
 
       Object.assign(octokit.rest.checks, {
