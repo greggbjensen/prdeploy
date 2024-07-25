@@ -39,7 +39,7 @@ export class CommentCommandManager {
     ];
   }
 
-  async processComment(comment: IssueComment): Promise<void> {
+  async processComment(comment: IssueComment | any): Promise<void> {
     for (const command of this._commands) {
       const commandMatch = comment.body.match(command.pattern);
       if (commandMatch) {

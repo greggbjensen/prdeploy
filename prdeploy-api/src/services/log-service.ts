@@ -1,4 +1,4 @@
-import { Octokit } from 'octokit';
+import { Octokit } from '@octokit/rest';
 import { Lifecycle, scoped } from 'tsyringe';
 import { LogContext, LogLevelInfo } from './models';
 

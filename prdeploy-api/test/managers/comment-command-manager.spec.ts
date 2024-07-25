@@ -4,7 +4,7 @@ import { CommentCommandManager } from '@src/managers';
 import { CreateForIssueCommentParams, CreateWorkflowDispatchParams, PullRequest } from '@src/models';
 import { ContainerHelper } from '@test/helpers';
 import { container } from 'tsyringe';
-import { Octokit } from 'octokit';
+import { Octokit } from '@octokit/rest';
 
 const commentId = 2015899564;
 const pullNumber = 8;

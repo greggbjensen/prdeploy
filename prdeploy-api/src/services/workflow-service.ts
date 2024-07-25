@@ -2,7 +2,7 @@ import { Lifecycle, scoped } from 'tsyringe';
 import { LogService } from './log-service';
 import { RepoSettings } from '@src/models';
 import { WorkflowRun } from '@octokit/webhooks-types';
-import { Octokit } from 'octokit';
+import { Octokit } from '@octokit/rest';
 
 @scoped(Lifecycle.ContainerScoped)
 export class WorkflowService {

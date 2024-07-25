@@ -2,7 +2,7 @@ import { Repository } from '@octokit/webhooks-types';
 import { PullRequest, RepoSettings, ServiceState } from '@src/models';
 import { Lifecycle, inject, scoped } from 'tsyringe';
 import { LogService } from './log-service';
-import { Octokit } from 'octokit';
+import { Octokit } from '@octokit/rest';
 import { TemplateService } from './template-service';
 import _ from 'lodash';
 import { SlackService } from './slack-service';

@@ -1,4 +1,4 @@
-import { Octokit } from 'octokit';
+import { Octokit } from '@octokit/rest';
 import { DependencyContainer, container } from 'tsyringe';
 import { LogService, RepoSettingsService } from './services';
 import { Repository } from '@octokit/webhooks-types';
@@ -6,8 +6,8 @@ import { REPOSITORY } from './injection-tokens';
 import { PullRequest, RepoSettings } from './models';
 
 export const webhookFlow = async (
-  octokit: Octokit,
-  repository: Repository,
+  octokit: Octokit | any,
+  repository: Repository | any,
   pullRequest: PullRequest | any,
   action: (scope: DependencyContainer, settings: RepoSettings, log: LogService) => Promise<void>
 ): Promise<void> => {

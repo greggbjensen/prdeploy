@@ -1,5 +1,5 @@
 import { DEFAULT_SETTINGS_FILE, REPOSITORY } from '@src/injection-tokens';
-import { Octokit } from 'octokit';
+import { Octokit } from '@octokit/rest';
 import { container } from 'tsyringe';
 import { RepoSettingsHelper } from './repo-settings-helper';
 import { LogService } from '@src/services';

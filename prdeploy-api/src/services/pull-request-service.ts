@@ -1,5 +1,5 @@
 import { WorkflowRun } from '@octokit/webhooks-types';
-import { Octokit } from 'octokit';
+import { Octokit } from '@octokit/rest';
 import { PullRequest, RepoSettings } from '@src/models';
 import { Lifecycle, scoped } from 'tsyringe';
 import { LogService } from './log-service';
