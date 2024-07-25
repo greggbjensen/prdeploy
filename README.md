@@ -20,7 +20,7 @@ GitHub App that allows the entire build-deploy lifecycle happens within a featur
 ## Repository Setup
 
 1. Follow the [prdeploy-api App Setup](/prdeploy-api/README.md#app-setup) to get prdeploy configured for your organization.
-2. Add a `pr-deploy.yaml` settings file to the root of your repository:
+2. Add a `.prdeploy.yaml` settings file to the root of your repository:
 
    ```yaml
    deployWorkflow: combined-deploy.yml          # Worklow to trigger for deployments to an environment.

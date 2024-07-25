@@ -1,0 +1,25 @@
+{
+  "blocks": [
+    {
+      "type": "context",
+      "elements": [
+        {
+          "type": "image",
+          "image_url": "https://via.placeholder.com/32/{{environment.color}}/ffffff?text={{environment.name}}",
+          "alt_text": "{{environment.name}}"
+        },
+        {
+          "type": "mrkdwn",
+          "text": "Pull request <{{pull.html_url}}|#{{pull.number}}> to *<{{environment.url}}|{{environment.name}}>* is out-of-date and has `MERGE CONFLICTS` for {{#if slackUser.id}}<@{{slackUser.id}}>{{else}}*{{slackUser.name}}*{{/if}}."
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "<{{pull.html_url}}|#{{pull.number}}> {{{pull.title}}}"
+      }
+    }
+  ]
+}
