@@ -1,0 +1,18 @@
+{
+  "blocks": [
+    {
+      "type": "context",
+      "elements": [
+        {
+          "type": "image",
+          "image_url": "https://via.placeholder.com/32/{{environment.color}}/ffffff?text={{environment.name}}",
+          "alt_text": "{{environment.name}}"
+        },
+        {
+          "type": "mrkdwn",
+          "text": "Environment *<{{environment.url}}|{{environment.name}}>* is available{{{takenMessage}}}."
+        }
+      ]
+    }
+  ]
+}

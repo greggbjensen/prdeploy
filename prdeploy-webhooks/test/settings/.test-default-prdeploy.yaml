@@ -1,0 +1,60 @@
+# All settings showing defaults, only override what needs to change.
+
+deployWorkflow: combined-deploy.yaml
+environments:
+  - name: dev
+    queue: 'DEV_PR_QUEUE'
+    url: 'https://dev.mydomain.com'
+  - name: dev2
+    queue: 'DEV_PR_QUEUE'
+    url: 'https://dev2.mydomain.com'
+  - name: dev3
+    queue: 'DEV_PR_QUEUE'
+    url: 'https://dev3.mydomain.com'
+  - name: stage
+    queue: 'STAGE_PR_QUEUE'
+    url: 'https://stage.mydomain.com'
+    requireBranchUpToDate: true
+    automationTest:
+      enabled: true
+      workflow: test-automation-run.yml
+      inputs:
+        environment: ${environment}
+        pull_number: ${pull_number}
+        run_name: ${run_name}
+  - name: prod
+    queue: 'PROD_PR_QUEUE'
+    url: 'https://www.mydomain.com'
+    requireBranchUpToDate: true
+    requireApproval: true
+    excludeFromRollback:
+      - mydomain-db
+    automationTest:
+      enabled: false
+      workflow: test-automation-run.yml
+      inputs:
+        environment: ${environment}
+        pull_number: ${pull_number}
+        run_name: ${run_name}
+services:
+  - name: mydomain-app-main
+  - name: mydomain-api-service
+  - name: mydomain-db
+defaultEnvironment: dev
+releaseEnvironment: prod
+addJiraIssues: true
+settingsBranch: 'main'
+builds:
+  checkPattern: 'Build helm chart'
+  workflowPattern: '/([^/]+?)-build.ya?ml'
+slack:
+  notificationsEnabled: true
+  channels:
+    deploy: '<SECRET NAME>'
+    release: '<SECRET NAME>'
+badge:
+  statusColors:
+    error: 'cc2900'
+    warn: 'cccc00'
+    success: '29a329'
+    info: '0080ff'

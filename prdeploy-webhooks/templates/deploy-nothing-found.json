@@ -1,0 +1,40 @@
+{
+  "blocks": [
+    {
+      "type": "context",
+      "elements": [
+        {
+          "type": "image",
+          "image_url": "https://via.placeholder.com/32/{{environment.color}}/ffffff?text={{environment.name}}",
+          "alt_text": "{{environment.name}}"
+        },
+        {
+          "type": "mrkdwn",
+          "text": "Deployment to *<{{environment.url}}|{{environment.name}}>* for {{#if slackUser.id}}<@{{slackUser.id}}>{{else}}*{{slackUser.name}}*{{/if}} `FAILED`:"
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "<{{pull.html_url}}|#{{pull.number}}> {{{pull.title}}}"
+      }
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "context",
+      "elements": [
+        {
+          "type": "mrkdwn",
+          "text": "Nothing found to deploy, make a change to a file in the service you want to include."
+        }
+      ]
+    },
+    {
+      "type": "divider"
+    }
+  ]
+}

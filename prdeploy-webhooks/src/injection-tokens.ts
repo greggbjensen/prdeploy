@@ -1,0 +1,3 @@
+export const REPOSITORY = 'REPOSITORY';
+export const DEFAULT_SETTINGS_FILE = 'DEFAULT_SETTINGS_FILE';
+export const SSM_CLIENT = 'SSM_CLIENT';
