@@ -5,6 +5,7 @@ import { SlackSettings } from './slack-settings';
 import { BuildsSettings } from './builds-settings';
 import { BadgeSettings } from './badge-settings';
 import { ServiceSettings } from './service-settings';
+import { JiraSettings } from './jira-settings';
 
 @scoped(Lifecycle.ContainerScoped)
 export class RepoSettings {
@@ -18,7 +19,7 @@ export class RepoSettings {
   releaseEnvironment: string;
   defaultBranch: string;
   settingsBranch: string;
-  addJiraIssues: boolean;
+  jira: JiraSettings;
   builds: BuildsSettings;
   slack: SlackSettings;
   emailAliases: EmailAliases;

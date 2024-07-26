@@ -52,16 +52,14 @@ GitHub App that allows the entire build-deploy lifecycle to happen within a feat
       - name: mydomain-app-main
     defaultEnvironment: dev                      # Default for /deploy only.
     releaseEnvironment: prod                     # Environment that is used for final releases.
-    addJiraIssues: true                          # If JIRA issues should be read from branch and added to PR.
+    jira:
+      addIssuesEnabled: true                     # If JIRA issues should be read from branch and added to PR.
     settingsBranch: 'main'                       # Branch to retrieve repo settings from.
     builds:
       checkPattern: 'Build helm chart'           # Pattern to know which checks are builds.
       workflowPattern: '/([^/]+?)-build.ya?ml'   # Pattern to know how to extract the build name from the workflow file.
     slack:
       notificationsEnabled: true                 # Whether or not to send Slack notifications.
-        channels:
-        deploy: ''                               # Slack webhook for channel to post to for each deployment success and failure.
-        release: ''                              # Slack webhook for channel to post final releases with notes to.
     ```
 
    _NOTE: For effeciency settings cache only updates every 5 minutes._

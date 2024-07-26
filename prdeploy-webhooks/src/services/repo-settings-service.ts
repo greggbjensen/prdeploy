@@ -1,6 +1,6 @@
 import { Repository } from '@octokit/webhooks-types';
 import { REPOSITORY, DEFAULT_SETTINGS_FILE } from '@src/injection-tokens';
-import { EmailAliases, RepoSettings } from '@src/models';
+import { JiraSettings, RepoSettings, SlackWebhooksSettings, SlackSettings } from '@src/models';
 import { Octokit, RestEndpointMethodTypes } from '@octokit/rest';
 import { Lifecycle, inject, scoped } from 'tsyringe';
 import yaml from 'js-yaml';
@@ -24,7 +24,6 @@ export class RepoSettingsService {
     stage: '2e86c1',
     prod: '1d8348'
   };
-  private static readonly EmailAliasesVariable = 'EMAIL_ALIASES';
   private static readonly DefaultBranch = 'main';
   private static GlobalDefaultSettings: RepoSettings;
   private static readonly Lock = new AsyncLock();
@@ -54,7 +53,7 @@ export class RepoSettingsService {
       const repoSettings = await this.getRepoSettings(defaultSettings.settingsBranch);
 
       settings = ObjectUtil.deepAssign(new RepoSettings(), defaultSettings, repoSettings);
-      await this.applyEmailAliases(settings);
+      await this.applyParameters(settings);
       await this.applyEnvironmentColors(settings);
       this.normalizeDefaults(settings);
 
@@ -100,18 +99,47 @@ export class RepoSettingsService {
     }
   }
 
-  private async applyEmailAliases(settings: RepoSettings): Promise<void> {
+  private async applyParameters(settings: RepoSettings): Promise<void> {
     try {
-      const emailAliases = await this._parameterService.getOrCreateObject<EmailAliases>(
-        RepoSettingsService.EmailAliasesVariable,
-        {},
-        'Org'
-      );
+      const parameters = await this._parameterService.getAll();
+      settings.emailAliases = JSON.parse(await this.getOrCreateParameter(parameters, 'EMAIL_ALIASES', '{}'));
+      settings.deployManagerSiteUrl = await this.getOrCreateParameter(parameters, 'DEPLOY_MANAGER_SITE_URL', '');
 
-      settings.emailAliases = emailAliases;
+      if (!settings.jira) {
+        settings.jira = {} as JiraSettings;
+      }
+      settings.jira.host = await this.getOrCreateParameter(parameters, 'JIRA_HOST', '');
+      settings.jira.username = await this.getOrCreateParameter(parameters, 'JIRA_USERNAME', '', true);
+      settings.jira.password = await this.getOrCreateParameter(parameters, 'JIRA_PASSWORD', '', true);
+
+      if (!settings.slack) {
+        settings.slack = {} as SlackSettings;
+      }
+      if (!settings.slack.webhooks) {
+        settings.slack.webhooks = {} as SlackWebhooksSettings;
+      }
+      settings.slack.emailDomain = await this.getOrCreateParameter(parameters, 'SLACK_EMAIL_DOMAIN', '');
+      settings.slack.token = await this.getOrCreateParameter(parameters, 'SLACK_TOKEN', '', true);
+      settings.slack.webhooks.deploy = await this.getOrCreateParameter(parameters, 'SLACK_WEBHOOKS_DEPLOY', '', true);
+      settings.slack.webhooks.release = await this.getOrCreateParameter(parameters, 'SLACK_WEBHOOKS_RELEASE', '', true);
     } catch (err: any) {
-      // Do nothing.
+      this._log.error(`Error getting Org and Repo parameters.  ${err}`);
     }
+  }
+
+  private async getOrCreateParameter(
+    parameters: Map<string, string>,
+    name: string,
+    defaultValue: string,
+    isSecret = false
+  ): Promise<string> {
+    let value = parameters.get(name);
+    if (!value) {
+      value = defaultValue;
+      await this._parameterService.setString(name, value, 'Org', isSecret);
+    }
+
+    return value;
   }
 
   private async getRepoSettings(settingsBranch: string): Promise<RepoSettings> {
@@ -244,13 +272,6 @@ export class RepoSettingsService {
     const content = await fs.readFile(this._defaultSettingsFile, 'utf8');
     const values = yaml.load(content) as RepoSettings;
     const settings = Object.assign(new RepoSettings(), values);
-
-    settings.deployManagerSiteUrl = process.env.DEPLOY_MANAGER_SITE_URL;
-
-    Object.assign(settings.slack, {
-      token: process.env.SLACK_TOKEN,
-      emailDomain: process.env.SLACK_EMAIL_DOMAIN
-    });
 
     return settings;
   }

@@ -1,4 +1,3 @@
-import JiraApi from 'jira-client';
 import dotenv from 'dotenv';
 import { container } from 'tsyringe';
 import { DEFAULT_SETTINGS_FILE, SSM_CLIENT } from './injection-tokens';
@@ -9,20 +8,6 @@ console.log('Configuring environment.');
 dotenv.config();
 
 console.log('Adding app-wide registrations.');
-
-container.register(JiraApi, {
-  useFactory: () => {
-    return new JiraApi({
-      protocol: 'https',
-      host: process.env.JIRA_HOST,
-      username: process.env.JIRA_USERNAME,
-      password: process.env.JIRA_PASSWORD,
-      apiVersion: '2',
-      strictSSL: true
-    });
-  }
-});
-
 container.register(SSM_CLIENT, {
   useFactory: () => {
     return new SSMClient({
