@@ -4,7 +4,8 @@ The prdeploy API has webhooks to allow GitHub to pass events, as well as the Gra
 ## App Setup
 
 1. Install the **prdeploy** app to your repository.
-2. Create an organization or repository variable `EMAIL_ALIASES`, for any email account that does not follow the `first.last@mydomain.com` pattern with a JSON value like below:
+2. Create a pull request and **prdeploy** will initialize all the required AWS Parameter Store variables
+2. Edit the organization `/prdeploy/myorg/EMAIL_ALIASES` or repository variable `/prdeploy/myorg/myrepo/EMAIL_ALIASES`, for any email account that does not follow the `first.last@mydomain.com` pattern with a JSON value like below:
 
    ```json
    {
