@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "predeploy-webhooks",
+            "skipFiles": [
+                "node_modules/**"
+            ],
+            "program": "${workspaceFolder}/dist/src/app.js",
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "predeploy-webhooks-build",
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        }
+    ]
+}
