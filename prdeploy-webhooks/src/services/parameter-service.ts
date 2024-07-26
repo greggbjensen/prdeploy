@@ -163,6 +163,7 @@ export class ParameterService {
         if (value === ParameterService.EMPTY_STRING_VALUE) {
           value = '';
         }
+        
         parameters.set(parameter.Name, value);
       }
     } catch (error) {
