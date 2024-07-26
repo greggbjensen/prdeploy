@@ -15,7 +15,7 @@ export type ParameterLevels = 'Repo' | 'Org';
 
 @scoped(Lifecycle.ContainerScoped)
 export class ParameterService {
-  private static readonly PARAMETER_STORE_ROOT = 'github-deploy';
+  private static readonly PARAMETER_STORE_ROOT = 'prdeploy';
   private static readonly MAX_HISTORY_PER_PAGE = 50;
 
   constructor(
