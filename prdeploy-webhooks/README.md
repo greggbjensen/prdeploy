@@ -30,13 +30,11 @@ The prdeploy API has webhooks to allow GitHub to pass events, as well as the Gra
   | Issues         | Read-only      |
   | Metadata       | Read-only      |
   | Pull requests  | Read and write |
-  | Variables      | Read and write |
 
   **Organization Permissions**
 
   | Scope     | Permission |
   | --------- | ---------- |
-  | Variables | Read-only  |
   | Members   | Read-only  |
 
   **Account Permissions**
