@@ -3,6 +3,7 @@ import { BuildInfo } from './models/build-info';
 
 export class SummaryWriter {
   static readonly HeadingLevel = 2;
+  static readonly SubHeadingLevel = 3;
   static readonly ShortHashLength = 7;
 
   async write(build: BuildInfo): Promise<void> {
@@ -26,7 +27,7 @@ ${pull.body ? pull.body : ''}
 | Head     | [${build.head}](${gitHubUrl}/tree/${build.head}) |`;
     }
 
-    core.summary.addHeading('Build Details', SummaryWriter.HeadingLevel).addRaw(`
+    core.summary.addHeading('Build Details', SummaryWriter.SubHeadingLevel).addRaw(`
 | Name     |       Value      |
 |----------|------------------|
 | Version  | ${build.version} |${headRow}

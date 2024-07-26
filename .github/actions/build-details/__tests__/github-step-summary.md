@@ -1,4 +1,4 @@
-<h2>Build Details</h2>
+<h3>Build Details</h3>
 
 | Name     |       Value      |
 |----------|------------------|
