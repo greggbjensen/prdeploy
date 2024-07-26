@@ -110,6 +110,10 @@ export class ParameterService {
       this._log.debug(`Parameter ${fullName} not found.  ${error.message}`);
     }
 
+    if (value === ParameterService.EMPTY_STRING_VALUE) {
+      value = '';
+    }
+
     return value;
   }
 
@@ -119,6 +123,10 @@ export class ParameterService {
   }
 
   async setString(name: string, value: string, level: ParameterLevel = 'Repo', isSecret = false): Promise<void> {
+    if (!value) {
+      value = ParameterService.EMPTY_STRING_VALUE;
+    }
+
     await this._client.send(
       new PutParameterCommand({
         Name: this.getFullName(name, level),
@@ -157,6 +165,7 @@ export class ParameterService {
         if (value === ParameterService.EMPTY_STRING_VALUE) {
           value = '';
         }
+
         parameters.set(name, value);
       }
     } catch (error) {
