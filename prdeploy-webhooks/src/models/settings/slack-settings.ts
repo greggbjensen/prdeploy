@@ -1,8 +1,8 @@
-import { SlackChannelSettings } from './slack-channel-settings';
+import { SlackWebhooksSettings } from './slack-webhooks-settings';
 
 export interface SlackSettings {
   token: string;
   emailDomain: string;
-  channels: SlackChannelSettings;
+  webhooks: SlackWebhooksSettings;
   notificationsEnabled: boolean;
 }

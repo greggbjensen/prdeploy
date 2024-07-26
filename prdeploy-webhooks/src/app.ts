@@ -35,7 +35,7 @@ app.webhooks.on(
     await webhookFlow(octokit, repository, pull_request, async (scope, settings, log) => {
       log.debug(`Received a pull request ${action} for #${(pull_request as any).number}.`);
 
-      if (!settings.addJiraIssues) {
+      if (!settings.jira.addIssuesEnabled) {
         log.debug(`Add JIRA issues is disabled.`);
         return;
       }

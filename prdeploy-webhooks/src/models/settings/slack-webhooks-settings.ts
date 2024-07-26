@@ -1,5 +1,5 @@
 export type SlackChannelTypes = 'deploy' | 'release';
 
-export type SlackChannelSettings = {
+export type SlackWebhooksSettings = {
   [key in SlackChannelTypes]: string;
 };

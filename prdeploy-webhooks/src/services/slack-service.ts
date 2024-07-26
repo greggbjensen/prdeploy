@@ -19,7 +19,7 @@ export class SlackService {
       return;
     }
 
-    const webhookUrl = this._settings.slack.channels[channelType];
+    const webhookUrl = this._settings.slack.webhooks[channelType];
     if (!webhookUrl) {
       this._log.warn(`No ${channelType} Slack channel specified.`);
       return;
