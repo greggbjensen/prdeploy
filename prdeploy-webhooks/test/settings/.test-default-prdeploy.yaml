@@ -42,7 +42,6 @@ services:
   - name: myorg-db
 defaultEnvironment: dev
 releaseEnvironment: prod
-addJiraIssues: true
 settingsBranch: 'main'
 builds:
   checkPattern: 'Build helm chart'
