@@ -43,7 +43,7 @@ describe('update', () => {
     const service = container.resolve(DeployStateService);
     await service.update('dev', 3445, [
       {
-        name: 'mydomain-api-internal',
+        name: 'myorg-api-internal',
         version: '2024.2.25-r8067229180',
         runId: 8067207106
       }
@@ -55,18 +55,18 @@ describe('update', () => {
     expect(actual.services).toBeTruthy();
     expect(actual.services.length).toEqual(1);
 
-    let actualService = actual.services.find(s => s.name === 'mydomain-api-internal');
+    let actualService = actual.services.find(s => s.name === 'myorg-api-internal');
     expect(actualService).toBeTruthy();
     expect(actualService.version).toBe('2024.2.25-r8067229180');
 
     actual = await service.update('dev', 3296, [
       {
-        name: 'mydomain-app-main',
+        name: 'myorg-app-main',
         version: '2024.2.27-r8068273297',
         runId: 8068273297
       },
       {
-        name: 'mydomain-api-service',
+        name: 'myorg-api-service',
         version: '2024.2.27-r8067229180',
         runId: 8067229180
       }
@@ -77,7 +77,7 @@ describe('update', () => {
     expect(actual.services).toBeTruthy();
     expect(actual.services.length).toEqual(3);
 
-    actualService = actual.services.find(s => s.name === 'mydomain-api-internal');
+    actualService = actual.services.find(s => s.name === 'myorg-api-internal');
     expect(actualService).toBeTruthy();
     expect(actualService.version).toBe('2024.2.25-r8067229180');
   });
@@ -100,12 +100,12 @@ describe('diff', () => {
     const service = container.resolve(DeployStateService);
     await service.update('dev', 3284, [
       {
-        name: 'mydomain-api-service',
+        name: 'myorg-api-service',
         version: '2024.2.25-r8067229180',
         runId: 8067207106
       },
       {
-        name: 'mydomain-app-main',
+        name: 'myorg-app-main',
         version: '2024.2.27-r8067229180',
         runId: 8067229180
       }
@@ -113,12 +113,12 @@ describe('diff', () => {
 
     await service.update('stage', 3263, [
       {
-        name: 'mydomain-api-service',
+        name: 'myorg-api-service',
         version: '2024.2.28-r8067285421',
         runId: 8067285421
       },
       {
-        name: 'mydomain-app-main',
+        name: 'myorg-app-main',
         version: '2024.2.27-r8068273297',
         runId: 8068273297
       }
@@ -131,16 +131,16 @@ describe('diff', () => {
     expect(actual.services).toBeDefined();
     expect(actual.services.length).toBeGreaterThan(0);
 
-    let serviceActual = actual.services.find(s => s.name === 'mydomain-api-service');
+    let serviceActual = actual.services.find(s => s.name === 'myorg-api-service');
     expect(serviceActual.version).toBe('2024.2.28-r8067285421');
     expect(serviceActual.runId).toBe(8067285421);
 
-    // mydomain-app-main is not on dev yet.
-    serviceActual = actual.services.find(s => s.name === 'mydomain-app-main');
+    // myorg-app-main is not on dev yet.
+    serviceActual = actual.services.find(s => s.name === 'myorg-app-main');
     expect(serviceActual.version).toBe('2024.2.27-r8068273297');
     expect(serviceActual.runId).toBe(8068273297);
 
-    // mydomain-api-service is not different.
+    // myorg-api-service is not different.
     expect(actual.services.length).toBe(2);
   });
 });

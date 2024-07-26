@@ -133,8 +133,12 @@ export class RepoSettingsService {
     defaultValue: string,
     isSecret = false
   ): Promise<string> {
-    let value = parameters.get(name);
-    if (!value) {
+    let value: string;
+    if (parameters.has(name)) {
+      value = parameters.get(name);
+    } else {
+      const fullName = this._parameterService.getFullName(name, 'Org');
+      this._log.info(`Parameter does not exist, creating ${fullName}`);
       value = defaultValue;
       await this._parameterService.setString(name, value, 'Org', isSecret);
     }

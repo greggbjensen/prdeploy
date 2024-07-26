@@ -4,16 +4,16 @@ deployWorkflow: combined-deploy.yaml
 environments:
   - name: dev
     queue: 'DEV_PR_QUEUE'
-    url: 'https://dev.mydomain.com'
+    url: 'https://dev.myorg.com'
   - name: dev2
     queue: 'DEV_PR_QUEUE'
-    url: 'https://dev2.mydomain.com'
+    url: 'https://dev2.myorg.com'
   - name: dev3
     queue: 'DEV_PR_QUEUE'
-    url: 'https://dev3.mydomain.com'
+    url: 'https://dev3.myorg.com'
   - name: stage
     queue: 'STAGE_PR_QUEUE'
-    url: 'https://stage.mydomain.com'
+    url: 'https://stage.myorg.com'
     requireBranchUpToDate: true
     automationTest:
       enabled: true
@@ -24,11 +24,11 @@ environments:
         run_name: ${run_name}
   - name: prod
     queue: 'PROD_PR_QUEUE'
-    url: 'https://www.mydomain.com'
+    url: 'https://www.myorg.com'
     requireBranchUpToDate: true
     requireApproval: true
     excludeFromRollback:
-      - mydomain-db
+      - myorg-db
     automationTest:
       enabled: false
       workflow: test-automation-run.yml
@@ -37,9 +37,9 @@ environments:
         pull_number: ${pull_number}
         run_name: ${run_name}
 services:
-  - name: mydomain-app-main
-  - name: mydomain-api-service
-  - name: mydomain-db
+  - name: myorg-app-main
+  - name: myorg-api-service
+  - name: myorg-db
 defaultEnvironment: dev
 releaseEnvironment: prod
 addJiraIssues: true

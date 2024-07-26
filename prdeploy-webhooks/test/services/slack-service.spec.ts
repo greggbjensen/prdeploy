@@ -77,7 +77,7 @@ describe('lookupUser', () => {
 
   it('gets slack user using email alias', async () => {
     const service = container.resolve(SlackService);
-    const user = await service.lookupUser({ name: '', email: 'jdoe@mydomain.com' } as any);
+    const user = await service.lookupUser({ name: '', email: 'jdoe@myorg.com' } as any);
 
     expect(user).not.toBeNull();
     expect(user?.username).toBeTruthy();
