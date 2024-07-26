@@ -21,7 +21,6 @@ The prdeploy API has webhooks to allow GitHub to pass events, as well as the Gra
     | SLACK_WEBHOOKS_DEPLOY   | SLACK Webhook URL for deployment channel notices. | https://hooks_slack_com/services/aaa/bbb/ccc                                                                                                                                                |
     | SLACK_WEBHOOKS_RELEASE  | SLACK Webhook URL for release channel notices.    | https://hooks_slack_com/services/aaa/bbb/ccc                                                                                                                                                |
 
-
 ## Requirements
 
 - Grant app the following permissions:
