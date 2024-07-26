@@ -17,9 +17,9 @@ The prdeploy API has webhooks to allow GitHub to pass events, as well as the Gra
     | JIRA_USERNAME           | Username the JIRA API token was generated for.    | greggbjensen@myorg.com                                                                                                                                                                      |
     | JIRA_PASSWORD           | JIRA API token.                                   | add1234.drgx541.edta541td                                                                                                                                                                   |
     | SLACK_EMAIL_DOMAIN      | Root domain for your organization in Slack.       | myorg.com                                                                                                                                                                                   |
-    | SLACK_TOKEN             | SLACK API token.                                  | add1234.drgx541.edta541td                                                                                                                                                                   |
-    | SLACK_WEBHOOKS_DEPLOY   | SLACK Webhook URL for deployment channel notices. | add1234.drgx541.edta541td                                                                                                                                                                   |
-    | SLACK_WEBHOOKS_RELEASE  | SLACK Webhook URL for release channel notices.    | add1234.drgx541.edta541td                                                                                                                                                                   |
+    | SLACK_TOKEN             | SLACK API token.                                  | kjhjjh12_fsgfsgds_dfafda                                                                                                                                                                    |
+    | SLACK_WEBHOOKS_DEPLOY   | SLACK Webhook URL for deployment channel notices. | https://hooks_slack_com/services/aaa/bbb/ccc                                                                                                                                                |
+    | SLACK_WEBHOOKS_RELEASE  | SLACK Webhook URL for release channel notices.    | https://hooks_slack_com/services/aaa/bbb/ccc                                                                                                                                                |
 
 
 ## Requirements
