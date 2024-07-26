@@ -1,4 +1,4 @@
-# prdeploy-api
+# prdeploy-webhooks
 The prdeploy API has webhooks to allow GitHub to pass events, as well as the GraphQL API for displaying the web page.
 
 ## App Setup
@@ -67,7 +67,7 @@ The prdeploy API has webhooks to allow GitHub to pass events, as well as the Gra
 1. Open this repository root with VS Code.
 2. Set a breakpoint in the App.
 3. Click on the **Debug** icon on the left nav.
-4. Select **prdeploy-api** from the **RUN AND DEBUG** drop down.
+4. Select **prdeploy-webhooks** from the **RUN AND DEBUG** drop down.
 5. Click the **Start Debugging** icon.
 
 ## Deployment

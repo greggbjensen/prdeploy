@@ -19,7 +19,7 @@ GitHub App that allows the entire build-deploy lifecycle to happen within a feat
 
 ## Repository Setup
 
-1. Follow the [prdeploy-api App Setup](/prdeploy-api/README.md#app-setup) to get prdeploy configured for your organization.
+1. Follow the [prdeploy-webhooks App Setup](/prdeploy-webhooks/README.md#app-setup) to get prdeploy configured for your organization.
 2. Add a `.prdeploy.yaml` settings file to the root of your repository:
 
    ```yaml
@@ -147,5 +147,5 @@ jobs:
 
 # Contributing
 
-1. For API development and debugging, see [prdeploy-api Development](/prdeploy-api/README.md#development).
+1. For API development and debugging, see [prdeploy-webhooks Development](/prdeploy-webhooks/README.md#development).
 2. For Web development and debugging, see [prdeploy-web Development](/prdeploy-web/README.md#development).
