@@ -1,5 +1,5 @@
 {
-  "name": "github-prdeploy",
+  "name": "prdeploy",
   "description": "Manages feature branch deployments across environments through a pull request.",
   "private": true,
   "version": "1.0.0",

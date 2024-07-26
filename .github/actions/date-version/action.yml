@@ -1,0 +1,45 @@
+name: Date version
+description: Creates a version for a build using the current date and run ID of the workflow
+inputs:
+  use_prerelease:
+    required: false
+    description: If set to false, the last version number becomes the run ID instead of the day
+    default: 'true'
+  use_four_digits:
+    required: false
+    description: If set to true, the Major.Minor.Build.Revision version is used with four digits
+    default: 'false'
+outputs:
+  version:
+    value: ${{ steps.version.outputs.version }}
+    description: 'The generated version to use.'
+
+runs:
+  using: "composite"
+  steps:
+
+  - name: Set VERSION env
+    id: version
+    shell: bash
+    env:
+      RUN_ID: ${{ github.run_id }}
+      USE_PRERELEASE: ${{ inputs.use_prerelease }}
+      USE_FOUR_DIGITS: ${{ inputs.use_four_digits }}
+    run: |
+      version=""
+      if [ $USE_FOUR_DIGITS = "true" ]; then
+        version=$(date '+%Y.%-m.%-d%-H.%-M%-S')
+      elif [ $USE_PRERELEASE = "true"]; then
+        dayVersion=$(date '+%Y.%-m.%-d')
+        version="$dayVersion-r$RUN_ID"
+      else
+        # Max digit is 66,535 so we convert seconds to 10th of a minute (0-9)
+        seconds=$(date '+%S')
+        minute10th=$(printf "%.0f" $(echo "($seconds/60.0)*9" | bc -l))
+        prefixVersion=$(date '+%Y.%-m.%-d.%-H%-M')
+        version="$prefixVersion$minute10th"
+      fi
+
+      echo "VERSION: $version"
+      echo "version=$version" >> $GITHUB_OUTPUT
+      echo "VERSION=$version" | Out-File -FilePath $GITHUB_ENV -Encoding utf8 -Append
