@@ -82,7 +82,7 @@ describe('setObject', () => {
     const service = container.resolve(ParameterService);
     const objectValue: Build = {
       runId: 8011629437,
-      name: 'mydomain-app-main',
+      name: 'myorg-app-main',
       title: 'TypeScript formatting updates',
       version: '2024.23.2-r8011629437',
       url: 'https://github.com/greggbjensen/prdeploy-example-repo/actions/runs/8011629437'
@@ -93,7 +93,7 @@ describe('setObject', () => {
 
     expect(value).toBeTruthy();
     expect(value.runId).toEqual(8011629437);
-    expect(value.name).toEqual('mydomain-app-main');
+    expect(value.name).toEqual('myorg-app-main');
     expect(value.title).toEqual('TypeScript formatting updates');
     expect(value.version).toEqual('2024.23.2-r8011629437');
     expect(value.url).toEqual('https://github.com/greggbjensen/prdeploy-example-repo/actions/runs/8011629437');

@@ -17,6 +17,8 @@ import { ParameterLevel } from './models';
 export class ParameterService {
   private static readonly PARAMETER_STORE_ROOT = 'prdeploy';
   private static readonly MAX_HISTORY_PER_PAGE = 50;
+  private static readonly EMPTY_STRING_VALUE = '<EMPTY>';
+  private static readonly PATH_TO_NAME_REGEX = /^.*\//;
 
   constructor(
     @inject(SSM_CLIENT) private _client: SSMClient,
@@ -128,15 +130,15 @@ export class ParameterService {
     );
   }
 
+  getFullName(name: string, level: ParameterLevel): string {
+    const path = this.getPath(level);
+    return `${path}/${name}`;
+  }
+
   private getPath(level: ParameterLevel): string {
     return level === 'Repo'
       ? `/${ParameterService.PARAMETER_STORE_ROOT}/${this._repository.owner.login}/${this._repository.name}`
       : `/${ParameterService.PARAMETER_STORE_ROOT}/${this._repository.owner.login}`;
-  }
-
-  private getFullName(name: string, level: ParameterLevel): string {
-    const path = this.getPath(level);
-    return `${path}/${name}`;
   }
 
   private async populateAllParameters(level: ParameterLevel, parameters: Map<string, string>): Promise<void> {
@@ -150,7 +152,12 @@ export class ParameterService {
       );
 
       for (const parameter of response.Parameters) {
-        parameters.set(parameter.Name, parameter.Value);
+        const name = parameter.Name.replace(ParameterService.PATH_TO_NAME_REGEX, '');
+        let value = parameter.Value;
+        if (value === ParameterService.EMPTY_STRING_VALUE) {
+          value = '';
+        }
+        parameters.set(name, value);
       }
     } catch (error) {
       this._log.error(`Unable to get ${level} parameters.  ${error}`);

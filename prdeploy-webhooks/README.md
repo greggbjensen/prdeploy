@@ -4,16 +4,23 @@ The prdeploy API has webhooks to allow GitHub to pass events, as well as the Gra
 ## App Setup
 
 1. Install the **prdeploy** app to your repository.
-2. Create a pull request and **prdeploy** will initialize all the required AWS Parameter Store variables
-2. Edit the organization `/prdeploy/myorg/EMAIL_ALIASES` or repository variable `/prdeploy/myorg/myrepo/EMAIL_ALIASES`, for any email account that does not follow the `first.last@mydomain.com` pattern with a JSON value like below:
+2. Create a pull request and **prdeploy** will initialize all the required AWS Parameter Store variables.
+3. The following values can be configured in AWS Parameter Store after they are created:
 
-   ```json
-   {
-     "jim.smith@mydomain.com": "james.smith@mydomain.com",
-     "john.doe@mydomain.com": "jdoe@mydomain.com",
-     "will.harris@mydomain.com": "billyh@mydomain.com"
-   }
-   ```
+    Each parameter is prefixed with the path  `/prdeploy/myorg/`
+
+    | Parameter               | Description                                       | Example                                                                                                                                                                                     |
+    |-------------------------|---------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | DEPLOY_MANAGER_SITE_URL | The URL of the site the Deployment Manager is on. | https://prdeploy.myorg.com                                                                                                                                                                  |
+    | EMAIL_ALIASES           | Aliases to correct email addresses for Slack.     | {<br>&nbsp;&nbsp;"jim.smith@myorg.com": "james.smith@myorg.com",<br>  &nbsp;&nbsp;"john.doe@myorg.com": "jdoe@myorg.com",<br>  &nbsp;&nbsp;"will.harris@myorg.com": "billyh@myorg.com"<br>} |
+    | JIRA_HOST               | Domain name of your Atlassian instance.           | myorg.atlassian.net                                                                                                                                                                         |
+    | JIRA_USERNAME           | Username the JIRA API token was generated for.    | greggbjensen@myorg.com                                                                                                                                                                      |
+    | JIRA_PASSWORD           | JIRA API token.                                   | add1234.drgx541.edta541td                                                                                                                                                                   |
+    | SLACK_EMAIL_DOMAIN      | Root domain for your organization in Slack.       | myorg.com                                                                                                                                                                                   |
+    | SLACK_TOKEN             | SLACK API token.                                  | add1234.drgx541.edta541td                                                                                                                                                                   |
+    | SLACK_WEBHOOKS_DEPLOY   | SLACK Webhook URL for deployment channel notices. | add1234.drgx541.edta541td                                                                                                                                                                   |
+    | SLACK_WEBHOOKS_RELEASE  | SLACK Webhook URL for release channel notices.    | add1234.drgx541.edta541td                                                                                                                                                                   |
+
 
 ## Requirements
 

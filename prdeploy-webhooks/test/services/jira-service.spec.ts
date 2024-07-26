@@ -11,7 +11,7 @@ const searchJira = jest.fn().mockResolvedValueOnce({
       key: 'SCRUM-1234',
       self: 'https://greggbjensen.atlassian.net/browse/SCRUM-1234',
       fields: {
-        summary: 'Containerize www.mydomain.com for the dev environment',
+        summary: 'Containerize www.myorg.com for the dev environment',
         issuetype: {
           name: 'Story',
           iconUrl:

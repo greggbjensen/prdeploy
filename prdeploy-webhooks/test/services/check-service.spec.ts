@@ -16,7 +16,7 @@ describe('listBuilds', () => {
           data: {
             check_runs: [
               {
-                name: 'mydomain-app-main',
+                name: 'myorg-app-main',
                 status: 'completed',
                 details_url:
                   'https://github.com/greggbjensen/prdeploy-example-repo/actions/runs/10014663490/job/27684771116'
@@ -33,7 +33,7 @@ describe('listBuilds', () => {
         getWorkflowRun: jest.fn().mockResolvedValueOnce({
           data: {
             display_title: 'SCRUM-1234 For certain flows, load variants with parent properties',
-            path: 'mydomain-app-main-build.yml',
+            path: 'myorg-app-main-build.yml',
             html_url: 'https://github.com/greggbjensen/prdeploy-example-repo/actions/runs/10014663490'
           }
         }),
