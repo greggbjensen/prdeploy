@@ -17,6 +17,7 @@ import { ParameterLevel } from './models';
 export class ParameterService {
   private static readonly PARAMETER_STORE_ROOT = 'prdeploy';
   private static readonly MAX_HISTORY_PER_PAGE = 50;
+  private static readonly EMPTY_STRING_VALUE = '<EMPTY>';
 
   constructor(
     @inject(SSM_CLIENT) private _client: SSMClient,
@@ -108,6 +109,10 @@ export class ParameterService {
       this._log.debug(`Parameter ${fullName} not found.  ${error.message}`);
     }
 
+    if (value === ParameterService.EMPTY_STRING_VALUE) {
+      value = '';
+    }
+
     return value;
   }
 
@@ -117,6 +122,10 @@ export class ParameterService {
   }
 
   async setString(name: string, value: string, level: ParameterLevel = 'Repo', isSecret = false): Promise<void> {
+    if (!value) {
+      value = ParameterService.EMPTY_STRING_VALUE;
+    }
+
     await this._client.send(
       new PutParameterCommand({
         Name: this.getFullName(name, level),
@@ -150,7 +159,12 @@ export class ParameterService {
       );
 
       for (const parameter of response.Parameters) {
-        parameters.set(parameter.Name, parameter.Value);
+        let value = parameter.Value;
+        if (value === ParameterService.EMPTY_STRING_VALUE) {
+          value = '';
+        }
+        
+        parameters.set(parameter.Name, value);
       }
     } catch (error) {
       this._log.error(`Unable to get ${level} parameters.  ${error}`);
