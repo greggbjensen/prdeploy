@@ -1,0 +1,23 @@
+name: 'Get build information'
+description: 'Gets build data and a matrix for a set of deploy and sync run IDs.'
+author: 'greggbjensen'
+inputs:
+  token:
+    required: true
+    description: 'The GitHub token to use for authentication.'
+  pull_number:
+    required: true
+    description: 'Number of the pull request to display.'
+  deploy_run_ids:
+    required: true
+    description: 'Run IDs of builds being deployed.'
+  sync_run_ids:
+    required: false
+    description: 'Run IDs of builds being synced with stable release.'
+  workflow_regex:
+    required: false
+    description: 'Regular expression with a single capture group that is the build name.'
+    default: '/([^/]+?)-build.ya?ml'
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
