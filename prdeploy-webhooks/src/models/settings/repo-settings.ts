@@ -22,7 +22,6 @@ export class RepoSettings {
   jira: JiraSettings;
   builds: BuildsSettings;
   slack: SlackSettings;
-  emailAliases: EmailAliases;
   deployManagerSiteUrl: string;
   badge: BadgeSettings;
 }

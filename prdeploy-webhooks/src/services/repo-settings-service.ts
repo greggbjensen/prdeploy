@@ -1,6 +1,6 @@
 import { Repository } from '@octokit/webhooks-types';
 import { REPOSITORY, DEFAULT_SETTINGS_FILE } from '@src/injection-tokens';
-import { JiraSettings, RepoSettings, SlackWebhooksSettings, SlackSettings } from '@src/models';
+import { JiraSettings, RepoSettings, SlackWebhooksSettings, SlackSettings, EmailAliases } from '@src/models';
 import { Octokit, RestEndpointMethodTypes } from '@octokit/rest';
 import { Lifecycle, inject, scoped } from 'tsyringe';
 import yaml from 'js-yaml';
@@ -102,7 +102,6 @@ export class RepoSettingsService {
   private async applyParameters(settings: RepoSettings): Promise<void> {
     try {
       const parameters = await this._parameterService.getAll();
-      settings.emailAliases = JSON.parse(await this.getOrCreateParameter(parameters, 'EMAIL_ALIASES', '{}'));
       settings.deployManagerSiteUrl = await this.getOrCreateParameter(parameters, 'DEPLOY_MANAGER_SITE_URL', '');
 
       if (!settings.jira) {
@@ -119,6 +118,9 @@ export class RepoSettingsService {
         settings.slack.webhooks = {} as SlackWebhooksSettings;
       }
       settings.slack.emailDomain = await this.getOrCreateParameter(parameters, 'SLACK_EMAIL_DOMAIN', '');
+      settings.slack.emailAliases = yaml.load(
+        await this.getOrCreateParameter(parameters, 'SLACK_EMAIL_ALIASES', '{}')
+      ) as EmailAliases;
       settings.slack.token = await this.getOrCreateParameter(parameters, 'SLACK_TOKEN', '', true);
       settings.slack.webhooks.deploy = await this.getOrCreateParameter(parameters, 'SLACK_WEBHOOKS_DEPLOY', '', true);
       settings.slack.webhooks.release = await this.getOrCreateParameter(parameters, 'SLACK_WEBHOOKS_RELEASE', '', true);

@@ -73,8 +73,8 @@ export class SlackService {
       return null;
     }
 
-    if (this._settings.emailAliases) {
-      const emailAlias = this._settings.emailAliases[lookupEmail];
+    if (this._settings.slack.emailAliases) {
+      const emailAlias = this._settings.slack.emailAliases[lookupEmail];
       if (emailAlias) {
         this._log.info(`alias: ${emailAlias}`);
         lookupEmail = emailAlias;
