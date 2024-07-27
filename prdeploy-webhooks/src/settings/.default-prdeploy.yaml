@@ -1,6 +1,6 @@
 # All settings showing defaults, only override what needs to change.
 
-deployWorkflow: combined-deploy.yml # Worklow to trigger for deployments to an environment.
+deployWorkflow: combined-deploy.yaml # Worklow to trigger for deployments to an environment.
 environments: # List of environments to be used.
   - name: dev # Name of the environment in GitHub Environments.
     queue: 'DEV_PR_QUEUE' # GitHub repository variable for queue, if there are multiple of the same evironment use the same queue.

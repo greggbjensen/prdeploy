@@ -1,5 +1,5 @@
 name: 'Build details'
-description: 'Creates a summary of your build with version information attached.'
+description: 'Creates a summary of your build with version and pull request information.'
 author: 'greggbjensen'
 inputs:
   version:

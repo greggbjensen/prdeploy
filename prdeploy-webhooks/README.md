@@ -15,12 +15,23 @@ The prdeploy API has webhooks to allow GitHub to pass events, as well as the Gra
     | EMAIL_ALIASES           | Aliases to correct email addresses for Slack.     | {<br>&nbsp;&nbsp;"jim.smith@myorg.com": "james.smith@myorg.com",<br>  &nbsp;&nbsp;"john.doe@myorg.com": "jdoe@myorg.com",<br>  &nbsp;&nbsp;"will.harris@myorg.com": "billyh@myorg.com"<br>} |
     | JIRA_HOST               | Domain name of your Atlassian instance.           | myorg.atlassian.net                                                                                                                                                                         |
     | JIRA_USERNAME           | Username the JIRA API token was generated for.    | greggbjensen@myorg.com                                                                                                                                                                      |
-    | JIRA_PASSWORD           | JIRA API token.                                   | add1234.drgx541.edta541td                                                                                                                                                                   |
+    | JIRA_PASSWORD           | JIRA API token.                                   | abc.def.hij                                                                                                                                                                   |
     | SLACK_EMAIL_DOMAIN      | Root domain for your organization in Slack.       | myorg.com                                                                                                                                                                                   |
-    | SLACK_TOKEN             | SLACK API token.                                  | add1234.drgx541.edta541td                                                                                                                                                                   |
-    | SLACK_WEBHOOKS_DEPLOY   | SLACK Webhook URL for deployment channel notices. | add1234.drgx541.edta541td                                                                                                                                                                   |
-    | SLACK_WEBHOOKS_RELEASE  | SLACK Webhook URL for release channel notices.    | add1234.drgx541.edta541td                                                                                                                                                                   |
+    | SLACK_TOKEN             | SLACK API token.                                  | abc_def_hij                                                                                                                                                                    |
+    | SLACK_WEBHOOKS_DEPLOY   | SLACK Webhook URL for deployment channel notices. | https://hooks_slack_com/services/aaa/bbb/ccc                                                                                                                                                |
+    | SLACK_WEBHOOKS_RELEASE  | SLACK Webhook URL for release channel notices.    | https://hooks_slack_com/services/aaa/bbb/ccc                                                                                                                                                |
 
+### Configure Slack.
+1. Create a new Slack App
+2. Enable Webhooks.
+3. Copy the `Bot User OAuth Token` into `SLACK_TOKEN` in your AWS Parameters.
+3. Add the following scopes:
+    ```
+    incoming-webhook
+    users:read
+    users:read.email
+    ```
+4. Add a webhook for your deploy and release channels.
 
 ## Requirements
 

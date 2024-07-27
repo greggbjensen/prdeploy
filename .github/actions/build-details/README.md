@@ -1,6 +1,6 @@
 # build-details action
 
-Creates a summary of your build with version information attached.
+Creates a summary of your build with version and pull request information.
 
 ![Screenshot](/.github/actions/build-details/images/build-details.png)
 

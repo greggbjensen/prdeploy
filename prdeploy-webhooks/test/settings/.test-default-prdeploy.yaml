@@ -42,16 +42,14 @@ services:
   - name: myorg-db
 defaultEnvironment: dev
 releaseEnvironment: prod
-addJiraIssues: true
 settingsBranch: 'main'
 builds:
   checkPattern: 'Build helm chart'
   workflowPattern: '/([^/]+?)-build.ya?ml'
+jira:
+  addIssuesEnabled: true
 slack:
   notificationsEnabled: true
-  channels:
-    deploy: '<SECRET NAME>'
-    release: '<SECRET NAME>'
 badge:
   statusColors:
     error: 'cc2900'

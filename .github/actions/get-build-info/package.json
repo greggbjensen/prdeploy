@@ -1,13 +1,13 @@
 {
-  "name": "build-details",
+  "name": "get-build-info",
   "version": "0.0.0",
   "private": true,
-  "description": "Creates a summary of your build with version and pull request information.",
+  "description": "Gets build data and a matrix for a set of deploy and sync run IDs.",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
-    "format": "prettier --write **/*.ts",
-    "format-check": "prettier --check **/*.ts",
+    "format": "prettier . --write **/*.ts",
+    "format-check": "prettier . --check **/*.ts",
     "lint": "eslint src/**/*.ts",
     "package": "ncc build --source-map --license licenses.txt",
     "test": "jest",
@@ -19,8 +19,11 @@
   },
   "keywords": [
     "actions",
-    "notes",
-    "build"
+    "commit",
+    "branch",
+    "pr",
+    "builds",
+    "checks"
   ],
   "author": "",
   "license": "MIT",
@@ -29,12 +32,15 @@
     "@actions/core": "^1.10.1",
     "@actions/github": "^6.0.0",
     "@octokit/rest": "^20.0.2",
+    "adm-zip": "^0.5.11",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
+    "@types/adm-zip": "^0.5.5",
     "@types/jest": "^29.5.12",
     "@types/lodash": "^4.17.0",
     "@types/node": "^20.11.27",
+    "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vercel/ncc": "^0.38.1",
     "eslint": "^8.57.0",
