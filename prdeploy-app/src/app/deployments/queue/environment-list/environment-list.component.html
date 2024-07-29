@@ -1,0 +1,113 @@
+<!-- <dx-data-grid
+  #environmentDataGrid
+  class="environment-table"
+  [dataSource]="data"
+  keyExpr="name"
+  [showBorders]="true"
+  [rowAlternationEnabled]="true">
+  <dxi-column
+    dataField="environment"
+    alignment="center"
+    [width]="110"
+    cellTemplate="environmentCellTemplate"></dxi-column>
+  <dxi-column
+    dataField="locked"
+    [width]="33"
+    dataType="boolean"
+    cellTemplate="lockedCellTemplate"
+    headerCellTemplate="lockedHeaderTemplate"></dxi-column>
+  <dxi-column caption="Pull Request" dataType="object" cellTemplate="pullRequestCellTemplate"></dxi-column>
+  <dxi-column dataField="updatedAt" [width]="145" dataType="date" cellTemplate="updatedAtCellTemplate"></dxi-column>
+  <dxi-column caption="User" [width]="140" dataType="object" cellTemplate="userCellTemplate"></dxi-column>
+  <dxi-column dataField="url" [width]="225" cellTemplate="linkCellTemplate" caption="URL"></dxi-column>
+  <dxi-column caption="Actions" dataType="object" [width]="155" cellTemplate="actionsCellTemplate"></dxi-column>
+  <dxo-load-panel indicatorSrc="/assets/images/loading-spinner-animated.gif"></dxo-load-panel>
+
+  <div *dxTemplate="let d of 'environmentCellTemplate'">
+    <div class="deploy-environment" [style]="{ backgroundColor: '#' + d.data.color }">
+      <a class="deploy-environment" [href]="d.data.url" target="_blank">{{ d.data.name }}</a>
+    </div>
+  </div>
+
+  <div *dxTemplate="let d of 'lockedHeaderTemplate'">
+    <dx-button class="environment-locked" icon="lock" stylingMode="text" hint="locked"></dx-button>
+  </div>
+
+  <div *dxTemplate="let d of 'lockedCellTemplate'">
+    @if (d.data.locked) {
+      <dx-button class="environment-locked" icon="lock" stylingMode="text" hint="locked"></dx-button>
+    }
+  </div>
+
+  <div *dxTemplate="let d of 'actionsCellTemplate'">
+    <div class="environment-actions">
+      @if (d.data.locked) {
+        <dx-button
+          class="environment-pull-free"
+          icon="remove"
+          stylingMode="text"
+          hint="/free {{ d.data.name }}"
+          (onClick)="free(d.data.name, d.data.pullRequest.number)"></dx-button>
+      }
+      <dx-button
+        class="environment-pull-force-deploy"
+        icon="add"
+        stylingMode="text"
+        (onClick)="showDeployForce(d.data.name)"
+        hint="/deploy {{ d.data.name.toLowerCase() }} --force"></dx-button>
+      <dx-button
+        class="environment-pull-redeploy"
+        icon="redo"
+        stylingMode="text"
+        (onClick)="redeploy(d.data.name, d.data.pullRequest.number)"
+        hint="/deploy {{ d.data.name.toLowerCase() }}"></dx-button>
+      <dx-button
+        class="environment-pull-rollbak"
+        icon="undo"
+        stylingMode="text"
+        (onClick)="showDeployRollback(d.data.name, d.data.pullRequest.number)"
+        hint="/rollback {{ d.data.name.toLowerCase() }}"></dx-button>
+    </div>
+  </div>
+
+  <div *dxTemplate="let d of 'linkCellTemplate'">
+    <a [href]="d.data.url" target="_blank">{{ d.data.url }}</a>
+  </div>
+
+  <div *dxTemplate="let d of 'updatedAtCellTemplate'">
+    @if (d.data.pullRequest?.updatedAt) {
+      {{ d.data.pullRequest?.updatedAt | date: 'short' }}
+    }
+  </div>
+
+  <div *dxTemplate="let d of 'userCellTemplate'">
+    @if (d.data.pullRequest?.user; as user) {
+      {{ user.name }}
+    }
+  </div>
+
+  <div *dxTemplate="let d of 'pullRequestCellTemplate'">
+    @if (d.data.pullRequest; as pullRequest) {
+      <a id="pr-{{ d.data.name }}-{{ pullRequest.number }}" [href]="pullRequest.url" target="_blank"
+        >#{{ pullRequest.number }}</a
+      >
+      &nbsp;<span>{{ pullRequest.title }}</span>
+      <app-pull-request-popover
+        [pullRequest]="pullRequest"
+        target="#pr-{{ d.data.name }}-{{ pullRequest.number }}"></app-pull-request-popover>
+    }
+    @if (!d.data.pullRequest) {
+      <span class="environment-unknown">Unknown</span>
+    }
+  </div>
+</dx-data-grid> -->
+
+<!-- <app-deploy-force-dialog
+  [environment]="actionEnvironment"
+  [repository]="repository"
+  [(visible)]="forceDeployVisible"></app-deploy-force-dialog>
+<app-deploy-rollback-dialog
+  [environment]="actionEnvironment"
+  [repository]="repository"
+  [pullNumber]="actionPullNumber"
+  [(visible)]="deployRollbackVisible"></app-deploy-rollback-dialog> -->

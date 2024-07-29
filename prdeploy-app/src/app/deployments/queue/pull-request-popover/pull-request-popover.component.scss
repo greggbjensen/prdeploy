@@ -1,0 +1,10 @@
+@import '../../../../sass/variables';
+
+.pull-head {
+  display: flex;
+}
+
+.pull-user {
+  font-weight: $font-weight-bold;
+  flex: 1;
+}

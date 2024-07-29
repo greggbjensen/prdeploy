@@ -1,0 +1,59 @@
+<dx-popup
+  [width]="500"
+  [height]="310"
+  [showTitle]="true"
+  title="Add Services to Pull Request"
+  [dragEnabled]="false"
+  [hideOnOutsideClick]="true"
+  [showCloseButton]="true"
+  container=".dx-viewport"
+  [(visible)]="visible"
+  (visibleChange)="onVisibleChange()">
+  <div class="form">
+    <label class="pull-request-lbl">Pull Request</label>
+    <!-- <dx-select-box
+      #selectPullRequest
+      placeholder="Select pull request"
+      class="add-pull-select"
+      [dataSource]="openPullRequests"
+      [displayExpr]="pullRequestDisplayExpr"
+      valueExpr="number"
+      [searchEnabled]="true"
+      [minSearchLength]="2"
+      [showDataBeforeSearch]="true"
+      [(selectedItem)]="selectedPullRequest">
+    </dx-select-box> -->
+    <label>Services</label>
+    <dx-drop-down-box
+      [(value)]="selectedServices"
+      [inputAttr]="{ 'aria-label': 'Services' }"
+      placeholder="Select services..."
+      [showClearButton]="true"
+      [dataSource]="repositoryServices"
+      (onValueChanged)="onDropDownBoxValueChanged()">
+      <div *dxTemplate="let data of 'content'">
+        <dx-list
+          #list
+          [dataSource]="repositoryServices"
+          selectionMode="multiple"
+          selectAllMode="allPages"
+          [showSelectionControls]="true"
+          [selectedItemKeys]="[]"
+          [selectByClick]="true"
+          (selectedItemsChange)="onSelectedServicesChange()"></dx-list>
+      </div>
+    </dx-drop-down-box>
+    <div class="dialog-actions">
+      <dx-button class="cancel-btn" text="Cancel" buttonType="tertiary" (onButtonClick)="cancel()" height="40">
+      </dx-button>
+      <!-- <dx-button
+        class="add-services-btn"
+        text="Add Services"
+        buttonType="primary"
+        (onButtonClick)="addServicesToPr()"
+        [disabled]="!selectedPullRequest || processing || !selectedServices?.length"
+        height="40">
+      </dx-button> -->
+    </div>
+  </div>
+</dx-popup>

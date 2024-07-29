@@ -1,0 +1,45 @@
+<dx-popup
+  [width]="450"
+  [height]="350"
+  [showTitle]="true"
+  title="Force Deploy {{ environment }}"
+  [dragEnabled]="false"
+  [hideOnOutsideClick]="true"
+  [showCloseButton]="true"
+  container=".dx-viewport"
+  [(visible)]="visible"
+  (visibleChange)="onVisibleChange()">
+  <div class="form">
+    <p>Choose a pull request to force to {{ environment }}:</p>
+    <!-- <dx-select-box
+      #selectPullRequest
+      placeholder="Select pull request"
+      class="add-pull-select"
+      [dataSource]="openPullRequests"
+      [displayExpr]="pullRequestDisplayExpr"
+      valueExpr="number"
+      [searchEnabled]="true"
+      [minSearchLength]="2"
+      [showDataBeforeSearch]="true"
+      [(selectedItem)]="selectedPullRequest">
+    </dx-select-box> -->
+    <div class="dx-fieldset">
+      <div class="dx-field-label">Retain locks</div>
+      <div class="dx-field-value">
+        <dx-check-box [(value)]="retainLocks"></dx-check-box>
+      </div>
+    </div>
+    <div class="deploy-actions">
+      <dx-button class="cancel-btn" text="Cancel" buttonType="tertiary" (onButtonClick)="cancel()" height="40">
+      </dx-button>
+      <!-- <dx-button
+        class="deploy-btn"
+        text="Deploy"
+        buttonType="primary"
+        (onButtonClick)="forceDeploy()"
+        [disabled]="!selectedPullRequest || processing"
+        height="40">
+      </dx-button> -->
+    </div>
+  </div>
+</dx-popup>

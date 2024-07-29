@@ -1,0 +1,59 @@
+@import '../../../../sass/variables';
+
+.deploy-environment {
+  color: $white;
+  font-size: 11px; // TODO GBJ: Variables and px or em?
+  font-weight: $font-weight-bold;
+  text-decoration: none;
+  line-height: 20px;
+  border-radius: 3px;
+  padding: 5px;
+}
+
+a {
+  text-decoration: none; // TODO GBJ: What is the default?
+}
+
+.environment-unknown {
+  text-transform: uppercase;
+  color: $gray-600;
+}
+
+::ng-deep .environment-locked {
+  cursor: default;
+
+  .dx-button-content {
+    padding: 0;
+
+    .dx-icon {
+      color: $gray-500;
+    }
+  }
+}
+
+::ng-deep .environment-table td {
+  vertical-align: middle !important;
+}
+
+::ng-deep .environment-actions .dx-icon {
+  &.dx-icon-remove::before {
+    color: $red-400;
+  }
+
+  &.dx-icon-add::before {
+    color: $green-400;
+  }
+
+  &.dx-icon-redo::before {
+    color: $blue-300;
+  }
+
+  &.dx-icon-undo::before {
+    color: $orange-400;
+  }
+}
+
+.environment-actions {
+  display: flex;
+  justify-content: flex-end;
+}

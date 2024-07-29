@@ -1,0 +1,9 @@
+query OpenPullRequests($owner: ID!, $repo: ID!, $search: String) {
+  openPullRequests(owner: $owner, repo: $repo, search: $search) {
+    number
+    title
+    user {
+      name
+    }
+  }
+}

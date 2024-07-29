@@ -1,0 +1,23 @@
+.dialog-actions {
+  margin-top: 30px;
+  display: flex;
+  margin-left: auto;
+
+  dx-button {
+    margin-left: 15px;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    margin: 20px 0 10px 0;
+    display: block;
+  }
+
+  .pull-request-lbl {
+    margin-top: 0;
+  }
+}

@@ -1,0 +1,55 @@
+@import '../../../../sass/variables';
+
+h4 {
+  margin: 10px; // TODO GBJ: Do we have fixed sizes for this?
+}
+
+a {
+  text-decoration: none; // TODO GBJ: What is the default?
+}
+
+.pull-user {
+  font-weight: $font-weight-bold;
+}
+
+.queue-pull {
+  display: flex;
+  align-items: center;
+}
+
+.queue-pull-title {
+  flex: 1;
+  display: flex;
+}
+
+.queue-pull-delete {
+  margin-left: 20px;
+}
+
+.queue-order {
+  background-color: $blue-500;
+  color: $white;
+  font-weight: $font-weight-bold;
+  display: block;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  border-radius: 10px;
+  margin-right: 10px;
+}
+
+.add-pull-row {
+  display: flex;
+}
+
+.add-pull-select {
+  flex: 1;
+}
+
+::ng-deep .queue-pull-delete .dx-icon.dx-icon-remove::before {
+  color: $red-400;
+}
+
+::ng-deep .add-pull-row .dx-icon.dx-icon-add::before {
+  color: $green-400;
+}

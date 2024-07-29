@@ -1,0 +1,33 @@
+query DeployEnvironmentsAndQueues($owner: ID!, $repo: ID!) {
+  deployEnvironments(owner: $owner, repo: $repo) {
+    name
+    url
+    color
+    locked
+    pullRequest {
+      number
+      title
+      body
+      url
+      updatedAt
+      user {
+        name
+        username
+      }
+    }
+  }
+  deployQueues(owner: $owner, repo: $repo) {
+    environment
+    pullRequests {
+      number
+      title
+      body
+      url
+      updatedAt
+      user {
+        name
+        username
+      }
+    }
+  }
+}

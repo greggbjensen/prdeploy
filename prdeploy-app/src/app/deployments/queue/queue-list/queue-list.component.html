@@ -1,0 +1,57 @@
+<!-- @if (queue) {
+  <dx-list
+    id="{{ queue.environment.toLowerCase() }}-queue-list"
+    [dataSource]="queue.pullRequests"
+    height="100%"
+    [indicateLoading]="true"
+    selectionMode="none"
+    [activeStateEnabled]="false"
+    [focusStateEnabled]="false"
+    (onItemReordered)="onItemReordered($event)">
+    <dxo-item-dragging [allowReordering]="true"></dxo-item-dragging>
+    <dxo-load-panel indicatorSrc="/assets/images/loading-spinner-animated.gif" [enabled]="true"></dxo-load-panel>
+    <div *dxTemplate="let pullRequest of 'item'; let queueIndex = index" class="queue-pull">
+      <div class="queue-pull-title">
+        <span class="queue-order">{{ queueIndex + 1 }}</span>
+        <a id="pr-queue-{{ pullRequest.number }}" [href]="pullRequest.url" target="_blank">#{{ pullRequest.number }}</a>
+        &nbsp;&nbsp;<span>{{ pullRequest.title }}</span>
+      </div>
+      <span class="queue-pull-updated">{{ pullRequest.updatedAt | date: 'short' }}</span>
+      <dx-button
+        class="queue-pull-delete"
+        icon="remove"
+        stylingMode="text"
+        (onClick)="remove(pullRequest)"
+        hint="Remove from queue"></dx-button>
+      <app-pull-request-popover
+        [pullRequest]="pullRequest"
+        target="#pr-queue-{{ pullRequest.number }}"></app-pull-request-popover>
+    </div>
+  </dx-list>
+} -->
+
+<div class="add-pull-row">
+  <!-- <dx-select-box
+    #pullSelectBox
+    placeholder="Add pull request"
+    class="add-pull-select"
+    [dataSource]="openPullRequests"
+    [displayExpr]="pullRequestDisplayExpr"
+    valueExpr="number"
+    [searchEnabled]="true"
+    [minSearchLength]="2"
+    [showDataBeforeSearch]="true">
+  </dx-select-box>
+  <dx-button
+    icon="add"
+    stylingMode="text"
+    hint="Add to queue"
+    [disabled]="!pullSelectBox.selectedItem"
+    (onClick)="add(pullSelectBox.selectedItem)"></dx-button>
+
+  <dx-load-panel
+    [visible]="loading"
+    indicatorSrc="/assets/images/loading-spinner-animated.gif"
+    [position]="{ of: queue?.environment + '-queue-list', offset: { y: 230 } }">
+  </dx-load-panel> -->
+</div>

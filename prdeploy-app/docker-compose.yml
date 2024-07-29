@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  prdeploy-app:
+    image: '${CONTAINER_REGISTRY:-prdeploy.local/}prdeploy-app:${VERSION:-1.0.0-local}'
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VERSION: '${VERSION:-1.0.0-local}'
+    ports:
+      - '8087:80'

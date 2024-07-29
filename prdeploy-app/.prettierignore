@@ -1,0 +1,8 @@
+.vscode/
+
+# Generated code
+**/generated/
+
+# Helm charts
+charts/
+templates/

@@ -1,0 +1,15 @@
+.content {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
+  margin-bottom: 20px;
+}
+
+.buttons {
+  text-align: right;
+}
+
+.button {
+  display: inline-block;
+  margin: 5px;
+}

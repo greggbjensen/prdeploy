@@ -1,0 +1,37 @@
+{
+    "jestrunner.disableCodeLens": true,
+    "prettier.configPath": ".prettierrc.json",
+    "eslint.workingDirectories": [{ "mode": "auto" }],
+    "[html]": {
+      "editor.formatOnSave": false,
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      // runs Prettier, then ESLint
+      "editor.codeActionsOnSave": [
+          "source.formatDocument",
+          "source.fixAll.eslint"
+      ]
+    },
+    "[typescript]": {
+        "editor.formatOnSave": false,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        // runs Prettier, then ESLint
+        "editor.codeActionsOnSave": [
+            "source.formatDocument",
+            "source.fixAll.eslint"
+        ]
+    },
+    "[json]": {
+      "editor.formatOnSave": false,
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      // runs Prettier, then ESLint
+      "editor.codeActionsOnSave": [
+          "source.formatDocument",
+          "source.fixAll.eslint"
+      ]
+    },
+    "editor.detectIndentation": false,
+    "editor.indentSize": "tabSize",
+    "files.exclude": {
+        "**/.angular": true
+    }
+}

@@ -1,0 +1,19 @@
+<!-- @if (pullRequest) {
+  <dx-popover
+    #detailsPopover
+    [target]="target"
+    showEvent="mouseenter"
+    hideEvent="mouseleave"
+    position="bottom"
+    [width]="450"
+    (onHiding)="onHiding($event)"
+    [hideEvent]="{ name: 'dxhoverend', delay: 100 }">
+    <div>
+      <div class="pull-head">
+        <span class="pull-user">{{ pullRequest.user?.name }}</span>
+        <span>{{ pullRequest.updatedAt | date: 'short' }}</span>
+      </div>
+      <markdown [data]="pullRequest.body | cleanMarkdown" [disableSanitizer]="true"> </markdown>
+    </div>
+  </dx-popover>
+} -->

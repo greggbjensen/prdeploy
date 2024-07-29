@@ -1,0 +1,22 @@
+<div class="user-panel">
+  <div class="user-info">
+    <div class="image-container">
+      <span class="user-image" [title]="user.email">{{ userInitials }}</span>
+    </div>
+  </div>
+  @if (menuMode === 'context') {
+    <dx-context-menu
+      [items]="menuItems"
+      target=".user-button"
+      showEvent="dxclick"
+      [position]="{
+        my: 'top',
+        at: 'bottom'
+      }"
+      cssClass="user-menu">
+    </dx-context-menu>
+  }
+  @if (menuMode === 'list') {
+    <dx-list class="dx-toolbar-menu-action" [items]="menuItems"> </dx-list>
+  }
+</div>

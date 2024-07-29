@@ -1,0 +1,89 @@
+<div class="repository-select">
+  <label>Repository:</label>
+  <!-- <dx-select-box
+    class="owner-select"
+    placeholder="Loading..."
+    [dataSource]="owners"
+    [value]="repository.owner"
+    (onSelectionChanged)="selectedOwnerChanged($event)">
+  </dx-select-box>
+  <dx-select-box
+    class="repo-select"
+    placeholder="Loading..."
+    [dataSource]="repos"
+    [value]="repository.repo"
+    (onSelectionChanged)="selectedRepoChanged($event)">
+  </dx-select-box> -->
+</div>
+
+<h3>
+  Environments
+  <dx-button
+    class="environments-refesh"
+    icon="refresh"
+    hint="Refresh"
+    stylingMode="text"
+    (onClick)="update()"></dx-button>
+</h3>
+<!-- @if (repository.repo) {
+  <app-environment-list
+    [repository]="repository"
+    [data]="deployEnvironments"
+    [loading]="loading"></app-environment-list>
+} -->
+
+<h3>
+  Queues
+  <dx-button
+    class="environments-refesh"
+    icon="refresh"
+    hint="Refresh"
+    stylingMode="text"
+    (onClick)="update()"></dx-button>
+</h3>
+<!-- @if (deployQueues.length > 0) {
+  <dx-accordion
+    [dataSource]="deployQueues"
+    [selectedIndex]="selectedQueueIndex"
+    (selectedItemChange)="selectedQueueChange($event)"
+    id="accordion-container">
+    <div *dxTemplate="let queue of 'title'">
+      <div class="queue-title">
+        <span class="queue-environment">{{ queue.environment }}</span>
+        <span class="queue-count">{{ queue.pullRequests.length }}</span>
+        @if (queue.pullRequests.length) {
+          <dx-button
+            class="trigger-deployments"
+            icon="redo"
+            hint="Trigger deployments"
+            stylingMode="text"
+            (onClick)="triggerDeployments(queue)"></dx-button>
+        }
+      </div>
+    </div>
+    <div *dxTemplate="let queue of 'item'">
+      @if (repository.repo) {
+        <app-queue-list
+          [repository]="repository"
+          [queue]="queue"
+          [loading]="loading"
+          (queueUpdateStarted)="queueUpdateStarted()"
+          (queueUpdateComplete)="queueUpdateComplete()"></app-queue-list>
+      }
+    </div>
+  </dx-accordion>
+} @else {
+  Loading...
+} -->
+
+<div class="page-actions">
+  <dx-button
+    class="add-service-pr-btn"
+    text="Add Services to Pull Request"
+    buttonType="secondary"
+    (onButtonClick)="showAddServiceToPr()"
+    height="40">
+  </dx-button>
+</div>
+
+<!-- <app-add-pr-service-dialog [repository]="repository" [(visible)]="addServiceToPrVisible"></app-add-pr-service-dialog> -->

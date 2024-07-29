@@ -1,0 +1,11 @@
+mutation DeployEnvironmentRollback($owner: ID!, $repo: ID!, $environment: ID!, $pullRequestNumber: ID!, $count: Int) {
+  deployEnvironmentRollback(
+    owner: $owner
+    repo: $repo
+    environment: $environment
+    pullRequestNumber: $pullRequestNumber
+    count: $count
+  ) {
+    success
+  }
+}
