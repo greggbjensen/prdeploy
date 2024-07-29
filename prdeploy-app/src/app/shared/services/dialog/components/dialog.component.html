@@ -1,0 +1,36 @@
+<dx-popup
+  [title]="title"
+  [(visible)]="visible"
+  [hideOnOutsideClick]="hideOnOutsideClick"
+  [showCloseButton]="true"
+  [dragEnabled]="false"
+  (onHidden)="onHidden()"
+  height="auto"
+  width="auto"
+  minWidth="400px">
+  <div *dxTemplate="let data of 'content'">
+    <div class="content">
+      @for (line of content; track line) {
+        @if (line) {
+          <div [innerHTML]="line | safeHtml"></div>
+        } @else {
+          <div>&nbsp;</div>
+        }
+      }
+    </div>
+    <div class="buttons">
+      @for (button of buttons; track button) {
+        <div class="button">
+          <!-- <dx-button
+            [text]="button.text"
+            [buttonType]="button.type"
+            (onButtonClick)="buttonClicked(button.text)"
+            [url]="button.url"
+            [attr.automation-id]="button.automationId"
+            [automationId]="button.automationId">
+          </dx-button> -->
+        </div>
+      }
+    </div>
+  </div>
+</dx-popup>

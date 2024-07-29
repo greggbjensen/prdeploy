@@ -1,0 +1,10 @@
+{
+  "api": {
+    "deployApiUrl": "http://localhost:3002/graphql/"
+  },
+  "auth0": {
+    "domain": "",
+    "clientId": "",
+    "audience": ""
+  }
+}

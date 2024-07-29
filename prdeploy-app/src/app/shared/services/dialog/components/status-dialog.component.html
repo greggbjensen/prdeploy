@@ -1,0 +1,64 @@
+<dx-popup
+  height="auto"
+  width="auto"
+  minWidth="350px"
+  [hideOnOutsideClick]="hideOnOutsideClick"
+  [showTitle]="false"
+  [dragEnabled]="false"
+  [(visible)]="visible"
+  (onHidden)="onHidden()">
+  <div *dxTemplate="let data of 'content'">
+    <div class="status-dialog-popup">
+      <div class="text-center">
+        @if (type === StatusDialogType.Success) {
+          <i icon="statusPublished" size="xl" class="success"></i>
+        }
+        @if (type === StatusDialogType.Error) {
+          <i icon="warning" size="xl" class="error"></i>
+        }
+        @if (type === StatusDialogType.Congratulations) {
+          <i icon="congratulations" size="xl" class="congratulations"></i>
+        }
+        <div class="text-title">{{ title }}</div>
+      </div>
+      <div class="content">
+        @for (line of content; track line) {
+          @if (line) {
+            <div [innerHTML]="line | safeHtml"></div>
+          }
+          @if (!line) {
+            <div>&nbsp;</div>
+          }
+        }
+      </div>
+      @if (showDoNotShowAgainCheckBox) {
+        <div class="do-not-show-again">
+          <dx-check-box text="Don't show this again" [(value)]="doNotShowAgain"></dx-check-box>
+        </div>
+      }
+      @if (errorMessages.length > 0) {
+        <div class="errors">
+          <ul>
+            @for (error of errorMessages; track error) {
+              <li><i icon="warning" size="s" class="error-icon"></i> {{ error }}</li>
+            }
+          </ul>
+        </div>
+      }
+      <div class="buttons">
+        @for (button of buttons; track button) {
+          <div>
+            <!-- <dx-button
+              [text]="button.text"
+              [buttonType]="button.type"
+              (onButtonClick)="buttonClicked(button.text)"
+              [url]="button.url"
+              [attr.automation-id]="button.automationId"
+              [automationId]="button.automationId">
+            </dx-button> -->
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</dx-popup>

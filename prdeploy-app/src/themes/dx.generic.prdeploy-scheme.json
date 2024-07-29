@@ -1,0 +1,14 @@
+{
+    "items": [
+        {
+            "key": "$base-accent",
+            "value": "rgba(17, 146, 236, 1)"
+        }
+    ],
+    "baseTheme": "generic.light",
+    "outputColorScheme": "prdeploy",
+    "makeSwatch": false,
+    "version": "24.1.4",
+    "widgets": [],
+    "removeExternalResources": false
+}

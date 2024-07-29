@@ -1,0 +1,27 @@
+@import '../../../../sass/variables';
+
+:host {
+  flex-direction: column;
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.layout-header {
+  z-index: 1501;
+}
+
+::ng-deep .layout-body.hide {
+  .dx-drawer-panel-content {
+    visibility: hidden;
+    width: 0 !important;
+  }
+}
+
+.page-content {
+  padding: 0 30px;
+}
+
+::ng-deep .dx-drawer-panel-content {
+  border-right: 1px solid $gray-200;
+}

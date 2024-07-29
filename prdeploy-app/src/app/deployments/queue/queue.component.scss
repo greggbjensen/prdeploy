@@ -1,0 +1,71 @@
+@import '../../../sass/variables';
+
+h3 {
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+}
+
+.repository-select {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  label {
+    margin-right: 10px;
+  }
+}
+
+.owner-select {
+  width: 150px;
+}
+
+.repo-select {
+  width: 250px;
+}
+
+.queue-title {
+  display: flex;
+  align-items: center;
+}
+
+.queue-environment {
+  width: 70px;
+}
+
+.queue-count {
+  background-color: $gray-200;
+  color: $gray-500;
+  font-weight: $font-weight-bold;
+  font-size: 14px;
+  display: block;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.trigger-deployments {
+  margin-left: auto;
+  margin-right: 15px;
+}
+
+::ng-deep .trigger-deployments .dx-icon-redo::before {
+  color: $blue-300;
+}
+
+.environments-refesh {
+  margin-left: 8px;
+}
+
+::ng-deep .environments-refesh .dx-icon-refresh::before {
+  color: $blue-300;
+}
+
+.page-actions {
+  margin-top: 60px;
+  display: flex;
+}

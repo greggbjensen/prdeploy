@@ -1,0 +1,5 @@
+mutation DeployEnvironmentFree($owner: ID!, $repo: ID!, $environment: ID!, $pullRequestNumber: ID!) {
+  deployEnvironmentFree(owner: $owner, repo: $repo, environment: $environment, pullRequestNumber: $pullRequestNumber) {
+    success
+  }
+}

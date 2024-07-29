@@ -1,0 +1,32 @@
+<dx-popup
+  [width]="400"
+  [height]="260"
+  [showTitle]="true"
+  title="Rollback {{ environment }}"
+  [dragEnabled]="false"
+  [hideOnOutsideClick]="true"
+  [showCloseButton]="true"
+  container=".dx-viewport"
+  [(visible)]="visible"
+  (visibleChange)="onVisibleChange()">
+  <div class="form">
+    <div class="dx-fieldset">
+      <div class="dx-field-label">Rollback count</div>
+      <div class="dx-field-value">
+        <dx-number-box [min]="1" [(value)]="rollbackCount"></dx-number-box>
+      </div>
+    </div>
+    <div class="rollback-actions">
+      <dx-button class="cancel-btn" text="Cancel" buttonType="tertiary" (onButtonClick)="cancel()" height="40">
+      </dx-button>
+      <dx-button
+        class="rollback-btn"
+        text="Rollback"
+        buttonType="primary"
+        (onButtonClick)="rollback()"
+        [disabled]="processing"
+        height="40">
+      </dx-button>
+    </div>
+  </div>
+</dx-popup>

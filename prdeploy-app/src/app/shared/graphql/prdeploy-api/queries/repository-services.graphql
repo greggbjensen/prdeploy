@@ -1,0 +1,3 @@
+query RepositoryServices($owner: ID!, $repo: ID!) {
+  repositoryServices(owner: $owner, repo: $repo)
+}

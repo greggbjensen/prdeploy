@@ -1,0 +1,14 @@
+@import '_variables';
+
+:host {
+  display: grid;
+  grid-template-rows: min-content 1fr;
+  height: 100%;
+
+  .loading-spinner {
+    display: grid;
+    align-content: center;
+    justify-content: center;
+    height: 100%;
+  }
+}

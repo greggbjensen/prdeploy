@@ -1,0 +1,47 @@
+@import '../../../../sass/variables';
+@import '../../../../dx-styles.scss';
+
+:host {
+  flex: 0 0 auto;
+  z-index: 1;
+  border-bottom: 1px solid $gray-200;
+
+  ::ng-deep .dx-toolbar .dx-toolbar-item.menu-button > .dx-toolbar-item-content .dx-icon {
+    color: $gray-600;
+  }
+}
+
+::ng-deep .dx-toolbar.header-toolbar .dx-toolbar-items-container .dx-toolbar-after {
+  padding: 0 40px;
+
+  :host-context(.screen-x-small) & {
+    padding: 0 20px;
+  }
+}
+
+::ng-deep .dx-toolbar .dx-toolbar-item.menu-button {
+  width: $side-panel-min-width;
+  text-align: center;
+  padding: 0;
+}
+
+::ng-deep .header-title .dx-item-content {
+  padding: 0;
+  margin: 0;
+  font-size: 14px;
+}
+
+:host-context(.dx-theme-generic) {
+  .dx-toolbar {
+    padding: 10px 0;
+  }
+
+  .user-button > .dx-button-content {
+    padding: 3px;
+  }
+}
+
+::ng-deep .header-logo img {
+  width: 95px;
+  margin-right: 15px;
+}
