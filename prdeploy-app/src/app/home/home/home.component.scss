@@ -1,0 +1,21 @@
+@import '../../../sass/variables';
+
+.login-section {
+  width: 425px;
+  height: 300px;
+  margin: 200px auto 0 auto;
+  border: 1px solid $gray-300;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: $box-shadow-lg;
+}
+
+.logo {
+  width: 350px;
+  margin: 30px 0 25px 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+}
