@@ -4,7 +4,7 @@ import { DxDrawerModule } from 'devextreme-angular/ui/drawer';
 import { DxScrollViewModule, DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 import { DOCUMENT } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
-import { ScreenService, UserService } from '../../services';
+import { AuthService, ScreenService } from '../../services';
 import { SideNavigationMenuComponent } from '../side-navigation-menu/side-navigation-menu.component';
 import { HeaderComponent } from '../header/header.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -36,32 +36,32 @@ export class SideNavOuterToolbarComponent implements OnInit {
   isAuthenticated = false;
 
   constructor(
-    private screen: ScreenService,
-    private router: Router,
-    private _userService: UserService,
+    private _screen: ScreenService,
+    private _router: Router,
+    private _authService: AuthService,
     @Inject(DOCUMENT) private _document: Document,
     private _destroyRef: DestroyRef
   ) {
-    this._userService.$user.pipe(takeUntilDestroyed()).subscribe((user: User) => this.updateIsAuthenticated(user));
+    this._authService.user$.pipe(takeUntilDestroyed()).subscribe((user: User) => this.updateIsAuthenticated(user));
   }
 
   ngOnInit() {
-    this.menuOpened = this.screen.sizes['screen-large'];
+    this.menuOpened = this._screen.sizes['screen-large'];
 
-    this.router.events.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(val => {
+    this._router.events.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(val => {
       if (val instanceof NavigationEnd) {
         this.selectedRoute = val.urlAfterRedirects.split('?')[0];
       }
     });
 
-    this.screen.changed.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => this.updateDrawer());
+    this._screen.changed.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => this.updateDrawer());
 
     this.updateDrawer();
   }
 
   updateDrawer() {
-    const isXSmall = this.screen.sizes['screen-x-small'];
-    const isLarge = this.screen.sizes['screen-large'];
+    const isXSmall = this._screen.sizes['screen-x-small'];
+    const isLarge = this._screen.sizes['screen-large'];
 
     this.menuMode = isLarge ? 'shrink' : 'overlap';
     this.menuRevealMode = isXSmall ? 'slide' : 'expand';
@@ -88,7 +88,7 @@ export class SideNavOuterToolbarComponent implements OnInit {
         if (/https?:\/\//.test(path)) {
           this._document.location.href = path;
         } else {
-          this.router.navigate([path]);
+          this._router.navigate([path]);
           this.scrollView.instance.scrollTo(0);
         }
       }

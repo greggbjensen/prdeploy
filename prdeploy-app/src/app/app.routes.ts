@@ -1,22 +1,17 @@
 import { Routes } from '@angular/router';
-import { AuthGuard } from 'src/app/shared/guards';
 import { authRoutes } from './auth/auth.routes';
+import { AuthGuard } from './shared/services';
+import { HomeComponent } from './home/home/home.component';
 
 export const routes: Routes = [
   {
     path: '',
-    canActivate: [AuthGuard], // Guard all routes with empty parent.
-    children: [
-      {
-        path: '',
-        redirectTo: 'deployments/queue',
-        pathMatch: 'full'
-      },
-      {
-        path: 'deployments',
-        loadChildren: () => import('./deployments/deployments.routes').then(m => m.routes)
-      }
-    ]
+    component: HomeComponent
+  },
+  {
+    path: 'deployments',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./deployments/deployments.routes').then(m => m.routes)
   },
   ...authRoutes,
   {

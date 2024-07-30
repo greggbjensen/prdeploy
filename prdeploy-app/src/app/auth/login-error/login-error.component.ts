@@ -16,7 +16,7 @@ export class LoginErrorComponent {
 
   logInAgainClicked() {
     this.loggingOut = true;
-    this.authService.logout(false);
+    this.authService.logout();
   }
 
   contactUsClicked() {

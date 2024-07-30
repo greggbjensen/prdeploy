@@ -29,7 +29,7 @@
     "@angular/platform-browser-dynamic": "^17.2.3",
     "@angular/router": "^17.2.3",
     "@apollo/client": "^3.8.8",
-    "@auth0/auth0-angular": "^2.2.2",
+    "angular-oauth2-oidc": "^17.0.2",
     "apollo-angular": "^6.0.0",
     "devextreme": "23.2.7",
     "devextreme-angular": "23.2.7",

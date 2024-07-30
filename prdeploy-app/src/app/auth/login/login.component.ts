@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, Navigation, ActivatedRoute } from '@angular/router';
-import { AuthService, SubscriptionService } from 'src/app/shared/services';
-import { SignUpModel } from 'src/app/shared/models';
+import { AuthService } from 'src/app/shared/services';
 
 @Component({
   selector: 'login',
@@ -11,27 +10,18 @@ import { SignUpModel } from 'src/app/shared/models';
 export class LoginComponent implements OnInit {
   private navigation: Navigation;
   returnUrl: string;
-  signUpModel = new SignUpModel();
   loginError = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService,
-    private subscriptionService: SubscriptionService
+    private authService: AuthService
   ) {
     this.navigation = this.router.getCurrentNavigation();
   }
 
   async ngOnInit(): Promise<void> {
     this.checkNavigationState();
-
-    if (this.returnUrl) {
-      this.signUpModel = await this.subscriptionService.getSignUpModelFromReturnUrl(this.returnUrl);
-      if (this.signUpModel.returnUrl) {
-        this.returnUrl = this.signUpModel.returnUrl;
-      }
-    }
 
     if (this.loginError) {
       this.redirectToLoginError();
@@ -56,7 +46,7 @@ export class LoginComponent implements OnInit {
 
   public loginWithAuth0() {
     try {
-      this.authService.redirectToLogin({ returnUrl: this.returnUrl });
+      this.authService.login(this.returnUrl);
     } catch (error) {
       this.loginError = true;
       this.redirectToLoginError();
@@ -64,7 +54,6 @@ export class LoginComponent implements OnInit {
   }
 
   private redirectToLoginError() {
-    this.authService.userChange.error(this.loginError);
     this.router.navigate(['/login/error'], { state: { loginError: this.loginError, skipUserCheck: true } });
   }
 }
