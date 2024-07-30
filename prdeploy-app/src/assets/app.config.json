@@ -3,6 +3,6 @@
     "deployApiUrl": "http://localhost:3002/graphql/"
   },
   "oauth": {
-    "clientId": "Ov23lifrB5wMwaP0MIQS"
+    "clientId": "<GitHub OAuth2 App Client ID>"
   }
 }
