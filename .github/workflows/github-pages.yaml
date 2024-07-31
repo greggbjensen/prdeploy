@@ -28,7 +28,7 @@ jobs:
         with:
           sparse-checkout: docs
       - name: Build MkDocs
-        run: mkdocs build --config-file docs/mkdocks.yaml
+        run: mkdocs build --config-file mkdocs.yaml
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Setup Pages
