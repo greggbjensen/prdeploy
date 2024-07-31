@@ -1,6 +1,8 @@
 site_name: prdeploy
 docs_dir: docs
 repo_url: https://github.com/greggbjensen/prdeploy
+theme:
+  name: readthedocs
 nav:
   - Introduction: 'index.md'
   - 'Issue Tracker': 'https://github.com/greggbjensen/prdeploy/issues'
