@@ -1,2 +1,4 @@
 site_name: prdeploy
 docs_dir: docs
+repo_name: prdeploy
+repo_url: https://github.com/greggbjensen/prdeploy
