@@ -1,0 +1,16 @@
+query DeployQueues($owner: ID!, $repo: ID!) {
+    deployQueues(owner: $owner, repo: $repo) {
+        environment
+        pullRequests {
+            number
+            title
+            body
+            url
+            updatedAt
+            user {
+              name
+              username
+            }
+        }
+    }
+}

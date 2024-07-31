@@ -1,0 +1,27 @@
+environments:
+  - name: dev
+    queue: 'DEV_PR_QUEUE'
+    url: 'https://dev.myorg.com'
+  - name: dev2
+    queue: 'DEV_PR_QUEUE'
+    url: 'https://dev2.myorg.com'
+  - name: dev3
+    queue: 'DEV_PR_QUEUE'
+    url: 'https://dev3.myorg.com'
+  - name: stage
+    queue: 'STAGE_PR_QUEUE'
+    url: 'https://stage.myorg.com'
+    requireBranchUpToDate: true
+  - name: prod
+    queue: 'PROD_PR_QUEUE'
+    url: 'https://www.myorg.com'
+    requireApproval: true
+    requireBranchUpToDate: true
+services:
+  - name: deploy-api-test
+  - name: deploy-app-test
+    path: deploy-app-test
+slack:
+  channels:
+    deploy:  'https://hooks.slack.com/services/secret1'
+    release: 'https://hooks.slack.com/services/secret2'
