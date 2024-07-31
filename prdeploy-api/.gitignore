@@ -248,7 +248,6 @@ _Pvt_Extensions
 
 # VS Code
 **/.vscode
-/selleractive
 
 # build job output
 /build/output/

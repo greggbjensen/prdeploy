@@ -12,9 +12,6 @@
               <ModulePath>.*\.dll$</ModulePath>
               <ModulePath>.*\.exe$</ModulePath>
             </Include>
-            <Exclude>
-              <ModulePath>SellerActive.Lib_*.dll</ModulePath>
-            </Exclude>
           </CodeCoverage>
         </Configuration>
       </DataCollector>

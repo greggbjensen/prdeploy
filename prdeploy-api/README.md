@@ -1,4 +1,2 @@
-# SellerActive.Api.Internal
+# PrDeploy.Api
 
-# Change version
-Version to trigger change: bump

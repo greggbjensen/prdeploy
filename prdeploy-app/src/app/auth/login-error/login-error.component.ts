@@ -18,8 +18,4 @@ export class LoginErrorComponent {
     this.loggingOut = true;
     this.authService.logout();
   }
-
-  contactUsClicked() {
-    window.open('https://www.selleractive.com/support/kb-tickets/new');
-  }
 }
