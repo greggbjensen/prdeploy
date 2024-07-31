@@ -1,0 +1,34 @@
+deployWorkflow: combined-deploy.yaml
+environments:                         
+  - name: dev                         
+    queue: 'DEV_PR_QUEUE'             
+    url: 'https://dev.myorg.com'
+  - name: stage
+    queue: 'STAGE_PR_QUEUE'
+    url: 'https://stage.myorg.com'
+    requireBranchUpToDate: true       
+  - name: prod
+    queue: 'PROD_PR_QUEUE'
+    url: 'https://www.myorg.com'
+    requireBranchUpToDate: true
+    requireApproval: true             
+defaultEnvironment: dev               
+releaseEnvironment: prod              
+addJiraIssues: true                   
+settingsBranch: 'main'                
+builds:
+    checkPattern: 'Build helm chart'            
+    workflowPattern: '/([^/]+?)-build.ya?ml'    
+slack:
+  notificationsEnabled: true          
+  channels:
+    deploy:  ''                       
+    release: ''                       
+badge:
+  statusColors:                       
+    error: 'ed6b6b'
+    warn: 'edbe3e'
+    success: '29a329'
+    info: '52a9ff'
+
+

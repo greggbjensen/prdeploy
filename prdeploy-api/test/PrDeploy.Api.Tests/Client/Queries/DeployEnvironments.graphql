@@ -1,0 +1,18 @@
+query DeployEnvironments($owner: ID!, $repo: ID!) {
+    deployEnvironments(owner: $owner, repo: $repo) {
+      name
+      url
+      color
+      pullRequest {
+          number
+          title
+          body
+          url
+          updatedAt
+          user {
+            name
+            username
+          }
+      }
+    }
+}

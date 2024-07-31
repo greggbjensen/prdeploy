@@ -1,0 +1,65 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <StrawberryShake_State>$(MSBuildProjectExtensionsPath)berry</StrawberryShake_State>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <GraphQL Remove="Client\Mutations\DeployEnvironmentDeploy.graphql" />
+    <GraphQL Remove="Client\Mutations\DeployEnvironmentFree.graphql" />
+    <GraphQL Remove="Client\Mutations\DeployEnvironmentRollback.graphql" />
+    <GraphQL Remove="Client\Mutations\DeployQueueUpdate.graphql" />
+    <GraphQL Remove="Client\Mutations\PullRequestAddServices.graphql" />
+    <GraphQL Remove="Client\Queries\DeployEnvironments.graphql" />
+    <GraphQL Remove="Client\Queries\DeployQueues.graphql" />
+    <GraphQL Remove="Client\Queries\OpenPullRequests.graphql" />
+    <GraphQL Remove="Client\Queries\OpenPullRequests.graphql" />
+    <GraphQL Remove="Client\Queries\PrDeployEnabledRepositories.graphql" />
+    <GraphQL Remove="Client\Queries\RepositoryServices.graphql" />
+    <GraphQL Remove="Client\schema.extensions.graphql" />
+    <GraphQL Remove="Client\schema.graphql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Client\.graphqlrc.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.32" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+    <PackageReference Include="Moq" Version="4.20.69" />
+    <PackageReference Include="StrawberryShake.Server" Version="13.6.1" />
+    <PackageReference Include="xunit" Version="2.5.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="6.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <GraphQL Include="Client\.graphqlrc.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PrDeploy.Api\PrDeploy.Api.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Mocks\.default-prdeploy.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mocks\.prdeploy.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

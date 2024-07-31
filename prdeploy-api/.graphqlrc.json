@@ -1,0 +1,12 @@
+{
+  "projects": [
+    {
+      "schema": [
+        "test/PrDeploy.Api.Tests/Client/schema.graphql"
+      ],
+      "documents": [
+        "test/PrDeploy.Api.Tests/Client/**/*.graphql"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+﻿schema {
+  query: DeployQuery
+  mutation: DeployMutation
+}
+
+type DeployQuery {
+  deployQueues(owner: ID! repo: ID!): [DeployQueue!]!
+  deployEnvironments(owner: ID! repo: ID!): [DeployEnvironment!]!
+  openPullRequests(owner: ID! repo: ID! search: String): [PullRequest!]!
+  prDeployEnabledRepositories: [Repository!]!
+  repositoryServices(owner: ID! repo: ID!): [String!]!
+}
+
+type DeployMutation {
+  deployQueueUpdate(owner: ID! repo: ID! environment: ID! pullRequestNumbers: [ID!]): DeployQueue!
+  deployEnvironmentFree(owner: ID! repo: ID! environment: ID! pullRequestNumber: ID!): StatusResponse!
+  deployEnvironmentDeploy(owner: ID! repo: ID! environment: ID! pullRequestNumber: ID! force: Boolean! = false retain: Boolean! = false): StatusResponse!
+  deployEnvironmentRollback(owner: ID! repo: ID! environment: ID! pullRequestNumber: ID! count: Int! = 0): StatusResponse!
+  pullRequestAddServices(owner: ID! repo: ID! pullRequestNumber: ID! services: [ID!]!): StatusResponse!
+}
+
+enum ApplyPolicy {
+  BEFORE_RESOLVER
+  AFTER_RESOLVER
+  VALIDATION
+}
+
+"Simple status response from a mutation."
+type StatusResponse {
+  "True if the mutation was successful; otherwise false."
+  success: Boolean!
+}
+
+type Repository {
+  owner: String!
+  repo: String!
+}
+
+"Pull request to deploy and merge code."
+type PullRequest {
+  "Pull request number."
+  number: ID
+  "Pull request title."
+  title: String
+  "URL for displaying the pull request HTML."
+  url: String
+  "Pull request body as markdown."
+  body: String
+  "The date and time the pull request deployment was last updated."
+  updatedAt: DateTime
+  "Login for user the pull request was created by."
+  user: DeployUser
+}
+
+"Environment and current pull request information."
+type DeployEnvironment {
+  "Environment that pull request is deployed to."
+  name: ID
+  "The full URL of the environment."
+  url: String
+  "The color used for the icon representing the environment."
+  color: String
+  "Current pull request in environment."
+  pullRequest: PullRequest
+  "A value indicating if the current environment is reserved for deploy."
+  locked: Boolean!
+}
+
+"Queue for a specific environment of pull requests waiting to be deployed."
+type DeployQueue {
+  "Environment to list the queue for."
+  environment: ID
+  "Ordered list of pull requests waiting in queue."
+  pullRequests: [PullRequest!]!
+}
+
+type DeployUser {
+  name: String
+  username: String
+}
+
+"The `DateTime` scalar represents an ISO-8601 compliant date time type."
+scalar DateTime
