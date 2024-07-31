@@ -3,7 +3,7 @@ docs_dir: docs
 repo_url: https://github.com/greggbjensen/prdeploy
 edit_uri: blob/main/docs/
 theme:
-  name: readthedocs
+  name: material
 nav:
   - Introduction: 'index.md'
   - 'Issue Tracker': 'https://github.com/greggbjensen/prdeploy/issues'
