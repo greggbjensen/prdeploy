@@ -2,6 +2,8 @@ import { AuthConfig } from 'angular-oauth2-oidc';
 import { OAuthOptions } from '../../options';
 
 export const authConfig = (options: OAuthOptions, document: Document) => {
+  const isDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+
   return {
     issuer: 'https://github.com',
     loginUrl: 'https://github.com/login/oauth/authorize',
@@ -12,6 +14,7 @@ export const authConfig = (options: OAuthOptions, document: Document) => {
     scope: 'openid profile email api', // Ask offline_access to support refresh token refreshes
     sessionChecksEnabled: true,
     showDebugInformation: true, // Also requires enabling "Verbose" level in devtools
-    clearHashAfterLogin: false // https://github.com/manfredsteyer/angular-oauth2-oidc/issues/457#issuecomment-431807040,
+    clearHashAfterLogin: false, // https://github.com/manfredsteyer/angular-oauth2-oidc/issues/457#issuecomment-431807040,
+    requireHttps: !isDev
   } as AuthConfig;
 };

@@ -4,7 +4,7 @@
   "description": "Web application for Engineers, QA, and Product Owners to be able to review and deploy services.",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "cross-env NODE_OPTIONS=\"--max-http-header-size=100000\" ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
@@ -39,6 +39,7 @@
     "lodash": "^4.17.21",
     "marked": "^9.0.0",
     "ngx-markdown": "^17.1.1",
+    "prdeploy-app": "file:",
     "rxjs": "~7.8.1",
     "tslib": "^2.4.0",
     "zone.js": "~0.14.2"
@@ -60,6 +61,7 @@
     "@types/lodash": "^4.14.202",
     "@typescript-eslint/eslint-plugin": "6.19.0",
     "@typescript-eslint/parser": "6.19.0",
+    "cross-env": "^7.0.3",
     "devextreme-cli": "latest",
     "devextreme-themebuilder": "^23.2.7",
     "eslint": "^8.56.0",

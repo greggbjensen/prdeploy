@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using PrDeploy.Api.Auth;
 using PrDeploy.Api.Builder;
+using PrDeploy.Api.Business.Services.Interfaces;
+using PrDeploy.Api.Models;
 using Serilog;
 using Serilog.Formatting.Json;
 
@@ -67,10 +69,43 @@ try
     app.UseGraphQlStandards(); // Must be here for context.Request.EnableBuffering().
     app.UseRouting();
     app.UseCors();
-    app.UseAuthentication();
-    app.UseAuthorization();
+    // app.UseAuthentication();
+    // app.UseAuthorization();
     app.UseEndpoints(endpoints =>
     {
+        // Simple GitHub Access Token proxy.
+        endpoints.MapPost("/api/oauth/access_token", async (HttpRequest request, IAuthService authService) =>
+        {
+            var form = await request.ReadFormAsync();
+            var accessTokenRequest = new AccessTokenRequest
+            {
+                GrantType = GetValue(form, "grant_type"),
+                Code = GetValue(form, "code"),
+                RedirectUrl = GetValue(form, "redirect_uri"),
+                CodeVerifier = GetValue(form, "code_verifier"),
+                ClientId = GetValue(form, "client_id"),
+            };
+
+            IResult result;
+            try
+            {
+                var accessTokenResponse = await authService.GetCodeAsync(accessTokenRequest);
+                result = Results.Ok(accessTokenResponse);
+            }
+            catch (HttpRequestException e)
+            {
+                Log.Logger.Error(e, $"Error getting access token ({e.StatusCode}).");
+                result = Results.StatusCode((int)e.StatusCode!);
+            }
+            catch (Exception e)
+            {
+                Log.Logger.Error(e, $"Internal Server error getting access token.");
+                result = Results.StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+            return result;
+        });
+
         endpoints.MapGraphQL().WithOptions(new GraphQLServerOptions {
             Tool = { Enable = false } // Use Apollo Playground instead of Banana Cake Pop.
         });
@@ -99,4 +134,10 @@ finally
 
 // Required for integration testing.
 // SourceRef: https://stackoverflow.com/questions/55131379/integration-testing-asp-net-core-with-net-framework-cant-find-deps-json
-public partial class Program { }
+public partial class Program
+{
+    public static string GetValue(IFormCollection form, string name)
+    {
+        return (form?.TryGetValue(name, out var value) == true ? value.FirstOrDefault() : string.Empty)!;
+    }
+}

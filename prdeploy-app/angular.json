@@ -99,7 +99,7 @@
               "buildTarget": "prdeploy-app:build:production"
             },
             "development": {
-              "port": 4300,
+              "port": 4301,
               "buildTarget": "prdeploy-app:build:development"
             }
           },

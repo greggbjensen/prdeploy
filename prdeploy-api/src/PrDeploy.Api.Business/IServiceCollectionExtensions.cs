@@ -50,7 +50,8 @@ public static class IServiceCollectionExtensions
             .AddScoped<IDeployEnvironmentService, DeployEnvironmentService>()
             .AddScoped<IPullRequestService, PullRequestService>()
             .AddScoped<IRepoSettingsService, RepoSettingsService>()
-            .AddScoped<IRepositoryService, RepositoryService>();
+            .AddScoped<IRepositoryService, RepositoryService>()
+            .AddScoped<IAuthService, AuthService>();
 
         return services;
     }
