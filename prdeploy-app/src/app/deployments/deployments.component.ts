@@ -21,9 +21,9 @@ import { AddPrServiceDialogComponent } from './add-pr-service-dialog/add-pr-serv
 import { uniq } from 'lodash';
 
 @Component({
-  selector: 'app-queue',
-  templateUrl: './queue.component.html',
-  styleUrls: ['./queue.component.scss'],
+  selector: 'app-deployments',
+  templateUrl: './deployments.component.html',
+  styleUrls: ['./deployments.component.scss'],
   standalone: true,
   imports: [
     DxButtonModule,
@@ -35,7 +35,7 @@ import { uniq } from 'lodash';
     AddPrServiceDialogComponent
   ]
 })
-export class QueueComponent implements OnInit {
+export class DeploymentsComponent implements OnInit {
   deployEnvironments: DeployEnvironment[] = [];
   deployQueues: DeployQueue[] = [];
   loading = true;

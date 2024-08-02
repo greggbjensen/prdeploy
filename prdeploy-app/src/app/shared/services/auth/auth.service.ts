@@ -6,7 +6,7 @@ import { filter } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private static readonly DefaultUrl = '/deployments/queue';
+  private static readonly DefaultUrl = '/deployments';
 
   private isAuthenticatedSubject$ = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject$.asObservable();
@@ -15,8 +15,7 @@ export class AuthService {
   public isDoneLoading$ = this.isDoneLoadingSubject$.asObservable();
 
   private navigateToLoginPage() {
-    // TODO: Remember current URL
-    this._router.navigateByUrl('/should-login');
+    this._router.navigateByUrl('/');
   }
 
   constructor(

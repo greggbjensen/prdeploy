@@ -1,14 +1,9 @@
 import { Routes } from '@angular/router';
-import { QueueComponent } from './queue';
+import { DeploymentsComponent } from './deployments.component';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'queue',
-    pathMatch: 'full'
-  },
-  {
-    path: 'queue',
-    component: QueueComponent
+    component: DeploymentsComponent
   }
 ];

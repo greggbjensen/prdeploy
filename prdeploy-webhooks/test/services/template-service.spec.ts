@@ -12,12 +12,12 @@ describe('renderQueueTable', () => {
       'dev',
       [2987, 2549, 2391],
       'https://github.com/greggbjensen/prdeploy-example-repo',
-      'https://awssite/deployments/queue'
+      'https://awssite/deployments'
     );
     expect(result).not.toBeFalsy();
     expect(result).toMatch(`| Position | 1       | 2       | 3       |
 |----------|---------|---------|---------|
-| [dev queue](https://awssite/deployments/queue?environment=dev&owner=greggbjensen&repo=prdeploy-example-repo) | [2987](https://github.com/greggbjensen/prdeploy-example-repo/pull/2987) | [2549](https://github.com/greggbjensen/prdeploy-example-repo/pull/2549) | [2391](https://github.com/greggbjensen/prdeploy-example-repo/pull/2391) |`);
+| [dev queue](https://awssite/deployments?environment=dev&owner=greggbjensen&repo=prdeploy-example-repo) | [2987](https://github.com/greggbjensen/prdeploy-example-repo/pull/2987) | [2549](https://github.com/greggbjensen/prdeploy-example-repo/pull/2549) | [2391](https://github.com/greggbjensen/prdeploy-example-repo/pull/2391) |`);
   });
 });
 

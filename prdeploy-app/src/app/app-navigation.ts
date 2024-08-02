@@ -1,7 +1,7 @@
 export const navigation = () => [
   {
     text: 'Deployments',
-    path: '/deployments/queue',
+    path: '/deployments',
     icon: 'movetofolder'
   }
 ];

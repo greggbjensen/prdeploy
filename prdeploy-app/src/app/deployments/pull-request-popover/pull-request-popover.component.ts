@@ -1,7 +1,7 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { DxPopoverComponent, DxPopoverModule } from 'devextreme-angular';
 import { PullRequest } from 'src/app/shared/graphql';
-import { CleanMarkdownPipe } from '../../../shared/pipes/clean-markdown.pipe';
+import { CleanMarkdownPipe } from 'src/app/shared/pipes/clean-markdown.pipe';
 import { MarkdownComponent } from 'ngx-markdown';
 import { DatePipe } from '@angular/common';
 
