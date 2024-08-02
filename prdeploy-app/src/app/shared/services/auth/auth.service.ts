@@ -67,6 +67,7 @@ export class AuthService {
 
   public logout() {
     this._oauthService.logOut();
+    this._router.navigate(['/']);
   }
   public hasValidToken() {
     return this._oauthService.hasValidAccessToken();
