@@ -6,8 +6,8 @@
       <div class="button-container">
         <dx-button
           [text]="!loggingOut ? 'Log in again' : 'Redirecting'"
-          buttonType="primary"
-          (onButtonClick)="logInAgainClicked()"
+          type="default"
+          (onClick)="logInAgainClicked()"
           [disabled]="loggingOut">
         </dx-button>
       </div>

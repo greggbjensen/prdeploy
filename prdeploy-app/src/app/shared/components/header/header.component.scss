@@ -4,7 +4,7 @@
 :host {
   flex: 0 0 auto;
   z-index: 1;
-  border-bottom: 1px solid $gray-200;
+  box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.21);
 
   ::ng-deep .dx-toolbar .dx-toolbar-item.menu-button > .dx-toolbar-item-content .dx-icon {
     color: $gray-600;
