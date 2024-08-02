@@ -8,7 +8,7 @@ namespace PrDeploy.Api.Auth
 {
     public static class AuthenticationExtensions
     {
-        public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, Action<GitHubAuthOptions> configure)
+        public static IServiceCollection AddGitHubAuthentication(this IServiceCollection services, Action<GitHubAuthOptions> configure)
         {
             var gitHubAuthOptions = new GitHubAuthOptions();
             configure(gitHubAuthOptions);
@@ -24,20 +24,10 @@ namespace PrDeploy.Api.Auth
             }
 
             services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+                .AddAuthentication(GitHubAuthenticationSchemeOptions.SchemeName)
+                .AddScheme<GitHubAuthenticationSchemeOptions, GitHubAuthenticationHandler>(
+                    GitHubAuthenticationSchemeOptions.SchemeName, _ =>
                 {
-                    options.Authority = gitHubAuthOptions.Authority;
-                    options.Audience = gitHubAuthOptions.Audience;
-                    options.Configuration = new OpenIdConnectConfiguration();
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        NameClaimType = ClaimTypes.NameIdentifier,
-                        AuthenticationType = JwtBearerDefaults.AuthenticationScheme
-                    };
-
-                    // This should only be enabled for troubleshooting.
-                    // IdentityModelEventSource.ShowPII = true;
                 });
 
             return services;

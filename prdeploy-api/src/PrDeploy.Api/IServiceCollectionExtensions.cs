@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
+using Octokit.Internal;
+using Octokit;
 using PrDeploy.Api.Auth;
 using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Filters;
 using PrDeploy.Api.Mutations;
 using PrDeploy.Api.Options;
 using PrDeploy.Api.Queries;
+using System.Security.Claims;
 
 namespace PrDeploy.Api;
 
@@ -35,7 +38,27 @@ public static class IServiceCollectionExtensions
             // Filters.
             .AddErrorFilter<SanitizedErrorFilter>();
 
-        services.AddScoped<IAuthorizationHandler, GitHubRepoAuthorizationHandler>();
+        services
+            .AddHttpContextAccessor()
+            .AddScoped<IGitHubClient>(s =>
+            {
+                var httpContext = s.GetRequiredService<IHttpContextAccessor>().HttpContext;
+                if (httpContext == null)
+                {
+                    throw new BadHttpRequestException("No http context.");
+                }
+
+                var tokenClaim = httpContext.User.FindFirst("Token");
+                if (tokenClaim == null)
+                {
+                    throw new BadHttpRequestException("No token in user context.");
+                }
+
+                var credentials = new Credentials(tokenClaim.Value);
+                return new GitHubClient(
+                    new ProductHeaderValue("prdeploy"), new InMemoryCredentialStore(credentials));
+            })
+            .AddScoped<IAuthorizationHandler, GitHubRepoAuthorizationHandler>();
 
         return services;
     }

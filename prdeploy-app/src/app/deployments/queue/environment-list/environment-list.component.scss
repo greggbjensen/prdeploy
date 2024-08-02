@@ -2,7 +2,7 @@
 
 .deploy-environment {
   color: $white;
-  font-size: 11px; // TODO GBJ: Variables and px or em?
+  font-size: 11px;
   font-weight: $font-weight-bold;
   text-decoration: none;
   line-height: 20px;
@@ -11,7 +11,7 @@
 }
 
 a {
-  text-decoration: none; // TODO GBJ: What is the default?
+  text-decoration: none;
 }
 
 .environment-unknown {

@@ -1,5 +1,4 @@
 import { Lifecycle, scoped } from 'tsyringe';
-import { EmailAliases } from '../email-aliases';
 import { EnvironmentSettings } from './environments-settings';
 import { SlackSettings } from './slack-settings';
 import { BuildsSettings } from './builds-settings';
@@ -12,7 +11,6 @@ export class RepoSettings {
   owner: string;
   repo: string;
   deployWorkflow: string;
-  syncWorkflow?: string;
   environments: EnvironmentSettings[];
   services: ServiceSettings[];
   defaultEnvironment: string;

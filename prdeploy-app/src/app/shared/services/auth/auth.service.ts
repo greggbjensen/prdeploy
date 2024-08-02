@@ -92,7 +92,7 @@ export class AuthService {
       }
     });
 
-    // THe following cross-tab communication of fresh access tokens works usually in practice,
+    // The following cross-tab communication of fresh access tokens works usually in practice,
     // but if you need more robust handling the community has come up with ways to extend logic
     // in the library which may give you better mileage.
     //

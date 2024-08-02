@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { DxButtonModule, DxNumberBoxModule, DxPopupModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
-// import { DeployEnvironmentRollbackGQL, Repository } from 'src/app/shared/graphql';
+import { DeployEnvironmentRollbackGQL, Repository } from 'src/app/shared/graphql';
 import { DialogButton, DialogService, LoggingService, StatusDialogType } from 'src/app/shared/services';
 
 @Component({
@@ -12,7 +12,7 @@ import { DialogButton, DialogService, LoggingService, StatusDialogType } from 's
   styleUrl: './deploy-rollback-dialog.component.scss'
 })
 export class DeployRollbackDialogComponent {
-  // @Input() repository: Repository;
+  @Input() repository: Repository;
   @Input() environment: string;
   @Input() pullNumber: string;
 
@@ -34,7 +34,7 @@ export class DeployRollbackDialogComponent {
   @Output() visibleChange = new EventEmitter<boolean>();
 
   constructor(
-    // private _deployEnvironmentDeployGQL: DeployEnvironmentRollbackGQL,
+    private _deployEnvironmentDeployGQL: DeployEnvironmentRollbackGQL,
     private _dialogService: DialogService,
     private _loggingService: LoggingService,
     private _changeDetectorRef: ChangeDetectorRef
@@ -44,15 +44,15 @@ export class DeployRollbackDialogComponent {
     this.processing = true;
 
     try {
-      // await firstValueFrom(
-      //   this._deployEnvironmentDeployGQL.mutate({
-      //     owner: this.repository.owner,
-      //     repo: this.repository.repo,
-      //     environment: this.environment,
-      //     pullRequestNumber: this.pullNumber,
-      //     count: this.rollbackCount > 1 ? this.rollbackCount : undefined
-      //   })
-      // );
+      await firstValueFrom(
+        this._deployEnvironmentDeployGQL.mutate({
+          owner: this.repository.owner,
+          repo: this.repository.repo,
+          environment: this.environment,
+          pullRequestNumber: this.pullNumber,
+          count: this.rollbackCount > 1 ? this.rollbackCount : undefined
+        })
+      );
 
       await firstValueFrom(
         this._dialogService.showStatusDialog(

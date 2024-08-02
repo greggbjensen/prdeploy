@@ -10,7 +10,7 @@ import {
   PrDeployEnabledRepositoriesGQL,
   Repository
 } from 'src/app/shared/graphql';
-import { DialogService, LoggingService } from 'src/app/shared/services';
+import { DialogButton, DialogService, LoggingService, StatusDialogType } from 'src/app/shared/services';
 import { QueueListComponent } from './queue-list/queue-list.component';
 import { DxTemplateModule } from 'devextreme-angular/core';
 import { DxAccordionModule, DxSelectBoxModule } from 'devextreme-angular';
@@ -83,49 +83,49 @@ export class QueueComponent implements OnInit {
       });
   }
 
-  // async triggerDeployments(queue: DeployQueue): Promise<void> {
-  //   try {
-  //     // Re-trigger first item in queue.
-  //     const pullRequest = queue.pullRequests[0];
-  //     await firstValueFrom(
-  //       this._deployEnvironmentDeployGQL.mutate({
-  //         owner: this.repository.owner,
-  //         repo: this.repository.repo,
-  //         environment: queue.environment,
-  //         pullRequestNumber: pullRequest.number
-  //       })
-  //     );
+  async triggerDeployments(queue: DeployQueue): Promise<void> {
+    try {
+      // Re-trigger first item in queue.
+      const pullRequest = queue.pullRequests[0];
+      await firstValueFrom(
+        this._deployEnvironmentDeployGQL.mutate({
+          owner: this.repository.owner,
+          repo: this.repository.repo,
+          environment: queue.environment,
+          pullRequestNumber: pullRequest.number
+        })
+      );
 
-  //     await firstValueFrom(
-  //       this._dialogService.showStatusDialog(
-  //         StatusDialogType.Success,
-  //         `Deploy ${queue.environment} Started`,
-  //         [
-  //           `The comment to deploy from the ${queue.environment} environment has been added.`,
-  //           'It may take a minute to update.'
-  //         ],
-  //         [new DialogButton('OK', 'primary')]
-  //       )
-  //     );
-  //   } catch (error) {
-  //     this._loggingService.error(error);
-  //   }
-  // }
+      await firstValueFrom(
+        this._dialogService.showStatusDialog(
+          StatusDialogType.Success,
+          `Deploy ${queue.environment} Started`,
+          [
+            `The comment to deploy from the ${queue.environment} environment has been added.`,
+            'It may take a minute to update.'
+          ],
+          [new DialogButton('OK', 'primary')]
+        )
+      );
+    } catch (error) {
+      this._loggingService.error(error);
+    }
+  }
 
   async update(): Promise<void> {
     this.loading = true;
 
     try {
-      // const response = await firstValueFrom(
-      //   this._deployEnvironmentsAndQueuesGQL.fetch({
-      //     owner: this.repository.owner,
-      //     repo: this.repository.repo
-      //   })
-      // );
-      // this.deployEnvironments = response.data.deployEnvironments;
-      // this.deployQueues = response.data.deployQueues;
-      // this.updateSelectedQueue();
-      // this.updateNavigationUrl();
+      const response = await firstValueFrom(
+        this._deployEnvironmentsAndQueuesGQL.fetch({
+          owner: this.repository.owner,
+          repo: this.repository.repo
+        })
+      );
+      this.deployEnvironments = response.data.deployEnvironments;
+      this.deployQueues = response.data.deployQueues;
+      this.updateSelectedQueue();
+      this.updateNavigationUrl();
     } catch (error) {
       this._loggingService.error(error);
     }
@@ -134,19 +134,19 @@ export class QueueComponent implements OnInit {
   }
 
   async selectedRepoChanged(event: SelectionChangedEvent): Promise<void> {
-    // this.repository.repo = event.selectedItem;
+    this.repository.repo = event.selectedItem;
     await this.update();
   }
 
   async selectedOwnerChanged(event: SelectionChangedEvent): Promise<void> {
-    // this.repository.owner = event.selectedItem;
+    this.repository.owner = event.selectedItem;
     this.updateOwnerRepos();
     await this.update();
   }
 
   updateSelectedQueue(): void {
     if (this._selectedEnvironment) {
-      // this.selectedQueueIndex = this.deployQueues.findIndex(q => q.environment == this._selectedEnvironment);
+      this.selectedQueueIndex = this.deployQueues.findIndex(q => q.environment == this._selectedEnvironment);
     }
   }
 
@@ -158,18 +158,18 @@ export class QueueComponent implements OnInit {
     await this.update();
   }
 
-  // async selectedQueueChange(queue?: DeployQueue): Promise<void> {
-  //   const environment = queue?.environment;
-  //   this._selectedEnvironment = environment;
-  //   this.updateNavigationUrl();
-  // }
+  async selectedQueueChange(queue?: DeployQueue): Promise<void> {
+    const environment = queue?.environment;
+    this._selectedEnvironment = environment;
+    this.updateNavigationUrl();
+  }
 
   updateNavigationUrl(): void {
     this._router.navigate([], {
       queryParams: {
-        environment: this._selectedEnvironment
-        // owner: this.repository.owner,
-        // repo: this.repository.repo
+        environment: this._selectedEnvironment,
+        owner: this.repository.owner,
+        repo: this.repository.repo
       },
       replaceUrl: true
     });
@@ -179,14 +179,14 @@ export class QueueComponent implements OnInit {
     this.addServiceToPrVisible = true;
   }
 
-  // repositoryDisplayExpr(item: Repository) {
-  //   return item ? `${item.owner}/${item.repo}` : '';
-  // }
+  repositoryDisplayExpr(item: Repository) {
+    return item ? `${item.owner}/${item.repo}` : '';
+  }
 
   private updateOwnerRepos() {
-    // this.repos = this._repositories.filter(r => r.owner === this.repository.owner).map(r => r.repo);
-    // if (!this.repository.repo || !this.repos.includes(this.repository.repo.toLowerCase())) {
-    //   this.repository.repo = this.repos ? this.repos[0] : null;
-    // }
+    this.repos = this._repositories.filter(r => r.owner === this.repository.owner).map(r => r.repo);
+    if (!this.repository.repo || !this.repos.includes(this.repository.repo.toLowerCase())) {
+      this.repository.repo = this.repos ? this.repos[0] : null;
+    }
   }
 }

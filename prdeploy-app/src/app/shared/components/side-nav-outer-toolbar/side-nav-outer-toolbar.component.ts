@@ -70,7 +70,7 @@ export class SideNavOuterToolbarComponent implements OnInit {
   }
 
   get hideMenuAfterNavigation() {
-    return false; // this.menuMode === 'overlap' || this.temporaryMenuOpened;
+    return this.menuMode === 'overlap' || this.temporaryMenuOpened;
   }
 
   get showMenuAfterClick() {

@@ -1,7 +1,7 @@
 using PrDeploy.Api.Business.Options;
 
 namespace PrDeploy.Api.Tests.Constants;
-public class GitHubData : GitHubOptions
+public class GitHubData
 {
     public string Owner => "greggbjensen";
     public string Repo => "prdeploy-example-repo";

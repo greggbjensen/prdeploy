@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Security.Claims;
 using Amazon;
 using Amazon.Runtime;
 using PrDeploy.Api.Business.Options;
@@ -25,15 +26,7 @@ public static class IServiceCollectionExtensions
         services
             .Configure<AwsOptions>(configuration.GetSection("Aws"))
             .Configure<PrDeployOptions>(configuration.GetSection("PrDeploy"))
-            .Configure<GitHubOptions>(configuration.GetSection("GitHub"))
             .Configure<GitHubAuthOptions>(configuration.GetSection("GitHubAuth"))
-            .AddScoped<IGitHubClient>(s =>
-            {
-                var options = s.GetRequiredService<IOptions<GitHubOptions>>().Value;
-                var credentials = new Credentials(options.Token);
-                return new GitHubClient(
-                    new ProductHeaderValue("prdeploy"), new InMemoryCredentialStore(credentials));
-            })
             .AddScoped<IRestClientInstance<GitHubAuthOptions>>(s =>
             {
                 var options = s.GetRequiredService<IOptions<GitHubAuthOptions>>();

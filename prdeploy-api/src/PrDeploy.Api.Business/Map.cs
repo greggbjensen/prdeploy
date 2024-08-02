@@ -64,7 +64,7 @@ public static class Map
         target.DefaultEnvironment ??= source.DefaultEnvironment;
         target.ReleaseEnvironment ??= source.ReleaseEnvironment;
         target.SettingsBranch ??= source.SettingsBranch;
-        target.AddJiraIssues ??= source.AddJiraIssues;
+        target.DefaultBranch ??= source.DefaultBranch;
 
         if (target.Builds == null)
         {
@@ -75,6 +75,15 @@ public static class Map
             Merge(target.Builds, source.Builds); 
         }
 
+        if (target.Jira == null)
+        {
+            target.Jira = source.Jira;
+        }
+        else
+        {
+            Merge(target.Jira, source.Jira);
+        }
+
         if (target.Slack == null)
         {
             target.Slack = source.Slack;
@@ -82,15 +91,6 @@ public static class Map
         else
         {
             Merge(target.Slack, source.Slack);
-        }
-
-        if (target.EmailAliases == null)
-        {
-            target.EmailAliases = source.EmailAliases;
-        }
-        else
-        {
-            Merge(target.EmailAliases, source.EmailAliases);
         }
 
         target.DeployManagerSiteUrl ??= source.DeployManagerSiteUrl;
@@ -125,16 +125,30 @@ public static class Map
 
         target.Token ??= source.Token;
         target.EmailDomain ??= source.EmailDomain;
+        target.EmailAliases ??= source.EmailAliases;
         target.NotificationsEnabled ??= source.NotificationsEnabled;
 
-        if (target.Channels == null)
+        if (target.Webhooks == null)
         {
-            target.Channels = source.Channels;
+            target.Webhooks = source.Webhooks;
         }
         else
         {
-            Merge(target.Channels, source.Channels);
+            Merge(target.Webhooks, source.Webhooks);
         }
+    }
+
+    private static void Merge(JiraSettings? target, JiraSettings? source)
+    {
+        if (source == null || target == null)
+        {
+            return;
+        }
+
+        target.AddIssuesEnabled ??= source.AddIssuesEnabled;
+        target.Host ??= source.Host;
+        target.Username ??= source.Username;
+        target.Password ??= source.Password;
     }
 
     public static void Merge(Dictionary<string, string>? target, Dictionary<string, string>? source)

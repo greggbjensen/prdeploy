@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-// import { DeployEnvironmentDeployGQL, OpenPullRequestsGQL, PullRequest, Repository } from 'src/app/shared/graphql';
+import { DeployEnvironmentDeployGQL, OpenPullRequestsGQL, PullRequest, Repository } from 'src/app/shared/graphql';
 import { DialogButton, DialogService, LoggingService, StatusDialogType } from 'src/app/shared/services';
 import {
   DxButtonModule,
@@ -9,6 +9,7 @@ import {
   DxSelectBoxComponent,
   DxSelectBoxModule
 } from 'devextreme-angular';
+import CustomStore from 'devextreme/data/custom_store';
 
 @Component({
   selector: 'app-deploy-force-dialog',
@@ -18,7 +19,7 @@ import {
   imports: [DxPopupModule, DxSelectBoxModule, DxButtonModule, DxCheckBoxModule]
 })
 export class DeployForceDialogComponent {
-  // @Input() repository: Repository;
+  @Input() repository: Repository;
   @Input() environment: string;
 
   @ViewChild('selectPullRequest') selectPullRequestComponent: DxSelectBoxComponent;
@@ -39,49 +40,49 @@ export class DeployForceDialogComponent {
 
   @Output() visibleChange = new EventEmitter<boolean>();
 
-  // selectedPullRequest: PullRequest;
-  // openPullRequests: CustomStore<PullRequest, number>;
+  selectedPullRequest: PullRequest;
+  openPullRequests: CustomStore<PullRequest, number>;
 
   constructor(
-    // private _openPullRequestsGQL: OpenPullRequestsGQL,
-    // private _deployEnvironmentDeployGQL: DeployEnvironmentDeployGQL,
+    private _openPullRequestsGQL: OpenPullRequestsGQL,
+    private _deployEnvironmentDeployGQL: DeployEnvironmentDeployGQL,
     private _dialogService: DialogService,
     private _loggingService: LoggingService,
     private _changeDetectorRef: ChangeDetectorRef
   ) {
-    // this.openPullRequests = new CustomStore<PullRequest, number>({
-    //   key: 'number',
-    //   load: async options => {
-    //     const result = await firstValueFrom(
-    //       this._openPullRequestsGQL.fetch({
-    //         owner: this.repository.owner,
-    //         repo: this.repository.repo,
-    //         search: options.searchValue
-    //       })
-    //     );
-    //     return result.data.openPullRequests;
-    //   }
-    // });
+    this.openPullRequests = new CustomStore<PullRequest, number>({
+      key: 'number',
+      load: async options => {
+        const result = await firstValueFrom(
+          this._openPullRequestsGQL.fetch({
+            owner: this.repository.owner,
+            repo: this.repository.repo,
+            search: options.searchValue
+          })
+        );
+        return result.data.openPullRequests;
+      }
+    });
   }
 
-  // pullRequestDisplayExpr(item: PullRequest) {
-  //   return item ? `#${item.number}  ${item.title}  (${item.user?.name})` : '';
-  // }
+  pullRequestDisplayExpr(item: PullRequest) {
+    return item ? `#${item.number}  ${item.title}  (${item.user?.name})` : '';
+  }
 
   async forceDeploy(): Promise<void> {
     this.processing = true;
 
     try {
-      // await firstValueFrom(
-      //   this._deployEnvironmentDeployGQL.mutate({
-      //     owner: this.repository.owner,
-      //     repo: this.repository.repo,
-      //     environment: this.environment,
-      //     pullRequestNumber: this.selectedPullRequest.number,
-      //     force: true,
-      //     retain: this.retainLocks
-      //   })
-      // );
+      await firstValueFrom(
+        this._deployEnvironmentDeployGQL.mutate({
+          owner: this.repository.owner,
+          repo: this.repository.repo,
+          environment: this.environment,
+          pullRequestNumber: this.selectedPullRequest.number,
+          force: true,
+          retain: this.retainLocks
+        })
+      );
 
       await firstValueFrom(
         this._dialogService.showStatusDialog(
@@ -113,7 +114,7 @@ export class DeployForceDialogComponent {
   }
 
   private clearFields() {
-    // this.selectedPullRequest = null;
+    this.selectedPullRequest = null;
     this.processing = false;
     this.retainLocks = false;
     if (this.selectPullRequestComponent) {
