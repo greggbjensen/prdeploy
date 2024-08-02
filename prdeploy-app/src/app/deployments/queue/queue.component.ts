@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SelectionChangedEvent } from 'devextreme/ui/select_box';
-import { firstValueFrom } from 'rxjs';
-// import {
-//   DeployEnvironment,
-//   DeployEnvironmentDeployGQL,
-//   DeployEnvironmentsAndQueuesGQL,
-//   DeployQueue,
-//   PrDeployEnabledRepositoriesGQL,
-//   Repository
-// } from 'src/app/shared/graphql';
+import { first, firstValueFrom } from 'rxjs';
+import {
+  DeployEnvironment,
+  DeployEnvironmentDeployGQL,
+  DeployEnvironmentsAndQueuesGQL,
+  DeployQueue,
+  PrDeployEnabledRepositoriesGQL,
+  Repository
+} from 'src/app/shared/graphql';
 import { DialogService, LoggingService } from 'src/app/shared/services';
 import { QueueListComponent } from './queue-list/queue-list.component';
 import { DxTemplateModule } from 'devextreme-angular/core';
@@ -18,6 +18,7 @@ import { DxAccordionModule, DxSelectBoxModule } from 'devextreme-angular';
 import { EnvironmentListComponent } from './environment-list/environment-list.component';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { AddPrServiceDialogComponent } from './add-pr-service-dialog/add-pr-service-dialog.component';
+import { uniq } from 'lodash';
 
 @Component({
   selector: 'app-queue',
@@ -35,25 +36,25 @@ import { AddPrServiceDialogComponent } from './add-pr-service-dialog/add-pr-serv
   ]
 })
 export class QueueComponent implements OnInit {
-  // deployEnvironments: DeployEnvironment[] = [];
-  // deployQueues: DeployQueue[] = [];
+  deployEnvironments: DeployEnvironment[] = [];
+  deployQueues: DeployQueue[] = [];
   loading = true;
   selectedQueueIndex = 0;
   addServiceToPrVisible = false;
   owners: string[];
   repos: string[];
-  // repository: Repository = {
-  //   owner: '',
-  //   repo: ''
-  // };
+  repository: Repository = {
+    owner: '',
+    repo: ''
+  };
 
-  // private _repositories: Repository[] = [];
+  private _repositories: Repository[] = [];
   private _selectedEnvironment: string;
 
   constructor(
-    // private _deployEnvironmentsAndQueuesGQL: DeployEnvironmentsAndQueuesGQL,
-    // private _deployEnvironmentDeployGQL: DeployEnvironmentDeployGQL,
-    // private _prDeployEnabledRepositoriesGQL: PrDeployEnabledRepositoriesGQL,
+    private _deployEnvironmentsAndQueuesGQL: DeployEnvironmentsAndQueuesGQL,
+    private _deployEnvironmentDeployGQL: DeployEnvironmentDeployGQL,
+    private _prDeployEnabledRepositoriesGQL: PrDeployEnabledRepositoriesGQL,
     private _dialogService: DialogService,
     private _loggingService: LoggingService,
     private _route: ActivatedRoute,
@@ -63,23 +64,23 @@ export class QueueComponent implements OnInit {
   ngOnInit(): void {
     firstValueFrom(this._route.queryParamMap).then(param => {
       this._selectedEnvironment = param.get('environment');
-      // this.repository.owner = param.get('owner');
-      // this.repository.repo = param.get('repo');
+      this.repository.owner = param.get('owner');
+      this.repository.repo = param.get('repo');
     });
 
-    // this._prDeployEnabledRepositoriesGQL
-    //   .fetch()
-    //   .pipe(first())
-    //   .subscribe(r => {
-    //     this._repositories = r.data.prDeployEnabledRepositories;
-    //     this.owners = uniq(this._repositories.map(r => r.owner));
-    //     if (!this.repository.owner || this.owners.includes(this.repository.owner.toLowerCase())) {
-    //       this.repository.owner = this.owners[0];
-    //     }
+    this._prDeployEnabledRepositoriesGQL
+      .fetch()
+      .pipe(first())
+      .subscribe(r => {
+        this._repositories = r.data.prDeployEnabledRepositories;
+        this.owners = uniq(this._repositories.map(r => r.owner));
+        if (!this.repository.owner || this.owners.includes(this.repository.owner.toLowerCase())) {
+          this.repository.owner = this.owners[0];
+        }
 
-    //     this.updateOwnerRepos();
-    //     this.update();
-    //   });
+        this.updateOwnerRepos();
+        this.update();
+      });
   }
 
   // async triggerDeployments(queue: DeployQueue): Promise<void> {

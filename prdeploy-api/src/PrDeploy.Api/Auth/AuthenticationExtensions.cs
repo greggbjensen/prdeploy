@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using PrDeploy.Api.Business.Options;
 
@@ -28,6 +29,7 @@ namespace PrDeploy.Api.Auth
                 {
                     options.Authority = gitHubAuthOptions.Authority;
                     options.Audience = gitHubAuthOptions.Audience;
+                    options.Configuration = new OpenIdConnectConfiguration();
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         NameClaimType = ClaimTypes.NameIdentifier,

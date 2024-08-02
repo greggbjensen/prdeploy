@@ -43,6 +43,7 @@ try
         .AddAuthorization(options =>
         {
             options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                
                 .RequireGitHubRepoAccess()
                 .Build();
         })
@@ -78,8 +79,8 @@ try
     app.UseGraphQlStandards(); // Must be here for context.Request.EnableBuffering().
     app.UseRouting();
     app.UseCors();
-    // app.UseAuthentication();
-    // app.UseAuthorization();
+    app.UseAuthentication();
+    app.UseAuthorization();
     app.UseEndpoints(endpoints =>
     {
         // Simple GitHub Access Token proxy.
@@ -113,7 +114,8 @@ try
             }
 
             return result;
-        });
+        })
+        .AllowAnonymous();
 
         endpoints.MapGraphQL().WithOptions(new GraphQLServerOptions {
             Tool = { Enable = false } // Use Apollo Playground instead of Banana Cake Pop.
