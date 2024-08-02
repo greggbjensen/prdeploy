@@ -7,15 +7,25 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using PrDeploy.Api.Auth;
 using PrDeploy.Api.Builder;
+using PrDeploy.Api.Business.Clients.Interfaces;
+using PrDeploy.Api.Business.Services.Interfaces;
+using PrDeploy.Api.Configuration;
+using PrDeploy.Api.Models;
 using Serilog;
 using Serilog.Formatting.Json;
+using Path = System.IO.Path;
 
 try
 {
+    var root = Directory.GetCurrentDirectory();
+    var dotenv = Path.Combine(root, ".env");
+    DotEnv.Load(dotenv);
+
     var builder = WebApplication.CreateBuilder(args);
     var configuration = builder.Configuration
         // This is loaded in the Kubernetes cluster as a mounted secret.
         .AddJsonFile("secrets/appsettings.secret.json", optional: true, reloadOnChange: true)
+        .AddEnvironmentVariables()
         .Build();
 
     //initial logger without env running
@@ -28,7 +38,8 @@ try
         .AddHttpContextAccessor()
         .AddPrDeployApi(new DeployApiOptions())
         .AddPrDeployApiBusiness(configuration)
-        .AddJwtAuthentication(options => configuration.Bind("Jwt", options))
+        .AddPrDeployApiModelValidation()
+        .AddJwtAuthentication(options => configuration.Bind("GitHubAuth", options))
         .AddAuthorization(options =>
         {
             options.FallbackPolicy = new AuthorizationPolicyBuilder()
@@ -67,10 +78,43 @@ try
     app.UseGraphQlStandards(); // Must be here for context.Request.EnableBuffering().
     app.UseRouting();
     app.UseCors();
-    app.UseAuthentication();
-    app.UseAuthorization();
+    // app.UseAuthentication();
+    // app.UseAuthorization();
     app.UseEndpoints(endpoints =>
     {
+        // Simple GitHub Access Token proxy.
+        endpoints.MapPost("/api/oauth/access_token", async (HttpRequest request, IGitHubAuthClient authClient) =>
+        {
+            var form = await request.ReadFormAsync();
+            var accessTokenRequest = new AccessTokenRequest
+            {
+                GrantType = GetValue(form, "grant_type"),
+                Code = GetValue(form, "code"),
+                RedirectUrl = GetValue(form, "redirect_uri"),
+                CodeVerifier = GetValue(form, "code_verifier"),
+                ClientId = GetValue(form, "client_id"),
+            };
+
+            IResult result;
+            try
+            {
+                var accessTokenResponse = await authClient.GetAccessTokenAsync(accessTokenRequest);
+                result = Results.Ok(accessTokenResponse);
+            }
+            catch (HttpRequestException e)
+            {
+                Log.Logger.Error(e, $"Error getting access token ({e.StatusCode}).");
+                result = Results.StatusCode((int)e.StatusCode!);
+            }
+            catch (Exception e)
+            {
+                Log.Logger.Error(e, $"Internal Server error getting access token.");
+                result = Results.StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+            return result;
+        });
+
         endpoints.MapGraphQL().WithOptions(new GraphQLServerOptions {
             Tool = { Enable = false } // Use Apollo Playground instead of Banana Cake Pop.
         });
@@ -99,4 +143,10 @@ finally
 
 // Required for integration testing.
 // SourceRef: https://stackoverflow.com/questions/55131379/integration-testing-asp-net-core-with-net-framework-cant-find-deps-json
-public partial class Program { }
+public partial class Program
+{
+    public static string GetValue(IFormCollection form, string name)
+    {
+        return (form?.TryGetValue(name, out var value) == true ? value.FirstOrDefault() : string.Empty)!;
+    }
+}

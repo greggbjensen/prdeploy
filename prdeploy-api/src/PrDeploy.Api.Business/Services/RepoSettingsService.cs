@@ -20,10 +20,13 @@ public class RepoSettingsService : IRepoSettingsService
     private readonly IMemoryCache _cache;
     private readonly ILogger _logger;
     private readonly GitHubOptions _gitHubOptions;
+    private readonly PrDeployOptions _prDeployOptions;
 
-    public RepoSettingsService(IGitHubClient gitHubClient, IMemoryCache cache, IOptions<GitHubOptions> gitHubOptions, ILogger<RepoSettingsService> logger)
+    public RepoSettingsService(IGitHubClient gitHubClient, IMemoryCache cache, 
+        IOptions<GitHubOptions> gitHubOptions, IOptions<PrDeployOptions> prDeployOptions, ILogger<RepoSettingsService> logger)
     {
         _gitHubOptions = gitHubOptions.Value;
+        _prDeployOptions = prDeployOptions.Value;
         _gitHubClient = gitHubClient;
         _cache = cache;
         _logger = logger;
@@ -43,21 +46,20 @@ public class RepoSettingsService : IRepoSettingsService
             .Build();
 
         // Default settings.
-        var prDeployOptions = _gitHubOptions.PrDeploy;
         var defaultSettings = await GetGenericSettingsAsync(
-            prDeployOptions.Owner,
-            prDeployOptions.Repo,
-            prDeployOptions.DefaultSettingsPath, deserializer);
+            _prDeployOptions.Owner,
+            _prDeployOptions.Repo,
+            _prDeployOptions.DefaultSettingsPath, deserializer);
 
         // Repo specific settings, which are optional.
         try
         {
-            repoSettings = await GetGenericSettingsAsync(owner, repo, prDeployOptions.RepoSettingsPath, deserializer);
+            repoSettings = await GetGenericSettingsAsync(owner, repo, _prDeployOptions.RepoSettingsPath, deserializer);
         }
         catch
         {
             repoSettings = new();
-            _logger.LogWarning($"The repository {owner}/{repo} does not yet have a {prDeployOptions.RepoSettingsPath} file.");
+            _logger.LogWarning($"The repository {owner}/{repo} does not yet have a {_prDeployOptions.RepoSettingsPath} file.");
         }
 
         repoSettings.Owner = owner;
