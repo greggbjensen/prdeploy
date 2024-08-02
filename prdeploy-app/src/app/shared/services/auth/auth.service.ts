@@ -7,6 +7,8 @@ import { User } from '../../models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private static readonly DefaultUrl = '/deployments/queue';
+
   private isAuthenticatedSubject$ = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject$.asObservable();
 
@@ -51,11 +53,7 @@ export class AuthService {
 
   public async runInitialLoginSequence(): Promise<void> {
     await this._oauthService.tryLogin();
-
-    if (this._oauthService.hasValidAccessToken()) {
-      this.updateIsAuthenticated();
-      return;
-    }
+    this.updateIsAuthenticated();
 
     if (this._oauthService.state) {
       let stateUrl = this._oauthService.state;
@@ -64,6 +62,8 @@ export class AuthService {
       }
       console.log(`There was state of ${this._oauthService.state}, so we are sending you to: ${stateUrl}`);
       this._router.navigateByUrl(stateUrl);
+    } else {
+      this._router.navigate([AuthService.DefaultUrl]);
     }
 
     this.isDoneLoadingSubject$.next(true);
@@ -119,8 +119,8 @@ export class AuthService {
     this.updateIsAuthenticated();
 
     this._oauthService.events.pipe(filter(e => ['token_received'].includes(e.type))).subscribe(async () => {
-      const user = (await this._oauthService.loadUserProfile()) as User;
-      this.userSubject$.next(user);
+      // const user = (await this._oauthService.loadUserProfile()) as User;
+      // this.userSubject$.next(user);
       this.updateIsAuthenticated();
     });
 

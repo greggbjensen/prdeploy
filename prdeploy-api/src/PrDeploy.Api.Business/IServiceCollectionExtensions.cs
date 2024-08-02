@@ -10,6 +10,10 @@ using Microsoft.Extensions.Options;
 using Octokit.Internal;
 using Octokit;
 using Amazon.SimpleSystemsManagement;
+using PrDeploy.Api.Business.Clients.Interfaces;
+using PrDeploy.Api.Business.Clients;
+using RestSharp;
+using HotChocolate;
 
 namespace PrDeploy.Api.Business;
 
@@ -19,22 +23,25 @@ public static class IServiceCollectionExtensions
     {
 
         services
-            .Configure<AwsOptions>(options =>
-            {
-                configuration.Bind("Aws", options);
-                BindFromEnvironment(options);
-            })
-            .Configure<GitHubOptions>(options =>
-            {
-                configuration.Bind("GitHub", options);
-                BindFromEnvironment(options);
-            })
+            .Configure<AwsOptions>(configuration.GetSection("Aws"))
+            .Configure<PrDeployOptions>(configuration.GetSection("PrDeploy"))
+            .Configure<GitHubOptions>(configuration.GetSection("GitHub"))
+            .Configure<GitHubAuthOptions>(configuration.GetSection("GitHubAuth"))
             .AddScoped<IGitHubClient>(s =>
             {
                 var options = s.GetRequiredService<IOptions<GitHubOptions>>().Value;
                 var credentials = new Credentials(options.Token);
                 return new GitHubClient(
                     new ProductHeaderValue("prdeploy"), new InMemoryCredentialStore(credentials));
+            })
+            .AddScoped<IRestClientInstance<GitHubAuthOptions>>(s =>
+            {
+                var options = s.GetRequiredService<IOptions<GitHubAuthOptions>>();
+                return new RestClientInstance<GitHubAuthOptions>
+                {
+                    Options = options.Value,
+                    RestClient = new RestClient(new RestClientOptions(options.Value.Authority))
+                };
             })
             .AddScoped<IAmazonSimpleSystemsManagement>(s =>
             {
@@ -51,25 +58,8 @@ public static class IServiceCollectionExtensions
             .AddScoped<IPullRequestService, PullRequestService>()
             .AddScoped<IRepoSettingsService, RepoSettingsService>()
             .AddScoped<IRepositoryService, RepositoryService>()
-            .AddScoped<IAuthService, AuthService>();
+            .AddScoped<IGitHubAuthClient, GitHubAuthClient>();
 
         return services;
-    }
-
-    private static void BindFromEnvironment<T>(T options)
-    {
-        // Support binding to environment variable for local development.
-        var properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public)
-            .Where(p => p.PropertyType == typeof(string));
-        foreach (var property in properties)
-        {
-            var value = (string?)property.GetValue(options);
-            if (value?.StartsWith("<ENV:") == true)
-            {
-                var tokenName = value.Trim('>').Split(":")[1];
-                var variableValue = Environment.GetEnvironmentVariable(tokenName);
-                property.SetValue(options, variableValue);
-            }
-        }
     }
 }

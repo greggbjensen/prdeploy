@@ -8,6 +8,7 @@ public class DeployApiTest : IClassFixture<DeployApiApplicationFactory>
 {
     public static readonly DeployEnvironmentData DeployEnvironments = new();
     public static readonly GitHubData GitHub = new();
+    public static readonly PrDeployOptionsData PrDeployOptions = new();
     public static readonly ParameterVariables ParameterVariables = new();
     public static readonly PullRequestData PullRequests = new();
     public static readonly DeployUserData DeployUsers = new();

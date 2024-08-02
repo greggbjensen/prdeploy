@@ -6,17 +6,17 @@ using Repository = PrDeploy.Api.Models.Repository;
 namespace PrDeploy.Api.Business.Services;
 public class RepositoryService : IRepositoryService
 {
-    private readonly GitHubOptions _gitHubOptions;
+    private readonly PrDeployOptions _prDeployOptions;
 
-    public RepositoryService(IOptions<GitHubOptions> gitHubOptions)
+    public RepositoryService(IOptions<PrDeployOptions> prDeployOptions)
     {
-        _gitHubOptions = gitHubOptions.Value;
+        _prDeployOptions = prDeployOptions.Value;
     }
 
     public Task<List<Repository>> ListPrDeployEnabledAsync()
     {
         // TODO GBJ: Use _githubAppClient.GitHubApps.GetAllInstallationsForCurrent() once issue is fixed:
         // https://github.com/octokit/octokit.net/issues/2833
-        return Task.FromResult(_gitHubOptions.PrDeploy.EnabledRepositories);
+        return Task.FromResult(_prDeployOptions.EnabledRepositories)!;
     }
 }

@@ -24,14 +24,14 @@ public class DeployQueueMutationTest : DeployApiTest
             gitHubMock.Setup(x => x.Repository.Content.GetRawContent(
                     GitHub.Owner,
                     GitHub.Repo,
-                    GitHub.PrDeploy.RepoSettingsPath
+                    PrDeployOptions.RepoSettingsPath
                 ))
                 .ReturnsAsync(() => File.ReadAllBytes(GitHub.MockRepoSettingsPath));
 
             gitHubMock.Setup(x => x.Repository.Content.GetRawContent(
-                    GitHub.PrDeploy.Owner,
-                    GitHub.PrDeploy.Repo,
-                    GitHub.PrDeploy.DefaultSettingsPath
+                    PrDeployOptions.Owner,
+                    PrDeployOptions.Repo,
+                    PrDeployOptions.DefaultSettingsPath
                 ))
                 .ReturnsAsync(() => File.ReadAllBytes(GitHub.MockDefaultSettingsPath));
 

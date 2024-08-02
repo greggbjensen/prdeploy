@@ -7,17 +7,25 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using PrDeploy.Api.Auth;
 using PrDeploy.Api.Builder;
+using PrDeploy.Api.Business.Clients.Interfaces;
 using PrDeploy.Api.Business.Services.Interfaces;
+using PrDeploy.Api.Configuration;
 using PrDeploy.Api.Models;
 using Serilog;
 using Serilog.Formatting.Json;
+using Path = System.IO.Path;
 
 try
 {
+    var root = Directory.GetCurrentDirectory();
+    var dotenv = Path.Combine(root, ".env");
+    DotEnv.Load(dotenv);
+
     var builder = WebApplication.CreateBuilder(args);
     var configuration = builder.Configuration
         // This is loaded in the Kubernetes cluster as a mounted secret.
         .AddJsonFile("secrets/appsettings.secret.json", optional: true, reloadOnChange: true)
+        .AddEnvironmentVariables()
         .Build();
 
     //initial logger without env running
@@ -30,7 +38,8 @@ try
         .AddHttpContextAccessor()
         .AddPrDeployApi(new DeployApiOptions())
         .AddPrDeployApiBusiness(configuration)
-        .AddJwtAuthentication(options => configuration.Bind("Jwt", options))
+        .AddPrDeployApiModelValidation()
+        .AddJwtAuthentication(options => configuration.Bind("GitHubAuth", options))
         .AddAuthorization(options =>
         {
             options.FallbackPolicy = new AuthorizationPolicyBuilder()
@@ -74,7 +83,7 @@ try
     app.UseEndpoints(endpoints =>
     {
         // Simple GitHub Access Token proxy.
-        endpoints.MapPost("/api/oauth/access_token", async (HttpRequest request, IAuthService authService) =>
+        endpoints.MapPost("/api/oauth/access_token", async (HttpRequest request, IGitHubAuthClient authClient) =>
         {
             var form = await request.ReadFormAsync();
             var accessTokenRequest = new AccessTokenRequest
@@ -89,7 +98,7 @@ try
             IResult result;
             try
             {
-                var accessTokenResponse = await authService.GetCodeAsync(accessTokenRequest);
+                var accessTokenResponse = await authClient.GetAccessTokenAsync(accessTokenRequest);
                 result = Results.Ok(accessTokenResponse);
             }
             catch (HttpRequestException e)

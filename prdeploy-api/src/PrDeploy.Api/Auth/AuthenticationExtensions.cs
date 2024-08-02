@@ -1,33 +1,33 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using PrDeploy.Api.Options;
+using PrDeploy.Api.Business.Options;
 
 namespace PrDeploy.Api.Auth
 {
     public static class AuthenticationExtensions
     {
-        public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, Action<JwtOptions> configure)
+        public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, Action<GitHubAuthOptions> configure)
         {
-            var jwtOptions = new JwtOptions();
-            configure(jwtOptions);
+            var gitHubAuthOptions = new GitHubAuthOptions();
+            configure(gitHubAuthOptions);
 
-            if (string.IsNullOrWhiteSpace(jwtOptions.Authority))
+            if (string.IsNullOrWhiteSpace(gitHubAuthOptions.Authority))
             {
-                throw new ArgumentException("Jwt.Authority is required in options.");
+                throw new ArgumentException("GitHubAuth.Authority is required in options.");
             }
 
-            if (string.IsNullOrWhiteSpace(jwtOptions.Audience))
+            if (string.IsNullOrWhiteSpace(gitHubAuthOptions.Audience))
             {
-                throw new ArgumentException("Jwt.Audience is required in options.");
+                throw new ArgumentException("GitHubAuth.Audience is required in options.");
             }
 
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
-                    options.Authority = jwtOptions.Authority;
-                    options.Audience = jwtOptions.Audience;
+                    options.Authority = gitHubAuthOptions.Authority;
+                    options.Audience = gitHubAuthOptions.Audience;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         NameClaimType = ClaimTypes.NameIdentifier,
