@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthConfig, OAuthErrorEvent, OAuthService } from 'angular-oauth2-oidc';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { User } from '../../models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -14,9 +13,6 @@ export class AuthService {
 
   private isDoneLoadingSubject$ = new BehaviorSubject<boolean>(false);
   public isDoneLoading$ = this.isDoneLoadingSubject$.asObservable();
-
-  private userSubject$ = new BehaviorSubject<User>(null);
-  public user$ = this.userSubject$.asObservable();
 
   private navigateToLoginPage() {
     // TODO: Remember current URL
@@ -74,10 +70,6 @@ export class AuthService {
   }
   public hasValidToken() {
     return this._oauthService.hasValidAccessToken();
-  }
-
-  public get user(): User {
-    return this.userSubject$.value;
   }
 
   private initialize(): void {

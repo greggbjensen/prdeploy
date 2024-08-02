@@ -2,9 +2,6 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { UserPanelComponent } from '../user-panel/user-panel.component';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DxToolbarModule } from 'devextreme-angular/ui/toolbar';
-
-import { User } from 'src/app/shared/models';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../services';
 @Component({
   selector: 'app-header',
@@ -23,8 +20,6 @@ export class HeaderComponent {
   @Input()
   title!: string;
 
-  user: User;
-
   userMenuItems = [
     {
       text: 'Logout',
@@ -35,9 +30,7 @@ export class HeaderComponent {
     }
   ];
 
-  constructor(private _authService: AuthService) {
-    this._authService.user$.pipe(takeUntilDestroyed()).subscribe((user: User) => (this.user = user));
-  }
+  constructor(private _authService: AuthService) {}
 
   toggleMenu = () => {
     this.menuToggle.emit();

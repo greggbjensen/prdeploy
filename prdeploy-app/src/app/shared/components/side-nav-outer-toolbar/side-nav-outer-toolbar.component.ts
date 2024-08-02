@@ -8,7 +8,6 @@ import { AuthService, ScreenService } from '../../services';
 import { SideNavigationMenuComponent } from '../side-navigation-menu/side-navigation-menu.component';
 import { HeaderComponent } from '../header/header.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { User } from '../../models';
 import { DxTemplateModule } from 'devextreme-angular/core';
 import { OpenedStateMode, RevealMode } from 'devextreme/ui/drawer';
 
@@ -42,7 +41,9 @@ export class SideNavOuterToolbarComponent implements OnInit {
     @Inject(DOCUMENT) private _document: Document,
     private _destroyRef: DestroyRef
   ) {
-    this._authService.user$.pipe(takeUntilDestroyed()).subscribe((user: User) => this.updateIsAuthenticated(user));
+    this._authService.isAuthenticated$
+      .pipe(takeUntilDestroyed())
+      .subscribe((isAuthenticated: boolean) => (this.isAuthenticated = isAuthenticated));
   }
 
   ngOnInit() {
@@ -108,9 +109,5 @@ export class SideNavOuterToolbarComponent implements OnInit {
       this.temporaryMenuOpened = true;
       this.menuOpened = true;
     }
-  }
-
-  private async updateIsAuthenticated(user: User): Promise<void> {
-    this.isAuthenticated = !!user;
   }
 }
