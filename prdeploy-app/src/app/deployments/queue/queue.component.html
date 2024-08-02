@@ -1,6 +1,6 @@
 <div class="repository-select">
   <label>Repository:</label>
-  <!-- <dx-select-box
+  <dx-select-box
     class="owner-select"
     placeholder="Loading..."
     [dataSource]="owners"
@@ -13,7 +13,7 @@
     [dataSource]="repos"
     [value]="repository.repo"
     (onSelectionChanged)="selectedRepoChanged($event)">
-  </dx-select-box> -->
+  </dx-select-box>
 </div>
 
 <h3>
@@ -25,12 +25,12 @@
     stylingMode="text"
     (onClick)="update()"></dx-button>
 </h3>
-<!-- @if (repository.repo) {
+@if (repository.repo) {
   <app-environment-list
     [repository]="repository"
     [data]="deployEnvironments"
     [loading]="loading"></app-environment-list>
-} -->
+}
 
 <h3>
   Queues
@@ -41,7 +41,7 @@
     stylingMode="text"
     (onClick)="update()"></dx-button>
 </h3>
-<!-- @if (deployQueues.length > 0) {
+@if (deployQueues.length > 0) {
   <dx-accordion
     [dataSource]="deployQueues"
     [selectedIndex]="selectedQueueIndex"
@@ -74,7 +74,7 @@
   </dx-accordion>
 } @else {
   Loading...
-} -->
+}
 
 <div class="page-actions">
   <dx-button
@@ -86,4 +86,4 @@
   </dx-button>
 </div>
 
-<!-- <app-add-pr-service-dialog [repository]="repository" [(visible)]="addServiceToPrVisible"></app-add-pr-service-dialog> -->
+<app-add-pr-service-dialog [repository]="repository" [(visible)]="addServiceToPrVisible"></app-add-pr-service-dialog>

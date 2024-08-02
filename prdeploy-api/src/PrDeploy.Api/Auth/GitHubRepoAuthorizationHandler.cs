@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PrDeploy.Api.Auth
 {
@@ -6,8 +7,14 @@ namespace PrDeploy.Api.Auth
     {
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, GitHubRepoAccessRequirement requirement)
         {
-            // TODO: Implement auth handling.
-            context.Succeed(requirement);
+            if (context.User.Identity != null && context.User.Identity.IsAuthenticated)
+            {
+                context.Succeed(requirement);
+            }
+            else
+            {
+                context.Fail(new AuthorizationFailureReason(this, "User not authenticated."));
+            }
 
             return Task.CompletedTask;
         }

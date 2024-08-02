@@ -1,7 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core';
 import { DxLoadIndicatorModule } from 'devextreme-angular';
-import { AuthService } from 'src/app/shared/services';
 
 @Component({
   selector: 'login-callback',
@@ -10,14 +8,4 @@ import { AuthService } from 'src/app/shared/services';
   standalone: true,
   imports: [DxLoadIndicatorModule]
 })
-export class LoginCallbackComponent implements OnInit {
-  constructor(
-    private router: Router,
-    private authService: AuthService
-  ) {}
-
-  async ngOnInit() {
-    // this.authService.handleCallbackRedirect();
-    console.log(`callback`);
-  }
-}
+export class LoginCallbackComponent {}

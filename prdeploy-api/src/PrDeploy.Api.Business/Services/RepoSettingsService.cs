@@ -19,13 +19,10 @@ public class RepoSettingsService : IRepoSettingsService
     private readonly IGitHubClient _gitHubClient;
     private readonly IMemoryCache _cache;
     private readonly ILogger _logger;
-    private readonly GitHubOptions _gitHubOptions;
     private readonly PrDeployOptions _prDeployOptions;
 
-    public RepoSettingsService(IGitHubClient gitHubClient, IMemoryCache cache, 
-        IOptions<GitHubOptions> gitHubOptions, IOptions<PrDeployOptions> prDeployOptions, ILogger<RepoSettingsService> logger)
+    public RepoSettingsService(IGitHubClient gitHubClient, IMemoryCache cache, IOptions<PrDeployOptions> prDeployOptions, ILogger<RepoSettingsService> logger)
     {
-        _gitHubOptions = gitHubOptions.Value;
         _prDeployOptions = prDeployOptions.Value;
         _gitHubClient = gitHubClient;
         _cache = cache;

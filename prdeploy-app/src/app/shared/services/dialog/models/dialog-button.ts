@@ -1,15 +1,9 @@
-export enum DialogButtonTypes {
-  Primary = 'primary',
-  Secondary = 'secondary',
-  Tertiary = 'tertiary',
-  Danger = 'danger'
-}
+import { ButtonType } from 'devextreme/common';
 
 export class DialogButton {
   constructor(
     public text: string,
-    public type: `${DialogButtonTypes}` = DialogButtonTypes.Secondary,
-    public url: string = null,
+    public type: ButtonType = 'normal',
     public automationId: string = null
   ) {}
 }

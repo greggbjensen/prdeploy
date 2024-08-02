@@ -1,1 +1,1 @@
-// export * from './generated/prdeploy-api-graphql';
+export * from './generated/prdeploy-api-graphql';

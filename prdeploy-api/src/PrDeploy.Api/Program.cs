@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.HttpOverrides;
 using PrDeploy.Api.Auth;
 using PrDeploy.Api.Builder;
 using PrDeploy.Api.Business.Clients.Interfaces;
-using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Configuration;
 using PrDeploy.Api.Models;
 using Serilog;
@@ -39,10 +38,10 @@ try
         .AddPrDeployApi(new DeployApiOptions())
         .AddPrDeployApiBusiness(configuration)
         .AddPrDeployApiModelValidation()
-        .AddJwtAuthentication(options => configuration.Bind("GitHubAuth", options))
+        .AddGitHubAuthentication(options => configuration.Bind("GitHubAuth", options))
         .AddAuthorization(options =>
         {
-            options.FallbackPolicy = new AuthorizationPolicyBuilder()
+            options.DefaultPolicy = new AuthorizationPolicyBuilder()
                 .RequireGitHubRepoAccess()
                 .Build();
         })
@@ -78,8 +77,8 @@ try
     app.UseGraphQlStandards(); // Must be here for context.Request.EnableBuffering().
     app.UseRouting();
     app.UseCors();
-    // app.UseAuthentication();
-    // app.UseAuthorization();
+    app.UseAuthentication();
+    app.UseAuthorization();
     app.UseEndpoints(endpoints =>
     {
         // Simple GitHub Access Token proxy.
@@ -113,7 +112,8 @@ try
             }
 
             return result;
-        });
+        })
+        .AllowAnonymous();
 
         endpoints.MapGraphQL().WithOptions(new GraphQLServerOptions {
             Tool = { Enable = false } // Use Apollo Playground instead of Banana Cake Pop.

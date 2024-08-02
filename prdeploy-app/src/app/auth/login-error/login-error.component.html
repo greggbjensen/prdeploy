@@ -4,14 +4,12 @@
       <div class="text-emptystate-header margin-bottom-tiny">Oops! your account is unreachable</div>
       <div class="text-emptystate-default margin-bottom-small">Contact us if this persists.</div>
       <div class="button-container">
-        <!-- <dx-button
-          text="Log in again"
-          loadingText="Redirecting..."
-          [loading]="loggingOut"
+        <dx-button
+          [text]="!loggingOut ? 'Log in again' : 'Redirecting'"
           buttonType="primary"
           (onButtonClick)="logInAgainClicked()"
           [disabled]="loggingOut">
-        </dx-button> -->
+        </dx-button>
       </div>
     </div>
     <img class="image" src="../../../assets/images/EmptyState/error.png" height="500px" width="500px" alt="Error" />

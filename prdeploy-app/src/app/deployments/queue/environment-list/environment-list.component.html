@@ -1,4 +1,4 @@
-<!-- <dx-data-grid
+<dx-data-grid
   #environmentDataGrid
   class="environment-table"
   [dataSource]="data"
@@ -21,7 +21,7 @@
   <dxi-column caption="User" [width]="140" dataType="object" cellTemplate="userCellTemplate"></dxi-column>
   <dxi-column dataField="url" [width]="225" cellTemplate="linkCellTemplate" caption="URL"></dxi-column>
   <dxi-column caption="Actions" dataType="object" [width]="155" cellTemplate="actionsCellTemplate"></dxi-column>
-  <dxo-load-panel indicatorSrc="/assets/images/loading-spinner-animated.gif"></dxo-load-panel>
+  <dxo-load-panel></dxo-load-panel>
 
   <div *dxTemplate="let d of 'environmentCellTemplate'">
     <div class="deploy-environment" [style]="{ backgroundColor: '#' + d.data.color }">
@@ -100,9 +100,9 @@
       <span class="environment-unknown">Unknown</span>
     }
   </div>
-</dx-data-grid> -->
+</dx-data-grid>
 
-<!-- <app-deploy-force-dialog
+<app-deploy-force-dialog
   [environment]="actionEnvironment"
   [repository]="repository"
   [(visible)]="forceDeployVisible"></app-deploy-force-dialog>
@@ -110,4 +110,4 @@
   [environment]="actionEnvironment"
   [repository]="repository"
   [pullNumber]="actionPullNumber"
-  [(visible)]="deployRollbackVisible"></app-deploy-rollback-dialog> -->
+  [(visible)]="deployRollbackVisible"></app-deploy-rollback-dialog>

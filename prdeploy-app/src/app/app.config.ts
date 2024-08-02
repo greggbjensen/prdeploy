@@ -5,7 +5,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { MarkdownModule } from 'ngx-markdown';
 import { HttpErrorInterceptor } from './shared/interceptors';
 import { HTTP_INTERCEPTORS, withInterceptorsFromDi, provideHttpClient, HttpClientModule } from '@angular/common/http';
-import { ApiOptions, OAuthOptions } from './shared/options';
+import { OAuthOptions } from './shared/options';
 import { APP_INITIALIZER, importProvidersFrom } from '@angular/core';
 import { AppConfigService, authConfig, AuthGuard, authModuleConfig, AuthService } from './shared/services';
 import { APOLLO_NAMED_OPTIONS, Apollo, NamedOptions } from 'apollo-angular';
@@ -49,10 +49,6 @@ export const appConfig: ApplicationConfig = {
     { provide: OAuthStorage, useFactory: storageFactory },
     // app.config.json sections.
     {
-      provide: ApiOptions,
-      useClass: ApiOptions
-    },
-    {
       provide: OAuthOptions,
       useClass: OAuthOptions
     },
@@ -68,12 +64,12 @@ export const appConfig: ApplicationConfig = {
     Apollo,
     {
       provide: APOLLO_NAMED_OPTIONS,
-      useFactory(httpLink: HttpLink, apiOptions: ApiOptions): NamedOptions {
+      useFactory(httpLink: HttpLink): NamedOptions {
         return {
-          deploy: createApollo(httpLink, apiOptions.prdeployApiUrl)
+          deploy: createApollo(httpLink, '/graphql')
         };
       },
-      deps: [HttpLink, ApiOptions]
+      deps: [HttpLink]
     },
     // Interceptors.
     { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }

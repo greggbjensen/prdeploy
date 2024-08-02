@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpBackend, HttpClient } from '@angular/common/http';
 import { firstValueFrom, Subject } from 'rxjs';
-import { ApiOptions, OAuthOptions } from '../options';
+import { OAuthOptions } from '../options';
 
 // SourceRef: https://lucasarcuri.com/blog/angular-load-config-file-before-app-starts/
 @Injectable({
@@ -13,7 +13,6 @@ export class AppConfigService {
 
   constructor(
     private _httpBackend: HttpBackend,
-    private _apiOptions: ApiOptions,
     private _oauthOptions: OAuthOptions
   ) {}
 
@@ -22,7 +21,6 @@ export class AppConfigService {
     // SourceRef: https://github.com/auth0/auth0-angular/issues/70
     const http = new HttpClient(this._httpBackend);
     const config: { [section: string]: any } = await firstValueFrom(http.get('/assets/app.config.json'));
-    Object.assign(this._apiOptions, config['api']);
     Object.assign(this._oauthOptions, config['oauth']);
   }
 
