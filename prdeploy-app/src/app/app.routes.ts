@@ -16,6 +16,6 @@ export const routes: Routes = [
   ...authRoutes,
   {
     path: '**',
-    redirectTo: 'deployments/queue'
+    redirectTo: 'deployments'
   }
 ];
