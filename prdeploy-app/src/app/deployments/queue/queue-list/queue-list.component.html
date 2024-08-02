@@ -1,4 +1,4 @@
-<!-- @if (queue) {
+@if (queue) {
   <dx-list
     id="{{ queue.environment.toLowerCase() }}-queue-list"
     [dataSource]="queue.pullRequests"
@@ -9,7 +9,7 @@
     [focusStateEnabled]="false"
     (onItemReordered)="onItemReordered($event)">
     <dxo-item-dragging [allowReordering]="true"></dxo-item-dragging>
-    <dxo-load-panel indicatorSrc="/assets/images/loading-spinner-animated.gif" [enabled]="true"></dxo-load-panel>
+    <dxo-load-panel [enabled]="true"></dxo-load-panel>
     <div *dxTemplate="let pullRequest of 'item'; let queueIndex = index" class="queue-pull">
       <div class="queue-pull-title">
         <span class="queue-order">{{ queueIndex + 1 }}</span>
@@ -28,10 +28,10 @@
         target="#pr-queue-{{ pullRequest.number }}"></app-pull-request-popover>
     </div>
   </dx-list>
-} -->
+}
 
 <div class="add-pull-row">
-  <!-- <dx-select-box
+  <dx-select-box
     #pullSelectBox
     placeholder="Add pull request"
     class="add-pull-select"
@@ -49,9 +49,6 @@
     [disabled]="!pullSelectBox.selectedItem"
     (onClick)="add(pullSelectBox.selectedItem)"></dx-button>
 
-  <dx-load-panel
-    [visible]="loading"
-    indicatorSrc="/assets/images/loading-spinner-animated.gif"
-    [position]="{ of: queue?.environment + '-queue-list', offset: { y: 230 } }">
-  </dx-load-panel> -->
+  <dx-load-panel [visible]="loading" [position]="{ of: queue?.environment + '-queue-list', offset: { y: 230 } }">
+  </dx-load-panel>
 </div>

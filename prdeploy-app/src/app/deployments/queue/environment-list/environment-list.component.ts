@@ -89,7 +89,7 @@ export class EnvironmentListComponent implements AfterViewInit {
           StatusDialogType.Success,
           `Free ${environment} Started`,
           [`The comment to free the ${environment} environment has been added.`, 'It may take a minute to update.'],
-          [new DialogButton('OK', 'primary')]
+          [new DialogButton('OK', 'default')]
         )
       );
     } catch (error) {
@@ -124,7 +124,7 @@ export class EnvironmentListComponent implements AfterViewInit {
           StatusDialogType.Success,
           `Redeploy ${environment} Started`,
           [`The comment to redeploy from the ${environment} environment has been added.`],
-          [new DialogButton('OK', 'primary')]
+          [new DialogButton('OK', 'default')]
         )
       );
     } catch (error) {

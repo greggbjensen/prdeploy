@@ -104,7 +104,7 @@ export class QueueComponent implements OnInit {
             `The comment to deploy from the ${queue.environment} environment has been added.`,
             'It may take a minute to update.'
           ],
-          [new DialogButton('OK', 'primary')]
+          [new DialogButton('OK', 'default')]
         )
       );
     } catch (error) {

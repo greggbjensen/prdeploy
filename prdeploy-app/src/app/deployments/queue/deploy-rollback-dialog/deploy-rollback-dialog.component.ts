@@ -62,7 +62,7 @@ export class DeployRollbackDialogComponent {
             `The comment to rollback from the ${this.environment} environment has been added.`,
             'It may take a minute to update.'
           ],
-          [new DialogButton('OK', 'primary')]
+          [new DialogButton('OK', 'default')]
         )
       );
 

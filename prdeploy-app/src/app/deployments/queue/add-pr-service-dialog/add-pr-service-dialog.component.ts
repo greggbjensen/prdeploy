@@ -104,7 +104,7 @@ export class AddPrServiceDialogComponent {
           StatusDialogType.Success,
           `Add Services Started`,
           [`The comment to add services to the pull request has been added.`, 'It may take a minute to update.'],
-          [new DialogButton('OK', 'primary')]
+          [new DialogButton('OK', 'default')]
         )
       );
 

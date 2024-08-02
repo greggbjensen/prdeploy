@@ -55,28 +55,28 @@ export class DialogService {
   }
 
   public getYesNo(title: string, content: string[], defaultResult: boolean = false): Observable<boolean> {
-    const buttons = [new DialogButton('No', 'tertiary'), new DialogButton('Yes', 'primary')];
+    const buttons = [new DialogButton('No', 'normal'), new DialogButton('Yes', 'default')];
     return this.dialogComponent
       .show(title, content, buttons)
       .pipe(map(result => (result === null ? defaultResult : result === 'Yes')));
   }
 
   public getContinueCancel(title: string, content: string[], defaultResult: boolean = false): Observable<boolean> {
-    const buttons = [new DialogButton('Cancel', 'tertiary'), new DialogButton('Continue', 'primary')];
+    const buttons = [new DialogButton('Cancel', 'normal'), new DialogButton('Continue', 'default')];
     return this.dialogComponent
       .show(title, content, buttons)
       .pipe(map(result => (result === null ? defaultResult : result === 'Continue')));
   }
 
   public getNoCancel(title: string, content: string[], defaultResult: boolean = false): Observable<boolean> {
-    const buttons = [new DialogButton('No', 'tertiary'), new DialogButton('Save', 'primary')];
+    const buttons = [new DialogButton('No', 'normal'), new DialogButton('Save', 'default')];
     return this.dialogComponent
       .show(title, content, buttons)
       .pipe(map(result => (result === null ? defaultResult : result === 'Save')));
   }
 
   public getSaveCancel(title: string, content: string[], defaultResult: boolean = false): Observable<boolean> {
-    const buttons = [new DialogButton('Cancel', 'tertiary'), new DialogButton('Save', 'primary')];
+    const buttons = [new DialogButton('Cancel', 'normal'), new DialogButton('Save', 'default')];
     return this.dialogComponent
       .show(title, content, buttons)
       .pipe(map(result => (result === null ? defaultResult : result === 'Save')));
