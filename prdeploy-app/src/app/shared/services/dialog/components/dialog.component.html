@@ -21,7 +21,7 @@
     <div class="buttons">
       @for (button of buttons; track button) {
         <div class="button">
-          <dx-button [text]="button.text" [type]="button.type" (onButtonClick)="buttonClicked(button.text)">
+          <dx-button [text]="button.text" [type]="button.type" (onClick)="buttonClicked(button.text)">
           </dx-button>
         </div>
       }
