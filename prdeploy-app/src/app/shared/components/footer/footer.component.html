@@ -9,3 +9,9 @@
     <a href="/privacy-policy" target="_blank" rel="noreferrer">Privacy Policy</a>
   </li>
 </ul>
+
+<dx-toast
+  [(visible)]="notificationService.notification.visible"
+  [maxWidth]="600"
+  [type]="notificationService.notification.type"
+  [message]="notificationService.notification.message"></dx-toast>

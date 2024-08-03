@@ -10,7 +10,13 @@ import {
   PrDeployEnabledRepositoriesGQL,
   Repository
 } from 'src/app/shared/graphql';
-import { DialogButton, DialogService, LoggingService, StatusDialogType } from 'src/app/shared/services';
+import {
+  DialogButton,
+  DialogService,
+  LoggingService,
+  NotificationService,
+  StatusDialogType
+} from 'src/app/shared/services';
 import { QueueListComponent } from './queue-list/queue-list.component';
 import { DxTemplateModule } from 'devextreme-angular/core';
 import { DxAccordionModule, DxSelectBoxModule } from 'devextreme-angular';
@@ -55,7 +61,7 @@ export class DeploymentsComponent implements OnInit {
     private _deployEnvironmentsAndQueuesGQL: DeployEnvironmentsAndQueuesGQL,
     private _deployEnvironmentDeployGQL: DeployEnvironmentDeployGQL,
     private _prDeployEnabledRepositoriesGQL: PrDeployEnabledRepositoriesGQL,
-    private _dialogService: DialogService,
+    private _notificationService: NotificationService,
     private _loggingService: LoggingService,
     private _route: ActivatedRoute,
     private _router: Router
@@ -96,17 +102,7 @@ export class DeploymentsComponent implements OnInit {
         })
       );
 
-      await firstValueFrom(
-        this._dialogService.showStatusDialog(
-          StatusDialogType.Success,
-          `Deploy ${queue.environment} Started`,
-          [
-            `The comment to deploy from the ${queue.environment} environment has been added.`,
-            'It may take a minute to update.'
-          ],
-          [new DialogButton('OK', 'default')]
-        )
-      );
+      this._notificationService.show(`Deploy ${queue.environment} comment added, it may take a minute to update.`);
     } catch (error) {
       this._loggingService.error(error);
     }

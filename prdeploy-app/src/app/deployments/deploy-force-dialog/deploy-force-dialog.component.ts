@@ -1,7 +1,13 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { DeployEnvironmentDeployGQL, OpenPullRequestsGQL, PullRequest, Repository } from 'src/app/shared/graphql';
-import { DialogButton, DialogService, LoggingService, StatusDialogType } from 'src/app/shared/services';
+import {
+  DialogButton,
+  DialogService,
+  LoggingService,
+  NotificationService,
+  StatusDialogType
+} from 'src/app/shared/services';
 import {
   DxButtonModule,
   DxCheckBoxModule,
@@ -46,7 +52,7 @@ export class DeployForceDialogComponent {
   constructor(
     private _openPullRequestsGQL: OpenPullRequestsGQL,
     private _deployEnvironmentDeployGQL: DeployEnvironmentDeployGQL,
-    private _dialogService: DialogService,
+    private _notificationService: NotificationService,
     private _loggingService: LoggingService,
     private _changeDetectorRef: ChangeDetectorRef
   ) {
@@ -84,18 +90,7 @@ export class DeployForceDialogComponent {
         })
       );
 
-      await firstValueFrom(
-        this._dialogService.showStatusDialog(
-          StatusDialogType.Success,
-          `Force Deploy ${this.environment} Started`,
-          [
-            `The comment to force deploy from the ${this.environment} environment has been added.`,
-            'It may take a minute to update.'
-          ],
-          [new DialogButton('OK', 'default')]
-        )
-      );
-
+      this._notificationService.show(`Force deploy ${this.environment} comment added, it may take a minute to update.`);
       this.visible = false;
     } catch (error) {
       this._loggingService.error(error);

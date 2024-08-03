@@ -17,7 +17,13 @@ import {
   Repository,
   RepositoryServicesGQL
 } from 'src/app/shared/graphql';
-import { DialogButton, DialogService, LoggingService, StatusDialogType } from 'src/app/shared/services';
+import {
+  DialogButton,
+  DialogService,
+  LoggingService,
+  NotificationService,
+  StatusDialogType
+} from 'src/app/shared/services';
 
 @Component({
   selector: 'app-add-pr-service-dialog',
@@ -65,6 +71,7 @@ export class AddPrServiceDialogComponent {
     private _repositoryServicesGQL: RepositoryServicesGQL,
     private _changeDetectorRef: ChangeDetectorRef,
     private _dialogService: DialogService,
+    private _notificationService: NotificationService,
     private _loggingService: LoggingService
   ) {
     this.openPullRequests = new CustomStore<PullRequest, number>({
@@ -99,15 +106,7 @@ export class AddPrServiceDialogComponent {
         })
       );
 
-      await firstValueFrom(
-        this._dialogService.showStatusDialog(
-          StatusDialogType.Success,
-          `Add Services Started`,
-          [`The comment to add services to the pull request has been added.`, 'It may take a minute to update.'],
-          [new DialogButton('OK', 'default')]
-        )
-      );
-
+      this._notificationService.show(`Add services comment added, it may take a minute to update.`);
       this.visible = false;
     } catch (error) {
       this._loggingService.error(error);

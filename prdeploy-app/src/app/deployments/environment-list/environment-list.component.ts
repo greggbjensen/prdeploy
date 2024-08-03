@@ -7,7 +7,13 @@ import {
   Repository
 } from 'src/app/shared/graphql';
 import { firstValueFrom } from 'rxjs';
-import { DialogButton, DialogService, LoggingService, StatusDialogType } from 'src/app/shared/services';
+import {
+  DialogButton,
+  DialogService,
+  LoggingService,
+  NotificationService,
+  StatusDialogType
+} from 'src/app/shared/services';
 import { PullRequestPopoverComponent } from '../pull-request-popover/pull-request-popover.component';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DatePipe } from '@angular/common';
@@ -65,7 +71,7 @@ export class EnvironmentListComponent implements AfterViewInit {
   constructor(
     private _deployEnvironmentDeployGQL: DeployEnvironmentDeployGQL,
     private _deployEnvironmentFreeGQL: DeployEnvironmentFreeGQL,
-    private _dialogService: DialogService,
+    private _notificationService: NotificationService,
     private _loggingService: LoggingService
   ) {}
 
@@ -84,14 +90,7 @@ export class EnvironmentListComponent implements AfterViewInit {
         })
       );
 
-      await firstValueFrom(
-        this._dialogService.showStatusDialog(
-          StatusDialogType.Success,
-          `Free ${environment} Started`,
-          [`The comment to free the ${environment} environment has been added.`, 'It may take a minute to update.'],
-          [new DialogButton('OK', 'default')]
-        )
-      );
+      this._notificationService.show(`Free ${environment} comment added, it may take a minute to update.`);
     } catch (error) {
       this._loggingService.error(error);
     }
@@ -119,14 +118,7 @@ export class EnvironmentListComponent implements AfterViewInit {
         })
       );
 
-      await firstValueFrom(
-        this._dialogService.showStatusDialog(
-          StatusDialogType.Success,
-          `Redeploy ${environment} Started`,
-          [`The comment to redeploy from the ${environment} environment has been added.`],
-          [new DialogButton('OK', 'default')]
-        )
-      );
+      this._notificationService.show(`Redeploy ${environment} comment added, it may take a minute to update.`);
     } catch (error) {
       this._loggingService.error(error);
     }

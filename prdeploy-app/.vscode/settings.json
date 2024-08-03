@@ -33,5 +33,6 @@
     "editor.indentSize": "tabSize",
     "files.exclude": {
         "**/.angular": true
-    }
+    },
+    "prettier.singleQuote": true
 }
