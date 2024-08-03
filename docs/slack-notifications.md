@@ -1,0 +1,1 @@
+The **prdeploy** app posts notifications for both deployments and releases.

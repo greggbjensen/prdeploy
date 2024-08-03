@@ -1,12 +1,6 @@
-# prdeploy
+Within the pull request, engineers, QA, and the product owner can work together using **prdeploy** comments as commands to progress the feature to production.  The intent is for the full lifecycle of development to take place within the pull request, cleaning up all bugs before merging to the `main` branch.  This makes sure each pull request is clean of bugs and the testing scope is small.
 
-GitHub App that allows the entire build-deploy lifecycle to happen within a feature branch.  If any problems are found in the deployment, a new commit is done and rolled through without needing multiple PRs.
-
-# Documentation
-
-Review the prdeploy documentation at https://prdeploy.readthedocs.io.
-
-# Comment Commands
+## Comment Commands
 
 | Command                                              | Description                                                                                                                         |
 | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
@@ -21,14 +15,3 @@ Review the prdeploy documentation at https://prdeploy.readthedocs.io.
 | `/rollback prod`<br>`/rollback stage`                | Rollback a specific environment to the previous version. You must have a lock on an environment to roll it back.                    |
 | `/rollback prod 2`                                   | Rollback a specific environment multiple versions in history.                                                                       |
 | `/add mydomain-api-service mydomain-app-main`        | Add services to be built and deployed with the pull request that have no code changes.                                              |
-
-## Deployment Practices
-
-1. Each pull request should be deployed as ready in the CD workflow.
-2. Only once deployed and verified the pull request should be merged to main.
-3. This application is deployed to a kubernetes cluster using the helm chart.
-
-# Contributing
-
-1. For API development and debugging, see [prdeploy-webhooks Development](/prdeploy-webhooks/README.md#development).
-2. For Web development and debugging, see [prdeploy-web Development](/prdeploy-web/README.md#development).

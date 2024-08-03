@@ -1,0 +1,1 @@
+The **prdeploy** has a portal that uses your GitHub Login to be able to see all your environments and their pull requests, as well as manage the queues of waiting pull requests.  You can also execute all of the [comment commands](comment-commands.md) though an easy to use interface.
