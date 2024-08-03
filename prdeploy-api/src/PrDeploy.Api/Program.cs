@@ -72,7 +72,6 @@ try
 
     // Configure the HTTP request pipeline.
     app.UseForwardedHeaders();
-    app.UseGlobalErrorHandling();
     app.UseSerilogRequestLogging();
     app.UseGraphQlStandards(); // Must be here for context.Request.EnableBuffering().
     app.UseRouting();

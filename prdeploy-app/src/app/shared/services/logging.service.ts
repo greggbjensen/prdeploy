@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 export class LoggingService {
   public error(error: any, customData: any = null): void {
     if (error instanceof Error) {
-      // TODO GBJ: Look at DataDog later.
+      // TODO GBJ: Add additional logging.
       if (customData) {
         console.error(error.message, customData);
       } else {

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { DxButtonModule } from 'devextreme-angular';
 
 @Component({
@@ -9,4 +9,11 @@ import { DxButtonModule } from 'devextreme-angular';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent {}
+export class HomeComponent implements OnInit {
+  forbidden = false;
+  constructor(private _activatedRoute: ActivatedRoute) {}
+
+  ngOnInit(): void {
+    this.forbidden = this._activatedRoute.snapshot.queryParams['forbidden'] == 'true';
+  }
+}

@@ -12,7 +12,7 @@ export class AuthGuard {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this._authService.isDoneLoading$.pipe(
       filter(isDone => isDone),
-      switchMap(_ => this._authService.isAuthenticated$),
+      switchMap(() => this._authService.isAuthenticated$),
       tap(isAuthenticated => isAuthenticated || this._authService.login(state.url))
     );
   }

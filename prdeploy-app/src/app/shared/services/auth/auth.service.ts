@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthConfig, OAuthErrorEvent, OAuthService } from 'angular-oauth2-oidc';
-import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
@@ -20,25 +20,8 @@ export class AuthService {
 
   constructor(
     private _oauthService: OAuthService,
-    private _authConfig: AuthConfig,
-    private _router: Router,
-    private _activatedRoute: ActivatedRoute
-  ) {
-    this.initialize();
-  }
-
-  public async handleCallbackRedirect(): Promise<void> {
-    this.updateIsAuthenticated();
-
-    const queryParamMap = await firstValueFrom(this._activatedRoute.queryParamMap);
-    const state = queryParamMap.get('state');
-    const values = state.split(';');
-    let redirectUrl = '/';
-    if (values.length > 1) {
-      redirectUrl = decodeURIComponent(values[1]);
-    }
-    this._router.navigate([redirectUrl], { replaceUrl: true });
-  }
+    private _router: Router
+  ) {}
 
   public login(targetUrl?: string) {
     // Note: before version 9.1.0 of the library you needed to
@@ -49,6 +32,10 @@ export class AuthService {
   public async runInitialLoginSequence(): Promise<void> {
     await this._oauthService.tryLogin();
     this.updateIsAuthenticated();
+    if (!this.isAuthenticatedSubject$.value) {
+      this.isDoneLoadingSubject$.next(true);
+      return;
+    }
 
     if (this._oauthService.state) {
       let stateUrl = this._oauthService.state;
@@ -64,16 +51,19 @@ export class AuthService {
     this.isDoneLoadingSubject$.next(true);
   }
 
-  public logout() {
+  public logout(forbidden = false) {
     this._oauthService.logOut();
-    this._router.navigate(['/']);
+    this._router.navigate(['/'], {
+      queryParams: !forbidden ? null : { forbidden }
+    });
   }
+
   public hasValidToken() {
     return this._oauthService.hasValidAccessToken();
   }
 
-  private initialize(): void {
-    this._oauthService.configure(this._authConfig);
+  public initialize(authConfig: AuthConfig): void {
+    this._oauthService.configure(authConfig);
 
     // Useful for debugging:
     this._oauthService.events.subscribe(event => {

@@ -8,11 +8,32 @@
   border-radius: 10px;
   padding: 30px;
   box-shadow: $box-shadow-lg;
+  position: relative;
 }
 
 .logo {
   width: 350px;
   margin: 30px 0 25px 0;
+}
+
+.forbidden {
+  color: $danger;
+  position: absolute;
+  font-size: $font-size-base;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 5px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid $red-200;
+  border-radius: 5px 5px 0 0;
+  background-color: $red-100;
+
+  .dx-icon {
+    margin-right: 7px;
+  }
 }
 
 .actions {

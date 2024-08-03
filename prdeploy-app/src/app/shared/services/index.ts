@@ -5,6 +5,7 @@ export * from './auth/auth.service';
 
 export * from './app-config.service';
 export * from './app-info.service';
+export * from './errors/global-error.handler';
 export * from './screen.service';
 export * from './dialog/dialog.service';
 export * from './dialog/dialog-utils';

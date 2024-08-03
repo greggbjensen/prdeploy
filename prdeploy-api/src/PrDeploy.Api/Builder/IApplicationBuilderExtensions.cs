@@ -8,10 +8,5 @@ namespace PrDeploy.Api.Builder
         {
             return app.UseMiddleware<GraphQlStandardsMiddleware>(); ;
         }
-
-        public static IApplicationBuilder UseGlobalErrorHandling(this IApplicationBuilder app)
-        {
-            return app.UseMiddleware<GlobalErrorHandlingMiddleware>(); ;
-        }
     }
 }
