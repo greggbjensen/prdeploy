@@ -1,4 +1,6 @@
-﻿namespace PrDeploy.Api.Filters
+﻿using System.Net;
+
+namespace PrDeploy.Api.Filters
 {
     public class SanitizedErrorFilter : IErrorFilter
     {
@@ -13,16 +15,31 @@
 
         public IError OnError(IError error)
         {
+            var result = error;
+            switch (error.Exception)
+            {
+                case Octokit.NotFoundException:
+                    // GitHub not found is a forbidden.
+                    result = ErrorBuilder.FromError(error)
+                        .SetCode("FORBIDDEN")
+                        .SetMessage("Access denied.")
+                        .SetException(
+                            new HttpRequestException("Access denied.",
+                                null, HttpStatusCode.Forbidden))
+                        .Build();
+                    break;
+            }
+
             _logger.LogError(error.Exception, error.Message, error);
 
             if (!_hostEnvironment.IsDevelopment())
             {
                 // TODO GBJ: Add additional message sanitization for security.
-                error.RemoveException();
-                error.RemoveLocations();
+                result.RemoveException();
+                result.RemoveLocations();
             }
 
-            return error;
+            return result;
         }
     }
 }

@@ -35,10 +35,11 @@ public static class IServiceCollectionExtensions
             .RegisterService<IRepositoryService>()
             .RegisterService<IRepoSettingsService>()
 
-            // Filters.
+            // Error handling.
             .AddErrorFilter<SanitizedErrorFilter>();
 
         services
+            .AddHttpResponseFormatter<SanitizedHttpResponseFormatter>()
             .AddHttpContextAccessor()
             .AddScoped<IGitHubClient>(s =>
             {
