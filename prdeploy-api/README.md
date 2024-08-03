@@ -1,3 +1,4 @@
-# PrDeploy.Api
+# prdeploy-api
 
-GraphQL API for supporting the prdeploy-app information and actions.
+GraphQL API supporting the web application for Engineers, QA, and Product Owners to be able to review and deploy services.
+

@@ -1,78 +1,9 @@
 # prdeploy-webhooks
 The prdeploy API has webhooks to allow GitHub to pass events, as well as the GraphQL API for displaying the web page.
 
-## App Setup
-
-1. Install the **prdeploy** app to your repository.
-2. Create a pull request and **prdeploy** will initialize all the required AWS Parameter Store variables.
-3. The following values can be configured in AWS Parameter Store after they are created:
-
-    Each parameter is prefixed with the path  `/prdeploy/myorg/`
-
-    | Parameter               | Description                                       | Example                                                                                                                                 |
-    |-------------------------|---------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
-    | DEPLOY_MANAGER_SITE_URL | The URL of the site the Deployment Manager is on. | https://prdeploy.myorg.com                                                                                                              |
-    | EMAIL_ALIASES           | Aliases to correct email addresses for Slack.     | "jim.smith@myorg.com": "james.smith@myorg.com"<br>"john.doe@myorg.com": "jdoe@myorg.com"<br>"will.harris@myorg.com": "billyh@myorg.com" |
-    | JIRA_HOST               | Domain name of your Atlassian instance.           | myorg.atlassian.net                                                                                                                     |
-    | JIRA_USERNAME           | Username the JIRA API token was generated for.    | greggbjensen@myorg.com                                                                                                                  |
-    | JIRA_PASSWORD           | JIRA API token.                                   | abc.def.hij                                                                                                                             |
-    | SLACK_EMAIL_DOMAIN      | Root domain for your organization in Slack.       | myorg.com                                                                                                                               |
-    | SLACK_TOKEN             | SLACK API token.                                  | abc_def_hij                                                                                                                             |
-    | SLACK_WEBHOOKS_DEPLOY   | SLACK Webhook URL for deployment channel notices. | https://hooks_slack_com/services/aaa/bbb/ccc                                                                                            |
-    | SLACK_WEBHOOKS_RELEASE  | SLACK Webhook URL for release channel notices.    | https://hooks_slack_com/services/aaa/bbb/ccc                                                                                            |
-
-
-### Configure Slack.
-1. Create a new Slack App
-2. Enable Webhooks.
-3. Copy the `Bot User OAuth Token` into `SLACK_TOKEN` in your AWS Parameters.
-3. Add the following scopes:
-    ```
-    incoming-webhook
-    users:read
-    users:read.email
-    ```
-4. Add a webhook for your deploy and release channels.
-
-## Requirements
-
-- Grant app the following permissions:
-
-  **Repository Permissions**
-
-  | Scope          | Permission     |
-  | -------------- | -------------- |
-  | Actions        | Read and write |
-  | Administration | Read-only      |
-  | Checks         | Read-only      |
-  | Contents       | Read and write |
-  | Issues         | Read-only      |
-  | Metadata       | Read-only      |
-  | Pull requests  | Read and write |
-
-  **Organization Permissions**
-
-  | Scope     | Permission |
-  | --------- | ---------- |
-  | Members   | Read-only  |
-
-  **Account Permissions**
-
-  | Scope           | Permission |
-  | --------------- | ---------- |
-  | Email addresses | Read-only  |
-
-- Subscribe app to the following events:
-
-  ```
-  Issue comment
-  Pull request
-  Workflow run
-  ```
-
 - For local development the GitHub App Webhook must be configured to receive events at a URL that is accessible from the internet using [smee](https://smee.io/).
 
-# Development
+## Development
 
 1. Download the private key from the your organizations GitHub App page and rename to `gh_app_key.pem` in this root folder.
 2. Create a `.env` file similar to `.env.example` and set actual values.
