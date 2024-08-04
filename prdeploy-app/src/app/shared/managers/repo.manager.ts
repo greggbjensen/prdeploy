@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { AuthService } from '../services';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,7 @@ export class RepoManager {
   constructor(
     private _router: Router,
     private _activatedRoute: ActivatedRoute,
+    private _authService: AuthService,
     private location: Location
   ) {
     firstValueFrom(this._activatedRoute.queryParamMap).then(param => {
@@ -55,8 +57,12 @@ export class RepoManager {
   }
 
   async updateQueryParams(additionalParams: Params = {}): Promise<void> {
+    // Do not update while login is in process.
+    if (this.location.path().startsWith('/login')) {
+      return;
+    }
+
     await this._router.navigate([this.location.path()], {
-      relativeTo: this._activatedRoute,
       queryParams: {
         owner: this.owner,
         repo: this.repo,

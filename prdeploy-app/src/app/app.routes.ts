@@ -1,13 +1,14 @@
 import { Routes } from '@angular/router';
 import { authRoutes } from './auth/auth.routes';
 import { AuthGuard } from './shared/services';
-import { HomeComponent } from './home/home.component';
 
 export const routes: Routes = [
   {
     path: '',
-    component: HomeComponent
+    redirectTo: 'login',
+    pathMatch: 'full'
   },
+  ...authRoutes,
   {
     path: 'deployments',
     canActivate: [AuthGuard],
@@ -23,7 +24,6 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: () => import('./settings/settings.routes').then(m => m.routes)
   },
-  ...authRoutes,
   {
     path: '**',
     redirectTo: 'deployments'
