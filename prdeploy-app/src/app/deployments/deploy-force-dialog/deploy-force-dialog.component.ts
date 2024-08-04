@@ -1,13 +1,7 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { DeployEnvironmentDeployGQL, OpenPullRequestsGQL, PullRequest, Repository } from 'src/app/shared/graphql';
-import {
-  DialogButton,
-  DialogService,
-  LoggingService,
-  NotificationService,
-  StatusDialogType
-} from 'src/app/shared/services';
+import { LoggingService } from 'src/app/shared/services';
 import {
   DxButtonModule,
   DxCheckBoxModule,
@@ -16,6 +10,7 @@ import {
   DxSelectBoxModule
 } from 'devextreme-angular';
 import CustomStore from 'devextreme/data/custom_store';
+import { NotificationManager } from 'src/app/shared/managers';
 
 @Component({
   selector: 'app-deploy-force-dialog',
@@ -52,7 +47,7 @@ export class DeployForceDialogComponent {
   constructor(
     private _openPullRequestsGQL: OpenPullRequestsGQL,
     private _deployEnvironmentDeployGQL: DeployEnvironmentDeployGQL,
-    private _notificationService: NotificationService,
+    private _notificationManager: NotificationManager,
     private _loggingService: LoggingService,
     private _changeDetectorRef: ChangeDetectorRef
   ) {
@@ -90,7 +85,7 @@ export class DeployForceDialogComponent {
         })
       );
 
-      this._notificationService.show(`Force deploy ${this.environment} comment added, it may take a minute to update.`);
+      this._notificationManager.show(`Force deploy ${this.environment} comment added, it may take a minute to update.`);
       this.visible = false;
     } catch (error) {
       this._loggingService.error(error);

@@ -2,13 +2,8 @@ import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angu
 import { DxButtonModule, DxNumberBoxModule, DxPopupModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
 import { DeployEnvironmentRollbackGQL, Repository } from 'src/app/shared/graphql';
-import {
-  DialogButton,
-  DialogService,
-  LoggingService,
-  NotificationService,
-  StatusDialogType
-} from 'src/app/shared/services';
+import { NotificationManager } from 'src/app/shared/managers';
+import { LoggingService } from 'src/app/shared/services';
 
 @Component({
   selector: 'app-deploy-rollback-dialog',
@@ -41,7 +36,7 @@ export class DeployRollbackDialogComponent {
 
   constructor(
     private _deployEnvironmentDeployGQL: DeployEnvironmentRollbackGQL,
-    private _notificationService: NotificationService,
+    private _notificationManager: NotificationManager,
     private _loggingService: LoggingService,
     private _changeDetectorRef: ChangeDetectorRef
   ) {}
@@ -60,7 +55,7 @@ export class DeployRollbackDialogComponent {
         })
       );
 
-      this._notificationService.show(`Rollback ${this.environment} comment added, it may take a minute to update.`);
+      this._notificationManager.show(`Rollback ${this.environment} comment added, it may take a minute to update.`);
       this.visible = false;
     } catch (error) {
       this._loggingService.error(error);

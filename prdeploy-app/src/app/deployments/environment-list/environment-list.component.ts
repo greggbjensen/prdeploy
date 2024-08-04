@@ -7,13 +7,7 @@ import {
   Repository
 } from 'src/app/shared/graphql';
 import { firstValueFrom } from 'rxjs';
-import {
-  DialogButton,
-  DialogService,
-  LoggingService,
-  NotificationService,
-  StatusDialogType
-} from 'src/app/shared/services';
+import { LoggingService } from 'src/app/shared/services';
 import { PullRequestPopoverComponent } from '../pull-request-popover/pull-request-popover.component';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DatePipe } from '@angular/common';
@@ -21,6 +15,7 @@ import { DxTemplateModule } from 'devextreme-angular/core';
 import { DxiColumnModule, DxoLoadPanelModule } from 'devextreme-angular/ui/nested';
 import { DeployRollbackDialogComponent } from '../deploy-rollback-dialog/deploy-rollback-dialog.component';
 import { DeployForceDialogComponent } from '../deploy-force-dialog/deploy-force-dialog.component';
+import { NotificationManager } from 'src/app/shared/managers';
 
 @Component({
   selector: 'app-environment-list',
@@ -71,7 +66,7 @@ export class EnvironmentListComponent implements AfterViewInit {
   constructor(
     private _deployEnvironmentDeployGQL: DeployEnvironmentDeployGQL,
     private _deployEnvironmentFreeGQL: DeployEnvironmentFreeGQL,
-    private _notificationService: NotificationService,
+    private _notificationManager: NotificationManager,
     private _loggingService: LoggingService
   ) {}
 
@@ -90,7 +85,7 @@ export class EnvironmentListComponent implements AfterViewInit {
         })
       );
 
-      this._notificationService.show(`Free ${environment} comment added, it may take a minute to update.`);
+      this._notificationManager.show(`Free ${environment} comment added, it may take a minute to update.`);
     } catch (error) {
       this._loggingService.error(error);
     }
@@ -118,7 +113,7 @@ export class EnvironmentListComponent implements AfterViewInit {
         })
       );
 
-      this._notificationService.show(`Redeploy ${environment} comment added, it may take a minute to update.`);
+      this._notificationManager.show(`Redeploy ${environment} comment added, it may take a minute to update.`);
     } catch (error) {
       this._loggingService.error(error);
     }

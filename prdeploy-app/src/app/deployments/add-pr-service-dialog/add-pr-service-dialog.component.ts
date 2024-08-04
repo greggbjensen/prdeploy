@@ -17,13 +17,8 @@ import {
   Repository,
   RepositoryServicesGQL
 } from 'src/app/shared/graphql';
-import {
-  DialogButton,
-  DialogService,
-  LoggingService,
-  NotificationService,
-  StatusDialogType
-} from 'src/app/shared/services';
+import { NotificationManager } from 'src/app/shared/managers';
+import { LoggingService } from 'src/app/shared/services';
 
 @Component({
   selector: 'app-add-pr-service-dialog',
@@ -70,8 +65,7 @@ export class AddPrServiceDialogComponent {
     private _pullRequestAddServicesGQL: PullRequestAddServicesGQL,
     private _repositoryServicesGQL: RepositoryServicesGQL,
     private _changeDetectorRef: ChangeDetectorRef,
-    private _dialogService: DialogService,
-    private _notificationService: NotificationService,
+    private _notificationManager: NotificationManager,
     private _loggingService: LoggingService
   ) {
     this.openPullRequests = new CustomStore<PullRequest, number>({
@@ -106,7 +100,7 @@ export class AddPrServiceDialogComponent {
         })
       );
 
-      this._notificationService.show(`Add services comment added, it may take a minute to update.`);
+      this._notificationManager.show(`Add services comment added, it may take a minute to update.`);
       this.visible = false;
     } catch (error) {
       this._loggingService.error(error);

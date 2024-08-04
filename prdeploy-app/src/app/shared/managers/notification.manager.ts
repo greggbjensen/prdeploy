@@ -5,7 +5,7 @@ import { ToastType } from 'devextreme/ui/toast';
 @Injectable({
   providedIn: 'root'
 })
-export class NotificationService {
+export class NotificationManager {
   notification: NotificationData = {
     visible: false,
     message: '',

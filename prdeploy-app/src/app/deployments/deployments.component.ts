@@ -10,13 +10,7 @@ import {
   PrDeployEnabledRepositoriesGQL,
   Repository
 } from 'src/app/shared/graphql';
-import {
-  DialogButton,
-  DialogService,
-  LoggingService,
-  NotificationService,
-  StatusDialogType
-} from 'src/app/shared/services';
+import { LoggingService } from 'src/app/shared/services';
 import { QueueListComponent } from './queue-list/queue-list.component';
 import { DxTemplateModule } from 'devextreme-angular/core';
 import { DxAccordionModule, DxSelectBoxModule } from 'devextreme-angular';
@@ -25,6 +19,7 @@ import { EnvironmentListComponent } from './environment-list/environment-list.co
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { AddPrServiceDialogComponent } from './add-pr-service-dialog/add-pr-service-dialog.component';
 import { uniq } from 'lodash';
+import { NotificationManager } from '../shared/managers';
 
 @Component({
   selector: 'app-deployments',
@@ -61,7 +56,7 @@ export class DeploymentsComponent implements OnInit {
     private _deployEnvironmentsAndQueuesGQL: DeployEnvironmentsAndQueuesGQL,
     private _deployEnvironmentDeployGQL: DeployEnvironmentDeployGQL,
     private _prDeployEnabledRepositoriesGQL: PrDeployEnabledRepositoriesGQL,
-    private _notificationService: NotificationService,
+    private _notificationManager: NotificationManager,
     private _loggingService: LoggingService,
     private _route: ActivatedRoute,
     private _router: Router
@@ -102,7 +97,7 @@ export class DeploymentsComponent implements OnInit {
         })
       );
 
-      this._notificationService.show(`Deploy ${queue.environment} comment added, it may take a minute to update.`);
+      this._notificationManager.show(`Deploy ${queue.environment} comment added, it may take a minute to update.`);
     } catch (error) {
       this._loggingService.error(error);
     }
