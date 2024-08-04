@@ -13,6 +13,16 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: () => import('./deployments/deployments.routes').then(m => m.routes)
   },
+  {
+    path: 'environments',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./environments/environments.routes').then(m => m.routes)
+  },
+  {
+    path: 'settings',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./settings/settings.routes').then(m => m.routes)
+  },
   ...authRoutes,
   {
     path: '**',
