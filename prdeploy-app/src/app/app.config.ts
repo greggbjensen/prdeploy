@@ -1,5 +1,5 @@
 import { ApplicationConfig, ErrorHandler, Injector } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, RouterModule } from '@angular/router';
 import { routes } from './app.routes';
 import { BrowserModule } from '@angular/platform-browser';
 import { MarkdownModule } from 'ngx-markdown';
@@ -18,9 +18,8 @@ import {
 import { APOLLO_NAMED_OPTIONS, Apollo, NamedOptions } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { ApolloClientOptions, InMemoryCache } from '@apollo/client/core';
-import { AuthConfig, OAuthModule, OAuthModuleConfig, OAuthStorage } from 'angular-oauth2-oidc';
+import { OAuthModule, OAuthModuleConfig, OAuthStorage } from 'angular-oauth2-oidc';
 import { DOCUMENT } from '@angular/common';
-import { firstValueFrom } from 'rxjs';
 
 export function storageFactory(): OAuthStorage {
   return localStorage;
@@ -42,7 +41,13 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()),
-    importProvidersFrom(BrowserModule, MarkdownModule.forRoot(), HttpClientModule, OAuthModule.forRoot()),
+    importProvidersFrom(
+      BrowserModule,
+      MarkdownModule.forRoot(),
+      HttpClientModule,
+      OAuthModule.forRoot(),
+      RouterModule.forRoot([])
+    ),
     AppConfigService,
     {
       provide: APP_INITIALIZER,

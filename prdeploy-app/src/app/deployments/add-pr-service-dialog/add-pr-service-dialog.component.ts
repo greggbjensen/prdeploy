@@ -14,10 +14,9 @@ import {
   OpenPullRequestsGQL,
   PullRequest,
   PullRequestAddServicesGQL,
-  Repository,
   RepositoryServicesGQL
 } from 'src/app/shared/graphql';
-import { NotificationManager } from 'src/app/shared/managers';
+import { NotificationManager, RepoManager } from 'src/app/shared/managers';
 import { LoggingService } from 'src/app/shared/services';
 
 @Component({
@@ -28,7 +27,6 @@ import { LoggingService } from 'src/app/shared/services';
   styleUrl: './add-pr-service-dialog.component.scss'
 })
 export class AddPrServiceDialogComponent {
-  @Input() repository: Repository;
   @ViewChild('selectPullRequest') selectPullRequestComponent: DxSelectBoxComponent;
   @ViewChild(DxListComponent, { static: false }) listView: DxListComponent;
 
@@ -51,7 +49,7 @@ export class AddPrServiceDialogComponent {
 
     if (this.visible) {
       firstValueFrom(
-        this._repositoryServicesGQL.fetch({ owner: this.repository.owner, repo: this.repository.repo })
+        this._repositoryServicesGQL.fetch({ owner: this._repoManager.owner, repo: this._repoManager.repo })
       ).then(response => {
         this.repositoryServices = response.data.repositoryServices;
       });
@@ -66,6 +64,7 @@ export class AddPrServiceDialogComponent {
     private _repositoryServicesGQL: RepositoryServicesGQL,
     private _changeDetectorRef: ChangeDetectorRef,
     private _notificationManager: NotificationManager,
+    private _repoManager: RepoManager,
     private _loggingService: LoggingService
   ) {
     this.openPullRequests = new CustomStore<PullRequest, number>({
@@ -73,8 +72,8 @@ export class AddPrServiceDialogComponent {
       load: async options => {
         const result = await firstValueFrom(
           this._openPullRequestsGQL.fetch({
-            owner: this.repository.owner,
-            repo: this.repository.repo,
+            owner: this._repoManager.owner,
+            repo: this._repoManager.repo,
             search: options.searchValue
           })
         );
@@ -93,8 +92,8 @@ export class AddPrServiceDialogComponent {
     try {
       await firstValueFrom(
         this._pullRequestAddServicesGQL.mutate({
-          owner: this.repository.owner,
-          repo: this.repository.repo,
+          owner: this._repoManager.owner,
+          repo: this._repoManager.repo,
           pullRequestNumber: this.selectedPullRequest.number,
           services: this.selectedServices
         })

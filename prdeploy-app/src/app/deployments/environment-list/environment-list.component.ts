@@ -1,11 +1,6 @@
 import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
 import { DxDataGridComponent, DxDataGridModule } from 'devextreme-angular';
-import {
-  DeployEnvironment,
-  DeployEnvironmentDeployGQL,
-  DeployEnvironmentFreeGQL,
-  Repository
-} from 'src/app/shared/graphql';
+import { DeployEnvironment, DeployEnvironmentDeployGQL, DeployEnvironmentFreeGQL } from 'src/app/shared/graphql';
 import { firstValueFrom } from 'rxjs';
 import { LoggingService } from 'src/app/shared/services';
 import { PullRequestPopoverComponent } from '../pull-request-popover/pull-request-popover.component';
@@ -15,7 +10,7 @@ import { DxTemplateModule } from 'devextreme-angular/core';
 import { DxiColumnModule, DxoLoadPanelModule } from 'devextreme-angular/ui/nested';
 import { DeployRollbackDialogComponent } from '../deploy-rollback-dialog/deploy-rollback-dialog.component';
 import { DeployForceDialogComponent } from '../deploy-force-dialog/deploy-force-dialog.component';
-import { NotificationManager } from 'src/app/shared/managers';
+import { NotificationManager, RepoManager } from 'src/app/shared/managers';
 
 @Component({
   selector: 'app-environment-list',
@@ -35,7 +30,6 @@ import { NotificationManager } from 'src/app/shared/managers';
   ]
 })
 export class EnvironmentListComponent implements AfterViewInit {
-  @Input() repository: Repository;
   @Input() data: DeployEnvironment[] = [];
 
   @Input() set loading(value: boolean) {
@@ -64,6 +58,7 @@ export class EnvironmentListComponent implements AfterViewInit {
   private _loading = false;
 
   constructor(
+    public repoManager: RepoManager,
     private _deployEnvironmentDeployGQL: DeployEnvironmentDeployGQL,
     private _deployEnvironmentFreeGQL: DeployEnvironmentFreeGQL,
     private _notificationManager: NotificationManager,
@@ -78,8 +73,8 @@ export class EnvironmentListComponent implements AfterViewInit {
     try {
       await firstValueFrom(
         this._deployEnvironmentFreeGQL.mutate({
-          owner: this.repository.owner,
-          repo: this.repository.repo,
+          owner: this.repoManager.owner,
+          repo: this.repoManager.repo,
           environment,
           pullRequestNumber
         })
@@ -106,8 +101,8 @@ export class EnvironmentListComponent implements AfterViewInit {
     try {
       await firstValueFrom(
         this._deployEnvironmentDeployGQL.mutate({
-          owner: this.repository.owner,
-          repo: this.repository.repo,
+          owner: this.repoManager.owner,
+          repo: this.repoManager.repo,
           environment,
           pullRequestNumber
         })

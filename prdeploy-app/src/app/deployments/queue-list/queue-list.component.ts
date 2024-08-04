@@ -7,8 +7,7 @@ import {
   DeployQueueUpdateGQL,
   InputMaybe,
   OpenPullRequestsGQL,
-  PullRequest,
-  Repository
+  PullRequest
 } from 'src/app/shared/graphql';
 import { DxSelectBoxModule, DxLoadPanelModule } from 'devextreme-angular';
 import { PullRequestPopoverComponent } from '../pull-request-popover/pull-request-popover.component';
@@ -17,6 +16,7 @@ import { DxTemplateModule } from 'devextreme-angular/core';
 import { DxoItemDraggingModule, DxoLoadPanelModule } from 'devextreme-angular/ui/nested';
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DatePipe } from '@angular/common';
+import { RepoManager } from 'src/app/shared/managers';
 
 @Component({
   selector: 'app-queue-list',
@@ -36,7 +36,6 @@ import { DatePipe } from '@angular/common';
   ]
 })
 export class QueueListComponent {
-  @Input() repository: Repository;
   @Input() set queue(value: DeployQueue) {
     this._queue = value;
     if (value) {
@@ -61,15 +60,16 @@ export class QueueListComponent {
 
   constructor(
     private _openPullRequestsGQL: OpenPullRequestsGQL,
-    private _deployQueueUpdateGQL: DeployQueueUpdateGQL
+    private _deployQueueUpdateGQL: DeployQueueUpdateGQL,
+    private _repoManager: RepoManager
   ) {
     this.openPullRequests = new CustomStore<PullRequest, number>({
       key: 'number',
       load: async options => {
         const result = await firstValueFrom(
           this._openPullRequestsGQL.fetch({
-            owner: this.repository.owner,
-            repo: this.repository.repo,
+            owner: this._repoManager.owner,
+            repo: this._repoManager.repo,
             search: options.searchValue
           })
         );
@@ -114,8 +114,8 @@ export class QueueListComponent {
     this.queueUpdateStarted.emit(pullRequestNumbers);
     await firstValueFrom(
       this._deployQueueUpdateGQL.mutate({
-        owner: this.repository.owner,
-        repo: this.repository.repo,
+        owner: this._repoManager.owner,
+        repo: this._repoManager.repo,
         environment: this.queue?.environment as string,
         pullRequestNumbers
       })

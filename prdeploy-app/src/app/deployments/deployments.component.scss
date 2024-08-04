@@ -6,27 +6,6 @@ h3 {
   align-items: center;
 }
 
-.repository-select {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-
-  label {
-    margin-right: 10px;
-  }
-}
-
-.owner-select {
-  width: 150px;
-}
-
-.repo-select {
-  width: 250px;
-}
-
 .queue-title {
   display: flex;
   align-items: center;
