@@ -15,6 +15,8 @@ using PrDeploy.Api.Business.Clients.Interfaces;
 using PrDeploy.Api.Business.Clients;
 using RestSharp;
 using HotChocolate;
+using PrDeploy.Api.Business.Security;
+using PrDeploy.Api.Business.Security.Interfaces;
 
 namespace PrDeploy.Api.Business;
 
@@ -51,7 +53,8 @@ public static class IServiceCollectionExtensions
             .AddScoped<IPullRequestService, PullRequestService>()
             .AddScoped<IRepoSettingsService, RepoSettingsService>()
             .AddScoped<IRepositoryService, RepositoryService>()
-            .AddScoped<IGitHubAuthClient, GitHubAuthClient>();
+            .AddScoped<IGitHubAuthClient, GitHubAuthClient>()
+            .AddScoped<IRepositorySecurity, RepositorySecurity>();
 
         return services;
     }
