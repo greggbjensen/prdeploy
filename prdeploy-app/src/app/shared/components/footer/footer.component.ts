@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AppInfoService } from '../../services';
 import { DxToastModule } from 'devextreme-angular';
-import { NotificationService } from '../../services/notification.service';
+import { NotificationManager } from '../../managers';
 
 @Component({
   selector: 'app-footer',
@@ -13,6 +13,6 @@ import { NotificationService } from '../../services/notification.service';
 export class FooterComponent {
   constructor(
     public appInfo: AppInfoService,
-    public notificationService: NotificationService
+    public notificationManager: NotificationManager
   ) {}
 }

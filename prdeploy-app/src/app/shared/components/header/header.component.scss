@@ -11,21 +11,21 @@
   }
 }
 
-::ng-deep .dx-toolbar.header-toolbar .dx-toolbar-items-container .dx-toolbar-after {
-  padding: 0 40px;
+::ng-deep header .dx-toolbar.header-toolbar .dx-toolbar-items-container .dx-toolbar-after {
+  padding: 0 15px 0 40px;
 
   :host-context(.screen-x-small) & {
     padding: 0 20px;
   }
 }
 
-::ng-deep .dx-toolbar .dx-toolbar-item.menu-button {
+::ng-deep header .dx-toolbar .dx-toolbar-item.menu-button {
   width: $side-panel-min-width;
   text-align: center;
   padding: 0;
 }
 
-::ng-deep .header-title .dx-item-content {
+::ng-deep header .header-title .dx-item-content {
   padding: 0;
   margin: 0;
   font-size: 14px;
@@ -44,4 +44,25 @@
 ::ng-deep .header-logo img {
   width: 95px;
   margin-right: 15px;
+}
+
+::ng-deep .repository-select .dx-item-content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-right: 10px;
+}
+
+header {
+
+  .owner-select {
+    width: 150px;
+    margin-right: 10px;
+    background-color: $gray-200;
+  }
+
+  .repo-select {
+    width: 250px;
+    background-color: $gray-200;
+  }
 }

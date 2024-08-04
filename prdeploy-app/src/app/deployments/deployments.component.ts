@@ -1,22 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { SelectionChangedEvent } from 'devextreme/ui/select_box';
-import { first, firstValueFrom } from 'rxjs';
+import { Component, DestroyRef, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import {
   DeployEnvironment,
   DeployEnvironmentDeployGQL,
   DeployEnvironmentsAndQueuesGQL,
   DeployQueue,
-  PrDeployEnabledRepositoriesGQL,
   Repository
 } from 'src/app/shared/graphql';
-import {
-  DialogButton,
-  DialogService,
-  LoggingService,
-  NotificationService,
-  StatusDialogType
-} from 'src/app/shared/services';
+import { LoggingService } from 'src/app/shared/services';
 import { QueueListComponent } from './queue-list/queue-list.component';
 import { DxTemplateModule } from 'devextreme-angular/core';
 import { DxAccordionModule, DxSelectBoxModule } from 'devextreme-angular';
@@ -24,7 +16,8 @@ import { DxAccordionModule, DxSelectBoxModule } from 'devextreme-angular';
 import { EnvironmentListComponent } from './environment-list/environment-list.component';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { AddPrServiceDialogComponent } from './add-pr-service-dialog/add-pr-service-dialog.component';
-import { uniq } from 'lodash';
+import { NotificationManager, RepoManager } from '../shared/managers';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-deployments',
@@ -47,46 +40,29 @@ export class DeploymentsComponent implements OnInit {
   loading = true;
   selectedQueueIndex = 0;
   addServiceToPrVisible = false;
-  owners: string[];
-  repos: string[];
-  repository: Repository = {
-    owner: '',
-    repo: ''
-  };
 
-  private _repositories: Repository[] = [];
   private _selectedEnvironment: string;
 
   constructor(
+    public repoManager: RepoManager,
     private _deployEnvironmentsAndQueuesGQL: DeployEnvironmentsAndQueuesGQL,
     private _deployEnvironmentDeployGQL: DeployEnvironmentDeployGQL,
-    private _prDeployEnabledRepositoriesGQL: PrDeployEnabledRepositoriesGQL,
-    private _notificationService: NotificationService,
+    private _notificationManager: NotificationManager,
     private _loggingService: LoggingService,
-    private _route: ActivatedRoute,
-    private _router: Router
+    private _activatedRoute: ActivatedRoute,
+    private _destroyRef: DestroyRef
   ) {}
 
   ngOnInit(): void {
-    firstValueFrom(this._route.queryParamMap).then(param => {
+    firstValueFrom(this._activatedRoute.queryParamMap).then(param => {
       this._selectedEnvironment = param.get('environment');
-      this.repository.owner = param.get('owner');
-      this.repository.repo = param.get('repo');
     });
 
-    this._prDeployEnabledRepositoriesGQL
-      .fetch()
-      .pipe(first())
-      .subscribe(r => {
-        this._repositories = r.data.prDeployEnabledRepositories;
-        this.owners = uniq(this._repositories.map(r => r.owner));
-        if (!this.repository.owner || this.owners.includes(this.repository.owner.toLowerCase())) {
-          this.repository.owner = this.owners[0];
-        }
-
-        this.updateOwnerRepos();
+    this.repoManager.isValid$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(isValid => {
+      if (isValid) {
         this.update();
-      });
+      }
+    });
   }
 
   async triggerDeployments(queue: DeployQueue): Promise<void> {
@@ -95,14 +71,14 @@ export class DeploymentsComponent implements OnInit {
       const pullRequest = queue.pullRequests[0];
       await firstValueFrom(
         this._deployEnvironmentDeployGQL.mutate({
-          owner: this.repository.owner,
-          repo: this.repository.repo,
+          owner: this.repoManager.owner,
+          repo: this.repoManager.repo,
           environment: queue.environment,
           pullRequestNumber: pullRequest.number
         })
       );
 
-      this._notificationService.show(`Deploy ${queue.environment} comment added, it may take a minute to update.`);
+      this._notificationManager.show(`Deploy ${queue.environment} comment added, it may take a minute to update.`);
     } catch (error) {
       this._loggingService.error(error);
     }
@@ -114,30 +90,19 @@ export class DeploymentsComponent implements OnInit {
     try {
       const response = await firstValueFrom(
         this._deployEnvironmentsAndQueuesGQL.fetch({
-          owner: this.repository.owner,
-          repo: this.repository.repo
+          owner: this.repoManager.owner,
+          repo: this.repoManager.repo
         })
       );
       this.deployEnvironments = response.data.deployEnvironments;
       this.deployQueues = response.data.deployQueues;
       this.updateSelectedQueue();
-      this.updateNavigationUrl();
+      this.repoManager.updateQueryParams();
     } catch (error) {
       this._loggingService.error(error);
     }
 
     this.loading = false;
-  }
-
-  async selectedRepoChanged(event: SelectionChangedEvent): Promise<void> {
-    this.repository.repo = event.selectedItem;
-    await this.update();
-  }
-
-  async selectedOwnerChanged(event: SelectionChangedEvent): Promise<void> {
-    this.repository.owner = event.selectedItem;
-    this.updateOwnerRepos();
-    await this.update();
   }
 
   updateSelectedQueue(): void {
@@ -157,18 +122,7 @@ export class DeploymentsComponent implements OnInit {
   async selectedQueueChange(queue?: DeployQueue): Promise<void> {
     const environment = queue?.environment;
     this._selectedEnvironment = environment;
-    this.updateNavigationUrl();
-  }
-
-  updateNavigationUrl(): void {
-    this._router.navigate([], {
-      queryParams: {
-        environment: this._selectedEnvironment,
-        owner: this.repository.owner,
-        repo: this.repository.repo
-      },
-      replaceUrl: true
-    });
+    this.repoManager.updateQueryParams({ environment: this._selectedEnvironment });
   }
 
   showAddServiceToPr(): void {
@@ -177,12 +131,5 @@ export class DeploymentsComponent implements OnInit {
 
   repositoryDisplayExpr(item: Repository) {
     return item ? `${item.owner}/${item.repo}` : '';
-  }
-
-  private updateOwnerRepos() {
-    this.repos = this._repositories.filter(r => r.owner === this.repository.owner).map(r => r.repo);
-    if (!this.repository.repo || !this.repos.includes(this.repository.repo.toLowerCase())) {
-      this.repository.repo = this.repos ? this.repos[0] : null;
-    }
   }
 }

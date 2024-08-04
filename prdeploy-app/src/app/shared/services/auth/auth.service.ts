@@ -7,6 +7,7 @@ import { filter } from 'rxjs/operators';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private static readonly DefaultUrl = '/deployments';
+  private static readonly LoginUrl = '/login';
 
   private isAuthenticatedSubject$ = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject$.asObservable();
@@ -15,7 +16,7 @@ export class AuthService {
   public isDoneLoading$ = this.isDoneLoadingSubject$.asObservable();
 
   private navigateToLoginPage() {
-    this._router.navigateByUrl('/');
+    this._router.navigateByUrl(AuthService.LoginUrl);
   }
 
   constructor(
@@ -53,7 +54,7 @@ export class AuthService {
 
   public logout(forbidden = false) {
     this._oauthService.logOut();
-    this._router.navigate(['/'], {
+    this._router.navigate([AuthService.LoginUrl], {
       queryParams: !forbidden ? null : { forbidden }
     });
   }

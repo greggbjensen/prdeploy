@@ -12,9 +12,26 @@
         }">
       </dxi-item>
     }
-    <dxi-item location="before" cssClass="header-logo" template="logoTemplate"> </dxi-item>
+    <dxi-item location="before" cssClass="header-logo" template="logoTemplate"></dxi-item>
     <div *dxTemplate="let item of 'logoTemplate'">
       <img src="/assets/images/logo.svg" alt="Logo" />
+    </div>
+    <dxi-item location="after" cssClass="repository-select" template="repoSelectTemplate"></dxi-item>
+    <div *dxTemplate="let item of 'repoSelectTemplate'">
+      <dx-select-box
+        class="owner-select"
+        placeholder="Loading..."
+        [dataSource]="owners"
+        [value]="repoManager.owner"
+        (onSelectionChanged)="selectedOwnerChanged($event)">
+      </dx-select-box>
+      <dx-select-box
+        class="repo-select"
+        placeholder="Loading..."
+        [dataSource]="repos"
+        [value]="repoManager.repo"
+        (onSelectionChanged)="selectedRepoChanged($event)">
+      </dx-select-box>
     </div>
     <dxi-item location="after" locateInMenu="auto" menuItemTemplate="menuItem">
       <div *dxTemplate="let data of 'item'">
