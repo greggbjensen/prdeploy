@@ -24,14 +24,13 @@
   <dxo-load-panel></dxo-load-panel>
 
   <div *dxTemplate="let d of 'environmentCellTemplate'">
-    <div class="deploy-environment" [style]="{ backgroundColor: '#' + d.data.color }">
-      <a
-        class="deploy-environment"
-        [routerLink]="['/environments']"
-        [queryParams]="{ sourceEnvironment: d.data.name }"
-        >{{ d.data.name }}</a
-      >
-    </div>
+    <a
+      class="deploy-environment"
+      [style]="{ backgroundColor: '#' + d.data.color }"
+      [routerLink]="['/environments']"
+      [queryParams]="{ sourceEnvironment: d.data.name }"
+      >{{ d.data.name }}</a
+    >
   </div>
 
   <div *dxTemplate="let d of 'lockedHeaderTemplate'">
