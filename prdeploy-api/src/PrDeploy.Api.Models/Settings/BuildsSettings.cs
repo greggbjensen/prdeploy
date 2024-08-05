@@ -1,4 +1,4 @@
-namespace PrDeploy.Api.Business.Models.Settings;
+namespace PrDeploy.Api.Models.Settings;
 public class BuildsSettings
 {
     public string? CheckPattern { get; set; }    

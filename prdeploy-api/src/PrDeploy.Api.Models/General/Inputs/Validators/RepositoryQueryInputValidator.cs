@@ -2,7 +2,7 @@
 
 namespace PrDeploy.Api.Models.General.Inputs.Validators
 {
-    public class RepositoryQueryInputValidator : AbstractValidator<RepositoryQueryInput>
+    public class RepositoryQueryInputValidator : AbstractValidator<RepoQueryInput>
     {
         public RepositoryQueryInputValidator()
         {

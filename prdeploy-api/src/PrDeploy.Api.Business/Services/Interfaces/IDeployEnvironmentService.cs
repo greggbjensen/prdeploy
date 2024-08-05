@@ -18,5 +18,5 @@ public interface IDeployEnvironmentService
 
     Task<StatusResponse> FreeAsync(string owner, string repo, string environment, int pullRequestNumber);
     Task<DeployStateComparison> CompareDeployStateAsync(DeployStateComparisonInput input);
-    Task<List<Environment>> ListEnvironmentsAsync(RepositoryQueryInput input);
+    Task<List<Environment>> ListEnvironmentsAsync(RepoQueryInput input);
 }

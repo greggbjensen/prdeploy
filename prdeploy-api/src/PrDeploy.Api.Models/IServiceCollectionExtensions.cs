@@ -16,7 +16,7 @@ namespace PrDeploy.Api.Models
             services
                 .AddScoped<IValidator<AccessTokenRequest>, AccessTokenRequestValidator>()
                 .AddScoped<IValidator<DeployStateComparisonInput>, DeployStateComparisonInputValidator>()
-                .AddScoped<IValidator<RepositoryQueryInput>, RepositoryQueryInputValidator>();
+                .AddScoped<IValidator<RepoQueryInput>, RepositoryQueryInputValidator>();
 
             return services;
         }

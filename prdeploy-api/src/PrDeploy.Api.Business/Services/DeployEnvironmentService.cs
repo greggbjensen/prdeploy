@@ -15,21 +15,21 @@ public class DeployEnvironmentService : IDeployEnvironmentService
 {
     private const string DeployStatePrefix = "DEPLOY_STATE_";
     private readonly IGitHubClient _gitHubClient;
-    private readonly ISettingsService _settingsService;
+    private readonly IDeploySettingsService _deploySettingsService;
     private readonly IPullRequestService _pullRequestService;
     private readonly IRepositorySecurity _repositorySecurity;
     private readonly IParameterStore _parameterStore;
     private readonly IValidator<DeployStateComparisonInput> _deployStateComparisonInputValidator;
-    private readonly IValidator<RepositoryQueryInput> _environmentsInputValidator;
+    private readonly IValidator<RepoQueryInput> _environmentsInputValidator;
 
-    public DeployEnvironmentService(IGitHubClient gitHubClient, ISettingsService settingsService,
+    public DeployEnvironmentService(IGitHubClient gitHubClient, IDeploySettingsService deploySettingsService,
         IPullRequestService pullRequestService, IRepositorySecurity repositorySecurity,
         IParameterStore parameterStore, IValidator<DeployStateComparisonInput> deployStateComparisonInputValidator,
-        IValidator<RepositoryQueryInput> environmentsInputValidator)
+        IValidator<RepoQueryInput> environmentsInputValidator)
     {
         _environmentsInputValidator = environmentsInputValidator;
         _gitHubClient = gitHubClient;
-        _settingsService = settingsService;
+        _deploySettingsService = deploySettingsService;
         _pullRequestService = pullRequestService;
         _repositorySecurity = repositorySecurity;
         _parameterStore = parameterStore;
@@ -40,7 +40,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
     {
         var deployEnvironments = new List<DeployEnvironment>();
 
-        var repoSettings = await _settingsService.GetMergedAsync(owner, repo);
+        var repoSettings = await _deploySettingsService.GetMergedAsync(owner, repo);
         var labels = await _gitHubClient.Issue.Labels.GetAllForRepository(owner, repo);
         var environmentColors = labels.ToDictionary(l => l.Name, l => l.Color, StringComparer.OrdinalIgnoreCase);
         foreach (var environment in repoSettings.Environments!)
@@ -83,12 +83,12 @@ public class DeployEnvironmentService : IDeployEnvironmentService
         return deployEnvironments;
     }
 
-    public async Task<List<Environment>> ListEnvironmentsAsync(RepositoryQueryInput input)
+    public async Task<List<Environment>> ListEnvironmentsAsync(RepoQueryInput input)
     {
         await _environmentsInputValidator.ValidateAndThrowAsync(input);
         await _repositorySecurity.GuardAsync(input.Owner, input.Repo);
 
-        var repoSettings = await _settingsService.GetMergedAsync(input.Owner, input.Repo);
+        var repoSettings = await _deploySettingsService.GetMergedAsync(input.Owner, input.Repo);
         var environments = repoSettings.Environments!.Select(e => new Environment
         {
             Name = e.Name,

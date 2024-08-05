@@ -1,4 +1,4 @@
-namespace PrDeploy.Api.Business.Models.Settings;
+namespace PrDeploy.Api.Models.Settings;
 public class BadgeStatusColorsSettings
 {
     public string? Error { get; set; }

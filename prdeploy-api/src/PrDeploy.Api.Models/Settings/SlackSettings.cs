@@ -1,4 +1,4 @@
-namespace PrDeploy.Api.Business.Models.Settings;
+namespace PrDeploy.Api.Models.Settings;
 public class SlackSettings
 {
     public string? Token { get; set; }

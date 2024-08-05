@@ -7,7 +7,6 @@ using PrDeploy.Api.Filters;
 using PrDeploy.Api.Mutations;
 using PrDeploy.Api.Options;
 using PrDeploy.Api.Queries;
-using System.Security.Claims;
 using PrDeploy.Api.Business.Auth.Interfaces;
 
 namespace PrDeploy.Api;
@@ -21,6 +20,7 @@ public static class IServiceCollectionExtensions
             .AddAuthorization()
             .AddQueryType(q => q.Name("DeployQuery"))
             .AddType<DeployQueueQuery>()
+            .AddType<DeploySettingsQuery>()
             .AddType<DeployEnvironmentQuery>()
             .AddType<PullRequestQuery>()
             .AddType<RepositoryQuery>()
@@ -34,7 +34,7 @@ public static class IServiceCollectionExtensions
             .RegisterService<IDeployEnvironmentService>()
             .RegisterService<IPullRequestService>()
             .RegisterService<IRepositoryService>()
-            .RegisterService<ISettingsService>()
+            .RegisterService<IDeploySettingsService>()
 
             // Error handling.
             .AddErrorFilter<SanitizedErrorFilter>();

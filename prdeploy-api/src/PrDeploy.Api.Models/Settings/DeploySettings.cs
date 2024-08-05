@@ -1,5 +1,5 @@
-namespace PrDeploy.Api.Business.Models.Settings;
-public class RepoSettings
+namespace PrDeploy.Api.Models.Settings;
+public class DeploySettings
 {
     //// This has to match prdeploy-webhooks/src/models/settings/repo-settings.ts.
     public string? Owner { get; set; }

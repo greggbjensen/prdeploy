@@ -14,7 +14,7 @@ public class DeployEnvironmentQuery
         await service.ListAsync(owner, repo);
 
     [GraphQLName("environments")]
-    public async Task<List<Environment>> Environments(IDeployEnvironmentService service, RepositoryQueryInput input) =>
+    public async Task<List<Environment>> Environments(IDeployEnvironmentService service, RepoQueryInput input) =>
         await service.ListEnvironmentsAsync(input);
 
     [GraphQLName("deployStateComparison")]

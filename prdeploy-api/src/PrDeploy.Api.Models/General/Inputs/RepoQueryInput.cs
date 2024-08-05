@@ -4,7 +4,7 @@ using HotChocolate.Types;
 namespace PrDeploy.Api.Models.General.Inputs
 {
     [GraphQLDescription("Input for a general owner and repo query.")]
-    public class RepositoryQueryInput
+    public class RepoQueryInput
     {
         [GraphQLType(typeof(IdType))]
         [GraphQLDescription("Repository owner or organization.")]

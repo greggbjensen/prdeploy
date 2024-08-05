@@ -1,7 +1,7 @@
-using PrDeploy.Api.Business.Models.Settings;
 using PrDeploy.Api.Models;
 using PrDeploy.Api.Models.PullRequests;
 using PrDeploy.Api.Models.Repositories;
+using PrDeploy.Api.Models.Settings;
 
 namespace PrDeploy.Api.Business;
 public static class Map
@@ -46,7 +46,7 @@ public static class Map
             ? new Repository { Owner = source.Owner.Login, Repo = source.Name }
             : null;
 
-    public static void Merge(RepoSettings? target, RepoSettings? source)
+    public static void Merge(DeploySettings? target, DeploySettings? source)
     {
         if (source == null || target == null)
         {
