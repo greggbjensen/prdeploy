@@ -6,6 +6,7 @@ using PrDeploy.Api.Business.Stores.Interfaces;
 using PrDeploy.Api.Models.DeployEnvironments;
 using PrDeploy.Api.Models.DeployEnvironments.Inputs;
 using PrDeploy.Api.Models.General;
+using PrDeploy.Api.Models.General.Inputs;
 using Environment = PrDeploy.Api.Models.DeployEnvironments.Environment;
 
 namespace PrDeploy.Api.Business.Services;
@@ -14,21 +15,21 @@ public class DeployEnvironmentService : IDeployEnvironmentService
 {
     private const string DeployStatePrefix = "DEPLOY_STATE_";
     private readonly IGitHubClient _gitHubClient;
-    private readonly IRepoSettingsService _repoSettingsService;
+    private readonly ISettingsService _settingsService;
     private readonly IPullRequestService _pullRequestService;
     private readonly IRepositorySecurity _repositorySecurity;
     private readonly IParameterStore _parameterStore;
     private readonly IValidator<DeployStateComparisonInput> _deployStateComparisonInputValidator;
-    private readonly IValidator<EnvironmentsInput> _environmentsInputValidator;
+    private readonly IValidator<RepositoryQueryInput> _environmentsInputValidator;
 
-    public DeployEnvironmentService(IGitHubClient gitHubClient, IRepoSettingsService repoSettingsService,
+    public DeployEnvironmentService(IGitHubClient gitHubClient, ISettingsService settingsService,
         IPullRequestService pullRequestService, IRepositorySecurity repositorySecurity,
         IParameterStore parameterStore, IValidator<DeployStateComparisonInput> deployStateComparisonInputValidator,
-        IValidator<EnvironmentsInput> environmentsInputValidator)
+        IValidator<RepositoryQueryInput> environmentsInputValidator)
     {
         _environmentsInputValidator = environmentsInputValidator;
         _gitHubClient = gitHubClient;
-        _repoSettingsService = repoSettingsService;
+        _settingsService = settingsService;
         _pullRequestService = pullRequestService;
         _repositorySecurity = repositorySecurity;
         _parameterStore = parameterStore;
@@ -39,7 +40,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
     {
         var deployEnvironments = new List<DeployEnvironment>();
 
-        var repoSettings = await _repoSettingsService.GetAsync(owner, repo);
+        var repoSettings = await _settingsService.GetMergedAsync(owner, repo);
         var labels = await _gitHubClient.Issue.Labels.GetAllForRepository(owner, repo);
         var environmentColors = labels.ToDictionary(l => l.Name, l => l.Color, StringComparer.OrdinalIgnoreCase);
         foreach (var environment in repoSettings.Environments!)
@@ -82,12 +83,12 @@ public class DeployEnvironmentService : IDeployEnvironmentService
         return deployEnvironments;
     }
 
-    public async Task<List<Environment>> ListEnvironmentsAsync(EnvironmentsInput input)
+    public async Task<List<Environment>> ListEnvironmentsAsync(RepositoryQueryInput input)
     {
         await _environmentsInputValidator.ValidateAndThrowAsync(input);
         await _repositorySecurity.GuardAsync(input.Owner, input.Repo);
 
-        var repoSettings = await _repoSettingsService.GetAsync(input.Owner, input.Repo);
+        var repoSettings = await _settingsService.GetMergedAsync(input.Owner, input.Repo);
         var environments = repoSettings.Environments!.Select(e => new Environment
         {
             Name = e.Name,

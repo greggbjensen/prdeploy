@@ -2,9 +2,9 @@ using PrDeploy.Api.Business.Models.Settings;
 
 namespace PrDeploy.Api.Business.Services.Interfaces;
 
-public interface IRepoSettingsService
+public interface ISettingsService
 {
-    Task<RepoSettings> GetAsync(string owner, string repo);
+    Task<RepoSettings> GetMergedAsync(string owner, string repo);
     Task<EnvironmentSettings> GetEnvironmentAsync(string owner, string repo, string environment);
     Task<List<EnvironmentSettings>> GetQueueEnvironmentsAsync(string owner, string repo);
 

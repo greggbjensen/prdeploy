@@ -12,7 +12,7 @@ public class RepositoryQuery
         await service.ListPrDeployEnabledAsync();
 
     [GraphQLName("repositoryServices")]
-    public async Task<List<string>> RepositoryServices(IRepoSettingsService service, [ID] string owner,
+    public async Task<List<string>> RepositoryServices(ISettingsService service, [ID] string owner,
         [ID] string repo) =>
         await service.ListServicesAsync(owner, repo);
 }

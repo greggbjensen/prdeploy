@@ -11,13 +11,13 @@ namespace PrDeploy.Api.Business.Services;
 public class DeployQueueService : IDeployQueueService
 {
     private readonly IGitHubClient _gitHubClient;
-    private readonly IRepoSettingsService _repoSettingsService;
+    private readonly ISettingsService _settingsService;
     private readonly IParameterStore _parameterStore;
 
-    public DeployQueueService(IGitHubClient gitHubClient, IRepoSettingsService repoSettingsService, IParameterStore parameterStore)
+    public DeployQueueService(IGitHubClient gitHubClient, ISettingsService settingsService, IParameterStore parameterStore)
     {
         _gitHubClient = gitHubClient;
-        _repoSettingsService = repoSettingsService;
+        _settingsService = settingsService;
         _parameterStore = parameterStore;
     }
 
@@ -31,7 +31,7 @@ public class DeployQueueService : IDeployQueueService
             value = pullRequestNumbers;
         }
 
-        var environmentSettings = await _repoSettingsService.GetEnvironmentAsync(owner, repo, environment);
+        var environmentSettings = await _settingsService.GetEnvironmentAsync(owner, repo, environment);
         await SetPullNumbersAsync(owner, repo, environmentSettings.Queue!, value);
 
         var deployQueue = await GetQueueAsync(owner, repo, environmentSettings);
@@ -41,7 +41,7 @@ public class DeployQueueService : IDeployQueueService
     public async Task<List<DeployQueue>> ListAsync(string owner, string repo)
     {
         // Get queues in parallel.
-        var environmentSettings = await _repoSettingsService.GetQueueEnvironmentsAsync(owner, repo);
+        var environmentSettings = await _settingsService.GetQueueEnvironmentsAsync(owner, repo);
         var queueTasks = environmentSettings.Select(e => GetQueueAsync(owner, repo, e));
         var queues = await Task.WhenAll(queueTasks);
 
@@ -52,8 +52,8 @@ public class DeployQueueService : IDeployQueueService
         List<int> pullRequestNumbers)
     {
         // Compare against current queue and add command comment for new ones.
-        var repoSettings = await _repoSettingsService.GetAsync(owner, repo);
-        var environmentSettings = _repoSettingsService.GetEnvironment(owner, repo, environment, repoSettings);
+        var repoSettings = await _settingsService.GetMergedAsync(owner, repo);
+        var environmentSettings = _settingsService.GetEnvironment(owner, repo, environment, repoSettings);
         var currentNumbers = await GetPullNumbersAsync(owner, repo, environmentSettings.Queue);
 
         var newNumbers = pullRequestNumbers.Where(n => !currentNumbers.Contains(n)).ToArray();

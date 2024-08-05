@@ -34,7 +34,7 @@ public static class IServiceCollectionExtensions
             .RegisterService<IDeployEnvironmentService>()
             .RegisterService<IPullRequestService>()
             .RegisterService<IRepositoryService>()
-            .RegisterService<IRepoSettingsService>()
+            .RegisterService<ISettingsService>()
 
             // Error handling.
             .AddErrorFilter<SanitizedErrorFilter>();

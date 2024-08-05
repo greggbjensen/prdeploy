@@ -1,6 +1,7 @@
 using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Models.DeployEnvironments;
 using PrDeploy.Api.Models.DeployEnvironments.Inputs;
+using PrDeploy.Api.Models.General.Inputs;
 using Environment = PrDeploy.Api.Models.DeployEnvironments.Environment;
 
 namespace PrDeploy.Api.Queries;
@@ -13,7 +14,7 @@ public class DeployEnvironmentQuery
         await service.ListAsync(owner, repo);
 
     [GraphQLName("environments")]
-    public async Task<List<Environment>> Environments(IDeployEnvironmentService service, EnvironmentsInput input) =>
+    public async Task<List<Environment>> Environments(IDeployEnvironmentService service, RepositoryQueryInput input) =>
         await service.ListEnvironmentsAsync(input);
 
     [GraphQLName("deployStateComparison")]

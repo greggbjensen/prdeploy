@@ -4,6 +4,8 @@ using PrDeploy.Api.Models.Auth;
 using PrDeploy.Api.Models.Auth.Validators;
 using PrDeploy.Api.Models.DeployEnvironments.Inputs;
 using PrDeploy.Api.Models.DeployEnvironments.Inputs.Validators;
+using PrDeploy.Api.Models.General.Inputs;
+using PrDeploy.Api.Models.General.Inputs.Validators;
 
 namespace PrDeploy.Api.Models
 {
@@ -14,7 +16,7 @@ namespace PrDeploy.Api.Models
             services
                 .AddScoped<IValidator<AccessTokenRequest>, AccessTokenRequestValidator>()
                 .AddScoped<IValidator<DeployStateComparisonInput>, DeployStateComparisonInputValidator>()
-                .AddScoped<IValidator<EnvironmentsInput>, EnvironmentsInputValidator>();
+                .AddScoped<IValidator<RepositoryQueryInput>, RepositoryQueryInputValidator>();
 
             return services;
         }

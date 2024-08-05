@@ -12,16 +12,20 @@ using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
 namespace PrDeploy.Api.Business.Services;
-public class RepoSettingsService : IRepoSettingsService
+public class SettingsService : ISettingsService
 {
-    private static readonly TimeSpan RepoSettingsExperation = TimeSpan.FromMinutes(5);
+    private static readonly TimeSpan RepoSettingsExpiration = TimeSpan.FromMinutes(5);
     private static readonly Regex NormalizeEnvironmentRegex = new Regex(@"\d+$", RegexOptions.Compiled);
     private readonly IGitHubClient _gitHubClient;
     private readonly IMemoryCache _cache;
     private readonly ILogger _logger;
     private readonly PrDeployOptions _prDeployOptions;
 
-    public RepoSettingsService(IGitHubClient gitHubClient, IMemoryCache cache, IOptions<PrDeployOptions> prDeployOptions, ILogger<RepoSettingsService> logger)
+    private static readonly IDeserializer Deserializer = new DeserializerBuilder()
+        .WithNamingConvention(CamelCaseNamingConvention.Instance)
+        .Build();
+
+    public SettingsService(IGitHubClient gitHubClient, IMemoryCache cache, IOptions<PrDeployOptions> prDeployOptions, ILogger<SettingsService> logger)
     {
         _prDeployOptions = prDeployOptions.Value;
         _gitHubClient = gitHubClient;
@@ -29,7 +33,7 @@ public class RepoSettingsService : IRepoSettingsService
         _logger = logger;
     }
 
-    public async Task<RepoSettings> GetAsync(string owner, string repo)
+    public async Task<RepoSettings> GetMergedAsync(string owner, string repo)
     {
         var repoKey = GetSettingsCacheKey(owner, repo);
         var repoSettings = _cache.Get<RepoSettings>(repoKey);
@@ -38,40 +42,22 @@ public class RepoSettingsService : IRepoSettingsService
             return repoSettings;
         }
 
-        var deserializer = new DeserializerBuilder()
-            .WithNamingConvention(CamelCaseNamingConvention.Instance)
-            .Build();
-
-        // Default settings.
-        var defaultSettings = await GetGenericSettingsAsync(
-            _prDeployOptions.Owner,
-            _prDeployOptions.Repo,
-            _prDeployOptions.DefaultSettingsPath, deserializer);
-
-        // Repo specific settings, which are optional.
-        try
-        {
-            repoSettings = await GetGenericSettingsAsync(owner, repo, _prDeployOptions.RepoSettingsPath, deserializer);
-        }
-        catch
-        {
-            repoSettings = new();
-            _logger.LogWarning($"The repository {owner}/{repo} does not yet have a {_prDeployOptions.RepoSettingsPath} file.");
-        }
+        var ownerSettings = await GetOwnerSettingsAsync(_prDeployOptions.Owner);
+        repoSettings = await GetRepoSettingsAsync(owner, repo);
 
         repoSettings.Owner = owner;
         repoSettings.Repo = repo;
 
         // Override default with repo.
-        Map.Merge(repoSettings, defaultSettings);
-        _cache.Set(repoKey, repoSettings, RepoSettingsExperation);
+        Map.Merge(repoSettings, ownerSettings);
+        _cache.Set(repoKey, repoSettings, RepoSettingsExpiration);
 
         return repoSettings;
     }
 
     public async Task<EnvironmentSettings> GetEnvironmentAsync(string owner, string repo, string environment)
     {
-        var repoSettings = await GetAsync(owner, repo);
+        var repoSettings = await GetMergedAsync(owner, repo);
         var result = GetEnvironment(owner, repo, environment, repoSettings);
         return result;
     }
@@ -79,7 +65,7 @@ public class RepoSettingsService : IRepoSettingsService
     public EnvironmentSettings? GetEnvironment(string owner, string repo, string environment,
         RepoSettings repoSettings)
     {
-        var result = repoSettings.Environments
+        var result = repoSettings.Environments!
             .Find(e => string.Equals(e.Name, environment, StringComparison.OrdinalIgnoreCase));
         if (result == null)
         {
@@ -93,7 +79,7 @@ public class RepoSettingsService : IRepoSettingsService
 
     public async Task<List<EnvironmentSettings>> GetQueueEnvironmentsAsync(string owner, string repo)
     {
-        var repoSettings = await GetAsync(owner, repo);
+        var repoSettings = await GetMergedAsync(owner, repo);
         var environmentSettings = repoSettings.Environments
             .GroupBy(e => e.Queue).Select(g =>
             {
@@ -105,22 +91,48 @@ public class RepoSettingsService : IRepoSettingsService
         return environmentSettings;
     }
 
-    public string NormalizeEnvironment(string environment)
-    {
-        return NormalizeEnvironmentRegex.Replace(environment, string.Empty);
-    }
-
     public async Task<List<string>> ListServicesAsync(string owner, string repo)
     {
         List<string>? services = null;
 
-        var settings = await GetAsync(owner, repo);
+        var settings = await GetMergedAsync(owner, repo);
         if (settings.Services?.Any() == true)
         {
             services = settings.Services.Select(s => s.Name).ToList();
         }
 
         return services ?? new List<string>();
+    }
+
+    private async Task<RepoSettings> GetRepoSettingsAsync(string owner, string repo)
+    {
+        // Repo specific settings, which are optional.
+        RepoSettings repoSettings;
+        try
+        {
+            repoSettings = await GetGenericSettingsAsync(owner, repo, _prDeployOptions.RepoSettingsPath, Deserializer);
+        }
+        catch
+        {
+            repoSettings = new();
+            _logger.LogWarning($"The repository {owner}/{repo} does not yet have a {_prDeployOptions.RepoSettingsPath} file.");
+        }
+
+        return repoSettings;
+    }
+
+    private async Task<RepoSettings> GetOwnerSettingsAsync(string owner)
+    {
+        var defaultSettings = await GetGenericSettingsAsync(
+            owner,
+            _prDeployOptions.Repo,
+            _prDeployOptions.DefaultSettingsPath, Deserializer);
+        return defaultSettings;
+    }
+
+    public string NormalizeEnvironment(string environment)
+    {
+        return NormalizeEnvironmentRegex.Replace(environment, string.Empty);
     }
 
     private static string GetSettingsCacheKey(string owner, string repo) => $"{owner}:{repo}:settings";

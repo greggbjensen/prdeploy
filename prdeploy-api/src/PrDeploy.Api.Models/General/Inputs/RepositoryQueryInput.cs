@@ -1,10 +1,10 @@
 ﻿using HotChocolate;
 using HotChocolate.Types;
 
-namespace PrDeploy.Api.Models.DeployEnvironments.Inputs
+namespace PrDeploy.Api.Models.General.Inputs
 {
-    [GraphQLDescription("Input for retrieving the environment list.")]
-    public class EnvironmentsInput
+    [GraphQLDescription("Input for a general owner and repo query.")]
+    public class RepositoryQueryInput
     {
         [GraphQLType(typeof(IdType))]
         [GraphQLDescription("Repository owner or organization.")]
