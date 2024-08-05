@@ -1,5 +1,5 @@
 import { Component, DestroyRef, OnInit } from '@angular/core';
-import { DxDataGridModule, DxSelectBoxModule } from 'devextreme-angular';
+import { DxButtonModule, DxDataGridModule, DxFormModule, DxSelectBoxModule } from 'devextreme-angular';
 import { DeployStateComparison, DeployStateComparisonGQL, Environment, EnvironmentsGQL } from '../shared/graphql';
 import { RepoManager } from '../shared/managers';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -9,7 +9,7 @@ import { SelectionChangedEvent } from 'devextreme/ui/select_box';
 @Component({
   selector: 'app-environments',
   standalone: true,
-  imports: [DxSelectBoxModule, DxDataGridModule],
+  imports: [DxButtonModule, DxFormModule, DxSelectBoxModule, DxDataGridModule],
   templateUrl: './environments.component.html',
   styleUrl: './environments.component.scss'
 })
@@ -52,21 +52,7 @@ export class EnvironmentsComponent implements OnInit {
     return item ? item.name : '';
   }
 
-  private async loadEnvironments(): Promise<void> {
-    const environmentsResponse = await firstValueFrom(
-      this._environmentsGQL.fetch({
-        input: {
-          owner: this._repoManager.owner,
-          repo: this._repoManager.repo
-        }
-      })
-    );
-
-    this.environments = [...environmentsResponse.data.environments, EnvironmentsComponent.StableEnvironment];
-    this.updateStateComparison();
-  }
-
-  private async updateStateComparison(sourceChanged = true): Promise<void> {
+  async updateStateComparison(sourceChanged = true): Promise<void> {
     this.updateCompareEnvironments(sourceChanged);
 
     const stateResponse = await firstValueFrom(
@@ -81,6 +67,20 @@ export class EnvironmentsComponent implements OnInit {
     );
 
     this.stateComparison = stateResponse.data.deployStateComparison;
+  }
+
+  private async loadEnvironments(): Promise<void> {
+    const environmentsResponse = await firstValueFrom(
+      this._environmentsGQL.fetch({
+        input: {
+          owner: this._repoManager.owner,
+          repo: this._repoManager.repo
+        }
+      })
+    );
+
+    this.environments = [...environmentsResponse.data.environments, EnvironmentsComponent.StableEnvironment];
+    this.updateStateComparison();
   }
 
   private updateCompareEnvironments(sourceChanged: boolean): void {

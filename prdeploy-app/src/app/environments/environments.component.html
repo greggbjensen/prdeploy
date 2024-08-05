@@ -1,19 +1,38 @@
-<dx-select-box
-  class="source-environment-select"
-  placeholder="Loading..."
-  [dataSource]="environments"
-  [value]="sourceEnvironment"
-  [displayExpr]="environmentDisplayExpr"
-  (onSelectionChanged)="sourceEnvironmentChanged($event)">
-</dx-select-box>
-<dx-select-box
-  class="target-environment-select"
-  placeholder="Loading..."
-  [dataSource]="environments"
-  [value]="targetEnvironment"
-  [displayExpr]="environmentDisplayExpr"
-  (onSelectionChanged)="targetEnvironmentChanged($event)">
-</dx-select-box>
+<h3>
+  Environment States
+  <dx-button
+    class="environments-refesh"
+    icon="refresh"
+    hint="Refresh"
+    stylingMode="text"
+    (onClick)="updateStateComparison()"></dx-button>
+</h3>
+
+<form class="environments-form">
+  <div class="dx-field">
+    <div class="dx-field-label">Source Environment</div>
+    <dx-select-box
+      class="dx-field-value"
+      placeholder="Loading..."
+      [dataSource]="environments"
+      [value]="sourceEnvironment"
+      [displayExpr]="environmentDisplayExpr"
+      (onSelectionChanged)="sourceEnvironmentChanged($event)">
+    </dx-select-box>
+  </div>
+
+  <div class="dx-field">
+    <div class="dx-field-label">Target Environment</div>
+    <dx-select-box
+      class="dx-field-value"
+      placeholder="Loading..."
+      [dataSource]="environments"
+      [value]="targetEnvironment"
+      [displayExpr]="environmentDisplayExpr"
+      (onSelectionChanged)="targetEnvironmentChanged($event)">
+    </dx-select-box>
+  </div>
+</form>
 
 @if (stateComparison) {
   <dx-data-grid
@@ -22,5 +41,34 @@
     keyExpr="name"
     [showBorders]="true"
     [rowAlternationEnabled]="true">
+    <dxi-column dataField="name" caption="Service" alignment="center" [width]="200" sortOrder="asc"></dxi-column>
+    <dxi-column [caption]="sourceEnvironment.name">
+      <dxi-column
+        dataField="sourceRunId"
+        caption="Run ID"
+        [width]="200"
+        alignment="left"
+        cellTemplate="runIdTemplate"></dxi-column>
+      <dxi-column dataField="sourceVersion" caption="Version" cellTemplate="versionTemplate"></dxi-column>
+    </dxi-column>
+    <dxi-column [caption]="targetEnvironment.name">
+      <dxi-column
+        dataField="targetRunId"
+        caption="Run ID"
+        [width]="200"
+        alignment="left"
+        cellTemplate="runIdTemplate"></dxi-column>
+      <dxi-column dataField="targetVersion" caption="Version" cellTemplate="versionTemplate"></dxi-column>
+    </dxi-column>
+    <div
+      *dxTemplate="let d of 'runIdTemplate'"
+      [class]="{ 'value-different': d.data.sourceRunId !== d.data.targetRunId }">
+      {{ d.value ? d.value : '' }}
+    </div>
+    <div
+      *dxTemplate="let d of 'versionTemplate'"
+      [class]="{ 'value-different': d.data.sourceVersion !== d.data.targetVersion }">
+      {{ d.value }}
+    </div>
   </dx-data-grid>
 }
