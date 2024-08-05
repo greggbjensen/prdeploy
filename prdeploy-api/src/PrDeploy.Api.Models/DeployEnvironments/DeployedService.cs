@@ -3,7 +3,7 @@
     public class DeployedService
     {
         public string Name { get; set; } = string.Empty;
-        public int RunId { get; set; }
+        public long RunId { get; set; }
         public string Version { get; set; } = string.Empty;
     }
 }

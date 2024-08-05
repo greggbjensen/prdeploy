@@ -11,13 +11,13 @@ namespace PrDeploy.Api.Models.DeployEnvironments
         public string Name { get; set; } = string.Empty;
 
         [GraphQLDescription("Workflow run ID of the source service.")]
-        public int SourceRunId { get; set; }
+        public long SourceRunId { get; set; }
 
         [GraphQLDescription("Version of the source service.")]
         public string SourceVersion { get; set; } = string.Empty;
 
         [GraphQLDescription("Workflow run ID of the target service.")]
-        public int TargetRunId { get; set; }
+        public long TargetRunId { get; set; }
 
         [GraphQLDescription("Version of the target service.")]
         public string TargetVersion { get; set; } = string.Empty;

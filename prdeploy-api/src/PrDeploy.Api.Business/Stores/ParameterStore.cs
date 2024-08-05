@@ -59,6 +59,10 @@ namespace PrDeploy.Api.Business.Stores
             {
                 // Do nothing.
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception {ex}");
+            }
 
             return value!;
         }
