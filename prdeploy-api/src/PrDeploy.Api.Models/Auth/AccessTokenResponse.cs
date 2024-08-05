@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace PrDeploy.Api.Models
+namespace PrDeploy.Api.Models.Auth
 {
     public class AccessTokenResponse
     {

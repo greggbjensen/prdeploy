@@ -1,4 +1,4 @@
-namespace PrDeploy.Api.Models;
+namespace PrDeploy.Api.Models.Repositories;
 public class Repository
 {
     public string Owner { get; set; } = string.Empty;

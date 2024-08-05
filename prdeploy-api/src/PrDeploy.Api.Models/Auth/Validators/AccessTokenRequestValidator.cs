@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace PrDeploy.Api.Models.Validation
+namespace PrDeploy.Api.Models.Auth.Validators
 {
     public class AccessTokenRequestValidator : AbstractValidator<AccessTokenRequest>
     {

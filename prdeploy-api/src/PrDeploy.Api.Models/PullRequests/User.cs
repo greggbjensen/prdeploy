@@ -1,4 +1,4 @@
-namespace PrDeploy.Api.Models;
+namespace PrDeploy.Api.Models.PullRequests;
 public class DeployUser
 {
     public string? Name { get; set; }

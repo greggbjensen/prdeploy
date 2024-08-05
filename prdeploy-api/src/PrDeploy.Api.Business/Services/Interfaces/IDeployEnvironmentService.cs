@@ -1,4 +1,8 @@
 using PrDeploy.Api.Models;
+using PrDeploy.Api.Models.DeployEnvironments;
+using PrDeploy.Api.Models.DeployEnvironments.Inputs;
+using PrDeploy.Api.Models.General;
+using Environment = PrDeploy.Api.Models.DeployEnvironments.Environment;
 
 namespace PrDeploy.Api.Business.Services.Interfaces;
 
@@ -12,4 +16,6 @@ public interface IDeployEnvironmentService
         int count);
 
     Task<StatusResponse> FreeAsync(string owner, string repo, string environment, int pullRequestNumber);
+    Task<DeployStateComparison> CompareDeployStateAsync(DeployStateComparisonInput input);
+    Task<List<Environment>> ListEnvironmentsAsync(EnvironmentsInput input);
 }

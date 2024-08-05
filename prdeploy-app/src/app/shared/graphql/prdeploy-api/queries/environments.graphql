@@ -1,0 +1,6 @@
+query Environments($input: EnvironmentsInput!) {
+  environments(input: $input) {
+    name
+    url
+  }
+}

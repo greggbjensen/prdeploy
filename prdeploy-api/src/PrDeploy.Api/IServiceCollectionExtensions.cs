@@ -8,6 +8,7 @@ using PrDeploy.Api.Mutations;
 using PrDeploy.Api.Options;
 using PrDeploy.Api.Queries;
 using System.Security.Claims;
+using PrDeploy.Api.Business.Auth.Interfaces;
 
 namespace PrDeploy.Api;
 
@@ -41,21 +42,16 @@ public static class IServiceCollectionExtensions
         services
             .AddHttpResponseFormatter<SanitizedHttpResponseFormatter>()
             .AddHttpContextAccessor()
+            .AddScoped<ISecurityContext, SecurityContext>()
             .AddScoped<IGitHubClient>(s =>
             {
-                var httpContext = s.GetRequiredService<IHttpContextAccessor>().HttpContext;
-                if (httpContext == null)
+                var userToken = s.GetRequiredService<ISecurityContext>().UserToken;
+                if (string.IsNullOrEmpty(userToken))
                 {
-                    throw new BadHttpRequestException("No http context.");
+                    throw new BadHttpRequestException("No token in security context.");
                 }
 
-                var tokenClaim = httpContext.User.FindFirst("Token");
-                if (tokenClaim == null)
-                {
-                    throw new BadHttpRequestException("No token in user context.");
-                }
-
-                var credentials = new Credentials(tokenClaim.Value);
+                var credentials = new Credentials(userToken);
                 return new GitHubClient(
                     new ProductHeaderValue("prdeploy"), new InMemoryCredentialStore(credentials));
             })

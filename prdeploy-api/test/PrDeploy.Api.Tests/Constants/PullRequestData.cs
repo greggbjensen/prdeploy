@@ -1,4 +1,5 @@
 using PrDeploy.Api.Models;
+using PrDeploy.Api.Models.PullRequests;
 
 namespace PrDeploy.Api.Tests.Constants;
 

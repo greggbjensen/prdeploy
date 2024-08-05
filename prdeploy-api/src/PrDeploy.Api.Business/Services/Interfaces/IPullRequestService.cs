@@ -1,4 +1,6 @@
 using PrDeploy.Api.Models;
+using PrDeploy.Api.Models.General;
+using PrDeploy.Api.Models.PullRequests;
 
 namespace PrDeploy.Api.Business.Services.Interfaces;
 

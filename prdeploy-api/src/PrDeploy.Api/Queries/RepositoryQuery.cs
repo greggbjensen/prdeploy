@@ -1,5 +1,6 @@
 using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Models;
+using PrDeploy.Api.Models.Repositories;
 
 namespace PrDeploy.Api.Queries;
 

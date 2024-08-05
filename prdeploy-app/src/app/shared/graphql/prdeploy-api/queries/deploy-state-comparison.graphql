@@ -1,0 +1,15 @@
+query DeployStateComparison($input: DeployStateComparisonInput!) {
+  deployStateComparison(input: $input) {
+    sourceEnvironment
+    sourcePullNumber
+    targetEnvironment
+    targetPullNumber
+    serviceComparisons {
+      name
+      sourceRunId
+      sourceVersion
+      targetRunId
+      targetVersion
+    }
+  }
+}

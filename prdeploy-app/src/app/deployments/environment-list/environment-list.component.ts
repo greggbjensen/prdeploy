@@ -11,6 +11,7 @@ import { DxiColumnModule, DxoLoadPanelModule } from 'devextreme-angular/ui/neste
 import { DeployRollbackDialogComponent } from '../deploy-rollback-dialog/deploy-rollback-dialog.component';
 import { DeployForceDialogComponent } from '../deploy-force-dialog/deploy-force-dialog.component';
 import { NotificationManager, RepoManager } from 'src/app/shared/managers';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-environment-list',
@@ -26,7 +27,8 @@ import { NotificationManager, RepoManager } from 'src/app/shared/managers';
     PullRequestPopoverComponent,
     DeployForceDialogComponent,
     DeployRollbackDialogComponent,
-    DatePipe
+    DatePipe,
+    RouterModule
   ]
 })
 export class EnvironmentListComponent implements AfterViewInit {
