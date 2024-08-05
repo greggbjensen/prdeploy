@@ -1,8 +1,11 @@
 ﻿using System.Net;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Octokit;
+using PrDeploy.Api.Business.Auth.Interfaces;
 using PrDeploy.Api.Business.Security.Interfaces;
 
 namespace PrDeploy.Api.Business.Security
@@ -13,10 +16,12 @@ namespace PrDeploy.Api.Business.Security
         private readonly IGitHubClient _client;
         private readonly ILogger<RepositorySecurity> _logger;
         private readonly IMemoryCache _cache;
+        private readonly ISecurityContext _securityContext;
 
-        public RepositorySecurity(IGitHubClient client, ILogger<RepositorySecurity> logger, IMemoryCache cache)
+        public RepositorySecurity(IGitHubClient client, ILogger<RepositorySecurity> logger, IMemoryCache cache, ISecurityContext securityContext)
         {
             _cache = cache;
+            _securityContext = securityContext;
             _client = client;
             _logger = logger;
         }
@@ -32,13 +37,14 @@ namespace PrDeploy.Api.Business.Security
 
         public async Task<bool> HasAccessAsync(string owner, string repo)
         {
-            var tokenClaim = ClaimsPrincipal.Current?.FindFirst("Token");
-            if (tokenClaim == null || string.IsNullOrEmpty(tokenClaim.Value))
+            var userToken = _securityContext.UserToken;
+            if (string.IsNullOrEmpty(userToken))
             {
                 return false;
             }
 
-            var authKey = $"{owner}/{repo}/{tokenClaim.Value}";
+            var userHash = HashToken(userToken);
+            var authKey = $"{owner}/{repo}/{userHash}";
             var hasAccess = _cache.TryGetValue(authKey, out object _);
             if (hasAccess)
             {
@@ -60,6 +66,26 @@ namespace PrDeploy.Api.Business.Security
             }
 
             return hasAccess;
+        }
+
+        private static string HashToken(string userToken)
+        {
+            var md5 = MD5.Create();
+            var hashBytes = md5.ComputeHash(Encoding.Default.GetBytes(userToken));
+            var hash = ByteArrayToString(hashBytes);
+            return hash;
+        }
+
+        //// SourceRef: https://learn.microsoft.com/en-us/troubleshoot/developer/visualstudio/csharp/language-compilers/compute-hash-values
+        private static string ByteArrayToString(byte[] arrInput)
+        {
+            int i;
+            StringBuilder sOutput = new StringBuilder(arrInput.Length);
+            for (i = 0; i < arrInput.Length; i++)
+            {
+                sOutput.Append(arrInput[i].ToString("X2"));
+            }
+            return sOutput.ToString();
         }
 
         private static void ThrowAccessDenied()

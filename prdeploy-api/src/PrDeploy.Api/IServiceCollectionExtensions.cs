@@ -8,6 +8,7 @@ using PrDeploy.Api.Mutations;
 using PrDeploy.Api.Options;
 using PrDeploy.Api.Queries;
 using System.Security.Claims;
+using PrDeploy.Api.Business.Auth.Interfaces;
 
 namespace PrDeploy.Api;
 
@@ -41,6 +42,7 @@ public static class IServiceCollectionExtensions
         services
             .AddHttpResponseFormatter<SanitizedHttpResponseFormatter>()
             .AddHttpContextAccessor()
+            .AddScoped<ISecurityContext, SecurityContext>()
             .AddScoped<IGitHubClient>(s =>
             {
                 var httpContext = s.GetRequiredService<IHttpContextAccessor>().HttpContext;
