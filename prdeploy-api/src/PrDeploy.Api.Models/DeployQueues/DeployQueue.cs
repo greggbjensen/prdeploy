@@ -1,7 +1,8 @@
 using HotChocolate;
 using HotChocolate.Types;
+using PrDeploy.Api.Models.PullRequests;
 
-namespace PrDeploy.Api.Models
+namespace PrDeploy.Api.Models.DeployQueues
 {
     [GraphQLDescription("Queue for a specific environment of pull requests waiting to be deployed.")]
     public class DeployQueue

@@ -2,7 +2,8 @@ using LinqKit;
 using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Models;
 using Octokit;
-using PullRequest = PrDeploy.Api.Models.PullRequest;
+using PrDeploy.Api.Models.General;
+using PullRequest = PrDeploy.Api.Models.PullRequests.PullRequest;
 
 namespace PrDeploy.Api.Business.Services;
 

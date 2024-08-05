@@ -1,4 +1,4 @@
-﻿namespace PrDeploy.Api.Models
+﻿namespace PrDeploy.Api.Models.Auth
 {
     //// SourceRef: https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps
     public class AccessTokenRequest

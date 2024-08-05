@@ -1,7 +1,7 @@
 using HotChocolate;
 using HotChocolate.Types;
 
-namespace PrDeploy.Api.Models;
+namespace PrDeploy.Api.Models.PullRequests;
 
 [GraphQLDescription("Pull request to deploy and merge code.")]
 public class PullRequest

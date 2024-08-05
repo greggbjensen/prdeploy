@@ -1,24 +1,24 @@
-using Amazon.SimpleSystemsManagement;
-using Amazon.SimpleSystemsManagement.Model;
 using PrDeploy.Api.Business.Models.Settings;
 using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Models;
 using Octokit;
-using YamlDotNet.Serialization;
+using PrDeploy.Api.Business.Stores.Interfaces;
+using PrDeploy.Api.Models.DeployQueues;
+using PrDeploy.Api.Models.General;
 
 namespace PrDeploy.Api.Business.Services;
 
 public class DeployQueueService : IDeployQueueService
 {
     private readonly IGitHubClient _gitHubClient;
-    private readonly IAmazonSimpleSystemsManagement _amazonSsm;
     private readonly IRepoSettingsService _repoSettingsService;
+    private readonly IParameterStore _parameterStore;
 
-    public DeployQueueService(IGitHubClient gitHubClient, IAmazonSimpleSystemsManagement amazonSsm, IRepoSettingsService repoSettingsService)
+    public DeployQueueService(IGitHubClient gitHubClient, IRepoSettingsService repoSettingsService, IParameterStore parameterStore)
     {
         _gitHubClient = gitHubClient;
-        _amazonSsm = amazonSsm;
         _repoSettingsService = repoSettingsService;
+        _parameterStore = parameterStore;
     }
 
     public async Task<DeployQueue> UpdateAsync(string owner, string repo, string environment,
@@ -32,7 +32,7 @@ public class DeployQueueService : IDeployQueueService
         }
 
         var environmentSettings = await _repoSettingsService.GetEnvironmentAsync(owner, repo, environment);
-        await SetPullNumbersAsync(owner, repo, environmentSettings.Queue, value);
+        await SetPullNumbersAsync(owner, repo, environmentSettings.Queue!, value);
 
         var deployQueue = await GetQueueAsync(owner, repo, environmentSettings);
         return deployQueue;
@@ -47,9 +47,6 @@ public class DeployQueueService : IDeployQueueService
 
         return queues.ToList();
     }
-
-    private static string GetParameterName(string owner, string repo, string? queueName) =>
-        $"/prdeploy/{owner}/{repo}/{queueName}";
 
     private async Task AddCommentForNewEntriesAsync(string owner, string repo, string environment,
         List<int> pullRequestNumbers)
@@ -92,44 +89,23 @@ public class DeployQueueService : IDeployQueueService
         return queue;
     }
 
-    private async Task<List<int>> GetPullNumbersAsync(string owner, string repo, string? queueName)
+    private async Task<List<int>> GetPullNumbersAsync(string owner, string repo, string queueName)
     {
-        List<int>? pullNumbers = null;
+        var pullNumbers = await _parameterStore.GetAsync<List<int>?>(owner, repo, queueName);
 
-        var request = new GetParameterRequest
+        // Set a default empty value if not found.
+        if (pullNumbers == null)
         {
-            Name = GetParameterName(owner, repo, queueName),
-        };
-        try
-        {
-            var parameterResponse = await _amazonSsm.GetParameterAsync(request);
-            var value = parameterResponse.Parameter.Value;
-            var deserializer = new DeserializerBuilder().Build();
-            pullNumbers = deserializer.Deserialize<List<int>>(value);
-        }
-        catch (ParameterNotFoundException)
-        {
-            // Set a default empty value if not found.
             pullNumbers = new List<int>();
             await SetPullNumbersAsync(owner, repo, queueName, pullNumbers);
         }
 
-        return pullNumbers ?? new List<int>();
+        return pullNumbers;
     }
 
-    private async Task SetPullNumbersAsync(string owner, string repo, string? queueName, List<int> value)
+    private async Task SetPullNumbersAsync(string owner, string repo, string queueName, List<int> value)
     {
-        var serializer = new SerializerBuilder().Build();
-        var yaml = serializer.Serialize(value);
-        var request = new PutParameterRequest
-        {
-            Name = GetParameterName(owner, repo, queueName),
-            Type = ParameterType.String,
-            Value = yaml,
-            Overwrite = true,
-            Tier = ParameterTier.Standard
-        };
-        await _amazonSsm.PutParameterAsync(request);
+        await _parameterStore.SetAsync(owner, repo, queueName, value);
     }
 
     private async Task<StatusResponse> AddPullRequestCommand(string owner, string repo, int pullRequestNumber,

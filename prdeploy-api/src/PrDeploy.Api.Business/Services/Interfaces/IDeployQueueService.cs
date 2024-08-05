@@ -1,4 +1,5 @@
 using PrDeploy.Api.Models;
+using PrDeploy.Api.Models.DeployQueues;
 
 namespace PrDeploy.Api.Business.Services.Interfaces;
 

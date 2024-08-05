@@ -1,7 +1,8 @@
 using HotChocolate;
 using HotChocolate.Types;
+using PrDeploy.Api.Models.PullRequests;
 
-namespace PrDeploy.Api.Models
+namespace PrDeploy.Api.Models.DeployEnvironments
 {
     [GraphQLDescription("Environment and current pull request information.")]
     public class DeployEnvironment

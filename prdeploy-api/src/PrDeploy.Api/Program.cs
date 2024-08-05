@@ -10,6 +10,7 @@ using PrDeploy.Api.Builder;
 using PrDeploy.Api.Business.Clients.Interfaces;
 using PrDeploy.Api.Configuration;
 using PrDeploy.Api.Models;
+using PrDeploy.Api.Models.Auth;
 using Serilog;
 using Serilog.Formatting.Json;
 using Path = System.IO.Path;

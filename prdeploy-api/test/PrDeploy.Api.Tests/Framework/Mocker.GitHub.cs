@@ -1,6 +1,7 @@
 using PrDeploy.Api.Models;
 using PrDeploy.Api.Tests.Constants;
 using Octokit;
+using PrDeploy.Api.Models.PullRequests;
 using PullRequest = Octokit.PullRequest;
 
 namespace PrDeploy.Api.Tests.Framework;
@@ -9,7 +10,7 @@ public static partial class Mocker
     public static readonly PullRequestData PullRequests = new();
     public static readonly DeployUserData DeployUsers = new();
 
-    public static Issue Issue(Models.PullRequest pullRequest, DeployUser user) =>
+    public static Issue Issue(Models.PullRequests.PullRequest pullRequest, DeployUser user) =>
         new(null,
             pullRequest.Url,
             null,
@@ -41,7 +42,7 @@ public static partial class Mocker
             null,
             null);
 
-    public static PullRequest PullRequest(Models.PullRequest pullRequest, DeployUser user) =>
+    public static PullRequest PullRequest(Models.PullRequests.PullRequest pullRequest, DeployUser user) =>
         new (81234,
             null,
             null,

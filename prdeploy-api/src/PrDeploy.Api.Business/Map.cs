@@ -1,5 +1,7 @@
 using PrDeploy.Api.Business.Models.Settings;
 using PrDeploy.Api.Models;
+using PrDeploy.Api.Models.PullRequests;
+using PrDeploy.Api.Models.Repositories;
 
 namespace PrDeploy.Api.Business;
 public static class Map

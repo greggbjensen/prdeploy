@@ -1,5 +1,3 @@
-using System.Reflection;
-using System.Security.Claims;
 using Amazon;
 using Amazon.Runtime;
 using PrDeploy.Api.Business.Options;
@@ -8,15 +6,14 @@ using PrDeploy.Api.Business.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Octokit.Internal;
-using Octokit;
 using Amazon.SimpleSystemsManagement;
 using PrDeploy.Api.Business.Clients.Interfaces;
 using PrDeploy.Api.Business.Clients;
 using RestSharp;
-using HotChocolate;
 using PrDeploy.Api.Business.Security;
 using PrDeploy.Api.Business.Security.Interfaces;
+using PrDeploy.Api.Business.Stores;
+using PrDeploy.Api.Business.Stores.Interfaces;
 
 namespace PrDeploy.Api.Business;
 
@@ -46,6 +43,9 @@ public static class IServiceCollectionExtensions
             })
 
             .AddMemoryCache()
+
+            // Stores.
+            .AddScoped<IParameterStore, ParameterStore>()
 
             // Services.
             .AddScoped<IDeployQueueService, DeployQueueService>()

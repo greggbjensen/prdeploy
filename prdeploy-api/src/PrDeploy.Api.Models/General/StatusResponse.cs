@@ -1,6 +1,6 @@
 using HotChocolate;
 
-namespace PrDeploy.Api.Models;
+namespace PrDeploy.Api.Models.General;
 
 [GraphQLDescription("Simple status response from a mutation.")]
 public class StatusResponse

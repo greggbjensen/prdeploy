@@ -1,4 +1,5 @@
 ﻿using PrDeploy.Api.Models;
+using PrDeploy.Api.Models.Auth;
 
 namespace PrDeploy.Api.Business.Clients.Interfaces;
 

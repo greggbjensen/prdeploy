@@ -1,7 +1,7 @@
 using HotChocolate;
 using HotChocolate.Types;
 
-namespace PrDeploy.Api.Models;
+namespace PrDeploy.Api.Models.DeployEnvironments;
 
 [GraphQLDescription("Deployment environment such as Dev, Stage, and Prod.")]
 public class Environment

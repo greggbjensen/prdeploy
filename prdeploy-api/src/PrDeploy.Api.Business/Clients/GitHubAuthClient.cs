@@ -4,6 +4,7 @@ using Octokit;
 using PrDeploy.Api.Business.Clients.Interfaces;
 using PrDeploy.Api.Business.Options;
 using PrDeploy.Api.Models;
+using PrDeploy.Api.Models.Auth;
 using RestSharp;
 
 namespace PrDeploy.Api.Business.Clients

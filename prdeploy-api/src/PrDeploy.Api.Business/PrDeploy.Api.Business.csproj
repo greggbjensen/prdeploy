@@ -21,4 +21,8 @@
     <ProjectReference Include="..\PrDeploy.Api.Models\PrDeploy.Api.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Stores\Interfaces\" />
+  </ItemGroup>
+
 </Project>
