@@ -8,7 +8,7 @@ public class Environment
 {
     [GraphQLType(typeof(IdType))]
     [GraphQLDescription("Readable name of the environment.")]
-    public string? Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     [GraphQLDescription("Full URL of the environment.")]
     public string? Url { get; set; }

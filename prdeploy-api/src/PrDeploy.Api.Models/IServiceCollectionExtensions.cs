@@ -11,8 +11,10 @@ namespace PrDeploy.Api.Models
     {
         public static IServiceCollection AddPrDeployApiModelValidation(this IServiceCollection services)
         {
-            services.AddScoped<IValidator<AccessTokenRequest>, AccessTokenRequestValidator>();
-            services.AddScoped<IValidator<DeployStateComparisonInput>, DeployStateComparisonInputValidator>();
+            services
+                .AddScoped<IValidator<AccessTokenRequest>, AccessTokenRequestValidator>()
+                .AddScoped<IValidator<DeployStateComparisonInput>, DeployStateComparisonInputValidator>()
+                .AddScoped<IValidator<EnvironmentsInput>, EnvironmentsInputValidator>();
 
             return services;
         }

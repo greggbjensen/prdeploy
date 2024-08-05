@@ -1,13 +1,12 @@
-using Amazon.SimpleSystemsManagement;
 using FluentValidation;
 using PrDeploy.Api.Business.Services.Interfaces;
-using PrDeploy.Api.Models;
 using Octokit;
 using PrDeploy.Api.Business.Security.Interfaces;
 using PrDeploy.Api.Business.Stores.Interfaces;
 using PrDeploy.Api.Models.DeployEnvironments;
 using PrDeploy.Api.Models.DeployEnvironments.Inputs;
 using PrDeploy.Api.Models.General;
+using Environment = PrDeploy.Api.Models.DeployEnvironments.Environment;
 
 namespace PrDeploy.Api.Business.Services;
 
@@ -20,11 +19,14 @@ public class DeployEnvironmentService : IDeployEnvironmentService
     private readonly IRepositorySecurity _repositorySecurity;
     private readonly IParameterStore _parameterStore;
     private readonly IValidator<DeployStateComparisonInput> _deployStateComparisonInputValidator;
+    private readonly IValidator<EnvironmentsInput> _environmentsInputValidator;
 
     public DeployEnvironmentService(IGitHubClient gitHubClient, IRepoSettingsService repoSettingsService,
         IPullRequestService pullRequestService, IRepositorySecurity repositorySecurity,
-        IParameterStore parameterStore, IValidator<DeployStateComparisonInput> deployStateComparisonInputValidator)
+        IParameterStore parameterStore, IValidator<DeployStateComparisonInput> deployStateComparisonInputValidator,
+        IValidator<EnvironmentsInput> environmentsInputValidator)
     {
+        _environmentsInputValidator = environmentsInputValidator;
         _gitHubClient = gitHubClient;
         _repoSettingsService = repoSettingsService;
         _pullRequestService = pullRequestService;
@@ -80,6 +82,21 @@ public class DeployEnvironmentService : IDeployEnvironmentService
         return deployEnvironments;
     }
 
+    public async Task<List<Environment>> ListEnvironmentsAsync(EnvironmentsInput input)
+    {
+        await _environmentsInputValidator.ValidateAndThrowAsync(input);
+        await _repositorySecurity.GuardAsync(input.Owner, input.Repo);
+
+        var repoSettings = await _repoSettingsService.GetAsync(input.Owner, input.Repo);
+        var environments = repoSettings.Environments!.Select(e => new Environment
+        {
+            Name = e.Name,
+            Url = e.Url
+        }).ToList();
+
+        return environments;
+    }
+
     public async Task<StatusResponse> FreeAsync(string owner, string repo, string environment, int pullRequestNumber)
     {
         return await _pullRequestService.AddCommentCommandAsync(owner, repo, pullRequestNumber, $"/free {environment.ToLower()}");
@@ -109,8 +126,8 @@ public class DeployEnvironmentService : IDeployEnvironmentService
 
         var sourceStateName = DeployStatePrefix + input.SourceEnvironment.ToUpperInvariant();
         var targetStateName = DeployStatePrefix + input.TargetEnvironment.ToUpperInvariant();
-        var sourceState = await _parameterStore.GetAsync<DeployState>(input.Owner, input.Repo, sourceStateName);
-        var targetState = await _parameterStore.GetAsync<DeployState>(input.Owner, input.Repo, targetStateName);
+        var sourceState = await GetOrCreateDeployState(input.Owner, input.Repo, sourceStateName);
+        var targetState = await GetOrCreateDeployState(input.Owner, input.Repo, targetStateName);
 
         var targetServiceLookUp = targetState.Services.ToDictionary(s => s.Name, s => s, 
             StringComparer.OrdinalIgnoreCase);
@@ -157,5 +174,21 @@ public class DeployEnvironmentService : IDeployEnvironmentService
         };
 
         return stateComparison;
+    }
+
+    private async Task<DeployState> GetOrCreateDeployState(string owner, string repo, string name)
+    {
+        var state = await _parameterStore.GetAsync<DeployState?>(owner, repo, name);
+        if (state == null)
+        {
+            state = new DeployState
+            {
+                PullNumber = 0,
+                Services = new List<DeployedService>()
+            };
+            await _parameterStore.SetAsync(owner, repo, name, state);
+        }
+
+        return state;
     }
 }

@@ -17,6 +17,8 @@ export type Scalars = {
   Float: { input: number; output: number; }
   /** The `DateTime` scalar represents an ISO-8601 compliant date time type. */
   DateTime: { input: any; output: any; }
+  /** The `Long` scalar type represents non-fractional signed whole 64-bit numeric values. Long can represent values between -(2^63) and 2^63 - 1. */
+  Long: { input: any; output: any; }
 };
 
 export enum ApplyPolicy {
@@ -96,6 +98,8 @@ export type DeployQuery = {
   __typename?: 'DeployQuery';
   deployEnvironments: Array<DeployEnvironment>;
   deployQueues: Array<DeployQueue>;
+  deployStateComparison: DeployStateComparison;
+  environments: Array<Environment>;
   openPullRequests: Array<PullRequest>;
   prDeployEnabledRepositories: Array<Repository>;
   repositoryServices: Array<Scalars['String']['output']>;
@@ -111,6 +115,16 @@ export type DeployQueryDeployEnvironmentsArgs = {
 export type DeployQueryDeployQueuesArgs = {
   owner: Scalars['ID']['input'];
   repo: Scalars['ID']['input'];
+};
+
+
+export type DeployQueryDeployStateComparisonArgs = {
+  input: DeployStateComparisonInput;
+};
+
+
+export type DeployQueryEnvironmentsArgs = {
+  input: EnvironmentsInput;
 };
 
 
@@ -135,10 +149,53 @@ export type DeployQueue = {
   pullRequests: Array<PullRequest>;
 };
 
+export type DeployStateComparison = {
+  __typename?: 'DeployStateComparison';
+  /** List of service comparisons. */
+  serviceComparisons: Array<ServiceComparison>;
+  /** Source environment to compare. */
+  sourceEnvironment?: Maybe<Scalars['ID']['output']>;
+  /** Source environment current pull request number. */
+  sourcePullNumber: Scalars['Int']['output'];
+  /** Target environment to compare to, Prod unless source is Prod, then Stable. */
+  targetEnvironment?: Maybe<Scalars['ID']['output']>;
+  /** Target environment current pull request number. */
+  targetPullNumber: Scalars['Int']['output'];
+};
+
+/** Input for retrieving the deploy state comparison. */
+export type DeployStateComparisonInput = {
+  /** Repository owner or organization. */
+  owner?: InputMaybe<Scalars['ID']['input']>;
+  /** Repository being accessed within the owner. */
+  repo?: InputMaybe<Scalars['ID']['input']>;
+  /** Environment to compare from. */
+  sourceEnvironment?: InputMaybe<Scalars['ID']['input']>;
+  /** Environment to compare to. */
+  targetEnvironment?: InputMaybe<Scalars['ID']['input']>;
+};
+
 export type DeployUser = {
   __typename?: 'DeployUser';
   name?: Maybe<Scalars['String']['output']>;
   username?: Maybe<Scalars['String']['output']>;
+};
+
+/** Deployment environment such as Dev, Stage, and Prod. */
+export type Environment = {
+  __typename?: 'Environment';
+  /** Readable name of the environment. */
+  name?: Maybe<Scalars['ID']['output']>;
+  /** Full URL of the environment. */
+  url?: Maybe<Scalars['String']['output']>;
+};
+
+/** Input for retrieving the environment list. */
+export type EnvironmentsInput = {
+  /** Repository owner or organization. */
+  owner?: InputMaybe<Scalars['ID']['input']>;
+  /** Repository being accessed within the owner. */
+  repo?: InputMaybe<Scalars['ID']['input']>;
 };
 
 /** Pull request to deploy and merge code. */
@@ -162,6 +219,21 @@ export type Repository = {
   __typename?: 'Repository';
   owner: Scalars['String']['output'];
   repo: Scalars['String']['output'];
+};
+
+/** Comparison of services between a source and target environment. */
+export type ServiceComparison = {
+  __typename?: 'ServiceComparison';
+  /** Name of the service deployed. */
+  name?: Maybe<Scalars['ID']['output']>;
+  /** Workflow run ID of the source service. */
+  sourceRunId: Scalars['Long']['output'];
+  /** Version of the source service. */
+  sourceVersion: Scalars['String']['output'];
+  /** Workflow run ID of the target service. */
+  targetRunId: Scalars['Long']['output'];
+  /** Version of the target service. */
+  targetVersion: Scalars['String']['output'];
 };
 
 /** Simple status response from a mutation. */
@@ -231,6 +303,20 @@ export type DeployEnvironmentsAndQueuesQueryVariables = Exact<{
 
 
 export type DeployEnvironmentsAndQueuesQuery = { __typename?: 'DeployQuery', deployEnvironments: Array<{ __typename?: 'DeployEnvironment', name?: string | null, url?: string | null, color?: string | null, locked: boolean, pullRequest?: { __typename?: 'PullRequest', number?: string | null, title?: string | null, body?: string | null, url?: string | null, updatedAt?: any | null, user?: { __typename?: 'DeployUser', name?: string | null, username?: string | null } | null } | null }>, deployQueues: Array<{ __typename?: 'DeployQueue', environment?: string | null, pullRequests: Array<{ __typename?: 'PullRequest', number?: string | null, title?: string | null, body?: string | null, url?: string | null, updatedAt?: any | null, user?: { __typename?: 'DeployUser', name?: string | null, username?: string | null } | null }> }> };
+
+export type DeployStateComparisonQueryVariables = Exact<{
+  input: DeployStateComparisonInput;
+}>;
+
+
+export type DeployStateComparisonQuery = { __typename?: 'DeployQuery', deployStateComparison: { __typename?: 'DeployStateComparison', sourceEnvironment?: string | null, sourcePullNumber: number, targetEnvironment?: string | null, targetPullNumber: number, serviceComparisons: Array<{ __typename?: 'ServiceComparison', name?: string | null, sourceRunId: any, sourceVersion: string, targetRunId: any, targetVersion: string }> } };
+
+export type EnvironmentsQueryVariables = Exact<{
+  input: EnvironmentsInput;
+}>;
+
+
+export type EnvironmentsQuery = { __typename?: 'DeployQuery', environments: Array<{ __typename?: 'Environment', name?: string | null, url?: string | null }> };
 
 export type OpenPullRequestsQueryVariables = Exact<{
   owner: Scalars['ID']['input'];
@@ -413,6 +499,53 @@ export const DeployEnvironmentsAndQueuesDocument = gql`
   })
   export class DeployEnvironmentsAndQueuesGQL extends Apollo.Query<DeployEnvironmentsAndQueuesQuery, DeployEnvironmentsAndQueuesQueryVariables> {
     override document = DeployEnvironmentsAndQueuesDocument;
+    override client = 'deploy';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const DeployStateComparisonDocument = gql`
+    query DeployStateComparison($input: DeployStateComparisonInput!) {
+  deployStateComparison(input: $input) {
+    sourceEnvironment
+    sourcePullNumber
+    targetEnvironment
+    targetPullNumber
+    serviceComparisons {
+      name
+      sourceRunId
+      sourceVersion
+      targetRunId
+      targetVersion
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class DeployStateComparisonGQL extends Apollo.Query<DeployStateComparisonQuery, DeployStateComparisonQueryVariables> {
+    override document = DeployStateComparisonDocument;
+    override client = 'deploy';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const EnvironmentsDocument = gql`
+    query Environments($input: EnvironmentsInput!) {
+  environments(input: $input) {
+    name
+    url
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class EnvironmentsGQL extends Apollo.Query<EnvironmentsQuery, EnvironmentsQueryVariables> {
+    override document = EnvironmentsDocument;
     override client = 'deploy';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

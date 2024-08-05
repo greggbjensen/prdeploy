@@ -2,24 +2,20 @@ import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
-import { AuthService } from '../services';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RepoManager {
-  private _repoSubject$ = new BehaviorSubject('');
-  private _ownerSubject$ = new BehaviorSubject('');
-  private _isValidSubject$ = new BehaviorSubject(false);
+  private _repo = '';
+  private _owner = '';
 
-  repo$ = this._repoSubject$.asObservable();
-  owner$ = this._ownerSubject$.asObservable();
-  isValid$ = this._isValidSubject$.asObservable();
+  private _valueChangedSubject$ = new BehaviorSubject(false);
+  valueChanged$ = this._valueChangedSubject$.asObservable();
 
   constructor(
     private _router: Router,
     private _activatedRoute: ActivatedRoute,
-    private _authService: AuthService,
     private location: Location
   ) {
     firstValueFrom(this._activatedRoute.queryParamMap).then(param => {
@@ -29,30 +25,30 @@ export class RepoManager {
   }
 
   get isValid(): boolean {
-    return this._isValidSubject$.value;
+    return this._valueChangedSubject$.value;
   }
 
   get repo(): string {
-    return this._repoSubject$.value;
+    return this._repo;
   }
 
   set repo(value: string) {
     if (value !== this.repo) {
-      this._repoSubject$.next(value);
+      this._repo = value;
       this.updateQueryParams();
-      this.updateIsValid();
+      this.updateValueChanged();
     }
   }
 
   get owner(): string {
-    return this._ownerSubject$.value;
+    return this._owner;
   }
 
   set owner(value: string) {
     if (value !== this.owner) {
-      this._ownerSubject$.next(value);
+      this._owner = value;
       this.updateQueryParams();
-      this.updateIsValid();
+      this.updateValueChanged();
     }
   }
 
@@ -73,10 +69,10 @@ export class RepoManager {
     });
   }
 
-  private updateIsValid() {
+  private updateValueChanged() {
     const isValid = !!this.repo && !!this.owner;
-    if (isValid != this.isValid) {
-      this._isValidSubject$.next(isValid);
+    if (isValid) {
+      this._valueChangedSubject$.next(true);
     }
   }
 }

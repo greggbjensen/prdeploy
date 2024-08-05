@@ -58,11 +58,7 @@ export class DeploymentsComponent implements OnInit {
       this._selectedEnvironment = param.get('environment');
     });
 
-    this.repoManager.isValid$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(isValid => {
-      if (isValid) {
-        this.update();
-      }
-    });
+    this.repoManager.valueChanged$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => this.update());
   }
 
   async triggerDeployments(queue: DeployQueue): Promise<void> {

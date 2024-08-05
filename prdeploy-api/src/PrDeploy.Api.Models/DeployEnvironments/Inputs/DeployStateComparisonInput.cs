@@ -3,6 +3,7 @@ using HotChocolate.Types;
 
 namespace PrDeploy.Api.Models.DeployEnvironments.Inputs
 {
+    [GraphQLDescription("Input for retrieving the deploy state comparison.")]
     public class DeployStateComparisonInput
     {
         [GraphQLType(typeof(IdType))]
