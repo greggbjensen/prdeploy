@@ -2,7 +2,7 @@
 {
     public class OwnerRepoValue<T>
     {
-        public T? OwnerValue { get; set; }
-        public T? RepoValue { get; set; }
+        public T? Owner { get; set; }
+        public T? Repo { get; set; }
     }
 }

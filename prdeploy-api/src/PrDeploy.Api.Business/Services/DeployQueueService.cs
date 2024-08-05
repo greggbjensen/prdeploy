@@ -1,6 +1,7 @@
 using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Models;
 using Octokit;
+using PrDeploy.Api.Business.Mapping;
 using PrDeploy.Api.Business.Stores.Interfaces;
 using PrDeploy.Api.Models.DeployQueues;
 using PrDeploy.Api.Models.General;

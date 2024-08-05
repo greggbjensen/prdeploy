@@ -7,6 +7,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Octokit;
+using PrDeploy.Api.Business.Mapping;
 using PrDeploy.Api.Models.General.Inputs;
 using PrDeploy.Api.Models.Settings;
 using PrDeploy.Api.Models.Settings.Compare;
@@ -38,22 +39,11 @@ public class DeploySettingsService : IDeploySettingsService
 
     public async Task<AllSettings> GetAllAsync(RepoQueryInput input)
     {
-        var compare = new DeploySettingsCompare();
-        var allSettings = new AllSettings
-        {
-            DeploySettingsCompare = compare
-        };
-
         // Add validation.
         var ownerSettings = await GetOwnerSettingsAsync(_prDeployOptions.Owner);
         var repoSettings = await GetRepoSettingsAsync(input.Owner, input.Repo);
 
-        compare.DeployWorkflow = new OwnerRepoValue<string>
-        {
-            OwnerValue = ownerSettings.DeployWorkflow,
-            RepoValue = repoSettings.DeployWorkflow
-        };
-
+        var allSettings = Map.AllSettings(ownerSettings, repoSettings);
         return allSettings;
     }
 

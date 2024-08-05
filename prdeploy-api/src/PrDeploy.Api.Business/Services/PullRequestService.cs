@@ -2,6 +2,7 @@ using LinqKit;
 using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Models;
 using Octokit;
+using PrDeploy.Api.Business.Mapping;
 using PrDeploy.Api.Models.General;
 using PullRequest = PrDeploy.Api.Models.PullRequests.PullRequest;
 
