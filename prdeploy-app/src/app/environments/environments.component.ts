@@ -5,6 +5,7 @@ import { RepoManager } from '../shared/managers';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
 import { SelectionChangedEvent } from 'devextreme/ui/select_box';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-environments',
@@ -22,6 +23,7 @@ export class EnvironmentsComponent implements OnInit {
     private _deployStateComparisonGQL: DeployStateComparisonGQL,
     private _environmentsGQL: EnvironmentsGQL,
     private _repoManager: RepoManager,
+    private _route: ActivatedRoute,
     private _destroyRef: DestroyRef
   ) {}
 
@@ -30,7 +32,12 @@ export class EnvironmentsComponent implements OnInit {
   sourceEnvironment: Environment;
   targetEnvironment: Environment;
 
+  private _initialSourceEnvironment = '';
+
   ngOnInit(): void {
+    firstValueFrom(this._route.queryParamMap).then(param => {
+      this._initialSourceEnvironment = param.get('sourceEnvironment');
+    });
     this._repoManager.valueChanged$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => this.loadEnvironments());
   }
 
@@ -90,7 +97,13 @@ export class EnvironmentsComponent implements OnInit {
 
     // Get first environment if none is selected.
     if (!this.sourceEnvironment) {
-      this.sourceEnvironment = this.environments.find(e => e.name !== EnvironmentsComponent.StableEnvironment.name);
+      this.sourceEnvironment = this._initialSourceEnvironment
+        ? this.environments.find(e => e.name === this._initialSourceEnvironment)
+        : this.environments.find(e => e.name !== EnvironmentsComponent.StableEnvironment.name);
+
+      if (!this.sourceEnvironment) {
+        this.sourceEnvironment = this.environments.find(e => e.name !== EnvironmentsComponent.StableEnvironment.name);
+      }
     }
 
     // Get stable environment if none is selected.
