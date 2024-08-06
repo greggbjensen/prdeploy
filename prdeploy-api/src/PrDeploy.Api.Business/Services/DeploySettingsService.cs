@@ -126,10 +126,10 @@ public class DeploySettingsService : IDeploySettingsService
         {
             deploySettings = await GetGenericSettingsAsync(owner, repo, _prDeployOptions.RepoSettingsPath, Deserializer);
         }
-        catch
+        catch (Exception ex)
         {
             deploySettings = new();
-            _logger.LogWarning($"The repository {owner}/{repo} does not yet have a {_prDeployOptions.RepoSettingsPath} file.");
+            _logger.LogWarning(ex, $"The repository {owner}/{repo} does not yet have a {_prDeployOptions.RepoSettingsPath} file.");
         }
 
         return deploySettings;

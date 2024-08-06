@@ -17,7 +17,7 @@ type DeployQuery {
 type DeployMutation {
   deployQueueUpdate(input: DeployQueueUpdateInput!): DeployQueue!
   deployEnvironmentFree(input: PullDeployInput!): StatusResponse!
-  deployEnvironmentDeploy(input: ForceDeployInput!): StatusResponse!
+  deployEnvironmentDeploy(input: EnvironmentDeployInput!): StatusResponse!
   deployEnvironmentRollback(input: RollbackInput!): StatusResponse!
   pullRequestAddServices(input: PullRequestAddServicesInput!): StatusResponse!
 }
@@ -159,7 +159,7 @@ input PullDeployInput {
   repo: ID
 }
 
-input ForceDeployInput {
+input EnvironmentDeployInput {
   force: Boolean!
   retain: Boolean!
   environment: ID!

@@ -1,34 +1,39 @@
-deployWorkflow: combined-deploy.yaml
-environments:                         
-  - name: dev                         
-    queue: 'DEV_PR_QUEUE'             
-    url: 'https://dev.myorg.com'
+# All settings showing defaults, only override what needs to change.
+
+deployWorkflow: combined-deploy.yaml # Worklow to trigger for deployments to an environment.
+environments: # List of environments to be used.
+  - name: dev # Name of the environment in GitHub Environments.
+    queue: 'DEV_PR_QUEUE' # GitHub repository variable for queue, if there are multiple of the same evironment use the same queue.
+    url: 'https://dev.myorg.com' # URL of the environment the deployment is for.
   - name: stage
     queue: 'STAGE_PR_QUEUE'
     url: 'https://stage.myorg.com'
-    requireBranchUpToDate: true       
+    requireBranchUpToDate: true # Indicates if the feature branch must be up to date with main to deploy.
   - name: prod
     queue: 'PROD_PR_QUEUE'
     url: 'https://www.myorg.com'
     requireBranchUpToDate: true
-    requireApproval: true             
-defaultEnvironment: dev               
-releaseEnvironment: prod              
-addJiraIssues: true                   
-settingsBranch: 'main'                
+    excludeFromRollback: [] # Services that should not be rolled back in this environment, such as databases.
+    automationTest: # Automation tests to run and report on as part of the pull request deploy.
+      enabled: false # Whether or not automation test run should be triggered.
+      workflow: test-automation-run.yml
+      inputs:
+        environment: ${environment} # Inputs can be tokens bound from pull request deploy, or hard coded values.
+        pull_number: ${pull_number}
+        run_name: ${run_name}
+defaultEnvironment: dev # Default for /deploy only.
+releaseEnvironment: prod # Environment that is used for final releases.
+jira:
+  addIssuesEnabled: false # If JIRA issues should be read from branch and added to PR.
+settingsBranch: 'main' # Branch to retrieve repo settings from.
 builds:
-    checkPattern: 'Build helm chart'            
-    workflowPattern: '/([^/]+?)-build.ya?ml'    
+  checkPattern: 'Build helm chart' # Pattern to know which checks are builds.
+  workflowPattern: '/([^/]+?)-build.ya?ml' # Pattern to know how to extract the build name from the workflow file.
 slack:
-  notificationsEnabled: true          
-  channels:
-    deploy:  ''                       
-    release: ''                       
+  notificationsEnabled: false # Whether or not to send Slack notifications.
 badge:
-  statusColors:                       
+  statusColors: # Colors for status badges posted to pull request comments.
     error: 'ed6b6b'
     warn: 'edbe3e'
     success: '29a329'
     info: '52a9ff'
-
-

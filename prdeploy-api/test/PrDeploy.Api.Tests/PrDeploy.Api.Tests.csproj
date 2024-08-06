@@ -62,12 +62,12 @@
     </None>
   </ItemGroup>
 
-  <Target Name="CleanGraphQL" BeforeTargets="Rebuild">
-    <Message Text="Cleaning GraphQL generated files." Importance="High"/>
+  <Target Name="CleanGraphQL" BeforeTargets="CoreClean">
+    <Message Text="Cleaning GraphQL generated files $(IntermediateOutputPath)berry\**\*." Importance="High" />
     <ItemGroup>
-      <GraphQLGeneratedFiles Include="$(IntermediateOutputPath)**\net6.0\berry\*" />
+      <GraphQLGeneratedFiles Include="$(IntermediateOutputPath)berry\**\*" />
     </ItemGroup>
-    <Delete Files='@(GraphQLGeneratedFiles)'/>
+    <Delete Files="@(GraphQLGeneratedFiles)" />
   </Target>
 
 </Project>

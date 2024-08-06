@@ -86,13 +86,14 @@ public class DeployEnvironmentMutationTest : DeployApiTest
     [Fact]
     public async Task DeployEnvironmentDeploy_AddsDeployCommentForEnvironmentToPullRequest()
     {
-        var result = await Client.DeployEnvironmentDeploy.ExecuteAsync(new ForceDeployInput
+        var result = await Client.DeployEnvironmentDeploy.ExecuteAsync(new EnvironmentDeployInput
         {
             Owner = GitHub.Owner, 
             Repo = GitHub.Repo,
             Environment = "Stage",
             PullNumber = DeployPullNumber,
-            Force = false
+            Force = false,
+            Retain = false
         });
         result.ValidateNoErrors();
         Assert.NotNull(result.Data);
@@ -105,13 +106,14 @@ public class DeployEnvironmentMutationTest : DeployApiTest
     [Fact]
     public async Task DeployEnvironmentDeploy_AddsForceDeployCommentForEnvironmentToPullRequest()
     {
-        var result = await Client.DeployEnvironmentDeploy.ExecuteAsync(new ForceDeployInput
+        var result = await Client.DeployEnvironmentDeploy.ExecuteAsync(new EnvironmentDeployInput
         {
             Owner = GitHub.Owner, 
             Repo = GitHub.Repo,
             Environment = "Stage", 
             PullNumber = ForceDeployPullNumber,
-            Force = true
+            Force = true,
+            Retain = false
         });
         result.ValidateNoErrors();
         Assert.NotNull(result.Data);

@@ -105,7 +105,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
             $"/free {input.Environment.ToLower()}");
     }
 
-    public async Task<StatusResponse> DeployAsync(ForceDeployInput input)
+    public async Task<StatusResponse> DeployAsync(EnvironmentDeployInput input)
     {
         var retainString = input.Retain ? " --retain" : string.Empty;
         var forceString = input.Force ? " --force" : string.Empty;

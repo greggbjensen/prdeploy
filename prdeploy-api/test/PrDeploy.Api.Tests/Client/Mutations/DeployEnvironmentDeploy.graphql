@@ -1,4 +1,4 @@
-mutation DeployEnvironmentDeploy($input: ForceDeployInput!) {
+mutation DeployEnvironmentDeploy($input: EnvironmentDeployInput!) {
   deployEnvironmentDeploy(input: $input) {
     success
   }

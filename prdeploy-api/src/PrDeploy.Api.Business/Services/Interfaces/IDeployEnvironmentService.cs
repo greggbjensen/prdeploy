@@ -10,7 +10,7 @@ namespace PrDeploy.Api.Business.Services.Interfaces;
 public interface IDeployEnvironmentService
 {
     Task<List<DeployEnvironment>> ListAsync(RepoQueryInput input);
-    Task<StatusResponse> DeployAsync(ForceDeployInput input);
+    Task<StatusResponse> DeployAsync(EnvironmentDeployInput input);
 
     Task<StatusResponse> RollbackAsync(RollbackInput input);
 

@@ -11,7 +11,7 @@ public class DeployEnvironmentMutation
     public async Task<StatusResponse> Free(IDeployEnvironmentService service, PullDeployInput input) => await service.FreeAsync(input);
 
     [GraphQLName("deployEnvironmentDeploy")]
-    public async Task<StatusResponse> ForceDeploy(IDeployEnvironmentService service, ForceDeployInput input) => await service.DeployAsync(input);
+    public async Task<StatusResponse> ForceDeploy(IDeployEnvironmentService service, EnvironmentDeployInput input) => await service.DeployAsync(input);
 
     [GraphQLName("deployEnvironmentRollback")]
     public async Task<StatusResponse> Rollback(IDeployEnvironmentService service, RollbackInput input) => await service.RollbackAsync(input);
