@@ -1,5 +1,6 @@
 using PrDeploy.Api.Models.General.Inputs;
 using PrDeploy.Api.Models.Settings;
+using PrDeploy.Api.Models.Settings.Compare;
 
 namespace PrDeploy.Api.Business.Services.Interfaces;
 
@@ -13,5 +14,5 @@ public interface IDeploySettingsService
         DeploySettings deploySettings);
 
     Task<List<string>> ListServicesAsync(string owner, string repo);
-    Task<AllSettings> GetAllAsync(RepoQueryInput input);
+    Task<DeploySettingsCompare> GetAllAsync(RepoQueryInput input);
 }

@@ -37,14 +37,14 @@ public class DeploySettingsService : IDeploySettingsService
         _logger = logger;
     }
 
-    public async Task<AllSettings> GetAllAsync(RepoQueryInput input)
+    public async Task<DeploySettingsCompare> GetAllAsync(RepoQueryInput input)
     {
         // Add validation.
         var ownerSettings = await GetOwnerSettingsAsync(_prDeployOptions.Owner);
         var repoSettings = await GetRepoSettingsAsync(input.Owner, input.Repo);
 
-        var allSettings = Map.AllSettings(ownerSettings, repoSettings);
-        return allSettings;
+        var settingsCompare = Map.Compare(ownerSettings, repoSettings);
+        return settingsCompare;
     }
 
     public async Task<DeploySettings> GetMergedAsync(string owner, string repo)
