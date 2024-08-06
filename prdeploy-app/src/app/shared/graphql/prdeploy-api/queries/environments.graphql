@@ -1,4 +1,4 @@
-query Environments($input: EnvironmentsInput!) {
+query Environments($input: RepoQueryInput!) {
   environments(input: $input) {
     name
     url
