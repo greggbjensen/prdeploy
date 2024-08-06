@@ -1,3 +1,5 @@
+using Amazon.Auth.AccessControlPolicy;
+using Amazon.SimpleSystemsManagement.Model;
 using PrDeploy.Api.Models.Settings;
 using PrDeploy.Api.Models.Settings.Compare;
 
@@ -48,6 +50,13 @@ public static partial class Map
             Repo = repo.DefaultBranch
         };
 
+        // We do not try to merge lists, they override.
+        compare.Environments = new()
+        {
+            Owner = owner.Environments,
+            Repo = repo.Environments
+        };
+
         // TODO GBJ: Change to PrdeployPortalUrl.
         compare.DeployManagerSiteUrl = new()
         {
@@ -55,6 +64,25 @@ public static partial class Map
             Repo = repo.DeployManagerSiteUrl
         };
 
+        compare.Builds = Compare(owner.Builds, repo.Builds);
+
         return allSettings;
+    }
+
+    public static BuildsSettingsCompare Compare(BuildsSettings? owner, BuildsSettings? repo)
+    {
+        return new()
+        {
+            CheckPattern = new()
+            {
+                Owner = owner?.CheckPattern,
+                Repo = repo?.CheckPattern
+            },
+            WorkflowPattern = new()
+            {
+                Owner = owner?.WorkflowPattern,
+                Repo = repo?.WorkflowPattern
+            }
+        };
     }
 }
