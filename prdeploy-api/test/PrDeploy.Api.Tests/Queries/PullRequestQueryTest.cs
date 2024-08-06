@@ -2,6 +2,7 @@ using PrDeploy.Api.Tests.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Octokit;
+using PrDeploy.Api.Tests.Client;
 using PrDeploy.Api.Tests.Framework.Client;
 
 namespace PrDeploy.Api.Tests.Queries;
@@ -36,7 +37,12 @@ public class PullRequestQueryTest : DeployApiTest
     [Fact]
     public async Task OpenPullRequests_SearchesOpenPullRequests()
     {
-        var result = await Client.OpenPullRequests.ExecuteAsync(GitHub.Owner, GitHub.Repo, "listings");
+        var result = await Client.OpenPullRequests.ExecuteAsync(new OpenPullRequestInput
+        {
+            Owner = GitHub.Owner, 
+            Repo =  GitHub.Repo,
+            Search = "listings"
+        });
         result.ValidateNoErrors();
         Assert.NotNull(result.Data);
         Assert.NotNull(result.Data.OpenPullRequests);

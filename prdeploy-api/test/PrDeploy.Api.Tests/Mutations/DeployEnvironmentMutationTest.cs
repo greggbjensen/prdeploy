@@ -2,7 +2,7 @@ using PrDeploy.Api.Tests.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Octokit;
-using StrawberryShake;
+using PrDeploy.Api.Tests.Client;
 using PrDeploy.Api.Tests.Framework.Client;
 
 namespace PrDeploy.Api.Tests.Mutations;
@@ -68,9 +68,13 @@ public class DeployEnvironmentMutationTest : DeployApiTest
     [Fact]
     public async Task DeployEnvironmentFree_AddsFreeCommentToPullRequest()
     {
-        var result = await Client.DeployEnvironmentFree.ExecuteAsync(
-            GitHub.Owner, GitHub.Repo,
-            "Dev", FreePullNumber.ToString());
+        var result = await Client.DeployEnvironmentFree.ExecuteAsync(new PullDeployInput
+        {
+            Owner = GitHub.Owner,
+            Repo = GitHub.Repo,
+            Environment = "Dev",
+            PullRequestNumber = FreePullNumber
+        });
         result.ValidateNoErrors();
         Assert.NotNull(result.Data);
         Assert.NotNull(result.Data.DeployEnvironmentFree);
@@ -82,9 +86,14 @@ public class DeployEnvironmentMutationTest : DeployApiTest
     [Fact]
     public async Task DeployEnvironmentDeploy_AddsDeployCommentForEnvironmentToPullRequest()
     {
-        var result = await Client.DeployEnvironmentDeploy.ExecuteAsync(
-            GitHub.Owner, GitHub.Repo,
-            "Stage", DeployPullNumber.ToString(), false);
+        var result = await Client.DeployEnvironmentDeploy.ExecuteAsync(new ForceDeployInput
+        {
+            Owner = GitHub.Owner, 
+            Repo = GitHub.Repo,
+            Environment = "Stage",
+            PullRequestNumber = DeployPullNumber,
+            Force = false
+        });
         result.ValidateNoErrors();
         Assert.NotNull(result.Data);
         Assert.NotNull(result.Data.DeployEnvironmentDeploy);
@@ -96,9 +105,14 @@ public class DeployEnvironmentMutationTest : DeployApiTest
     [Fact]
     public async Task DeployEnvironmentDeploy_AddsForceDeployCommentForEnvironmentToPullRequest()
     {
-        var result = await Client.DeployEnvironmentDeploy.ExecuteAsync(
-            GitHub.Owner, GitHub.Repo,
-            "Stage", ForceDeployPullNumber.ToString(), true);
+        var result = await Client.DeployEnvironmentDeploy.ExecuteAsync(new ForceDeployInput
+        {
+            Owner = GitHub.Owner, 
+            Repo = GitHub.Repo,
+            Environment = "Stage", 
+            PullRequestNumber = ForceDeployPullNumber,
+            Force = true
+        });
         result.ValidateNoErrors();
         Assert.NotNull(result.Data);
         Assert.NotNull(result.Data.DeployEnvironmentDeploy);
@@ -110,9 +124,14 @@ public class DeployEnvironmentMutationTest : DeployApiTest
     [Fact]
     public async Task DeployEnvironmentRollback_AddsRollbackCommentToPullRequest()
     {
-        var result = await Client.DeployEnvironmentRollback.ExecuteAsync(
-            GitHub.Owner, GitHub.Repo,
-            "Stage", RollbackDeployPullNumber.ToString(), 1);
+        var result = await Client.DeployEnvironmentRollback.ExecuteAsync(new RollbackInput
+        {
+            Owner = GitHub.Owner,
+            Repo = GitHub.Repo,
+            Environment = "Stage",
+            PullRequestNumber = RollbackDeployPullNumber, 
+            Count = 1
+        });
         result.ValidateNoErrors();
         Assert.NotNull(result.Data);
         Assert.NotNull(result.Data.DeployEnvironmentRollback);

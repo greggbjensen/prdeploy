@@ -1,5 +1,5 @@
-query DeployEnvironments($owner: ID!, $repo: ID!) {
-    deployEnvironments(owner: $owner, repo: $repo) {
+query DeployEnvironments($input: RepoQueryInput!) {
+    deployEnvironments(input: $input) {
       name
       url
       color

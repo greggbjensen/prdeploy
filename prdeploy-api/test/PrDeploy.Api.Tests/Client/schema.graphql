@@ -4,36 +4,28 @@
 }
 
 type DeployQuery {
-  deployQueues(owner: ID! repo: ID!): [DeployQueue!]!
-  deployEnvironments(owner: ID! repo: ID!): [DeployEnvironment!]!
-  openPullRequests(owner: ID! repo: ID! search: String): [PullRequest!]!
+  deployQueues(input: RepoQueryInput!): [DeployQueue!]!
+  deploySettingsCompare(input: RepoQueryInput!): DeploySettingsCompare!
+  deployEnvironments(input: RepoQueryInput!): [DeployEnvironment!]!
+  environments(input: RepoQueryInput!): [Environment!]!
+  deployStateComparison(input: DeployStateComparisonInput!): DeployStateComparison!
+  openPullRequests(input: OpenPullRequestInput!): [PullRequest!]!
   prDeployEnabledRepositories: [Repository!]!
-  repositoryServices(owner: ID! repo: ID!): [String!]!
+  repositoryServices(input: RepoQueryInput!): [String!]!
 }
 
 type DeployMutation {
-  deployQueueUpdate(owner: ID! repo: ID! environment: ID! pullRequestNumbers: [ID!]): DeployQueue!
-  deployEnvironmentFree(owner: ID! repo: ID! environment: ID! pullRequestNumber: ID!): StatusResponse!
-  deployEnvironmentDeploy(owner: ID! repo: ID! environment: ID! pullRequestNumber: ID! force: Boolean! = false retain: Boolean! = false): StatusResponse!
-  deployEnvironmentRollback(owner: ID! repo: ID! environment: ID! pullRequestNumber: ID! count: Int! = 0): StatusResponse!
-  pullRequestAddServices(owner: ID! repo: ID! pullRequestNumber: ID! services: [ID!]!): StatusResponse!
+  deployQueueUpdate(input: DeployQueueUpdateInput!): DeployQueue!
+  deployEnvironmentFree(input: PullDeployInput!): StatusResponse!
+  deployEnvironmentDeploy(input: ForceDeployInput!): StatusResponse!
+  deployEnvironmentRollback(input: RollbackInput!): StatusResponse!
+  pullRequestAddServices(input: PullRequestAddServicesInput!): StatusResponse!
 }
 
 enum ApplyPolicy {
   BEFORE_RESOLVER
   AFTER_RESOLVER
   VALIDATION
-}
-
-"Simple status response from a mutation."
-type StatusResponse {
-  "True if the mutation was successful; otherwise false."
-  success: Boolean!
-}
-
-type Repository {
-  owner: String!
-  repo: String!
 }
 
 "Pull request to deploy and merge code."
@@ -52,6 +44,39 @@ type PullRequest {
   user: DeployUser
 }
 
+"Input for retrieving the deploy state comparison."
+input DeployStateComparisonInput {
+  "Repository owner or organization."
+  owner: ID
+  "Repository being accessed within the owner."
+  repo: ID
+  "Environment to compare from."
+  sourceEnvironment: ID
+  "Environment to compare to."
+  targetEnvironment: ID
+}
+
+type DeployStateComparison {
+  "Source environment to compare."
+  sourceEnvironment: ID
+  "Source environment current pull request number."
+  sourcePullNumber: Int!
+  "Target environment to compare to, Prod unless source is Prod, then Stable."
+  targetEnvironment: ID
+  "Target environment current pull request number."
+  targetPullNumber: Int!
+  "List of service comparisons."
+  serviceComparisons: [ServiceComparison!]!
+}
+
+"Deployment environment such as Dev, Stage, and Prod."
+type Environment {
+  "Readable name of the environment."
+  name: ID
+  "Full URL of the environment."
+  url: String
+}
+
 "Environment and current pull request information."
 type DeployEnvironment {
   "Environment that pull request is deployed to."
@@ -66,12 +91,155 @@ type DeployEnvironment {
   locked: Boolean!
 }
 
+type DeploySettingsCompare {
+  deployWorkflow: OwnerRepoValueOfString!
+  environments: OwnerRepoValueOfListOfEnvironmentSettings!
+  services: OwnerRepoValueOfListOfServiceSettings!
+  defaultEnvironment: OwnerRepoValueOfString!
+  releaseEnvironment: OwnerRepoValueOfString!
+  defaultBranch: OwnerRepoValueOfString!
+  settingsBranch: OwnerRepoValueOfString!
+  jira: JiraSettingsCompare!
+  builds: BuildsSettingsCompare!
+  slack: SlackSettingsCompare!
+  deployManagerSiteUrl: OwnerRepoValueOfString!
+  badge: BadgeSettingsCompare!
+}
+
+"Input for a general owner and repo query."
+input RepoQueryInput {
+  "Repository owner or organization."
+  owner: ID
+  "Repository being accessed within the owner."
+  repo: ID
+}
+
 "Queue for a specific environment of pull requests waiting to be deployed."
 type DeployQueue {
   "Environment to list the queue for."
   environment: ID
   "Ordered list of pull requests waiting in queue."
   pullRequests: [PullRequest!]!
+}
+
+input OpenPullRequestInput {
+  search: String
+  "Repository owner or organization."
+  owner: ID
+  "Repository being accessed within the owner."
+  repo: ID
+}
+
+type Repository {
+  owner: String!
+  repo: String!
+}
+
+input DeployQueueUpdateInput {
+  environment: ID!
+  pullRequestNumbers: [Int!]
+  "Repository owner or organization."
+  owner: ID
+  "Repository being accessed within the owner."
+  repo: ID
+}
+
+"Simple status response from a mutation."
+type StatusResponse {
+  "True if the mutation was successful; otherwise false."
+  success: Boolean!
+}
+
+input PullDeployInput {
+  environment: ID!
+  pullRequestNumber: Int!
+  "Repository owner or organization."
+  owner: ID
+  "Repository being accessed within the owner."
+  repo: ID
+}
+
+input ForceDeployInput {
+  force: Boolean!
+  retain: Boolean!
+  environment: ID!
+  pullRequestNumber: Int!
+  "Repository owner or organization."
+  owner: ID
+  "Repository being accessed within the owner."
+  repo: ID
+}
+
+input RollbackInput {
+  count: Int!
+  environment: ID!
+  pullRequestNumber: Int!
+  "Repository owner or organization."
+  owner: ID
+  "Repository being accessed within the owner."
+  repo: ID
+}
+
+input PullRequestAddServicesInput {
+  pullRequestNumber: Int!
+  services: [String!]!
+  "Repository owner or organization."
+  owner: ID
+  "Repository being accessed within the owner."
+  repo: ID
+}
+
+type BadgeSettingsCompare {
+  statusColors: BadgeStatusColorsSettingsCompare!
+}
+
+type SlackSettingsCompare {
+  token: OwnerRepoValueOfString!
+  emailDomain: OwnerRepoValueOfString!
+  emailAliases: OwnerRepoDictionary!
+  webhooks: SlackWebHooksSettingsCompare!
+  notificationsEnabled: OwnerRepoValueOfNullableOfBoolean!
+}
+
+type BuildsSettingsCompare {
+  checkPattern: OwnerRepoValueOfString!
+  workflowPattern: OwnerRepoValueOfString!
+}
+
+type JiraSettingsCompare {
+  addIssuesEnabled: OwnerRepoValueOfNullableOfBoolean!
+  host: OwnerRepoValueOfString!
+  username: OwnerRepoValueOfString!
+  password: OwnerRepoValueOfString!
+}
+
+type OwnerRepoValueOfListOfServiceSettings {
+  owner: [ServiceSettings]
+  repo: [ServiceSettings]
+}
+
+type OwnerRepoValueOfListOfEnvironmentSettings {
+  owner: [EnvironmentSettings]
+  repo: [EnvironmentSettings]
+}
+
+type OwnerRepoValueOfString {
+  owner: String
+  repo: String
+}
+
+"Comparison of services between a source and target environment."
+type ServiceComparison {
+  "Name of the service deployed."
+  name: ID
+  "Workflow run ID of the source service."
+  sourceRunId: Long!
+  "Version of the source service."
+  sourceVersion: String!
+  "Workflow run ID of the target service."
+  targetRunId: Long!
+  "Version of the target service."
+  targetVersion: String!
 }
 
 type DeployUser {
@@ -81,3 +249,52 @@ type DeployUser {
 
 "The `DateTime` scalar represents an ISO-8601 compliant date time type."
 scalar DateTime
+
+"The `Long` scalar type represents non-fractional signed whole 64-bit numeric values. Long can represent values between -(2^63) and 2^63 - 1."
+scalar Long
+
+type EnvironmentSettings {
+  name: String!
+  queue: String!
+  color: String
+  url: String
+  requireApproval: Boolean!
+  requireBranchUpToDate: Boolean!
+  automationTest: AutomationTestSettings
+  excludeFromRollback: [String!]
+}
+
+type ServiceSettings {
+  name: String
+  path: String
+}
+
+type OwnerRepoValueOfNullableOfBoolean {
+  owner: Boolean
+  repo: Boolean
+}
+
+type SlackWebHooksSettingsCompare {
+  deployUrl: OwnerRepoValueOfString!
+  releaseUrl: OwnerRepoValueOfString!
+}
+
+type OwnerRepoDictionary {
+  owner: Any
+  repo: Any
+}
+
+type BadgeStatusColorsSettingsCompare {
+  error: OwnerRepoValueOfString!
+  warn: OwnerRepoValueOfString!
+  success: OwnerRepoValueOfString!
+  info: OwnerRepoValueOfString!
+}
+
+scalar Any
+
+type AutomationTestSettings {
+  enabled: Boolean
+  workflow: String
+  inputs: Any
+}

@@ -2,6 +2,7 @@ using PrDeploy.Api.Tests.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Octokit;
+using PrDeploy.Api.Tests.Client;
 using PrDeploy.Api.Tests.Framework.Client;
 
 namespace PrDeploy.Api.Tests.Mutations;
@@ -36,9 +37,13 @@ public class PullRequestMutationTest : DeployApiTest
     [Fact]
     public async Task PullRequestAddService_AddsAddServiceComment()
     {
-        var result = await Client.PullRequestAddServices.ExecuteAsync(
-            GitHub.Owner, GitHub.Repo,
-            AddPullNumber.ToString(), new List<string>{ "deploy-api-test", "deploy-app-test" });
+        var result = await Client.PullRequestAddServices.ExecuteAsync(new PullRequestAddServicesInput
+        {
+            Owner = GitHub.Owner,
+            Repo = GitHub.Repo,
+            PullRequestNumber = AddPullNumber,
+            Services = new List<string>{ "deploy-api-test", "deploy-app-test" }
+        });
         result.ValidateNoErrors();
         Assert.NotNull(result.Data);
         Assert.NotNull(result.Data.PullRequestAddServices);

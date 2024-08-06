@@ -4,6 +4,7 @@ using PrDeploy.Api.Tests.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Octokit;
+using PrDeploy.Api.Tests.Client;
 using PrDeploy.Api.Tests.Framework.Client;
 
 namespace PrDeploy.Api.Tests.Mutations;
@@ -76,9 +77,13 @@ public class DeployQueueMutationTest : DeployApiTest
     [Fact]
     public async Task DeployQueueUpdate_SetsEnvironmentPullRequestQueueInOrder()
     {
-        var result = await Client.DeployQueueUpdate.ExecuteAsync(
-            GitHub.Owner, GitHub.Repo,
-            "Dev", new[] { "2871", "2852", "2864" });
+        var result = await Client.DeployQueueUpdate.ExecuteAsync(new DeployQueueUpdateInput
+        {
+            Owner = GitHub.Owner, 
+            Repo = GitHub.Repo,
+            Environment = "Dev",
+            PullRequestNumbers = new List<int> { 2871, 2852, 2864 }
+        });
         result.ValidateNoErrors();
         Assert.NotNull(result.Data);
         Assert.NotNull(result.Data.DeployQueueUpdate);

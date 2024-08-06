@@ -1,5 +1,5 @@
-mutation DeployEnvironmentDeploy($owner: ID!, $repo: ID!, $environment: ID!, $pullRequestNumber: ID!, $force: Boolean) {
-  deployEnvironmentDeploy(owner: $owner, repo: $repo, environment: $environment, pullRequestNumber: $pullRequestNumber, force: $force) {
+mutation DeployEnvironmentDeploy($input: ForceDeployInput!) {
+  deployEnvironmentDeploy(input: $input) {
     success
   }
 }

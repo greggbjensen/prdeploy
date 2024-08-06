@@ -4,6 +4,7 @@ using PrDeploy.Api.Tests.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Octokit;
+using PrDeploy.Api.Tests.Client;
 using PrDeploy.Api.Tests.Framework.Client;
 
 namespace PrDeploy.Api.Tests.Queries;
@@ -76,7 +77,11 @@ public class DeployQueueQueryTest : DeployApiTest
     [Fact]
     public async Task DeployQueues_ReturnsAllQueues()
     {
-        var result = await Client.DeployQueues.ExecuteAsync(GitHub.Owner, GitHub.Repo);
+        var result = await Client.DeployQueues.ExecuteAsync(new RepoQueryInput
+        {
+            Owner = GitHub.Owner,
+            Repo = GitHub.Repo
+        });
         result.ValidateNoErrors();
         Assert.NotNull(result.Data);
         Assert.NotNull(result.Data.DeployQueues);
