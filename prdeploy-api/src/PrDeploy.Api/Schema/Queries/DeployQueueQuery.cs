@@ -1,9 +1,8 @@
 using PrDeploy.Api.Business.Services.Interfaces;
-using PrDeploy.Api.Models;
 using PrDeploy.Api.Models.DeployQueues;
 using PrDeploy.Api.Models.General.Inputs;
 
-namespace PrDeploy.Api.Queries;
+namespace PrDeploy.Api.Schema.Queries;
 
 [ExtendObjectType("DeployQuery")]
 public class DeployQueueQuery

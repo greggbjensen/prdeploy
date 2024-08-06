@@ -48,10 +48,10 @@ public class PullRequestService : IPullRequestService
     public async Task<StatusResponse> AddServicesAsync(PullRequestAddServicesInput input)
     {
         var serviceList = string.Join(' ', input.Services);
-        return await AddCommentCommandAsync(input.Owner, input.Repo, input.PullRequestNumber, $"/add {serviceList}");
+        return await AddCommentCommandAsync(input.Owner, input.Repo, input.PullNumber, $"/add {serviceList}");
     }
 
-    public async Task<StatusResponse> AddCommentCommandAsync(string owner, string repo, int pullRequestNumber,
+    public async Task<StatusResponse> AddCommentCommandAsync(string owner, string repo, int pullNumber,
         string command)
     {
         var comment = $@"
@@ -60,7 +60,7 @@ public class PullRequestService : IPullRequestService
         await _client.Issue.Comment.Create(
             owner,
             repo,
-            pullRequestNumber,
+            pullNumber,
             comment
         );
 

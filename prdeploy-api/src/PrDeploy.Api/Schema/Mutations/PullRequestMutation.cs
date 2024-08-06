@@ -1,9 +1,8 @@
 using PrDeploy.Api.Business.Services.Interfaces;
-using PrDeploy.Api.Models;
 using PrDeploy.Api.Models.General;
 using PrDeploy.Api.Models.PullRequests.Inputs;
 
-namespace PrDeploy.Api.Mutations;
+namespace PrDeploy.Api.Schema.Mutations;
 
 [ExtendObjectType("DeployMutation")]
 public class PullRequestMutation

@@ -2,7 +2,7 @@ using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Models.DeployEnvironments.Inputs;
 using PrDeploy.Api.Models.General;
 
-namespace PrDeploy.Api.Mutations;
+namespace PrDeploy.Api.Schema.Mutations;
 
 [ExtendObjectType("DeployMutation")]
 public class DeployEnvironmentMutation

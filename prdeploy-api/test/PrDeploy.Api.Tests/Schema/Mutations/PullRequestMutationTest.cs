@@ -1,11 +1,11 @@
-using PrDeploy.Api.Tests.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Octokit;
 using PrDeploy.Api.Tests.Client;
+using PrDeploy.Api.Tests.Framework;
 using PrDeploy.Api.Tests.Framework.Client;
 
-namespace PrDeploy.Api.Tests.Mutations;
+namespace PrDeploy.Api.Tests.Schema.Mutations;
 
 public class PullRequestMutationTest : DeployApiTest
 {
@@ -41,7 +41,7 @@ public class PullRequestMutationTest : DeployApiTest
         {
             Owner = GitHub.Owner,
             Repo = GitHub.Repo,
-            PullRequestNumber = AddPullNumber,
+            PullNumber = AddPullNumber,
             Services = new List<string>{ "deploy-api-test", "deploy-app-test" }
         });
         result.ValidateNoErrors();

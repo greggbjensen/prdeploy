@@ -4,7 +4,7 @@ using PrDeploy.Api.Models.DeployEnvironments.Inputs;
 using PrDeploy.Api.Models.General.Inputs;
 using Environment = PrDeploy.Api.Models.DeployEnvironments.Environment;
 
-namespace PrDeploy.Api.Queries;
+namespace PrDeploy.Api.Schema.Queries;
 
 [ExtendObjectType("DeployQuery")]
 public class DeployEnvironmentQuery

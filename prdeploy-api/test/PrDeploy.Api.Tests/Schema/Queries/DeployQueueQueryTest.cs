@@ -1,13 +1,13 @@
-using Amazon.SimpleSystemsManagement.Model;
 using Amazon.SimpleSystemsManagement;
-using PrDeploy.Api.Tests.Framework;
+using Amazon.SimpleSystemsManagement.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Octokit;
 using PrDeploy.Api.Tests.Client;
+using PrDeploy.Api.Tests.Framework;
 using PrDeploy.Api.Tests.Framework.Client;
 
-namespace PrDeploy.Api.Tests.Queries;
+namespace PrDeploy.Api.Tests.Schema.Queries;
 
 public class DeployQueueQueryTest : DeployApiTest
 {

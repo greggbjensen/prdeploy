@@ -7,6 +7,6 @@ namespace PrDeploy.Api.Models.DeployEnvironments.Inputs
     {
         [ID]
         public string Environment { get; set; } = string.Empty;
-        public int PullRequestNumber { get; set; }
+        public int PullNumber { get; set; }
     }
 }

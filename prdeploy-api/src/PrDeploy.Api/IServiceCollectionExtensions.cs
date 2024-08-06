@@ -4,10 +4,10 @@ using Octokit;
 using PrDeploy.Api.Auth;
 using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Filters;
-using PrDeploy.Api.Mutations;
 using PrDeploy.Api.Options;
-using PrDeploy.Api.Queries;
 using PrDeploy.Api.Business.Auth.Interfaces;
+using PrDeploy.Api.Schema.Mutations;
+using PrDeploy.Api.Schema.Queries;
 
 namespace PrDeploy.Api;
 

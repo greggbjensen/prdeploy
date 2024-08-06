@@ -1,11 +1,11 @@
-using PrDeploy.Api.Tests.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Octokit;
 using PrDeploy.Api.Tests.Client;
+using PrDeploy.Api.Tests.Framework;
 using PrDeploy.Api.Tests.Framework.Client;
 
-namespace PrDeploy.Api.Tests.Mutations;
+namespace PrDeploy.Api.Tests.Schema.Mutations;
 
 public class DeployEnvironmentMutationTest : DeployApiTest
 {
@@ -73,7 +73,7 @@ public class DeployEnvironmentMutationTest : DeployApiTest
             Owner = GitHub.Owner,
             Repo = GitHub.Repo,
             Environment = "Dev",
-            PullRequestNumber = FreePullNumber
+            PullNumber = FreePullNumber
         });
         result.ValidateNoErrors();
         Assert.NotNull(result.Data);
@@ -91,7 +91,7 @@ public class DeployEnvironmentMutationTest : DeployApiTest
             Owner = GitHub.Owner, 
             Repo = GitHub.Repo,
             Environment = "Stage",
-            PullRequestNumber = DeployPullNumber,
+            PullNumber = DeployPullNumber,
             Force = false
         });
         result.ValidateNoErrors();
@@ -110,7 +110,7 @@ public class DeployEnvironmentMutationTest : DeployApiTest
             Owner = GitHub.Owner, 
             Repo = GitHub.Repo,
             Environment = "Stage", 
-            PullRequestNumber = ForceDeployPullNumber,
+            PullNumber = ForceDeployPullNumber,
             Force = true
         });
         result.ValidateNoErrors();
@@ -129,7 +129,7 @@ public class DeployEnvironmentMutationTest : DeployApiTest
             Owner = GitHub.Owner,
             Repo = GitHub.Repo,
             Environment = "Stage",
-            PullRequestNumber = RollbackDeployPullNumber, 
+            PullNumber = RollbackDeployPullNumber, 
             Count = 1
         });
         result.ValidateNoErrors();

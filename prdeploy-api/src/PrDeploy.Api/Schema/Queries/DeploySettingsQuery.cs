@@ -2,7 +2,7 @@ using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Models.General.Inputs;
 using PrDeploy.Api.Models.Settings.Compare;
 
-namespace PrDeploy.Api.Queries;
+namespace PrDeploy.Api.Schema.Queries;
 
 [ExtendObjectType("DeployQuery")]
 public class DeploySettingsQuery

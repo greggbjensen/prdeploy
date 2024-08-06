@@ -1,13 +1,13 @@
 using Amazon.SimpleSystemsManagement;
 using Amazon.SimpleSystemsManagement.Model;
-using PrDeploy.Api.Tests.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Octokit;
 using PrDeploy.Api.Tests.Client;
+using PrDeploy.Api.Tests.Framework;
 using PrDeploy.Api.Tests.Framework.Client;
 
-namespace PrDeploy.Api.Tests.Mutations;
+namespace PrDeploy.Api.Tests.Schema.Mutations;
 
 public class DeployQueueMutationTest : DeployApiTest
 {

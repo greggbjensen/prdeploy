@@ -9,7 +9,7 @@ public interface IPullRequestService
 {
     Task<List<PullRequest>> ListOpenPullRequestsAsync(OpenPullRequestInput input);
 
-    Task<StatusResponse> AddCommentCommandAsync(string owner, string repo, int pullRequestNumber,
+    Task<StatusResponse> AddCommentCommandAsync(string owner, string repo, int pullNumber,
         string command);
 
     Task<StatusResponse> AddServicesAsync(PullRequestAddServicesInput input);

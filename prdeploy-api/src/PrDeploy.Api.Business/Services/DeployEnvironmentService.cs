@@ -101,7 +101,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
 
     public async Task<StatusResponse> FreeAsync(PullDeployInput input)
     {
-        return await _pullRequestService.AddCommentCommandAsync(input.Owner, input.Repo, input.PullRequestNumber, 
+        return await _pullRequestService.AddCommentCommandAsync(input.Owner, input.Repo, input.PullNumber, 
             $"/free {input.Environment.ToLower()}");
     }
 
@@ -109,14 +109,14 @@ public class DeployEnvironmentService : IDeployEnvironmentService
     {
         var retainString = input.Retain ? " --retain" : string.Empty;
         var forceString = input.Force ? " --force" : string.Empty;
-        return await _pullRequestService.AddCommentCommandAsync(input.Owner, input.Repo, input.PullRequestNumber, 
+        return await _pullRequestService.AddCommentCommandAsync(input.Owner, input.Repo, input.PullNumber, 
             $"/deploy {input.Environment.ToLower()}{forceString}{retainString}");
     }
 
     public async Task<StatusResponse> RollbackAsync(RollbackInput input)
     {
         var countString = input.Count > 1 ? $" {input.Count}" : string.Empty;
-        return await _pullRequestService.AddCommentCommandAsync(input.Owner, input.Repo, input.PullRequestNumber, 
+        return await _pullRequestService.AddCommentCommandAsync(input.Owner, input.Repo, input.PullNumber, 
             $"/rollback {input.Environment.ToLower()}{countString}");
     }
 

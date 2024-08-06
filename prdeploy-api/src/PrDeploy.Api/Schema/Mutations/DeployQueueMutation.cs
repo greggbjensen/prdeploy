@@ -2,7 +2,7 @@ using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Models.DeployQueues;
 using PrDeploy.Api.Models.DeployQueues.Inputs;
 
-namespace PrDeploy.Api.Mutations;
+namespace PrDeploy.Api.Schema.Mutations;
 
 [ExtendObjectType("DeployMutation")]
 public class DeployQueueMutation

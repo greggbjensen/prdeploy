@@ -110,7 +110,7 @@ public class DeployQueueService : IDeployQueueService
         await _parameterStore.SetAsync(owner, repo, queueName, value);
     }
 
-    private async Task<StatusResponse> AddPullRequestCommand(string owner, string repo, int pullRequestNumber,
+    private async Task<StatusResponse> AddPullRequestCommand(string owner, string repo, int pullNumber,
         string command)
     {
         var comment = $@"
@@ -119,7 +119,7 @@ public class DeployQueueService : IDeployQueueService
         await _gitHubClient.Issue.Comment.Create(
             owner,
             repo,
-            pullRequestNumber,
+            pullNumber,
             comment
         );
 

@@ -152,7 +152,7 @@ type StatusResponse {
 
 input PullDeployInput {
   environment: ID!
-  pullRequestNumber: Int!
+  pullNumber: Int!
   "Repository owner or organization."
   owner: ID
   "Repository being accessed within the owner."
@@ -163,7 +163,7 @@ input ForceDeployInput {
   force: Boolean!
   retain: Boolean!
   environment: ID!
-  pullRequestNumber: Int!
+  pullNumber: Int!
   "Repository owner or organization."
   owner: ID
   "Repository being accessed within the owner."
@@ -173,7 +173,7 @@ input ForceDeployInput {
 input RollbackInput {
   count: Int!
   environment: ID!
-  pullRequestNumber: Int!
+  pullNumber: Int!
   "Repository owner or organization."
   owner: ID
   "Repository being accessed within the owner."
@@ -181,7 +181,7 @@ input RollbackInput {
 }
 
 input PullRequestAddServicesInput {
-  pullRequestNumber: Int!
+  pullNumber: Int!
   services: [String!]!
   "Repository owner or organization."
   owner: ID
