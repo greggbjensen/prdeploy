@@ -97,6 +97,17 @@ public static partial class Map
         }
     }
 
+    private static void Merge(SlackWebHooksSettings? target, SlackWebHooksSettings? source)
+    {
+        if (source == null || target == null)
+        {
+            return;
+        }
+
+        target.DeployUrl ??= source.DeployUrl;
+        target.ReleaseUrl ??= source.ReleaseUrl;
+    }
+
     private static void Merge(JiraSettings? target, JiraSettings? source)
     {
         if (source == null || target == null)
