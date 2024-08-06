@@ -1,6 +1,6 @@
 using PrDeploy.Api.Business.Services.Interfaces;
-using PrDeploy.Api.Models;
 using PrDeploy.Api.Models.PullRequests;
+using PrDeploy.Api.Models.PullRequests.Inputs;
 
 namespace PrDeploy.Api.Queries;
 
@@ -8,6 +8,6 @@ namespace PrDeploy.Api.Queries;
 public class PullRequestQuery
 {
     [GraphQLName("openPullRequests")]
-    public async Task<List<PullRequest>> OpenPullRequests(IPullRequestService service, [ID] string owner, [ID] string repo, string? search) =>
-        await service.ListOpenPullRequestsAsync(owner, repo, search);
+    public async Task<List<PullRequest>> OpenPullRequests(IPullRequestService service, OpenPullRequestInput input) =>
+        await service.ListOpenPullRequestsAsync(input);
 }

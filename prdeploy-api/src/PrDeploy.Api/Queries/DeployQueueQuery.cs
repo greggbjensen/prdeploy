@@ -1,6 +1,7 @@
 using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Models;
 using PrDeploy.Api.Models.DeployQueues;
+using PrDeploy.Api.Models.General.Inputs;
 
 namespace PrDeploy.Api.Queries;
 
@@ -8,6 +9,6 @@ namespace PrDeploy.Api.Queries;
 public class DeployQueueQuery
 {
     [GraphQLName("deployQueues")]
-    public async Task<List<DeployQueue>> DeployQueues(IDeployQueueService service, [ID] string owner, [ID] string repo) =>
-        await service.ListAsync(owner, repo);
+    public async Task<List<DeployQueue>> DeployQueues(IDeployQueueService service, RepoQueryInput input) =>
+        await service.ListAsync(input);
 }

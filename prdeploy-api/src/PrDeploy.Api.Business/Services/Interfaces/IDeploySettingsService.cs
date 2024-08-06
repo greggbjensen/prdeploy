@@ -13,6 +13,6 @@ public interface IDeploySettingsService
     EnvironmentSettings? GetEnvironment(string owner, string repo, string environment,
         DeploySettings deploySettings);
 
-    Task<List<string>> ListServicesAsync(string owner, string repo);
+    Task<List<string>> ListServicesAsync(RepoQueryInput input);
     Task<DeploySettingsCompare> GetAllAsync(RepoQueryInput input);
 }

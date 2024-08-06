@@ -105,11 +105,11 @@ public class DeploySettingsService : IDeploySettingsService
         return environmentSettings;
     }
 
-    public async Task<List<string>> ListServicesAsync(string owner, string repo)
+    public async Task<List<string>> ListServicesAsync(RepoQueryInput input)
     {
         List<string>? services = null;
 
-        var settings = await GetMergedAsync(owner, repo);
+        var settings = await GetMergedAsync(input.Owner, input.Repo);
         if (settings.Services?.Any() == true)
         {
             services = settings.Services.Select(s => s.Name).ToList();

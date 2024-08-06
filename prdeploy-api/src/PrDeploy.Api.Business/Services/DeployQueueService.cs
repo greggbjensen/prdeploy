@@ -4,7 +4,9 @@ using Octokit;
 using PrDeploy.Api.Business.Mapping;
 using PrDeploy.Api.Business.Stores.Interfaces;
 using PrDeploy.Api.Models.DeployQueues;
+using PrDeploy.Api.Models.DeployQueues.Inputs;
 using PrDeploy.Api.Models.General;
+using PrDeploy.Api.Models.General.Inputs;
 using PrDeploy.Api.Models.Settings;
 
 namespace PrDeploy.Api.Business.Services;
@@ -22,28 +24,27 @@ public class DeployQueueService : IDeployQueueService
         _parameterStore = parameterStore;
     }
 
-    public async Task<DeployQueue> UpdateAsync(string owner, string repo, string environment,
-        List<int>? pullRequestNumbers)
+    public async Task<DeployQueue> UpdateAsync(DeployQueueUpdateInput input)
     {
         var value = new List<int>();
-        if (pullRequestNumbers?.Any() == true)
+        if (input.PullRequestNumbers?.Any() == true)
         {
-            await AddCommentForNewEntriesAsync(owner, repo, environment, pullRequestNumbers);
-            value = pullRequestNumbers;
+            await AddCommentForNewEntriesAsync(input.Owner, input.Repo, input.Environment, input.PullRequestNumbers);
+            value = input.PullRequestNumbers;
         }
 
-        var environmentSettings = await _deploySettingsService.GetEnvironmentAsync(owner, repo, environment);
-        await SetPullNumbersAsync(owner, repo, environmentSettings.Queue!, value);
+        var environmentSettings = await _deploySettingsService.GetEnvironmentAsync(input.Owner, input.Repo, input.Environment);
+        await SetPullNumbersAsync(input.Owner, input.Repo, environmentSettings.Queue!, value);
 
-        var deployQueue = await GetQueueAsync(owner, repo, environmentSettings);
+        var deployQueue = await GetQueueAsync(input.Owner, input.Repo, environmentSettings);
         return deployQueue;
     }
 
-    public async Task<List<DeployQueue>> ListAsync(string owner, string repo)
+    public async Task<List<DeployQueue>> ListAsync(RepoQueryInput input)
     {
         // Get queues in parallel.
-        var environmentSettings = await _deploySettingsService.GetQueueEnvironmentsAsync(owner, repo);
-        var queueTasks = environmentSettings.Select(e => GetQueueAsync(owner, repo, e));
+        var environmentSettings = await _deploySettingsService.GetQueueEnvironmentsAsync(input.Owner, input.Repo);
+        var queueTasks = environmentSettings.Select(e => GetQueueAsync(input.Owner, input.Repo, e));
         var queues = await Task.WhenAll(queueTasks);
 
         return queues.ToList();

@@ -9,14 +9,12 @@ namespace PrDeploy.Api.Business.Services.Interfaces;
 
 public interface IDeployEnvironmentService
 {
-    Task<List<DeployEnvironment>> ListAsync(string owner, string repo);
-    Task<StatusResponse> DeployAsync(string owner, string repo, string environment, int pullRequestNumber, bool force,
-        bool retain);
+    Task<List<DeployEnvironment>> ListAsync(RepoQueryInput input);
+    Task<StatusResponse> DeployAsync(ForceDeployInput input);
 
-    Task<StatusResponse> RollbackAsync(string owner, string repo, string environment, int pullRequestNumber,
-        int count);
+    Task<StatusResponse> RollbackAsync(RollbackInput input);
 
-    Task<StatusResponse> FreeAsync(string owner, string repo, string environment, int pullRequestNumber);
+    Task<StatusResponse> FreeAsync(PullDeployInput input);
     Task<DeployStateComparison> CompareDeployStateAsync(DeployStateComparisonInput input);
     Task<List<Environment>> ListEnvironmentsAsync(RepoQueryInput input);
 }

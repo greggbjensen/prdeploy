@@ -1,6 +1,7 @@
 using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Models;
 using PrDeploy.Api.Models.General;
+using PrDeploy.Api.Models.PullRequests.Inputs;
 
 namespace PrDeploy.Api.Mutations;
 
@@ -8,7 +9,6 @@ namespace PrDeploy.Api.Mutations;
 public class PullRequestMutation
 {
     [GraphQLName("pullRequestAddServices")]
-    public async Task<StatusResponse> PullRequestAddServices(IPullRequestService service, [ID] string owner, [ID] string repo,
-        [ID] int pullRequestNumber, [ID] List<string> services) =>
-        await service.AddServicesAsync(owner, repo, pullRequestNumber, services);
+    public async Task<StatusResponse> PullRequestAddServices(IPullRequestService service, PullRequestAddServicesInput input) =>
+        await service.AddServicesAsync(input);
 }

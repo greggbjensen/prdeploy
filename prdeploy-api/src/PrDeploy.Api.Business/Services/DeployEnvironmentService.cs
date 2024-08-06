@@ -37,12 +37,12 @@ public class DeployEnvironmentService : IDeployEnvironmentService
         _deployStateComparisonInputValidator = deployStateComparisonInputValidator;
     }
 
-    public async Task<List<DeployEnvironment>> ListAsync(string owner, string repo)
+    public async Task<List<DeployEnvironment>> ListAsync(RepoQueryInput input)
     {
         var deployEnvironments = new List<DeployEnvironment>();
 
-        var repoSettings = await _deploySettingsService.GetMergedAsync(owner, repo);
-        var labels = await _gitHubClient.Issue.Labels.GetAllForRepository(owner, repo);
+        var repoSettings = await _deploySettingsService.GetMergedAsync(input.Owner, input.Repo);
+        var labels = await _gitHubClient.Issue.Labels.GetAllForRepository(input.Owner, input.Repo);
         var environmentColors = labels.ToDictionary(l => l.Name, l => l.Color, StringComparer.OrdinalIgnoreCase);
         foreach (var environment in repoSettings.Environments!)
         {
@@ -58,8 +58,8 @@ public class DeployEnvironmentService : IDeployEnvironmentService
             }
 
             var issues = await _gitHubClient.Issue.GetAllForRepository(
-                owner,
-                repo,
+                input.Owner,
+                input.Repo,
                 new RepositoryIssueRequest
                 {
                     Labels = { environment.Name },
@@ -99,24 +99,25 @@ public class DeployEnvironmentService : IDeployEnvironmentService
         return environments;
     }
 
-    public async Task<StatusResponse> FreeAsync(string owner, string repo, string environment, int pullRequestNumber)
+    public async Task<StatusResponse> FreeAsync(PullDeployInput input)
     {
-        return await _pullRequestService.AddCommentCommandAsync(owner, repo, pullRequestNumber, $"/free {environment.ToLower()}");
+        return await _pullRequestService.AddCommentCommandAsync(input.Owner, input.Repo, input.PullRequestNumber, 
+            $"/free {input.Environment.ToLower()}");
     }
 
-    public async Task<StatusResponse> DeployAsync(string owner, string repo, string environment, int pullRequestNumber,
-        bool force, bool retain)
+    public async Task<StatusResponse> DeployAsync(ForceDeployInput input)
     {
-        var retainString = retain ? " --retain" : string.Empty;
-        var forceString = force ? " --force" : string.Empty;
-        return await _pullRequestService.AddCommentCommandAsync(owner, repo, pullRequestNumber, $"/deploy {environment.ToLower()}{forceString}{retainString}");
+        var retainString = input.Retain ? " --retain" : string.Empty;
+        var forceString = input.Force ? " --force" : string.Empty;
+        return await _pullRequestService.AddCommentCommandAsync(input.Owner, input.Repo, input.PullRequestNumber, 
+            $"/deploy {input.Environment.ToLower()}{forceString}{retainString}");
     }
 
-    public async Task<StatusResponse> RollbackAsync(string owner, string repo, string environment, int pullRequestNumber,
-        int count)
+    public async Task<StatusResponse> RollbackAsync(RollbackInput input)
     {
-        var countString = count > 1 ? $" {count}" : string.Empty;
-        return await _pullRequestService.AddCommentCommandAsync(owner, repo, pullRequestNumber, $"/rollback {environment.ToLower()}{countString}");
+        var countString = input.Count > 1 ? $" {input.Count}" : string.Empty;
+        return await _pullRequestService.AddCommentCommandAsync(input.Owner, input.Repo, input.PullRequestNumber, 
+            $"/rollback {input.Environment.ToLower()}{countString}");
     }
 
     public async Task<DeployStateComparison> CompareDeployStateAsync(DeployStateComparisonInput input)

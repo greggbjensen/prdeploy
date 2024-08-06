@@ -1,5 +1,5 @@
 using PrDeploy.Api.Business.Services.Interfaces;
-using PrDeploy.Api.Models;
+using PrDeploy.Api.Models.DeployEnvironments.Inputs;
 using PrDeploy.Api.Models.General;
 
 namespace PrDeploy.Api.Mutations;
@@ -8,14 +8,11 @@ namespace PrDeploy.Api.Mutations;
 public class DeployEnvironmentMutation
 {
     [GraphQLName("deployEnvironmentFree")]
-    public async Task<StatusResponse> Free(IDeployEnvironmentService service, [ID] string owner, [ID] string repo, [ID] string environment,
-        [ID] int pullRequestNumber) => await service.FreeAsync(owner, repo, environment, pullRequestNumber);
+    public async Task<StatusResponse> Free(IDeployEnvironmentService service, PullDeployInput input) => await service.FreeAsync(input);
 
     [GraphQLName("deployEnvironmentDeploy")]
-    public async Task<StatusResponse> ForceDeploy(IDeployEnvironmentService service, [ID] string owner, [ID] string repo, [ID] string environment,
-        [ID] int pullRequestNumber, bool force = false, bool retain = false) => await service.DeployAsync(owner, repo, environment, pullRequestNumber, force, retain);
+    public async Task<StatusResponse> ForceDeploy(IDeployEnvironmentService service, ForceDeployInput input) => await service.DeployAsync(input);
 
     [GraphQLName("deployEnvironmentRollback")]
-    public async Task<StatusResponse> Rollback(IDeployEnvironmentService service, [ID] string owner, [ID] string repo, [ID] string environment,
-        [ID] int pullRequestNumber, int count = 0) => await service.RollbackAsync(owner, repo, environment, pullRequestNumber, count);
+    public async Task<StatusResponse> Rollback(IDeployEnvironmentService service, RollbackInput input) => await service.RollbackAsync(input);
 }

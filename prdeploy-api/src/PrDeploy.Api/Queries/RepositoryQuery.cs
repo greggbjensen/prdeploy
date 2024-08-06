@@ -1,5 +1,6 @@
 using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Models;
+using PrDeploy.Api.Models.General.Inputs;
 using PrDeploy.Api.Models.Repositories;
 
 namespace PrDeploy.Api.Queries;
@@ -12,7 +13,6 @@ public class RepositoryQuery
         await service.ListPrDeployEnabledAsync();
 
     [GraphQLName("repositoryServices")]
-    public async Task<List<string>> RepositoryServices(IDeploySettingsService service, [ID] string owner,
-        [ID] string repo) =>
-        await service.ListServicesAsync(owner, repo);
+    public async Task<List<string>> RepositoryServices(IDeploySettingsService service, RepoQueryInput input) =>
+        await service.ListServicesAsync(input);
 }
