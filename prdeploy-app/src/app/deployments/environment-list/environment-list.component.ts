@@ -47,7 +47,7 @@ export class EnvironmentListComponent implements AfterViewInit {
   }
 
   actionEnvironment: string;
-  actionPullNumber: string;
+  actionPullNumber: number;
   forceDeployVisible: boolean;
   deployRollbackVisible: boolean;
 
@@ -71,14 +71,16 @@ export class EnvironmentListComponent implements AfterViewInit {
     this.loading = true;
   }
 
-  async free(environment: string, pullRequestNumber: string): Promise<void> {
+  async free(environment: string, pullNumber: number): Promise<void> {
     try {
       await firstValueFrom(
         this._deployEnvironmentFreeGQL.mutate({
-          owner: this.repoManager.owner,
-          repo: this.repoManager.repo,
-          environment,
-          pullRequestNumber
+          input: {
+            owner: this.repoManager.owner,
+            repo: this.repoManager.repo,
+            environment,
+            pullNumber
+          }
         })
       );
 
@@ -93,20 +95,22 @@ export class EnvironmentListComponent implements AfterViewInit {
     this.actionEnvironment = environment;
   }
 
-  showDeployRollback(environment: string, pullNumber: string): void {
+  showDeployRollback(environment: string, pullNumber: number): void {
     this.deployRollbackVisible = true;
     this.actionPullNumber = pullNumber;
     this.actionEnvironment = environment;
   }
 
-  async redeploy(environment: string, pullRequestNumber: string): Promise<void> {
+  async redeploy(environment: string, pullNumber: number): Promise<void> {
     try {
       await firstValueFrom(
         this._deployEnvironmentDeployGQL.mutate({
-          owner: this.repoManager.owner,
-          repo: this.repoManager.repo,
-          environment,
-          pullRequestNumber
+          input: {
+            owner: this.repoManager.owner,
+            repo: this.repoManager.repo,
+            environment,
+            pullNumber
+          }
         })
       );
 

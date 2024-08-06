@@ -22,6 +22,6 @@ services:
   - name: deploy-app-test
     path: deploy-app-test
 slack:
-  channels:
-    deploy:  'https://hooks.slack.com/services/secret1'
-    release: 'https://hooks.slack.com/services/secret2'
+  webhooks:
+    deployUrl:  'https://hooks.slack.com/services/secret1'
+    releaseUrl: 'https://hooks.slack.com/services/secret2'

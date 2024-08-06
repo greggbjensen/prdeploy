@@ -54,8 +54,8 @@ export class QueueListComponent {
   private _queue?: DeployQueue;
 
   @Input() loading = true;
-  @Output() queueUpdateStarted: EventEmitter<string[]> = new EventEmitter<string[]>();
-  @Output() queueUpdateComplete: EventEmitter<string[]> = new EventEmitter<string[]>();
+  @Output() queueUpdateStarted: EventEmitter<number[]> = new EventEmitter<number[]>();
+  @Output() queueUpdateComplete: EventEmitter<number[]> = new EventEmitter<number[]>();
   openPullRequests: CustomStore<PullRequest, number>;
 
   constructor(
@@ -68,9 +68,11 @@ export class QueueListComponent {
       load: async options => {
         const result = await firstValueFrom(
           this._openPullRequestsGQL.fetch({
-            owner: this._repoManager.owner,
-            repo: this._repoManager.repo,
-            search: options.searchValue
+            input: {
+              owner: this._repoManager.owner,
+              repo: this._repoManager.repo,
+              search: options.searchValue
+            }
           })
         );
         return result.data.openPullRequests;
@@ -108,16 +110,18 @@ export class QueueListComponent {
   }
 
   private async updatePullNumbers(
-    pullNumbers: (InputMaybe<string | string[]> | undefined)[] | undefined
+    pullNumbers: (InputMaybe<number | number[]> | undefined)[] | undefined
   ): Promise<void> {
-    const pullRequestNumbers = pullNumbers as string[];
+    const pullRequestNumbers = pullNumbers as number[];
     this.queueUpdateStarted.emit(pullRequestNumbers);
     await firstValueFrom(
       this._deployQueueUpdateGQL.mutate({
-        owner: this._repoManager.owner,
-        repo: this._repoManager.repo,
-        environment: this.queue?.environment as string,
-        pullRequestNumbers
+        input: {
+          owner: this._repoManager.owner,
+          repo: this._repoManager.repo,
+          environment: this.queue?.environment as string,
+          pullNumbers: pullRequestNumbers
+        }
       })
     );
 

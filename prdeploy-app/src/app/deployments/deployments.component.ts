@@ -67,10 +67,12 @@ export class DeploymentsComponent implements OnInit {
       const pullRequest = queue.pullRequests[0];
       await firstValueFrom(
         this._deployEnvironmentDeployGQL.mutate({
-          owner: this.repoManager.owner,
-          repo: this.repoManager.repo,
-          environment: queue.environment,
-          pullRequestNumber: pullRequest.number
+          input: {
+            owner: this.repoManager.owner,
+            repo: this.repoManager.repo,
+            environment: queue.environment,
+            pullNumber: pullRequest.number
+          }
         })
       );
 
@@ -86,8 +88,10 @@ export class DeploymentsComponent implements OnInit {
     try {
       const response = await firstValueFrom(
         this._deployEnvironmentsAndQueuesGQL.fetch({
-          owner: this.repoManager.owner,
-          repo: this.repoManager.repo
+          input: {
+            owner: this.repoManager.owner,
+            repo: this.repoManager.repo
+          }
         })
       );
       this.deployEnvironments = response.data.deployEnvironments;

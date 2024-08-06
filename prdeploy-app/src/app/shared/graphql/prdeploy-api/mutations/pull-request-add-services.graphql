@@ -1,5 +1,5 @@
-mutation PullRequestAddServices($owner: ID!, $repo: ID!, $pullRequestNumber: ID!, $services: [ID!]!) {
-  pullRequestAddServices(owner: $owner, repo: $repo, pullRequestNumber: $pullRequestNumber, services: $services) {
+mutation PullRequestAddServices($input: PullRequestAddServicesInput!) {
+  pullRequestAddServices(input: $input) {
     success
   }
 }

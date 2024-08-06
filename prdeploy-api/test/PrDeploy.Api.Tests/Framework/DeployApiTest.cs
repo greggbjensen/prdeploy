@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using PrDeploy.Api.Tests.Constants;
+using PrDeploy.Api.Tests.Client;
 using System.Net.Sockets;
 
 namespace PrDeploy.Api.Tests.Framework;

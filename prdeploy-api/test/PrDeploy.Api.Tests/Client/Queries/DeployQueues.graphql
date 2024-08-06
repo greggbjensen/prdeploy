@@ -1,5 +1,5 @@
-query DeployQueues($owner: ID!, $repo: ID!) {
-    deployQueues(owner: $owner, repo: $repo) {
+query DeployQueues($input: RepoQueryInput!) {
+    deployQueues(input: $input) {
         environment
         pullRequests {
             number

@@ -4,11 +4,10 @@ using Octokit;
 using PrDeploy.Api.Auth;
 using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Filters;
-using PrDeploy.Api.Mutations;
 using PrDeploy.Api.Options;
-using PrDeploy.Api.Queries;
-using System.Security.Claims;
 using PrDeploy.Api.Business.Auth.Interfaces;
+using PrDeploy.Api.Schema.Mutations;
+using PrDeploy.Api.Schema.Queries;
 
 namespace PrDeploy.Api;
 
@@ -21,6 +20,7 @@ public static class IServiceCollectionExtensions
             .AddAuthorization()
             .AddQueryType(q => q.Name("DeployQuery"))
             .AddType<DeployQueueQuery>()
+            .AddType<DeploySettingsQuery>()
             .AddType<DeployEnvironmentQuery>()
             .AddType<PullRequestQuery>()
             .AddType<RepositoryQuery>()
@@ -34,7 +34,7 @@ public static class IServiceCollectionExtensions
             .RegisterService<IDeployEnvironmentService>()
             .RegisterService<IPullRequestService>()
             .RegisterService<IRepositoryService>()
-            .RegisterService<IRepoSettingsService>()
+            .RegisterService<IDeploySettingsService>()
 
             // Error handling.
             .AddErrorFilter<SanitizedErrorFilter>();

@@ -1,5 +1,5 @@
-mutation DeployQueueUpdate($owner: ID!, $repo: ID!, $environment: ID!, $pullRequestNumbers: [ID!]) {
-  deployQueueUpdate(owner: $owner, repo: $repo, environment: $environment, pullRequestNumbers: $pullRequestNumbers) {
+mutation DeployQueueUpdate($input: DeployQueueUpdateInput!) {
+  deployQueueUpdate(input: $input) {
     environment
   }
 }

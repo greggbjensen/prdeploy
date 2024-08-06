@@ -56,9 +56,11 @@ export class DeployForceDialogComponent {
       load: async options => {
         const result = await firstValueFrom(
           this._openPullRequestsGQL.fetch({
-            owner: this.repository.owner,
-            repo: this.repository.repo,
-            search: options.searchValue
+            input: {
+              owner: this.repository.owner,
+              repo: this.repository.repo,
+              search: options.searchValue
+            }
           })
         );
         return result.data.openPullRequests;
@@ -76,12 +78,14 @@ export class DeployForceDialogComponent {
     try {
       await firstValueFrom(
         this._deployEnvironmentDeployGQL.mutate({
-          owner: this.repository.owner,
-          repo: this.repository.repo,
-          environment: this.environment,
-          pullRequestNumber: this.selectedPullRequest.number,
-          force: true,
-          retain: this.retainLocks
+          input: {
+            owner: this.repository.owner,
+            repo: this.repository.repo,
+            environment: this.environment,
+            pullNumber: this.selectedPullRequest.number,
+            force: true,
+            retain: this.retainLocks
+          }
         })
       );
 

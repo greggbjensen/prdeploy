@@ -1,5 +1,5 @@
-query DeployEnvironmentsAndQueues($owner: ID!, $repo: ID!) {
-  deployEnvironments(owner: $owner, repo: $repo) {
+query DeployEnvironmentsAndQueues($input: RepoQueryInput!) {
+  deployEnvironments(input: $input) {
     name
     url
     color
@@ -16,7 +16,7 @@ query DeployEnvironmentsAndQueues($owner: ID!, $repo: ID!) {
       }
     }
   }
-  deployQueues(owner: $owner, repo: $repo) {
+  deployQueues(input: $input) {
     environment
     pullRequests {
       number

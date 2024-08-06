@@ -4,7 +4,8 @@
     "extensions": {
         "strawberryShake": {
             "name": "DeployApiClient",
-            "url": "http://localhost:5197/graphql/",
+            "url": "http://localhost:4302/graphql/",
+            "namespace": "PrDeploy.Api.Tests.Client",
             "dependencyInjection": true,
             "strictSchemaValidation": true,
             "hashAlgorithm": "md5",

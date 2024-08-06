@@ -1,0 +1,144 @@
+query DeploySettingsCompare($input: RepoQueryInput!) {
+  deploySettingsCompare(input: $input) {
+    deployWorkflow {
+      owner
+      repo
+    }
+    environments {
+      owner {
+        name
+        queue
+        color
+        url
+        requireApproval
+        requireBranchUpToDate
+        automationTest {
+          enabled
+          workflow
+          inputs
+        }
+        excludeFromRollback
+      }
+      repo {
+        name
+        queue
+        color
+        url
+        requireApproval
+        requireBranchUpToDate
+        automationTest {
+          enabled
+          workflow
+          inputs
+        }
+        excludeFromRollback
+      }
+    }
+    services {
+      owner {
+        name
+        path
+      }
+      repo {
+        name
+        path
+      }
+    }
+    defaultEnvironment {
+      owner
+      repo
+    }
+    releaseEnvironment {
+      owner
+      repo
+    }
+    defaultBranch {
+      owner
+      repo
+    }
+    settingsBranch {
+      owner
+      repo
+    }
+    jira {
+      addIssuesEnabled {
+        owner
+        repo
+      }
+      host {
+        owner
+        repo
+      }
+      username {
+        owner
+        repo
+      }
+      password {
+        owner
+        repo
+      }
+    }
+    builds {
+      checkPattern {
+        owner
+        repo
+      }
+      workflowPattern {
+        owner
+        repo
+      }
+    }
+    slack {
+      token {
+        owner
+        repo
+      }
+      emailDomain {
+        owner
+        repo
+      }
+      emailAliases {
+        owner
+        repo
+      }
+      webhooks {
+        deployUrl {
+          owner
+          repo
+        }
+        releaseUrl {
+          owner
+          repo
+        }
+      }
+      notificationsEnabled {
+        owner
+        repo
+      }
+    }
+    badge {
+      statusColors {
+        error {
+          owner
+          repo
+        }
+        warn {
+          owner
+          repo
+        }
+        success {
+          owner
+          repo
+        }
+        info {
+          owner
+          repo
+        }
+      }
+    }
+    deployManagerSiteUrl {
+      owner
+      repo
+    }
+  }
+}
