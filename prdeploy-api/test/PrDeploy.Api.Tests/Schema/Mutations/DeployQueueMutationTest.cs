@@ -82,7 +82,7 @@ public class DeployQueueMutationTest : DeployApiTest
             Owner = GitHub.Owner, 
             Repo = GitHub.Repo,
             Environment = "Dev",
-            PullRequestNumbers = new List<int> { 2871, 2852, 2864 }
+            PullNumbers = new List<int> { 2871, 2852, 2864 }
         });
         result.ValidateNoErrors();
         Assert.NotNull(result.Data);

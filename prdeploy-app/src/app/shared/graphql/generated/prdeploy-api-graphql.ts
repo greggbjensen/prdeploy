@@ -80,45 +80,27 @@ export type DeployMutation = {
 
 
 export type DeployMutationDeployEnvironmentDeployArgs = {
-  environment: Scalars['ID']['input'];
-  force?: Scalars['Boolean']['input'];
-  owner: Scalars['ID']['input'];
-  pullRequestNumber: Scalars['ID']['input'];
-  repo: Scalars['ID']['input'];
-  retain?: Scalars['Boolean']['input'];
+  input: EnvironmentDeployInput;
 };
 
 
 export type DeployMutationDeployEnvironmentFreeArgs = {
-  environment: Scalars['ID']['input'];
-  owner: Scalars['ID']['input'];
-  pullRequestNumber: Scalars['ID']['input'];
-  repo: Scalars['ID']['input'];
+  input: PullDeployInput;
 };
 
 
 export type DeployMutationDeployEnvironmentRollbackArgs = {
-  count?: Scalars['Int']['input'];
-  environment: Scalars['ID']['input'];
-  owner: Scalars['ID']['input'];
-  pullRequestNumber: Scalars['ID']['input'];
-  repo: Scalars['ID']['input'];
+  input: RollbackInput;
 };
 
 
 export type DeployMutationDeployQueueUpdateArgs = {
-  environment: Scalars['ID']['input'];
-  owner: Scalars['ID']['input'];
-  pullRequestNumbers?: InputMaybe<Array<Scalars['ID']['input']>>;
-  repo: Scalars['ID']['input'];
+  input: DeployQueueUpdateInput;
 };
 
 
 export type DeployMutationPullRequestAddServicesArgs = {
-  owner: Scalars['ID']['input'];
-  pullRequestNumber: Scalars['ID']['input'];
-  repo: Scalars['ID']['input'];
-  services: Array<Scalars['ID']['input']>;
+  input: PullRequestAddServicesInput;
 };
 
 export type DeployQuery = {
@@ -135,14 +117,12 @@ export type DeployQuery = {
 
 
 export type DeployQueryDeployEnvironmentsArgs = {
-  owner: Scalars['ID']['input'];
-  repo: Scalars['ID']['input'];
+  input: RepoQueryInput;
 };
 
 
 export type DeployQueryDeployQueuesArgs = {
-  owner: Scalars['ID']['input'];
-  repo: Scalars['ID']['input'];
+  input: RepoQueryInput;
 };
 
 
@@ -162,15 +142,12 @@ export type DeployQueryEnvironmentsArgs = {
 
 
 export type DeployQueryOpenPullRequestsArgs = {
-  owner: Scalars['ID']['input'];
-  repo: Scalars['ID']['input'];
-  search?: InputMaybe<Scalars['String']['input']>;
+  input: OpenPullRequestInput;
 };
 
 
 export type DeployQueryRepositoryServicesArgs = {
-  owner: Scalars['ID']['input'];
-  repo: Scalars['ID']['input'];
+  input: RepoQueryInput;
 };
 
 /** Queue for a specific environment of pull requests waiting to be deployed. */
@@ -180,6 +157,15 @@ export type DeployQueue = {
   environment?: Maybe<Scalars['ID']['output']>;
   /** Ordered list of pull requests waiting in queue. */
   pullRequests: Array<PullRequest>;
+};
+
+export type DeployQueueUpdateInput = {
+  environment: Scalars['ID']['input'];
+  /** Repository owner or organization. */
+  owner?: InputMaybe<Scalars['ID']['input']>;
+  pullNumbers?: InputMaybe<Array<Scalars['Int']['input']>>;
+  /** Repository being accessed within the owner. */
+  repo?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type DeploySettingsCompare = {
@@ -239,6 +225,17 @@ export type Environment = {
   url?: Maybe<Scalars['String']['output']>;
 };
 
+export type EnvironmentDeployInput = {
+  environment: Scalars['ID']['input'];
+  force?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Repository owner or organization. */
+  owner?: InputMaybe<Scalars['ID']['input']>;
+  pullNumber: Scalars['Int']['input'];
+  /** Repository being accessed within the owner. */
+  repo?: InputMaybe<Scalars['ID']['input']>;
+  retain?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export type EnvironmentSettings = {
   __typename?: 'EnvironmentSettings';
   automationTest?: Maybe<AutomationTestSettings>;
@@ -257,6 +254,14 @@ export type JiraSettingsCompare = {
   host: OwnerRepoValueOfString;
   password: OwnerRepoValueOfString;
   username: OwnerRepoValueOfString;
+};
+
+export type OpenPullRequestInput = {
+  /** Repository owner or organization. */
+  owner?: InputMaybe<Scalars['ID']['input']>;
+  /** Repository being accessed within the owner. */
+  repo?: InputMaybe<Scalars['ID']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type OwnerRepoDictionary = {
@@ -289,13 +294,22 @@ export type OwnerRepoValueOfString = {
   repo?: Maybe<Scalars['String']['output']>;
 };
 
+export type PullDeployInput = {
+  environment: Scalars['ID']['input'];
+  /** Repository owner or organization. */
+  owner?: InputMaybe<Scalars['ID']['input']>;
+  pullNumber: Scalars['Int']['input'];
+  /** Repository being accessed within the owner. */
+  repo?: InputMaybe<Scalars['ID']['input']>;
+};
+
 /** Pull request to deploy and merge code. */
 export type PullRequest = {
   __typename?: 'PullRequest';
   /** Pull request body as markdown. */
   body?: Maybe<Scalars['String']['output']>;
   /** Pull request number. */
-  number?: Maybe<Scalars['ID']['output']>;
+  number: Scalars['Int']['output'];
   /** Pull request title. */
   title?: Maybe<Scalars['String']['output']>;
   /** The date and time the pull request deployment was last updated. */
@@ -304,6 +318,15 @@ export type PullRequest = {
   url?: Maybe<Scalars['String']['output']>;
   /** Login for user the pull request was created by. */
   user?: Maybe<DeployUser>;
+};
+
+export type PullRequestAddServicesInput = {
+  /** Repository owner or organization. */
+  owner?: InputMaybe<Scalars['ID']['input']>;
+  pullNumber: Scalars['Int']['input'];
+  /** Repository being accessed within the owner. */
+  repo?: InputMaybe<Scalars['ID']['input']>;
+  services: Array<Scalars['String']['input']>;
 };
 
 /** Input for a general owner and repo query. */
@@ -318,6 +341,16 @@ export type Repository = {
   __typename?: 'Repository';
   owner: Scalars['String']['output'];
   repo: Scalars['String']['output'];
+};
+
+export type RollbackInput = {
+  count: Scalars['Int']['input'];
+  environment: Scalars['ID']['input'];
+  /** Repository owner or organization. */
+  owner?: InputMaybe<Scalars['ID']['input']>;
+  pullNumber: Scalars['Int']['input'];
+  /** Repository being accessed within the owner. */
+  repo?: InputMaybe<Scalars['ID']['input']>;
 };
 
 /** Comparison of services between a source and target environment. */
@@ -364,65 +397,46 @@ export type StatusResponse = {
 };
 
 export type DeployEnvironmentDeployMutationVariables = Exact<{
-  owner: Scalars['ID']['input'];
-  repo: Scalars['ID']['input'];
-  environment: Scalars['ID']['input'];
-  pullRequestNumber: Scalars['ID']['input'];
-  force?: InputMaybe<Scalars['Boolean']['input']>;
-  retain?: InputMaybe<Scalars['Boolean']['input']>;
+  input: EnvironmentDeployInput;
 }>;
 
 
 export type DeployEnvironmentDeployMutation = { __typename?: 'DeployMutation', deployEnvironmentDeploy: { __typename?: 'StatusResponse', success: boolean } };
 
 export type DeployEnvironmentFreeMutationVariables = Exact<{
-  owner: Scalars['ID']['input'];
-  repo: Scalars['ID']['input'];
-  environment: Scalars['ID']['input'];
-  pullRequestNumber: Scalars['ID']['input'];
+  input: PullDeployInput;
 }>;
 
 
 export type DeployEnvironmentFreeMutation = { __typename?: 'DeployMutation', deployEnvironmentFree: { __typename?: 'StatusResponse', success: boolean } };
 
 export type DeployEnvironmentRollbackMutationVariables = Exact<{
-  owner: Scalars['ID']['input'];
-  repo: Scalars['ID']['input'];
-  environment: Scalars['ID']['input'];
-  pullRequestNumber: Scalars['ID']['input'];
-  count?: InputMaybe<Scalars['Int']['input']>;
+  input: RollbackInput;
 }>;
 
 
 export type DeployEnvironmentRollbackMutation = { __typename?: 'DeployMutation', deployEnvironmentRollback: { __typename?: 'StatusResponse', success: boolean } };
 
 export type DeployQueueUpdateMutationVariables = Exact<{
-  owner: Scalars['ID']['input'];
-  repo: Scalars['ID']['input'];
-  environment: Scalars['ID']['input'];
-  pullRequestNumbers?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
+  input: DeployQueueUpdateInput;
 }>;
 
 
 export type DeployQueueUpdateMutation = { __typename?: 'DeployMutation', deployQueueUpdate: { __typename?: 'DeployQueue', environment?: string | null } };
 
 export type PullRequestAddServicesMutationVariables = Exact<{
-  owner: Scalars['ID']['input'];
-  repo: Scalars['ID']['input'];
-  pullRequestNumber: Scalars['ID']['input'];
-  services: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+  input: PullRequestAddServicesInput;
 }>;
 
 
 export type PullRequestAddServicesMutation = { __typename?: 'DeployMutation', pullRequestAddServices: { __typename?: 'StatusResponse', success: boolean } };
 
 export type DeployEnvironmentsAndQueuesQueryVariables = Exact<{
-  owner: Scalars['ID']['input'];
-  repo: Scalars['ID']['input'];
+  input: RepoQueryInput;
 }>;
 
 
-export type DeployEnvironmentsAndQueuesQuery = { __typename?: 'DeployQuery', deployEnvironments: Array<{ __typename?: 'DeployEnvironment', name?: string | null, url?: string | null, color?: string | null, locked: boolean, pullRequest?: { __typename?: 'PullRequest', number?: string | null, title?: string | null, body?: string | null, url?: string | null, updatedAt?: any | null, user?: { __typename?: 'DeployUser', name?: string | null, username?: string | null } | null } | null }>, deployQueues: Array<{ __typename?: 'DeployQueue', environment?: string | null, pullRequests: Array<{ __typename?: 'PullRequest', number?: string | null, title?: string | null, body?: string | null, url?: string | null, updatedAt?: any | null, user?: { __typename?: 'DeployUser', name?: string | null, username?: string | null } | null }> }> };
+export type DeployEnvironmentsAndQueuesQuery = { __typename?: 'DeployQuery', deployEnvironments: Array<{ __typename?: 'DeployEnvironment', name?: string | null, url?: string | null, color?: string | null, locked: boolean, pullRequest?: { __typename?: 'PullRequest', number: number, title?: string | null, body?: string | null, url?: string | null, updatedAt?: any | null, user?: { __typename?: 'DeployUser', name?: string | null, username?: string | null } | null } | null }>, deployQueues: Array<{ __typename?: 'DeployQueue', environment?: string | null, pullRequests: Array<{ __typename?: 'PullRequest', number: number, title?: string | null, body?: string | null, url?: string | null, updatedAt?: any | null, user?: { __typename?: 'DeployUser', name?: string | null, username?: string | null } | null }> }> };
 
 export type DeploySettingsCompareQueryVariables = Exact<{
   input: RepoQueryInput;
@@ -446,13 +460,11 @@ export type EnvironmentsQueryVariables = Exact<{
 export type EnvironmentsQuery = { __typename?: 'DeployQuery', environments: Array<{ __typename?: 'Environment', name?: string | null, url?: string | null }> };
 
 export type OpenPullRequestsQueryVariables = Exact<{
-  owner: Scalars['ID']['input'];
-  repo: Scalars['ID']['input'];
-  search?: InputMaybe<Scalars['String']['input']>;
+  input: OpenPullRequestInput;
 }>;
 
 
-export type OpenPullRequestsQuery = { __typename?: 'DeployQuery', openPullRequests: Array<{ __typename?: 'PullRequest', number?: string | null, title?: string | null, user?: { __typename?: 'DeployUser', name?: string | null } | null }> };
+export type OpenPullRequestsQuery = { __typename?: 'DeployQuery', openPullRequests: Array<{ __typename?: 'PullRequest', number: number, title?: string | null, user?: { __typename?: 'DeployUser', name?: string | null } | null }> };
 
 export type PrDeployEnabledRepositoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -460,23 +472,15 @@ export type PrDeployEnabledRepositoriesQueryVariables = Exact<{ [key: string]: n
 export type PrDeployEnabledRepositoriesQuery = { __typename?: 'DeployQuery', prDeployEnabledRepositories: Array<{ __typename?: 'Repository', owner: string, repo: string }> };
 
 export type RepositoryServicesQueryVariables = Exact<{
-  owner: Scalars['ID']['input'];
-  repo: Scalars['ID']['input'];
+  input: RepoQueryInput;
 }>;
 
 
 export type RepositoryServicesQuery = { __typename?: 'DeployQuery', repositoryServices: Array<string> };
 
 export const DeployEnvironmentDeployDocument = gql`
-    mutation DeployEnvironmentDeploy($owner: ID!, $repo: ID!, $environment: ID!, $pullRequestNumber: ID!, $force: Boolean, $retain: Boolean) {
-  deployEnvironmentDeploy(
-    owner: $owner
-    repo: $repo
-    environment: $environment
-    pullRequestNumber: $pullRequestNumber
-    force: $force
-    retain: $retain
-  ) {
+    mutation DeployEnvironmentDeploy($input: EnvironmentDeployInput!) {
+  deployEnvironmentDeploy(input: $input) {
     success
   }
 }
@@ -493,13 +497,8 @@ export const DeployEnvironmentDeployDocument = gql`
     }
   }
 export const DeployEnvironmentFreeDocument = gql`
-    mutation DeployEnvironmentFree($owner: ID!, $repo: ID!, $environment: ID!, $pullRequestNumber: ID!) {
-  deployEnvironmentFree(
-    owner: $owner
-    repo: $repo
-    environment: $environment
-    pullRequestNumber: $pullRequestNumber
-  ) {
+    mutation DeployEnvironmentFree($input: PullDeployInput!) {
+  deployEnvironmentFree(input: $input) {
     success
   }
 }
@@ -516,14 +515,8 @@ export const DeployEnvironmentFreeDocument = gql`
     }
   }
 export const DeployEnvironmentRollbackDocument = gql`
-    mutation DeployEnvironmentRollback($owner: ID!, $repo: ID!, $environment: ID!, $pullRequestNumber: ID!, $count: Int) {
-  deployEnvironmentRollback(
-    owner: $owner
-    repo: $repo
-    environment: $environment
-    pullRequestNumber: $pullRequestNumber
-    count: $count
-  ) {
+    mutation DeployEnvironmentRollback($input: RollbackInput!) {
+  deployEnvironmentRollback(input: $input) {
     success
   }
 }
@@ -540,13 +533,8 @@ export const DeployEnvironmentRollbackDocument = gql`
     }
   }
 export const DeployQueueUpdateDocument = gql`
-    mutation DeployQueueUpdate($owner: ID!, $repo: ID!, $environment: ID!, $pullRequestNumbers: [ID!]) {
-  deployQueueUpdate(
-    owner: $owner
-    repo: $repo
-    environment: $environment
-    pullRequestNumbers: $pullRequestNumbers
-  ) {
+    mutation DeployQueueUpdate($input: DeployQueueUpdateInput!) {
+  deployQueueUpdate(input: $input) {
     environment
   }
 }
@@ -563,13 +551,8 @@ export const DeployQueueUpdateDocument = gql`
     }
   }
 export const PullRequestAddServicesDocument = gql`
-    mutation PullRequestAddServices($owner: ID!, $repo: ID!, $pullRequestNumber: ID!, $services: [ID!]!) {
-  pullRequestAddServices(
-    owner: $owner
-    repo: $repo
-    pullRequestNumber: $pullRequestNumber
-    services: $services
-  ) {
+    mutation PullRequestAddServices($input: PullRequestAddServicesInput!) {
+  pullRequestAddServices(input: $input) {
     success
   }
 }
@@ -586,8 +569,8 @@ export const PullRequestAddServicesDocument = gql`
     }
   }
 export const DeployEnvironmentsAndQueuesDocument = gql`
-    query DeployEnvironmentsAndQueues($owner: ID!, $repo: ID!) {
-  deployEnvironments(owner: $owner, repo: $repo) {
+    query DeployEnvironmentsAndQueues($input: RepoQueryInput!) {
+  deployEnvironments(input: $input) {
     name
     url
     color
@@ -604,7 +587,7 @@ export const DeployEnvironmentsAndQueuesDocument = gql`
       }
     }
   }
-  deployQueues(owner: $owner, repo: $repo) {
+  deployQueues(input: $input) {
     environment
     pullRequests {
       number
@@ -836,8 +819,8 @@ export const EnvironmentsDocument = gql`
     }
   }
 export const OpenPullRequestsDocument = gql`
-    query OpenPullRequests($owner: ID!, $repo: ID!, $search: String) {
-  openPullRequests(owner: $owner, repo: $repo, search: $search) {
+    query OpenPullRequests($input: OpenPullRequestInput!) {
+  openPullRequests(input: $input) {
     number
     title
     user {
@@ -877,8 +860,8 @@ export const PrDeployEnabledRepositoriesDocument = gql`
     }
   }
 export const RepositoryServicesDocument = gql`
-    query RepositoryServices($owner: ID!, $repo: ID!) {
-  repositoryServices(owner: $owner, repo: $repo)
+    query RepositoryServices($input: RepoQueryInput!) {
+  repositoryServices(input: $input)
 }
     `;
 

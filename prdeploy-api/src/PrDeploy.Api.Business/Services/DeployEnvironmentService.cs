@@ -107,8 +107,8 @@ public class DeployEnvironmentService : IDeployEnvironmentService
 
     public async Task<StatusResponse> DeployAsync(EnvironmentDeployInput input)
     {
-        var retainString = input.Retain ? " --retain" : string.Empty;
-        var forceString = input.Force ? " --force" : string.Empty;
+        var retainString = input.Retain.GetValueOrDefault() ? " --retain" : string.Empty;
+        var forceString = input.Force.GetValueOrDefault() ? " --force" : string.Empty;
         return await _pullRequestService.AddCommentCommandAsync(input.Owner, input.Repo, input.PullNumber, 
             $"/deploy {input.Environment.ToLower()}{forceString}{retainString}");
     }

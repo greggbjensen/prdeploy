@@ -31,7 +31,7 @@ enum ApplyPolicy {
 "Pull request to deploy and merge code."
 type PullRequest {
   "Pull request number."
-  number: ID
+  number: Int!
   "Pull request title."
   title: String
   "URL for displaying the pull request HTML."
@@ -137,7 +137,7 @@ type Repository {
 
 input DeployQueueUpdateInput {
   environment: ID!
-  pullRequestNumbers: [Int!]
+  pullNumbers: [Int!]
   "Repository owner or organization."
   owner: ID
   "Repository being accessed within the owner."

@@ -86,7 +86,7 @@ public class DeployEnvironmentQueryTest : DeployApiTest
 
         var pullRequest = dev.PullRequest;
         Assert.NotNull(pullRequest);
-        Assert.Equal(PullRequests.TestPull.Number.ToString(), pullRequest.Number);
+        Assert.Equal(PullRequests.TestPull.Number, pullRequest.Number);
         Assert.Equal(PullRequests.TestPull.Title, pullRequest.Title);
         Assert.Equal(PullRequests.TestPull.Body, pullRequest.Body);
         Assert.Equal(PullRequests.TestPull.Url, pullRequest.Url);

@@ -6,7 +6,6 @@ namespace PrDeploy.Api.Models.PullRequests;
 [GraphQLDescription("Pull request to deploy and merge code.")]
 public class PullRequest
 {
-    [GraphQLType(typeof(IdType))]
     [GraphQLDescription("Pull request number.")]
     public int Number { get; set; }
 

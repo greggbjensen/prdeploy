@@ -27,10 +27,10 @@ public class DeployQueueService : IDeployQueueService
     public async Task<DeployQueue> UpdateAsync(DeployQueueUpdateInput input)
     {
         var value = new List<int>();
-        if (input.PullRequestNumbers?.Any() == true)
+        if (input.PullNumbers?.Any() == true)
         {
-            await AddCommentForNewEntriesAsync(input.Owner, input.Repo, input.Environment, input.PullRequestNumbers);
-            value = input.PullRequestNumbers;
+            await AddCommentForNewEntriesAsync(input.Owner, input.Repo, input.Environment, input.PullNumbers);
+            value = input.PullNumbers;
         }
 
         var environmentSettings = await _deploySettingsService.GetEnvironmentAsync(input.Owner, input.Repo, input.Environment);
@@ -51,14 +51,14 @@ public class DeployQueueService : IDeployQueueService
     }
 
     private async Task AddCommentForNewEntriesAsync(string owner, string repo, string environment,
-        List<int> pullRequestNumbers)
+        List<int> pullNumbers)
     {
         // Compare against current queue and add command comment for new ones.
         var repoSettings = await _deploySettingsService.GetMergedAsync(owner, repo);
         var environmentSettings = _deploySettingsService.GetEnvironment(owner, repo, environment, repoSettings);
         var currentNumbers = await GetPullNumbersAsync(owner, repo, environmentSettings.Queue);
 
-        var newNumbers = pullRequestNumbers.Where(n => !currentNumbers.Contains(n)).ToArray();
+        var newNumbers = pullNumbers.Where(n => !currentNumbers.Contains(n)).ToArray();
         if (newNumbers.Any())
         {
             var command = environment.StartsWith(repoSettings.DefaultEnvironment, StringComparison.OrdinalIgnoreCase)

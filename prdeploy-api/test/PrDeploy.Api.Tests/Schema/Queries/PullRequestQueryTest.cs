@@ -54,7 +54,7 @@ public class PullRequestQueryTest : DeployApiTest
 
         var pullRequest = pullRequests[0];
         Assert.NotNull(pullRequest);
-        Assert.Equal(PullRequests.ListingPull.Number.ToString(), pullRequest.Number);
+        Assert.Equal(PullRequests.ListingPull.Number, pullRequest.Number);
         Assert.Equal(PullRequests.ListingPull.Title, pullRequest.Title);
 
         Assert.NotNull(pullRequest.User);

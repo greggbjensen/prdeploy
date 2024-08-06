@@ -49,7 +49,7 @@ export class AddPrServiceDialogComponent {
 
     if (this.visible) {
       firstValueFrom(
-        this._repositoryServicesGQL.fetch({ owner: this._repoManager.owner, repo: this._repoManager.repo })
+        this._repositoryServicesGQL.fetch({ input: { owner: this._repoManager.owner, repo: this._repoManager.repo } })
       ).then(response => {
         this.repositoryServices = response.data.repositoryServices;
       });
@@ -72,9 +72,11 @@ export class AddPrServiceDialogComponent {
       load: async options => {
         const result = await firstValueFrom(
           this._openPullRequestsGQL.fetch({
-            owner: this._repoManager.owner,
-            repo: this._repoManager.repo,
-            search: options.searchValue
+            input: {
+              owner: this._repoManager.owner,
+              repo: this._repoManager.repo,
+              search: options.searchValue
+            }
           })
         );
         return result.data.openPullRequests;
@@ -92,10 +94,12 @@ export class AddPrServiceDialogComponent {
     try {
       await firstValueFrom(
         this._pullRequestAddServicesGQL.mutate({
-          owner: this._repoManager.owner,
-          repo: this._repoManager.repo,
-          pullRequestNumber: this.selectedPullRequest.number,
-          services: this.selectedServices
+          input: {
+            owner: this._repoManager.owner,
+            repo: this._repoManager.repo,
+            pullNumber: this.selectedPullRequest.number,
+            services: this.selectedServices
+          }
         })
       );
 

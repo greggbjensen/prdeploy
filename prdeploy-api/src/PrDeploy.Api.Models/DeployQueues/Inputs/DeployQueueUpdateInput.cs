@@ -7,6 +7,6 @@ namespace PrDeploy.Api.Models.DeployQueues.Inputs
     {
         [ID]
         public string Environment { get; set; } = string.Empty;
-        public List<int>? PullRequestNumbers { get; set; } = null!;
+        public List<int>? PullNumbers { get; set; } = null!;
     }
 }

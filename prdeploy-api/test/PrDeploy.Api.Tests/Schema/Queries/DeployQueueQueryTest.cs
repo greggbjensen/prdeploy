@@ -96,9 +96,9 @@ public class DeployQueueQueryTest : DeployApiTest
         Assert.NotNull(dev.PullRequests);
 
         var pullRequest = dev.PullRequests.FirstOrDefault(p =>
-            p.Number == PullRequests.TestPull.Number.ToString());
+            p.Number == PullRequests.TestPull.Number);
         Assert.NotNull(pullRequest);
-        Assert.Equal(PullRequests.TestPull.Number.ToString(), pullRequest.Number);
+        Assert.Equal(PullRequests.TestPull.Number, pullRequest.Number);
         Assert.Equal(PullRequests.TestPull.Title, pullRequest.Title);
         Assert.Equal(PullRequests.TestPull.Body, pullRequest.Body);
         Assert.Equal(PullRequests.TestPull.Url, pullRequest.Url);

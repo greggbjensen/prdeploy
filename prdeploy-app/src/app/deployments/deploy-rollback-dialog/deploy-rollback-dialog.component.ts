@@ -15,7 +15,7 @@ import { LoggingService } from 'src/app/shared/services';
 export class DeployRollbackDialogComponent {
   @Input() repository: Repository;
   @Input() environment: string;
-  @Input() pullNumber: string;
+  @Input() pullNumber: number;
 
   processing = false;
   rollbackCount = 1;
@@ -47,11 +47,13 @@ export class DeployRollbackDialogComponent {
     try {
       await firstValueFrom(
         this._deployEnvironmentDeployGQL.mutate({
-          owner: this.repository.owner,
-          repo: this.repository.repo,
-          environment: this.environment,
-          pullRequestNumber: this.pullNumber,
-          count: this.rollbackCount > 1 ? this.rollbackCount : undefined
+          input: {
+            owner: this.repository.owner,
+            repo: this.repository.repo,
+            environment: this.environment,
+            pullNumber: this.pullNumber,
+            count: this.rollbackCount > 1 ? this.rollbackCount : undefined
+          }
         })
       );
 

@@ -1,5 +1,5 @@
-query OpenPullRequests($owner: ID!, $repo: ID!, $search: String) {
-  openPullRequests(owner: $owner, repo: $repo, search: $search) {
+query OpenPullRequests($input: OpenPullRequestInput!) {
+  openPullRequests(input: $input) {
     number
     title
     user {
