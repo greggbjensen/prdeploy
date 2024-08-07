@@ -16,26 +16,7 @@ public class RepositoryQueryTest : DeployApiTest
 
     public override void ConfigureServices(IServiceCollection services)
     {
-        services.AddTransient<IGitHubClient>(s =>
-        {
-            var mock = new Mock<IGitHubClient>(MockBehavior.Strict);
-
-            mock.Setup(x => x.Repository.Content.GetRawContent(
-                    GitHub.Owner,
-                    GitHub.Repo,
-                    PrDeployOptions.RepoSettingsPath
-                ))
-                .ReturnsAsync(() => File.ReadAllBytes(GitHub.MockRepoSettingsPath));
-
-            mock.Setup(x => x.Repository.Content.GetRawContent(
-                    PrDeployOptions.Owner,
-                    PrDeployOptions.Repo,
-                    PrDeployOptions.DefaultSettingsPath
-                ))
-                .ReturnsAsync(() => File.ReadAllBytes(GitHub.MockDefaultSettingsPath));
-
-            return mock.Object;
-        });
+        // TODO Add SSM mocks.
     }
 
     [Fact]

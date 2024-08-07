@@ -22,19 +22,7 @@ public class DeployQueueQueryTest : DeployApiTest
         {
             var mock = new Mock<IGitHubClient>(MockBehavior.Strict);
 
-            mock.Setup(x => x.Repository.Content.GetRawContent(
-                    GitHub.Owner,
-                    GitHub.Repo,
-                    PrDeployOptions.RepoSettingsPath
-                ))
-                .ReturnsAsync(() => File.ReadAllBytes(GitHub.MockRepoSettingsPath));
-
-            mock.Setup(x => x.Repository.Content.GetRawContent(
-                    PrDeployOptions.Owner,
-                    PrDeployOptions.Repo,
-                    PrDeployOptions.DefaultSettingsPath
-                ))
-                .ReturnsAsync(() => File.ReadAllBytes(GitHub.MockDefaultSettingsPath));
+            // TODO Add SSM mocks.
 
             mock.Setup(x => x.PullRequest.Get(
                     GitHub.Owner,

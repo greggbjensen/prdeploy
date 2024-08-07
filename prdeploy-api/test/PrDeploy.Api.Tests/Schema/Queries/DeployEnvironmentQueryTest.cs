@@ -34,19 +34,7 @@ public class DeployEnvironmentQueryTest : DeployApiTest
                     Mocker.Label("prod", "1d8348"),
                 });
 
-            mock.Setup(x => x.Repository.Content.GetRawContent(
-                    GitHub.Owner,
-                    GitHub.Repo,
-                    PrDeployOptions.RepoSettingsPath
-                ))
-                .ReturnsAsync(() => File.ReadAllBytes(GitHub.MockRepoSettingsPath));
-
-            mock.Setup(x => x.Repository.Content.GetRawContent(
-                    PrDeployOptions.Owner,
-                    PrDeployOptions.Repo,
-                    PrDeployOptions.DefaultSettingsPath
-                ))
-                .ReturnsAsync(() => File.ReadAllBytes(GitHub.MockDefaultSettingsPath));
+            // TODO Add SSM mocks.
 
             mock.Setup(x => x.Issue.GetAllForRepository(
                     GitHub.Owner,

@@ -22,19 +22,7 @@ public class DeployQueueMutationTest : DeployApiTest
         {
             var gitHubMock = new Mock<IGitHubClient>(MockBehavior.Strict);
 
-            gitHubMock.Setup(x => x.Repository.Content.GetRawContent(
-                    GitHub.Owner,
-                    GitHub.Repo,
-                    PrDeployOptions.RepoSettingsPath
-                ))
-                .ReturnsAsync(() => File.ReadAllBytes(GitHub.MockRepoSettingsPath));
-
-            gitHubMock.Setup(x => x.Repository.Content.GetRawContent(
-                    PrDeployOptions.Owner,
-                    PrDeployOptions.Repo,
-                    PrDeployOptions.DefaultSettingsPath
-                ))
-                .ReturnsAsync(() => File.ReadAllBytes(GitHub.MockDefaultSettingsPath));
+            // TODO Add SSM mocks.
 
             gitHubMock.Setup(x => x.PullRequest.Get(
                     GitHub.Owner,

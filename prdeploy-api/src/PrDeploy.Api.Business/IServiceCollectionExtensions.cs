@@ -24,7 +24,6 @@ public static class IServiceCollectionExtensions
 
         services
             .Configure<AwsOptions>(configuration.GetSection("Aws"))
-            .Configure<PrDeployOptions>(configuration.GetSection("PrDeploy"))
             .Configure<GitHubAuthOptions>(configuration.GetSection("GitHubAuth"))
             .AddScoped<IRestClientInstance<GitHubAuthOptions>>(s =>
             {

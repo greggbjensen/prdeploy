@@ -11,6 +11,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="default-owner-settings.yaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="default-owner-settings.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="HotChocolate.AspNetCore" Version="13.5.1" />
     <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="13.5.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.32" />
