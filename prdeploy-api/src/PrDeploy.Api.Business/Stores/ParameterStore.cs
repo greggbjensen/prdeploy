@@ -16,6 +16,12 @@ namespace PrDeploy.Api.Business.Stores
             _amazonSsm = amazonSsm;
         }
 
+        public async Task<T> GetAsync<T>(string name)
+        {
+            var value = await GetParameterValueAsync<T>($"{PrdeployPrefix}/{name.ToUpperInvariant()}");
+            return value;
+        }
+
         public async Task<T> GetAsync<T>(string owner, string repo, string name)
         {
             var value = await GetParameterValueAsync<T>($"{PrdeployPrefix}/{owner}/{repo}/{name.ToUpperInvariant()}");
@@ -26,6 +32,11 @@ namespace PrDeploy.Api.Business.Stores
         {
             var value = await GetParameterValueAsync<T>($"{PrdeployPrefix}/{owner}/{name.ToUpperInvariant()}/");
             return value;
+        }
+
+        public async Task SetAsync<T>(string name, T value, bool isSecure = false)
+        {
+            await SetParameterValueAsync($"{PrdeployPrefix}/{name.ToUpperInvariant()}", value, isSecure);
         }
 
         public async Task SetAsync<T>(string owner, string repo, string name, T value, bool isSecure = false)

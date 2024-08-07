@@ -5,7 +5,7 @@ using PrDeploy.Api.Models.OwnerRepo;
 namespace PrDeploy.Api.Schema.Queries;
 
 [ExtendObjectType("DeployQuery")]
-public class RepositoryQuery
+public class OwnerRepoQuery
 {
     [GraphQLName("enabledOwnerRepos")]
     public async Task<List<OwnerRepos>> PrDeployEnabledRepositories(IOwnerRepoService service) =>

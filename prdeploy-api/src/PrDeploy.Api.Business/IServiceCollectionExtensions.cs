@@ -52,9 +52,9 @@ public static class IServiceCollectionExtensions
             .AddScoped<IDeployEnvironmentService, DeployEnvironmentService>()
             .AddScoped<IPullRequestService, PullRequestService>()
             .AddScoped<IDeploySettingsService, DeploySettingsService>()
-            .AddScoped<IRepositoryService, RepositoryService>()
+            .AddScoped<IOwnerRepoService, OwnerRepoService>()
             .AddScoped<IGitHubAuthClient, GitHubAuthClient>()
-            .AddScoped<IRepositorySecurity, RepositorySecurity>();
+            .AddScoped<IGitHubSecurity, GitHubSecurity>();
 
         return services;
     }
