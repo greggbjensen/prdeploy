@@ -28,6 +28,7 @@ public static class IServiceCollectionExtensions
             .AddMutationType(m => m.Name("DeployMutation"))
             .AddType<DeployEnvironmentMutation>()
             .AddType<DeployQueueMutation>()
+            .AddType<DeploySettingsMutation>()
             .AddType<OwnerRepoMutation>()
             .AddType<PullRequestMutation>()
 

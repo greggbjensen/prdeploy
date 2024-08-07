@@ -16,7 +16,7 @@ environments: # List of environments to be used.
     excludeFromRollback: [] # Services that should not be rolled back in this environment, such as databases.
     automationTest: # Automation tests to run and report on as part of the pull request deploy.
       enabled: false # Whether or not automation test run should be triggered.
-      workflow: test-automation-run.yml
+      workflow: test-automation-run.yaml
       inputs:
         environment: ${environment} # Inputs can be tokens bound from pull request deploy, or hard coded values.
         pull_number: ${pull_number}
