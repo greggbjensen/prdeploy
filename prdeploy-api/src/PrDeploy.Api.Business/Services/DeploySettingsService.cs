@@ -1,50 +1,46 @@
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
-using PrDeploy.Api.Business.Options;
 using PrDeploy.Api.Business.Services.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Octokit;
 using PrDeploy.Api.Business.Mapping;
+using PrDeploy.Api.Business.Security.Interfaces;
+using PrDeploy.Api.Business.Stores.Interfaces;
+using PrDeploy.Api.Models.General;
 using PrDeploy.Api.Models.General.Inputs;
 using PrDeploy.Api.Models.Settings;
 using PrDeploy.Api.Models.Settings.Compare;
-using YamlDotNet.Serialization;
+using PrDeploy.Api.Models.Settings.Inputs;
 using YamlDotNet.Serialization.NamingConventions;
+using YamlDotNet.Serialization;
 
 namespace PrDeploy.Api.Business.Services;
 public class DeploySettingsService : IDeploySettingsService
 {
+    private const string DeploySettingsKey = "DEPLOY_SETTINGS";
     private static readonly TimeSpan RepoSettingsExpiration = TimeSpan.FromMinutes(5);
     private static readonly Regex NormalizeEnvironmentRegex = new Regex(@"\d+$", RegexOptions.Compiled);
-    private readonly IGitHubClient _gitHubClient;
+    private static DeploySettings? _defaultOwnerSettings;
     private readonly IMemoryCache _cache;
-    private readonly ILogger _logger;
-    private readonly PrDeployOptions _prDeployOptions;
 
-    private static readonly IDeserializer Deserializer = new DeserializerBuilder()
-        .WithNamingConvention(CamelCaseNamingConvention.Instance)
-        .Build();
+    private readonly IParameterStore _parameterStore;
+    private readonly IGitHubSecurity _gitHubSecurity;
 
-    public DeploySettingsService(IGitHubClient gitHubClient, IMemoryCache cache, 
-        IOptions<PrDeployOptions> prDeployOptions, ILogger<DeploySettingsService> logger)
+    public DeploySettingsService(IParameterStore parameterStore, IGitHubSecurity gitHubSecurity, IMemoryCache cache)
     {
-        _prDeployOptions = prDeployOptions.Value;
-        _gitHubClient = gitHubClient;
+        _parameterStore = parameterStore;
+        _gitHubSecurity = gitHubSecurity;
         _cache = cache;
-        _logger = logger;
     }
 
     public async Task<DeploySettingsCompare> GetAllAsync(RepoQueryInput input)
     {
         // Add validation.
-        var ownerSettings = await GetOwnerSettingsAsync(_prDeployOptions.Owner);
+        var ownerSettings = await GetOwnerSettingsAsync(input.Owner);
         var repoSettings = await GetRepoSettingsAsync(input.Owner, input.Repo);
 
         var settingsCompare = Map.Compare(ownerSettings, repoSettings);
-        return settingsCompare;
+        return settingsCompare!;
     }
 
     public async Task<DeploySettings> GetMergedAsync(string owner, string repo)
@@ -56,7 +52,7 @@ public class DeploySettingsService : IDeploySettingsService
             return repoSettings;
         }
 
-        var ownerSettings = await GetOwnerSettingsAsync(_prDeployOptions.Owner);
+        var ownerSettings = await GetOwnerSettingsAsync(owner);
         repoSettings = await GetRepoSettingsAsync(owner, repo);
 
         repoSettings.Owner = owner;
@@ -94,7 +90,7 @@ public class DeploySettingsService : IDeploySettingsService
     public async Task<List<EnvironmentSettings>> GetQueueEnvironmentsAsync(string owner, string repo)
     {
         var repoSettings = await GetMergedAsync(owner, repo);
-        var environmentSettings = repoSettings.Environments
+        var environmentSettings = repoSettings.Environments!
             .GroupBy(e => e.Queue).Select(g =>
             {
                 var environment = g.First();
@@ -118,30 +114,63 @@ public class DeploySettingsService : IDeploySettingsService
         return services ?? new List<string>();
     }
 
-    private async Task<DeploySettings> GetRepoSettingsAsync(string owner, string repo)
+    public async Task<DeploySettings> GetOwnerSettingsAsync(string owner)
     {
+        await _gitHubSecurity.GuardOwnerAsync(owner);
+
         // Repo specific settings, which are optional.
-        DeploySettings deploySettings;
-        try
+        var deploySettings = await _parameterStore.GetAsync<DeploySettings?>(owner, DeploySettingsKey);
+        if (deploySettings == null)
         {
-            deploySettings = await GetGenericSettingsAsync(owner, repo, _prDeployOptions.RepoSettingsPath, Deserializer);
-        }
-        catch (Exception ex)
-        {
-            deploySettings = new();
-            _logger.LogWarning(ex, $"The repository {owner}/{repo} does not yet have a {_prDeployOptions.RepoSettingsPath} file.");
+            _defaultOwnerSettings ??= await LoadDefaultOwnerSettingsAsync();
+            deploySettings = _defaultOwnerSettings;
+            await _parameterStore.SetAsync(owner, DeploySettingsKey, deploySettings, true);
         }
 
         return deploySettings;
     }
 
-    private async Task<DeploySettings> GetOwnerSettingsAsync(string owner)
+    public async Task<StatusResponse> SetOwnerSettingsAsync(SetOwnerSettingsInput input)
     {
-        var defaultSettings = await GetGenericSettingsAsync(
-            owner,
-            _prDeployOptions.Repo,
-            _prDeployOptions.DefaultSettingsPath, Deserializer);
-        return defaultSettings;
+        await _gitHubSecurity.GuardOwnerAsync(input.Owner);
+
+        await _parameterStore.SetAsync(input.Owner, DeploySettingsKey, input.Settings, true);
+
+        return new StatusResponse
+        {
+            Success = true
+        };
+    }
+
+    public async Task<DeploySettings> GetRepoSettingsAsync(string owner, string repo)
+    {
+        await _gitHubSecurity.GuardRepoAsync(owner, repo);
+
+        // Repo specific settings, which are optional.
+        var deploySettings = await _parameterStore.GetAsync<DeploySettings?>(owner, repo, DeploySettingsKey);
+        if (deploySettings == null)
+        {
+            deploySettings = new DeploySettings();
+            await _parameterStore.SetAsync(owner, repo, DeploySettingsKey, deploySettings, true);
+        }
+
+        return deploySettings;
+    }
+
+    public async Task<StatusResponse> SetRepoSettingsAsync(SetRepoSettingsInput input)
+    {
+        await _gitHubSecurity.GuardRepoAsync(input.Owner, input.Repo);
+
+        await _parameterStore.SetAsync(input.Owner, input.Repo, DeploySettingsKey, input.Settings, true);
+
+        // Clear cache so it can update.
+        var cacheKy = GetSettingsCacheKey(input.Owner, input.Repo);
+        _cache.Remove(cacheKy);
+
+        return new StatusResponse
+        {
+            Success = true
+        };
     }
 
     public string NormalizeEnvironment(string environment)
@@ -149,16 +178,15 @@ public class DeploySettingsService : IDeploySettingsService
         return NormalizeEnvironmentRegex.Replace(environment, string.Empty);
     }
 
-    private static string GetSettingsCacheKey(string owner, string repo) => $"{owner}:{repo}:settings";
-
-    private async Task<DeploySettings> GetGenericSettingsAsync(string owner, string repo, string settingsPath,
-        IDeserializer deserializer)
+    private async Task<DeploySettings> LoadDefaultOwnerSettingsAsync()
     {
-        var settingsBytes = await _gitHubClient.Repository.Content.GetRawContent(owner, repo,
-            settingsPath);
-        var settingsYaml = Encoding.UTF8.GetString(settingsBytes, 0, settingsBytes.Length);
-        var settings = deserializer.Deserialize<DeploySettings>(settingsYaml) ?? new();
-
-        return settings;
+        var yaml = await File.ReadAllTextAsync("default-owner-settings.yaml");
+        var deserializer = new DeserializerBuilder()
+            .WithNamingConvention(CamelCaseNamingConvention.Instance)
+            .Build();
+        var deploySettings = deserializer.Deserialize<DeploySettings>(yaml);
+        return deploySettings;
     }
+
+    private static string GetSettingsCacheKey(string owner, string repo) => $"{owner}:{repo}:settings";
 }

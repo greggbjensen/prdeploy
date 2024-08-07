@@ -24,7 +24,6 @@ public static class IServiceCollectionExtensions
 
         services
             .Configure<AwsOptions>(configuration.GetSection("Aws"))
-            .Configure<PrDeployOptions>(configuration.GetSection("PrDeploy"))
             .Configure<GitHubAuthOptions>(configuration.GetSection("GitHubAuth"))
             .AddScoped<IRestClientInstance<GitHubAuthOptions>>(s =>
             {
@@ -52,9 +51,9 @@ public static class IServiceCollectionExtensions
             .AddScoped<IDeployEnvironmentService, DeployEnvironmentService>()
             .AddScoped<IPullRequestService, PullRequestService>()
             .AddScoped<IDeploySettingsService, DeploySettingsService>()
-            .AddScoped<IRepositoryService, RepositoryService>()
+            .AddScoped<IOwnerRepoService, OwnerRepoService>()
             .AddScoped<IGitHubAuthClient, GitHubAuthClient>()
-            .AddScoped<IRepositorySecurity, RepositorySecurity>();
+            .AddScoped<IGitHubSecurity, GitHubSecurity>();
 
         return services;
     }

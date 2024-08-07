@@ -18,13 +18,13 @@ public class DeployEnvironmentService : IDeployEnvironmentService
     private readonly IGitHubClient _gitHubClient;
     private readonly IDeploySettingsService _deploySettingsService;
     private readonly IPullRequestService _pullRequestService;
-    private readonly IRepositorySecurity _repositorySecurity;
+    private readonly IGitHubSecurity _gitHubSecurity;
     private readonly IParameterStore _parameterStore;
     private readonly IValidator<DeployStateComparisonInput> _deployStateComparisonInputValidator;
     private readonly IValidator<RepoQueryInput> _environmentsInputValidator;
 
     public DeployEnvironmentService(IGitHubClient gitHubClient, IDeploySettingsService deploySettingsService,
-        IPullRequestService pullRequestService, IRepositorySecurity repositorySecurity,
+        IPullRequestService pullRequestService, IGitHubSecurity gitHubSecurity,
         IParameterStore parameterStore, IValidator<DeployStateComparisonInput> deployStateComparisonInputValidator,
         IValidator<RepoQueryInput> environmentsInputValidator)
     {
@@ -32,7 +32,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
         _gitHubClient = gitHubClient;
         _deploySettingsService = deploySettingsService;
         _pullRequestService = pullRequestService;
-        _repositorySecurity = repositorySecurity;
+        _gitHubSecurity = gitHubSecurity;
         _parameterStore = parameterStore;
         _deployStateComparisonInputValidator = deployStateComparisonInputValidator;
     }
@@ -87,7 +87,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
     public async Task<List<Environment>> ListEnvironmentsAsync(RepoQueryInput input)
     {
         await _environmentsInputValidator.ValidateAndThrowAsync(input);
-        await _repositorySecurity.GuardAsync(input.Owner, input.Repo);
+        await _gitHubSecurity.GuardRepoAsync(input.Owner, input.Repo);
 
         var repoSettings = await _deploySettingsService.GetMergedAsync(input.Owner, input.Repo);
         var environments = repoSettings.Environments!.Select(e => new Environment
@@ -125,7 +125,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
         await _deployStateComparisonInputValidator.ValidateAndThrowAsync(input);
 
         // Because we do not make a GitHub call here, we need to secure the repo access.
-        await _repositorySecurity.GuardAsync(input.Owner, input.Repo);
+        await _gitHubSecurity.GuardRepoAsync(input.Owner, input.Repo);
 
         var sourceStateName = DeployStatePrefix + input.SourceEnvironment.ToUpperInvariant();
         var targetStateName = DeployStatePrefix + input.TargetEnvironment.ToUpperInvariant();

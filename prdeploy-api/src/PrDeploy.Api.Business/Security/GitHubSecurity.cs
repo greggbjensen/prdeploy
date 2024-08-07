@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Caching.Memory;
@@ -10,15 +9,15 @@ using PrDeploy.Api.Business.Security.Interfaces;
 
 namespace PrDeploy.Api.Business.Security
 {
-    public class RepositorySecurity : IRepositorySecurity
+    public class GitHubSecurity : IGitHubSecurity
     {
         private static readonly TimeSpan AccessRefreshTimeSpan = TimeSpan.FromMinutes(10);
         private readonly IGitHubClient _client;
-        private readonly ILogger<RepositorySecurity> _logger;
+        private readonly ILogger<GitHubSecurity> _logger;
         private readonly IMemoryCache _cache;
         private readonly ISecurityContext _securityContext;
 
-        public RepositorySecurity(IGitHubClient client, ILogger<RepositorySecurity> logger, IMemoryCache cache, ISecurityContext securityContext)
+        public GitHubSecurity(IGitHubClient client, ILogger<GitHubSecurity> logger, IMemoryCache cache, ISecurityContext securityContext)
         {
             _cache = cache;
             _securityContext = securityContext;
@@ -26,16 +25,25 @@ namespace PrDeploy.Api.Business.Security
             _logger = logger;
         }
 
-        public async Task GuardAsync(string owner, string repo)
+        public async Task GuardRepoAsync(string owner, string repo)
         {
-            var hasAccess = await HasAccessAsync(owner, repo);
+            var hasAccess = await HasRepoAccessAsync(owner, repo);
             if (!hasAccess)
             {
                 throw new HttpRequestException("Access denied", null, HttpStatusCode.Forbidden);
             }
         }
 
-        public async Task<bool> HasAccessAsync(string owner, string repo)
+        public async Task GuardOwnerAsync(string owner)
+        {
+            var hasAccess = await HasOwnerAccessAsync(owner);
+            if (!hasAccess)
+            {
+                throw new HttpRequestException("Access denied", null, HttpStatusCode.Forbidden);
+            }
+        }
+
+        public async Task<bool> HasRepoAccessAsync(string owner, string repo)
         {
             var userToken = _securityContext.UserToken;
             if (string.IsNullOrEmpty(userToken))
@@ -44,7 +52,7 @@ namespace PrDeploy.Api.Business.Security
             }
 
             var userHash = HashToken(userToken);
-            var authKey = $"{owner}/{repo}/{userHash}";
+            var authKey = $"auth/{owner}/{repo}/{userHash}";
             var hasAccess = _cache.TryGetValue(authKey, out object _);
             if (hasAccess)
             {
@@ -63,6 +71,39 @@ namespace PrDeploy.Api.Business.Security
             catch (Exception ex)
             {
                 _logger.LogWarning(ex, $"User did not have access to {owner}/{repo}");
+            }
+
+            return hasAccess;
+        }
+
+        public async Task<bool> HasOwnerAccessAsync(string owner)
+        {
+            var userToken = _securityContext.UserToken;
+            if (string.IsNullOrEmpty(userToken))
+            {
+                return false;
+            }
+
+            var userHash = HashToken(userToken);
+            var authKey = $"auth/{owner}/{userHash}";
+            var hasAccess = _cache.TryGetValue(authKey, out object _);
+            if (hasAccess)
+            {
+                return true;
+            }
+
+            try
+            {
+                var organization = await _client.Organization.Get(owner);
+                hasAccess = organization != null;
+                if (hasAccess)
+                {
+                    _cache.Set(authKey, true, AccessRefreshTimeSpan);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, $"User did not have access to {owner}");
             }
 
             return hasAccess;

@@ -23,17 +23,20 @@ public static class IServiceCollectionExtensions
             .AddType<DeploySettingsQuery>()
             .AddType<DeployEnvironmentQuery>()
             .AddType<PullRequestQuery>()
+            .AddType<OwnerRepoQuery>()
             .AddType<RepositoryQuery>()
             .AddMutationType(m => m.Name("DeployMutation"))
-            .AddType<DeployQueueMutation>()
             .AddType<DeployEnvironmentMutation>()
+            .AddType<DeployQueueMutation>()
+            .AddType<DeploySettingsMutation>()
+            .AddType<OwnerRepoMutation>()
             .AddType<PullRequestMutation>()
 
             // Register service classes so they can be injected without a [Service] attribute.
             .RegisterService<IDeployQueueService>()
             .RegisterService<IDeployEnvironmentService>()
             .RegisterService<IPullRequestService>()
-            .RegisterService<IRepositoryService>()
+            .RegisterService<IOwnerRepoService>()
             .RegisterService<IDeploySettingsService>()
 
             // Error handling.

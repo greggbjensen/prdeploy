@@ -1,5 +1,5 @@
+using PrDeploy.Api.Models.OwnerRepo;
 using PrDeploy.Api.Models.PullRequests;
-using PrDeploy.Api.Models.Repositories;
 using PrDeploy.Api.Models.Settings;
 
 namespace PrDeploy.Api.Business.Mapping;

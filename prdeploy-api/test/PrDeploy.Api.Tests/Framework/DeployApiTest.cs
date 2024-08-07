@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using PrDeploy.Api.Tests.Constants;
 using PrDeploy.Api.Tests.Client;
-using System.Net.Sockets;
 
 namespace PrDeploy.Api.Tests.Framework;
 
@@ -9,7 +8,6 @@ public class DeployApiTest : IClassFixture<DeployApiApplicationFactory>
 {
     public static readonly DeployEnvironmentData DeployEnvironments = new();
     public static readonly GitHubData GitHub = new();
-    public static readonly PrDeployOptionsData PrDeployOptions = new();
     public static readonly ParameterVariables ParameterVariables = new();
     public static readonly PullRequestData PullRequests = new();
     public static readonly DeployUserData DeployUsers = new();
