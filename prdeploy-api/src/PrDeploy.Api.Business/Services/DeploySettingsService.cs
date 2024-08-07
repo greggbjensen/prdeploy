@@ -110,7 +110,7 @@ public class DeploySettingsService : IDeploySettingsService
         return services ?? new List<string>();
     }
 
-    private async Task<DeploySettings> GetOwnerSettingsAsync(string owner)
+    public async Task<DeploySettings> GetOwnerSettingsAsync(string owner)
     {
         // Repo specific settings, which are optional.
         var deploySettings = await _parameterStore.GetAsync<DeploySettings?>(owner, DeploySettingsKey);
@@ -124,7 +124,7 @@ public class DeploySettingsService : IDeploySettingsService
         return deploySettings;
     }
 
-    private async Task<DeploySettings> GetRepoSettingsAsync(string owner, string repo)
+    public async Task<DeploySettings> GetRepoSettingsAsync(string owner, string repo)
     {
         // Repo specific settings, which are optional.
         var deploySettings = await _parameterStore.GetAsync<DeploySettings?>(owner, repo, DeploySettingsKey);
@@ -137,6 +137,11 @@ public class DeploySettingsService : IDeploySettingsService
         return deploySettings;
     }
 
+    public string NormalizeEnvironment(string environment)
+    {
+        return NormalizeEnvironmentRegex.Replace(environment, string.Empty);
+    }
+
     private async Task<DeploySettings> LoadDefaultOwnerSettingsAsync()
     {
         var yaml = await File.ReadAllTextAsync("default-owner-settings.yaml");
@@ -145,11 +150,6 @@ public class DeploySettingsService : IDeploySettingsService
             .Build();
         var deploySettings = deserializer.Deserialize<DeploySettings>(yaml);
         return deploySettings;
-    }
-
-    public string NormalizeEnvironment(string environment)
-    {
-        return NormalizeEnvironmentRegex.Replace(environment, string.Empty);
     }
 
     private static string GetSettingsCacheKey(string owner, string repo) => $"{owner}:{repo}:settings";
