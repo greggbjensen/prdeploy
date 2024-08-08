@@ -49,12 +49,26 @@
         </div>
       </div>
       <div class="test-workflow-inputs">
-        <span>Workflow Inputs:</span>
-        @for (item of environment.automationTest.inputs; track item.key) {
+        <div>
+          <span>Workflow Inputs:</span>
+          <dx-button
+            class="add-workflow-input-btn success-icon-btn"
+            icon="add"
+            stylingMode="text"
+            (onClick)="showAddAutomationInput()"
+            hint="Add workflow input"></dx-button>
+        </div>
+        @for (item of environment.automationTest.inputs | keyvalue; track item.key) {
           <div class="field">
             <label>{{ item.key }}</label>
-            <div class="field-value">
-              <dx-text-box [value]="item.value"></dx-text-box>
+            <div class="field-value field-removable">
+              <dx-text-box [value]="item.value.toString()"></dx-text-box>
+              <dx-button
+                class="add-workflow-input-btn danger-icon-btn"
+                icon="remove"
+                stylingMode="text"
+                (onClick)="removeAutomationInput(item.key)"
+                hint="Add workflow input"></dx-button>
             </div>
           </div>
         }
@@ -62,3 +76,7 @@
     </div>
   </div>
 </div>
+
+<app-add-automation-input-dialog
+  [(visible)]="addAutomationInputVisible"
+  (addInput)="addAutomationInput($event)"></app-add-automation-input-dialog>
