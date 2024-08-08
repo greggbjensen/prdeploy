@@ -15,6 +15,7 @@ import { EnvironmentFormComponent } from '../environment-form/environment-form.c
 import { JiraFormComponent } from '../jira-form/jira-form.component';
 import { SettingsLevel } from '../models';
 import { SlackFormComponent } from '../slack-form/slack-form.component';
+import { BadgeFormComponent } from '../badge-form/badge-form.component';
 @Component({
   selector: 'app-settings-form',
   standalone: true,
@@ -22,6 +23,7 @@ import { SlackFormComponent } from '../slack-form/slack-form.component';
     EnvironmentFormComponent,
     JiraFormComponent,
     SlackFormComponent,
+    BadgeFormComponent,
     DxFormModule,
     DxTextBoxModule,
     DxSelectBoxModule,
