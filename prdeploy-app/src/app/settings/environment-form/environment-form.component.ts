@@ -3,6 +3,7 @@ import { DxButtonModule, DxCheckBoxModule, DxTextBoxModule } from 'devextreme-an
 import { EnvironmentSettings } from 'src/app/shared/graphql';
 import { AddAutomationInputDialogComponent } from '../add-automation-input-dialog/add-automation-input-dialog.component';
 import { KeyValuePipe } from '@angular/common';
+import { ValueChangedEvent } from 'devextreme/ui/text_box';
 
 @Component({
   selector: 'app-environment-form',
@@ -26,6 +27,10 @@ export class EnvironmentFormComponent {
     }
 
     this.environment.automationTest.inputs[name] = '';
+  }
+
+  updateAutomationInput(e: ValueChangedEvent, name: any) {
+    this.environment.automationTest.inputs[name] = e.value;
   }
 
   removeAutomationInput(name: any) {
