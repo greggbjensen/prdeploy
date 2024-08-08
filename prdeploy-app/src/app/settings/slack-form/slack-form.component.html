@@ -1,0 +1,23 @@
+<div classs="field-group">
+  <h4 class="field-group-title">Slack</h4>
+  <div class="field">
+    <label>Notifications enabled</label>
+    <div class="field-value">
+      <dx-check-box [(value)]="slack.notificationsEnabled[level]"></dx-check-box>
+    </div>
+  </div>
+  <div class="field">
+    <label>Token</label>
+    <div class="field-value">
+      <dx-text-box [(value)]="slack.token[level]" [placeholder]="showOwner ? slack.token['owner'] : ''"></dx-text-box>
+    </div>
+  </div>
+  <div class="field">
+    <label>Email domain</label>
+    <div class="field-value">
+      <dx-text-box
+        [(value)]="slack.emailDomain[level]"
+        [placeholder]="showOwner ? slack.emailDomain['owner'] : ''"></dx-text-box>
+    </div>
+  </div>
+</div>

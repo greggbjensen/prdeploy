@@ -14,12 +14,14 @@ import { RepoManager } from 'src/app/shared/managers';
 import { EnvironmentFormComponent } from '../environment-form/environment-form.component';
 import { JiraFormComponent } from '../jira-form/jira-form.component';
 import { SettingsLevel } from '../models';
+import { SlackFormComponent } from '../slack-form/slack-form.component';
 @Component({
   selector: 'app-settings-form',
   standalone: true,
   imports: [
     EnvironmentFormComponent,
     JiraFormComponent,
+    SlackFormComponent,
     DxFormModule,
     DxTextBoxModule,
     DxSelectBoxModule,
