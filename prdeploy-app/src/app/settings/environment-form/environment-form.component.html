@@ -33,6 +33,7 @@
         </div>
       </div>
     </div>
+
     <div class="field-group field-group-horizontal">
       <strong class="field-group-title">Automation Test</strong>
       <div class="field">
@@ -40,6 +41,23 @@
         <div class="field-value">
           <dx-check-box [(value)]="environment.automationTest.enabled"></dx-check-box>
         </div>
+      </div>
+      <div class="field">
+        <label>GitHub Workfow</label>
+        <div class="field-value">
+          <dx-text-box [(value)]="environment.automationTest.workflow"></dx-text-box>
+        </div>
+      </div>
+      <div class="test-workflow-inputs">
+        <span>Workflow Inputs:</span>
+        @for (item of environment.automationTest.inputs; track item.key) {
+          <div class="field">
+            <label>{{ item.key }}</label>
+            <div class="field-value">
+              <dx-text-box [value]="item.value"></dx-text-box>
+            </div>
+          </div>
+        }
       </div>
     </div>
   </div>
