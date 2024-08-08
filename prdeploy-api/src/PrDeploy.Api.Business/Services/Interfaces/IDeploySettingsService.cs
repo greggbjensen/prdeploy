@@ -16,7 +16,7 @@ public interface IDeploySettingsService
         DeploySettings deploySettings);
 
     Task<List<string>> ListServicesAsync(RepoQueryInput input);
-    Task<DeploySettingsCompare> GetAllAsync(RepoQueryInput input);
+    Task<DeploySettingsCompare> CompareAsync(RepoQueryInput input);
     Task<DeploySettings> GetOwnerSettingsAsync(string owner);
     Task<DeploySettings> GetRepoSettingsAsync(string owner, string repo);
     Task<StatusResponse> SetOwnerSettingsAsync(SetOwnerSettingsInput input);

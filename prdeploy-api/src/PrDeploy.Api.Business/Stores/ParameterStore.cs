@@ -1,5 +1,6 @@
 ﻿using Amazon.SimpleSystemsManagement;
 using Amazon.SimpleSystemsManagement.Model;
+using Microsoft.Extensions.Logging;
 using PrDeploy.Api.Business.Stores.Interfaces;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -9,11 +10,15 @@ namespace PrDeploy.Api.Business.Stores
     public class ParameterStore : IParameterStore
     {
         private const string PrdeployPrefix = "/prdeploy";
+        private static readonly SemaphoreSlim Semaphore = new(1);
         private readonly IAmazonSimpleSystemsManagement _amazonSsm;
+        private readonly ILogger<ParameterStore> _logger;
 
-        public ParameterStore(IAmazonSimpleSystemsManagement amazonSsm)
+
+        public ParameterStore(IAmazonSimpleSystemsManagement amazonSsm, ILogger<ParameterStore> logger)
         {
             _amazonSsm = amazonSsm;
+            _logger = logger;
         }
 
         public async Task<T> GetAsync<T>(string name)
@@ -80,18 +85,29 @@ namespace PrDeploy.Api.Business.Stores
 
         private async Task SetParameterValueAsync<T>(string path, T value, bool isSecure)
         {
-            var serializer = new SerializerBuilder()
-                .WithNamingConvention(CamelCaseNamingConvention.Instance).Build();
-            var yaml = serializer.Serialize(value);
-            var request = new PutParameterRequest
+            // Only allow one update at a time to prevent TooManyUpdates from Parameter store.
+            await Semaphore.WaitAsync();
+
+            try
             {
-                Name = path,
-                Type = !isSecure ? ParameterType.String : ParameterType.SecureString,
-                Value = yaml,
-                Overwrite = true,
-                Tier = ParameterTier.Standard
-            };
-            await _amazonSsm.PutParameterAsync(request);
+                _logger.LogInformation($"Updating parameter store at {path}");
+                var serializer = new SerializerBuilder()
+                    .WithNamingConvention(CamelCaseNamingConvention.Instance).Build();
+                var yaml = serializer.Serialize(value);
+                var request = new PutParameterRequest
+                {
+                    Name = path,
+                    Type = !isSecure ? ParameterType.String : ParameterType.SecureString,
+                    Value = yaml,
+                    Overwrite = true,
+                    Tier = ParameterTier.Standard
+                };
+                await _amazonSsm.PutParameterAsync(request);
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
         }
     }
 }

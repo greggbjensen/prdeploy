@@ -1,5 +1,4 @@
 using PrDeploy.Api.Business.Services.Interfaces;
-using PrDeploy.Api.Models.General.Inputs;
 using PrDeploy.Api.Models.OwnerRepo;
 
 namespace PrDeploy.Api.Schema.Queries;
@@ -8,6 +7,6 @@ namespace PrDeploy.Api.Schema.Queries;
 public class OwnerRepoQuery
 {
     [GraphQLName("enabledOwnerRepos")]
-    public async Task<List<OwnerRepos>> PrDeployEnabledRepositories(IOwnerRepoService service) =>
+    public async Task<List<OwnerRepos>> EnabledOwnerRepos(IOwnerRepoService service) =>
         await service.ListEnabledAsync();
 }

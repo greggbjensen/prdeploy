@@ -1,11 +1,6 @@
 <h3>
   Deployments
-  <dx-button
-    class="environments-refesh"
-    icon="refresh"
-    hint="Refresh"
-    stylingMode="text"
-    (onClick)="update()"></dx-button>
+  <dx-button class="primary-icon-btn" icon="refresh" hint="Refresh" stylingMode="text" (onClick)="update()"></dx-button>
 </h3>
 @if (repoManager.repo) {
   <app-environment-list [data]="deployEnvironments" [loading]="loading"></app-environment-list>
@@ -13,12 +8,7 @@
 
 <h3>
   Queues
-  <dx-button
-    class="environments-refesh"
-    icon="refresh"
-    hint="Refresh"
-    stylingMode="text"
-    (onClick)="update()"></dx-button>
+  <dx-button class="primary-icon-btn" icon="refresh" hint="Refresh" stylingMode="text" (onClick)="update()"></dx-button>
 </h3>
 @if (deployQueues.length > 0) {
   <dx-accordion

@@ -1,0 +1,38 @@
+@if (stateComparison) {
+  <dx-data-grid
+    class="environment-table"
+    [dataSource]="stateComparison.serviceComparisons"
+    keyExpr="name"
+    [showBorders]="true"
+    [rowAlternationEnabled]="true">
+    <dxi-column dataField="name" caption="Service" alignment="center" [width]="200" sortOrder="asc"></dxi-column>
+    <dxi-column [caption]="sourceEnvironment.name">
+      <dxi-column
+        dataField="sourceRunId"
+        caption="Run ID"
+        [width]="150"
+        alignment="left"
+        cellTemplate="runIdTemplate"></dxi-column>
+      <dxi-column dataField="sourceVersion" caption="Version" [width]="250" cellTemplate="versionTemplate"></dxi-column>
+    </dxi-column>
+    <dxi-column [caption]="targetEnvironment.name">
+      <dxi-column
+        dataField="targetRunId"
+        caption="Run ID"
+        [width]="150"
+        alignment="left"
+        cellTemplate="runIdTemplate"></dxi-column>
+      <dxi-column dataField="targetVersion" caption="Version" [width]="250" cellTemplate="versionTemplate"></dxi-column>
+    </dxi-column>
+    <div
+      *dxTemplate="let d of 'runIdTemplate'"
+      [class]="{ 'value-different': d.data.sourceRunId !== d.data.targetRunId }">
+      {{ d.value ? d.value : '' }}
+    </div>
+    <div
+      *dxTemplate="let d of 'versionTemplate'"
+      [class]="{ 'value-different': d.data.sourceVersion !== d.data.targetVersion }">
+      {{ d.value }}
+    </div>
+  </dx-data-grid>
+}

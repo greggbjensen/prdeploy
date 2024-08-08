@@ -37,24 +37,6 @@ a {
   vertical-align: middle !important;
 }
 
-::ng-deep .environment-actions .dx-icon {
-  &.dx-icon-remove::before {
-    color: $red-400;
-  }
-
-  &.dx-icon-add::before {
-    color: $green-400;
-  }
-
-  &.dx-icon-redo::before {
-    color: $blue-300;
-  }
-
-  &.dx-icon-undo::before {
-    color: $orange-400;
-  }
-}
-
 .environment-actions {
   display: flex;
   justify-content: flex-end;

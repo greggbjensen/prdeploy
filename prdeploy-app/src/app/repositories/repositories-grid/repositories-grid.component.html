@@ -1,0 +1,30 @@
+<dx-data-grid
+  class="repositories-grid"
+  [dataSource]="repositories"
+  keyExpr="repo"
+  [showBorders]="true"
+  [rowAlternationEnabled]="true"
+  [width]="500">
+  <dxi-column dataField="repo" caption="Repository" dataType="string"></dxi-column>
+  <dxi-column dataField="owner" dataType="string" [groupIndex]="0" groupCellTemplate="ownerCellTemplate"></dxi-column>
+  <div *dxTemplate="let d of 'ownerCellTemplate'">
+    <div class="owner-cell">
+      <span>{{ d.value }}</span>
+      <dx-button
+        class="primary-icon-btn"
+        icon="add"
+        stylingMode="text"
+        hint="Add"
+        (onClick)="addRepo(d.value)"></dx-button>
+    </div>
+  </div>
+  <dxi-column caption="Actions" dataType="object" [width]="80" cellTemplate="actionsCellTemplate"></dxi-column>
+  <div *dxTemplate="let d of 'actionsCellTemplate'">
+    <dx-button
+      class="danger-icon-btn"
+      icon="remove"
+      stylingMode="text"
+      hint="Remove"
+      (onClick)="removeRepo(d.data)"></dx-button>
+  </div>
+</dx-data-grid>

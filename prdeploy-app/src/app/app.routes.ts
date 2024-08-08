@@ -20,6 +20,11 @@ export const routes: Routes = [
     loadChildren: () => import('./environments/environments.routes').then(m => m.routes)
   },
   {
+    path: 'repositories',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./repositories/repositories.routes').then(m => m.routes)
+  },
+  {
     path: 'settings',
     canActivate: [AuthGuard],
     loadChildren: () => import('./settings/settings.routes').then(m => m.routes)

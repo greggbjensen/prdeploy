@@ -48,6 +48,7 @@
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
               "node_modules/devextreme/dist/css/dx.common.css",
+              "node_modules/bootstrap-icons/font/bootstrap-icons.css",
               "src/themes/generated/theme.prdeploy.scss",
               "src/dx-styles.scss",
               "src/styles.scss"

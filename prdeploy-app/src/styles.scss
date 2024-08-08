@@ -1,5 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
+@import './sass/variables';
+
 .text-right {
   text-align: right;
 }
@@ -15,3 +17,25 @@
 .dx-toast-message {
   white-space: pre-line;
 }
+
+.danger-icon-btn .dx-icon {
+  color: $red-400;
+}
+
+.success-icon-btn .dx-icon {
+  color: $green-400;
+}
+
+.primary-icon-btn .dx-icon {
+  color: $blue-300;
+}
+
+.secondary-icon-btn .dx-icon {
+  color: $orange-400;
+}
+
+.page-actions {
+  margin-top: 60px;
+  display: flex;
+}
+

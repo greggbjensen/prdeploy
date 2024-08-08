@@ -1,0 +1,23 @@
+<h3>
+  Enabled Repositories
+  <dx-button
+    class="success-icon-btn"
+    icon="refresh"
+    hint="Refresh"
+    stylingMode="text"
+    (onClick)="updateOwnerRepos()"></dx-button>
+</h3>
+
+<app-repositories-grid
+  [ownerRepos]="ownerRepos"
+  (showAddRepo)="showAddRepo($event)"
+  (onRemoveRepo)="removeRepo($event)"></app-repositories-grid>
+
+<div class="page-actions">
+  <dx-button text="Add Repository" type="normal" (onClick)="showAddRepo()" height="40"> </dx-button>
+</div>
+
+<app-add-repo-dialog
+  [(visible)]="addRepoVisible"
+  (repoAdded)="updateOwnerRepos()"
+  [owner]="addRepoOwner"></app-add-repo-dialog>

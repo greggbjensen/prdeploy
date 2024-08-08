@@ -10,7 +10,7 @@ public class DeploySettingsQuery
 {
     [GraphQLName("deploySettingsCompare")]
     public async Task<DeploySettingsCompare> DeploySettingsCompare(IDeploySettingsService service, RepoQueryInput input) =>
-        await service.GetAllAsync(input);
+        await service.CompareAsync(input);
 
     [GraphQLName("repoSettings")]
     public async Task<DeploySettings> RepoSettings(IDeploySettingsService service, RepoQueryInput input) =>

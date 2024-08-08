@@ -1,8 +1,9 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { DxButtonModule, DxNumberBoxModule, DxPopupModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
-import { DeployEnvironmentRollbackGQL, Repository } from 'src/app/shared/graphql';
+import { DeployEnvironmentRollbackGQL } from 'src/app/shared/graphql';
 import { NotificationManager } from 'src/app/shared/managers';
+import { Repository } from 'src/app/shared/models';
 import { LoggingService } from 'src/app/shared/services';
 
 @Component({
