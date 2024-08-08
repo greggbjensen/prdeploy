@@ -1,16 +1,17 @@
-import { Component, DestroyRef, OnInit } from '@angular/core';
-import { DxButtonModule, DxDataGridModule, DxFormModule, DxSelectBoxModule } from 'devextreme-angular';
-import { DeployStateComparison, DeployStateComparisonGQL, Environment, EnvironmentsGQL } from '../shared/graphql';
-import { RepoManager } from '../shared/managers';
+import { Component, DestroyRef, OnInit, ViewChild, viewChild } from '@angular/core';
+import { DxButtonModule, DxFormModule, DxSelectBoxModule } from 'devextreme-angular';
+import { Environment, EnvironmentsGQL } from '../shared/graphql';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
 import { SelectionChangedEvent } from 'devextreme/ui/select_box';
 import { ActivatedRoute } from '@angular/router';
+import { RepoManager } from '../shared/managers';
+import { EnvironmentsGridComponent } from './environments-grid/environments-grid.component';
 
 @Component({
   selector: 'app-environments',
   standalone: true,
-  imports: [DxButtonModule, DxFormModule, DxSelectBoxModule, DxDataGridModule],
+  imports: [DxButtonModule, DxFormModule, DxSelectBoxModule, EnvironmentsGridComponent],
   templateUrl: './environments.component.html',
   styleUrl: './environments.component.scss'
 })
@@ -19,15 +20,15 @@ export class EnvironmentsComponent implements OnInit {
     name: 'stable'
   };
 
+  @ViewChild(EnvironmentsGridComponent) environtmentsGrid: EnvironmentsGridComponent;
+
   constructor(
-    private _deployStateComparisonGQL: DeployStateComparisonGQL,
     private _environmentsGQL: EnvironmentsGQL,
     private _repoManager: RepoManager,
     private _route: ActivatedRoute,
     private _destroyRef: DestroyRef
   ) {}
 
-  stateComparison: DeployStateComparison;
   environments: Environment[];
   sourceEnvironment: Environment;
   targetEnvironment: Environment;
@@ -44,36 +45,19 @@ export class EnvironmentsComponent implements OnInit {
   sourceEnvironmentChanged(event: SelectionChangedEvent): void {
     if (event.selectedItem.name !== this.sourceEnvironment.name) {
       this.sourceEnvironment = event.selectedItem;
-      this.updateStateComparison(true);
+      this.updateCompareEnvironments(true);
     }
   }
 
   targetEnvironmentChanged(event: SelectionChangedEvent): void {
     if (event.selectedItem.name !== this.targetEnvironment.name) {
       this.targetEnvironment = event.selectedItem;
-      this.updateStateComparison(false);
+      this.updateCompareEnvironments(false);
     }
   }
 
   environmentDisplayExpr(item: Environment): string {
     return item ? item.name : '';
-  }
-
-  async updateStateComparison(sourceChanged = true): Promise<void> {
-    this.updateCompareEnvironments(sourceChanged);
-
-    const stateResponse = await firstValueFrom(
-      this._deployStateComparisonGQL.fetch({
-        input: {
-          owner: this._repoManager.owner,
-          repo: this._repoManager.repo,
-          sourceEnvironment: this.sourceEnvironment.name,
-          targetEnvironment: this.targetEnvironment.name
-        }
-      })
-    );
-
-    this.stateComparison = stateResponse.data.deployStateComparison;
   }
 
   private async loadEnvironments(): Promise<void> {
@@ -87,10 +71,10 @@ export class EnvironmentsComponent implements OnInit {
     );
 
     this.environments = [...environmentsResponse.data.environments, EnvironmentsComponent.StableEnvironment];
-    this.updateStateComparison();
+    this.updateCompareEnvironments(true);
   }
 
-  private updateCompareEnvironments(sourceChanged: boolean): void {
+  updateCompareEnvironments(sourceChanged: boolean): void {
     if (!this.environments || this.environments.length === 0) {
       return;
     }
