@@ -1,0 +1,5 @@
+mutation OwnerRepoRemoveEnabled($input: RepositoryInput!) {
+  ownerRepoRemoveEnabled(input: $input) {
+    success
+  }
+}

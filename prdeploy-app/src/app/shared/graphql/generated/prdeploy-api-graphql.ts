@@ -35,9 +35,32 @@ export type AutomationTestSettings = {
   workflow?: Maybe<Scalars['String']['output']>;
 };
 
+export type AutomationTestSettingsInput = {
+  enabled?: InputMaybe<Scalars['Boolean']['input']>;
+  inputs?: InputMaybe<Scalars['Any']['input']>;
+  workflow?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type BadgeSettings = {
+  __typename?: 'BadgeSettings';
+  statusColors?: Maybe<BadgeStatusColorsSettings>;
+};
+
 export type BadgeSettingsCompare = {
   __typename?: 'BadgeSettingsCompare';
   statusColors: BadgeStatusColorsSettingsCompare;
+};
+
+export type BadgeSettingsInput = {
+  statusColors?: InputMaybe<BadgeStatusColorsSettingsInput>;
+};
+
+export type BadgeStatusColorsSettings = {
+  __typename?: 'BadgeStatusColorsSettings';
+  error?: Maybe<Scalars['String']['output']>;
+  info?: Maybe<Scalars['String']['output']>;
+  success?: Maybe<Scalars['String']['output']>;
+  warn?: Maybe<Scalars['String']['output']>;
 };
 
 export type BadgeStatusColorsSettingsCompare = {
@@ -48,10 +71,28 @@ export type BadgeStatusColorsSettingsCompare = {
   warn: OwnerRepoValueOfString;
 };
 
+export type BadgeStatusColorsSettingsInput = {
+  error?: InputMaybe<Scalars['String']['input']>;
+  info?: InputMaybe<Scalars['String']['input']>;
+  success?: InputMaybe<Scalars['String']['input']>;
+  warn?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type BuildsSettings = {
+  __typename?: 'BuildsSettings';
+  checkPattern?: Maybe<Scalars['String']['output']>;
+  workflowPattern?: Maybe<Scalars['String']['output']>;
+};
+
 export type BuildsSettingsCompare = {
   __typename?: 'BuildsSettingsCompare';
   checkPattern: OwnerRepoValueOfString;
   workflowPattern: OwnerRepoValueOfString;
+};
+
+export type BuildsSettingsInput = {
+  checkPattern?: InputMaybe<Scalars['String']['input']>;
+  workflowPattern?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** Environment and current pull request information. */
@@ -75,7 +116,11 @@ export type DeployMutation = {
   deployEnvironmentFree: StatusResponse;
   deployEnvironmentRollback: StatusResponse;
   deployQueueUpdate: DeployQueue;
+  ownerRepoAddEnabled: StatusResponse;
+  ownerRepoRemoveEnabled: StatusResponse;
+  ownerSettingsSet: StatusResponse;
   pullRequestAddServices: StatusResponse;
+  repoSettingsSet: StatusResponse;
 };
 
 
@@ -99,8 +144,28 @@ export type DeployMutationDeployQueueUpdateArgs = {
 };
 
 
+export type DeployMutationOwnerRepoAddEnabledArgs = {
+  input: RepositoryInput;
+};
+
+
+export type DeployMutationOwnerRepoRemoveEnabledArgs = {
+  input: RepositoryInput;
+};
+
+
+export type DeployMutationOwnerSettingsSetArgs = {
+  input: SetOwnerSettingsInput;
+};
+
+
 export type DeployMutationPullRequestAddServicesArgs = {
   input: PullRequestAddServicesInput;
+};
+
+
+export type DeployMutationRepoSettingsSetArgs = {
+  input: SetRepoSettingsInput;
 };
 
 export type DeployQuery = {
@@ -109,9 +174,11 @@ export type DeployQuery = {
   deployQueues: Array<DeployQueue>;
   deploySettingsCompare: DeploySettingsCompare;
   deployStateComparison: DeployStateComparison;
+  enabledOwnerRepos: Array<OwnerRepos>;
   environments: Array<Environment>;
   openPullRequests: Array<PullRequest>;
-  prDeployEnabledRepositories: Array<Repository>;
+  ownerSettings: DeploySettings;
+  repoSettings: DeploySettings;
   repositoryServices: Array<Scalars['String']['output']>;
 };
 
@@ -146,6 +213,16 @@ export type DeployQueryOpenPullRequestsArgs = {
 };
 
 
+export type DeployQueryOwnerSettingsArgs = {
+  input: OwnerQueryInput;
+};
+
+
+export type DeployQueryRepoSettingsArgs = {
+  input: RepoQueryInput;
+};
+
+
 export type DeployQueryRepositoryServicesArgs = {
   input: RepoQueryInput;
 };
@@ -168,6 +245,24 @@ export type DeployQueueUpdateInput = {
   repo?: InputMaybe<Scalars['ID']['input']>;
 };
 
+export type DeploySettings = {
+  __typename?: 'DeploySettings';
+  badge?: Maybe<BadgeSettings>;
+  builds?: Maybe<BuildsSettings>;
+  defaultBranch?: Maybe<Scalars['String']['output']>;
+  defaultEnvironment?: Maybe<Scalars['String']['output']>;
+  deployManagerSiteUrl?: Maybe<Scalars['String']['output']>;
+  deployWorkflow?: Maybe<Scalars['String']['output']>;
+  environments?: Maybe<Array<EnvironmentSettings>>;
+  jira?: Maybe<JiraSettings>;
+  owner?: Maybe<Scalars['String']['output']>;
+  releaseEnvironment?: Maybe<Scalars['String']['output']>;
+  repo?: Maybe<Scalars['String']['output']>;
+  services?: Maybe<Array<ServiceSettings>>;
+  settingsBranch?: Maybe<Scalars['String']['output']>;
+  slack?: Maybe<SlackSettings>;
+};
+
 export type DeploySettingsCompare = {
   __typename?: 'DeploySettingsCompare';
   badge: BadgeSettingsCompare;
@@ -182,6 +277,23 @@ export type DeploySettingsCompare = {
   services: OwnerRepoValueOfListOfServiceSettings;
   settingsBranch: OwnerRepoValueOfString;
   slack: SlackSettingsCompare;
+};
+
+export type DeploySettingsInput = {
+  badge?: InputMaybe<BadgeSettingsInput>;
+  builds?: InputMaybe<BuildsSettingsInput>;
+  defaultBranch?: InputMaybe<Scalars['String']['input']>;
+  defaultEnvironment?: InputMaybe<Scalars['String']['input']>;
+  deployManagerSiteUrl?: InputMaybe<Scalars['String']['input']>;
+  deployWorkflow?: InputMaybe<Scalars['String']['input']>;
+  environments?: InputMaybe<Array<EnvironmentSettingsInput>>;
+  jira?: InputMaybe<JiraSettingsInput>;
+  owner?: InputMaybe<Scalars['String']['input']>;
+  releaseEnvironment?: InputMaybe<Scalars['String']['input']>;
+  repo?: InputMaybe<Scalars['String']['input']>;
+  services?: InputMaybe<Array<ServiceSettingsInput>>;
+  settingsBranch?: InputMaybe<Scalars['String']['input']>;
+  slack?: InputMaybe<SlackSettingsInput>;
 };
 
 export type DeployStateComparison = {
@@ -248,6 +360,25 @@ export type EnvironmentSettings = {
   url?: Maybe<Scalars['String']['output']>;
 };
 
+export type EnvironmentSettingsInput = {
+  automationTest?: InputMaybe<AutomationTestSettingsInput>;
+  color?: InputMaybe<Scalars['String']['input']>;
+  excludeFromRollback?: InputMaybe<Array<Scalars['String']['input']>>;
+  name: Scalars['String']['input'];
+  queue: Scalars['String']['input'];
+  requireApproval: Scalars['Boolean']['input'];
+  requireBranchUpToDate: Scalars['Boolean']['input'];
+  url?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type JiraSettings = {
+  __typename?: 'JiraSettings';
+  addIssuesEnabled?: Maybe<Scalars['Boolean']['output']>;
+  host?: Maybe<Scalars['String']['output']>;
+  password?: Maybe<Scalars['String']['output']>;
+  username?: Maybe<Scalars['String']['output']>;
+};
+
 export type JiraSettingsCompare = {
   __typename?: 'JiraSettingsCompare';
   addIssuesEnabled: OwnerRepoValueOfNullableOfBoolean;
@@ -256,12 +387,25 @@ export type JiraSettingsCompare = {
   username: OwnerRepoValueOfString;
 };
 
+export type JiraSettingsInput = {
+  addIssuesEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  host?: InputMaybe<Scalars['String']['input']>;
+  password?: InputMaybe<Scalars['String']['input']>;
+  username?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type OpenPullRequestInput = {
   /** Repository owner or organization. */
   owner?: InputMaybe<Scalars['ID']['input']>;
   /** Repository being accessed within the owner. */
   repo?: InputMaybe<Scalars['ID']['input']>;
   search?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Input for a general owner query. */
+export type OwnerQueryInput = {
+  /** Repository owner or organization. */
+  owner?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type OwnerRepoDictionary = {
@@ -292,6 +436,15 @@ export type OwnerRepoValueOfString = {
   __typename?: 'OwnerRepoValueOfString';
   owner?: Maybe<Scalars['String']['output']>;
   repo?: Maybe<Scalars['String']['output']>;
+};
+
+/** Set of owner and associated repos. */
+export type OwnerRepos = {
+  __typename?: 'OwnerRepos';
+  /** Owner or organization of a set of repo. */
+  owner: Scalars['String']['output'];
+  /** List of repository names for owner. */
+  repos: Array<Scalars['String']['output']>;
 };
 
 export type PullDeployInput = {
@@ -337,10 +490,12 @@ export type RepoQueryInput = {
   repo?: InputMaybe<Scalars['ID']['input']>;
 };
 
-export type Repository = {
-  __typename?: 'Repository';
-  owner: Scalars['String']['output'];
-  repo: Scalars['String']['output'];
+/** Owner and repo name of a repository. */
+export type RepositoryInput = {
+  /** Owner or organization of a repo. */
+  owner: Scalars['String']['input'];
+  /** Name of the repository. */
+  repo: Scalars['String']['input'];
 };
 
 export type RollbackInput = {
@@ -374,6 +529,38 @@ export type ServiceSettings = {
   path?: Maybe<Scalars['String']['output']>;
 };
 
+export type ServiceSettingsInput = {
+  name?: InputMaybe<Scalars['String']['input']>;
+  path?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Input for updating repo settings. */
+export type SetOwnerSettingsInput = {
+  /** Repository owner or organization. */
+  owner?: InputMaybe<Scalars['ID']['input']>;
+  /** Full settings for owner that defaults repo settings. */
+  settings?: InputMaybe<DeploySettingsInput>;
+};
+
+/** Input for updating repo settings. */
+export type SetRepoSettingsInput = {
+  /** Repository owner or organization. */
+  owner?: InputMaybe<Scalars['ID']['input']>;
+  /** Repository being accessed within the owner. */
+  repo?: InputMaybe<Scalars['ID']['input']>;
+  /** Full settings for owner and repository. */
+  settings?: InputMaybe<DeploySettingsInput>;
+};
+
+export type SlackSettings = {
+  __typename?: 'SlackSettings';
+  emailAliases?: Maybe<Scalars['Any']['output']>;
+  emailDomain?: Maybe<Scalars['String']['output']>;
+  notificationsEnabled?: Maybe<Scalars['Boolean']['output']>;
+  token?: Maybe<Scalars['String']['output']>;
+  webhooks?: Maybe<SlackWebHooksSettings>;
+};
+
 export type SlackSettingsCompare = {
   __typename?: 'SlackSettingsCompare';
   emailAliases: OwnerRepoDictionary;
@@ -383,10 +570,29 @@ export type SlackSettingsCompare = {
   webhooks: SlackWebHooksSettingsCompare;
 };
 
+export type SlackSettingsInput = {
+  emailAliases?: InputMaybe<Scalars['Any']['input']>;
+  emailDomain?: InputMaybe<Scalars['String']['input']>;
+  notificationsEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  token?: InputMaybe<Scalars['String']['input']>;
+  webhooks?: InputMaybe<SlackWebHooksSettingsInput>;
+};
+
+export type SlackWebHooksSettings = {
+  __typename?: 'SlackWebHooksSettings';
+  deployUrl?: Maybe<Scalars['String']['output']>;
+  releaseUrl?: Maybe<Scalars['String']['output']>;
+};
+
 export type SlackWebHooksSettingsCompare = {
   __typename?: 'SlackWebHooksSettingsCompare';
   deployUrl: OwnerRepoValueOfString;
   releaseUrl: OwnerRepoValueOfString;
+};
+
+export type SlackWebHooksSettingsInput = {
+  deployUrl?: InputMaybe<Scalars['String']['input']>;
+  releaseUrl?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** Simple status response from a mutation. */
@@ -424,6 +630,20 @@ export type DeployQueueUpdateMutationVariables = Exact<{
 
 export type DeployQueueUpdateMutation = { __typename?: 'DeployMutation', deployQueueUpdate: { __typename?: 'DeployQueue', environment?: string | null } };
 
+export type OwnerRepoAddEnabledMutationVariables = Exact<{
+  input: RepositoryInput;
+}>;
+
+
+export type OwnerRepoAddEnabledMutation = { __typename?: 'DeployMutation', ownerRepoAddEnabled: { __typename?: 'StatusResponse', success: boolean } };
+
+export type OwnerRepoRemoveEnabledMutationVariables = Exact<{
+  input: RepositoryInput;
+}>;
+
+
+export type OwnerRepoRemoveEnabledMutation = { __typename?: 'DeployMutation', ownerRepoRemoveEnabled: { __typename?: 'StatusResponse', success: boolean } };
+
 export type PullRequestAddServicesMutationVariables = Exact<{
   input: PullRequestAddServicesInput;
 }>;
@@ -452,6 +672,11 @@ export type DeployStateComparisonQueryVariables = Exact<{
 
 export type DeployStateComparisonQuery = { __typename?: 'DeployQuery', deployStateComparison: { __typename?: 'DeployStateComparison', sourceEnvironment?: string | null, sourcePullNumber: number, targetEnvironment?: string | null, targetPullNumber: number, serviceComparisons: Array<{ __typename?: 'ServiceComparison', name?: string | null, sourceRunId: any, sourceVersion: string, targetRunId: any, targetVersion: string }> } };
 
+export type EnabledOwnerReposQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type EnabledOwnerReposQuery = { __typename?: 'DeployQuery', enabledOwnerRepos: Array<{ __typename?: 'OwnerRepos', owner: string, repos: Array<string> }> };
+
 export type EnvironmentsQueryVariables = Exact<{
   input: RepoQueryInput;
 }>;
@@ -465,11 +690,6 @@ export type OpenPullRequestsQueryVariables = Exact<{
 
 
 export type OpenPullRequestsQuery = { __typename?: 'DeployQuery', openPullRequests: Array<{ __typename?: 'PullRequest', number: number, title?: string | null, user?: { __typename?: 'DeployUser', name?: string | null } | null }> };
-
-export type PrDeployEnabledRepositoriesQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type PrDeployEnabledRepositoriesQuery = { __typename?: 'DeployQuery', prDeployEnabledRepositories: Array<{ __typename?: 'Repository', owner: string, repo: string }> };
 
 export type RepositoryServicesQueryVariables = Exact<{
   input: RepoQueryInput;
@@ -545,6 +765,42 @@ export const DeployQueueUpdateDocument = gql`
   })
   export class DeployQueueUpdateGQL extends Apollo.Mutation<DeployQueueUpdateMutation, DeployQueueUpdateMutationVariables> {
     override document = DeployQueueUpdateDocument;
+    override client = 'deploy';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const OwnerRepoAddEnabledDocument = gql`
+    mutation OwnerRepoAddEnabled($input: RepositoryInput!) {
+  ownerRepoAddEnabled(input: $input) {
+    success
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class OwnerRepoAddEnabledGQL extends Apollo.Mutation<OwnerRepoAddEnabledMutation, OwnerRepoAddEnabledMutationVariables> {
+    override document = OwnerRepoAddEnabledDocument;
+    override client = 'deploy';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const OwnerRepoRemoveEnabledDocument = gql`
+    mutation OwnerRepoRemoveEnabled($input: RepositoryInput!) {
+  ownerRepoRemoveEnabled(input: $input) {
+    success
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class OwnerRepoRemoveEnabledGQL extends Apollo.Mutation<OwnerRepoRemoveEnabledMutation, OwnerRepoRemoveEnabledMutationVariables> {
+    override document = OwnerRepoRemoveEnabledDocument;
     override client = 'deploy';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
@@ -799,6 +1055,25 @@ export const DeployStateComparisonDocument = gql`
       super(apollo);
     }
   }
+export const EnabledOwnerReposDocument = gql`
+    query EnabledOwnerRepos {
+  enabledOwnerRepos {
+    owner
+    repos
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class EnabledOwnerReposGQL extends Apollo.Query<EnabledOwnerReposQuery, EnabledOwnerReposQueryVariables> {
+    override document = EnabledOwnerReposDocument;
+    override client = 'deploy';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const EnvironmentsDocument = gql`
     query Environments($input: RepoQueryInput!) {
   environments(input: $input) {
@@ -835,25 +1110,6 @@ export const OpenPullRequestsDocument = gql`
   })
   export class OpenPullRequestsGQL extends Apollo.Query<OpenPullRequestsQuery, OpenPullRequestsQueryVariables> {
     override document = OpenPullRequestsDocument;
-    override client = 'deploy';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const PrDeployEnabledRepositoriesDocument = gql`
-    query PrDeployEnabledRepositories {
-  prDeployEnabledRepositories {
-    owner
-    repo
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class PrDeployEnabledRepositoriesGQL extends Apollo.Query<PrDeployEnabledRepositoriesQuery, PrDeployEnabledRepositoriesQueryVariables> {
-    override document = PrDeployEnabledRepositoriesDocument;
     override client = 'deploy';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

@@ -1,0 +1,5 @@
+mutation OwnerRepoAddEnabled($input: RepositoryInput!) {
+  ownerRepoAddEnabled(input: $input) {
+    success
+  }
+}

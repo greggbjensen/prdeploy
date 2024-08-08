@@ -5,8 +5,7 @@ import {
   DeployEnvironment,
   DeployEnvironmentDeployGQL,
   DeployEnvironmentsAndQueuesGQL,
-  DeployQueue,
-  Repository
+  DeployQueue
 } from 'src/app/shared/graphql';
 import { LoggingService } from 'src/app/shared/services';
 import { QueueListComponent } from './queue-list/queue-list.component';
@@ -83,6 +82,10 @@ export class DeploymentsComponent implements OnInit {
   }
 
   async update(): Promise<void> {
+    if (!this.repoManager.isValid) {
+      return;
+    }
+
     this.loading = true;
 
     try {
@@ -127,9 +130,5 @@ export class DeploymentsComponent implements OnInit {
 
   showAddServiceToPr(): void {
     this.addServiceToPrVisible = true;
-  }
-
-  repositoryDisplayExpr(item: Repository) {
-    return item ? `${item.owner}/${item.repo}` : '';
   }
 }

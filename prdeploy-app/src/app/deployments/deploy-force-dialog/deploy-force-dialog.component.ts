@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { DeployEnvironmentDeployGQL, OpenPullRequestsGQL, PullRequest, Repository } from 'src/app/shared/graphql';
+import { DeployEnvironmentDeployGQL, OpenPullRequestsGQL, PullRequest } from 'src/app/shared/graphql';
 import { LoggingService } from 'src/app/shared/services';
 import {
   DxButtonModule,
@@ -11,6 +11,7 @@ import {
 } from 'devextreme-angular';
 import CustomStore from 'devextreme/data/custom_store';
 import { NotificationManager } from 'src/app/shared/managers';
+import { Repository } from 'src/app/shared/models';
 
 @Component({
   selector: 'app-deploy-force-dialog',

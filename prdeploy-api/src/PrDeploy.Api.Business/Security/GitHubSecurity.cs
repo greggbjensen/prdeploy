@@ -96,14 +96,28 @@ namespace PrDeploy.Api.Business.Security
             {
                 var organization = await _client.Organization.Get(owner);
                 hasAccess = organization != null;
-                if (hasAccess)
-                {
-                    _cache.Set(authKey, true, AccessRefreshTimeSpan);
-                }
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, $"User did not have access to {owner}");
+                _logger.LogWarning(ex, $"User did not have access to {owner}, trying user account");
+            }
+
+            if (!hasAccess)
+            {
+                try
+                {
+                    var user = await _client.User.Current();
+                    hasAccess = string.Equals(owner, user.Login, StringComparison.OrdinalIgnoreCase);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogWarning(e, $"User did not have access {owner} user account");
+                }
+            }
+
+            if (hasAccess)
+            {
+                _cache.Set(authKey, true, AccessRefreshTimeSpan);
             }
 
             return hasAccess;

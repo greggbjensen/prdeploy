@@ -11,7 +11,7 @@ export const authConfig = (options: OAuthOptions, document: Document) => {
     clientId: options.clientId, // The "Auth Code + PKCE" client
     responseType: 'code',
     redirectUri: document.location.origin + '/login/callback',
-    scope: 'repo',
+    scope: 'repo read:org',
     sessionChecksEnabled: true,
     showDebugInformation: true, // Also requires enabling "Verbose" level in devtools
     clearHashAfterLogin: false, // https://github.com/manfredsteyer/angular-oauth2-oidc/issues/457#issuecomment-431807040,

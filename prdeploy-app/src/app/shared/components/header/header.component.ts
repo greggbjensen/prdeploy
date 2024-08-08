@@ -7,7 +7,7 @@ import { DxSelectBoxModule } from 'devextreme-angular';
 import { RepoManager } from '../../managers';
 import { first, firstValueFrom } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
-import { PrDeployEnabledRepositoriesGQL, Repository } from '../../graphql';
+import { EnabledOwnerReposGQL, OwnerRepos } from '../../graphql';
 import { uniq } from 'lodash';
 import { SelectionChangedEvent } from 'devextreme/ui/select_box';
 @Component({
@@ -39,13 +39,13 @@ export class HeaderComponent implements OnInit {
     }
   ];
 
-  private _repositories: Repository[] = [];
+  private _ownerRepos: OwnerRepos[] = [];
 
   constructor(
     public repoManager: RepoManager,
     private _authService: AuthService,
     private _route: ActivatedRoute,
-    private _prDeployEnabledRepositoriesGQL: PrDeployEnabledRepositoriesGQL
+    private _enabledOwnerReposGQL: EnabledOwnerReposGQL
   ) {}
 
   ngOnInit(): void {
@@ -54,12 +54,12 @@ export class HeaderComponent implements OnInit {
       this.repoManager.repo = param.get('repo');
     });
 
-    this._prDeployEnabledRepositoriesGQL
+    this._enabledOwnerReposGQL
       .fetch()
       .pipe(first())
       .subscribe(r => {
-        this._repositories = r.data.prDeployEnabledRepositories;
-        this.owners = uniq(this._repositories.map(r => r.owner));
+        this._ownerRepos = r.data.enabledOwnerRepos;
+        this.owners = this._ownerRepos.map(o => o.owner);
         if (!this.repoManager.owner || this.owners.includes(this.repoManager.owner.toLowerCase())) {
           this.repoManager.owner = this.owners[0];
         }
@@ -78,7 +78,7 @@ export class HeaderComponent implements OnInit {
   }
 
   private updateOwnerRepos() {
-    this.repos = this._repositories.filter(r => r.owner === this.repoManager.owner).map(r => r.repo);
+    this.repos = this._ownerRepos.find(r => r.owner === this.repoManager.owner).repos;
     if (!this.repoManager.repo || !this.repos.includes(this.repoManager.repo.toLowerCase())) {
       this.repoManager.repo = this.repos ? this.repos[0] : null;
     }
