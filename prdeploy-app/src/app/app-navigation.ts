@@ -2,16 +2,21 @@ export const navigation = () => [
   {
     text: 'Deployments',
     path: '/deployments',
-    icon: 'login'
+    icon: 'bi bi-cloud-upload'
   },
   {
     text: 'Environments',
     path: '/environments',
-    icon: 'fields'
+    icon: 'bi bi-card-list'
+  },
+  {
+    text: 'Repositories',
+    path: '/repositories',
+    icon: 'bi bi-database'
   },
   {
     text: 'Settings',
     path: '/settings',
-    icon: 'preferences'
+    icon: 'bi bi-gear'
   }
 ];
