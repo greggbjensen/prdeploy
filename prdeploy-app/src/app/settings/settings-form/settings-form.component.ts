@@ -12,14 +12,14 @@ import { firstValueFrom } from 'rxjs';
 import { DeploySettingsCompare, DeploySettingsCompareGQL, DeploySettingsCompareQuery } from 'src/app/shared/graphql';
 import { RepoManager } from 'src/app/shared/managers';
 import { EnvironmentFormComponent } from '../environment-form/environment-form.component';
-
-type SettingsLevel = 'owner' | 'repo';
-
+import { JiraFormComponent } from '../jira-form/jira-form.component';
+import { SettingsLevel } from '../models';
 @Component({
   selector: 'app-settings-form',
   standalone: true,
   imports: [
     EnvironmentFormComponent,
+    JiraFormComponent,
     DxFormModule,
     DxTextBoxModule,
     DxSelectBoxModule,
