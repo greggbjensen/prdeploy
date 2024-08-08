@@ -1,0 +1,46 @@
+<div class="environment-settings">
+  <div class="field-row">
+    <div classs="field-group field-group-horizontal">
+      <strong class="field-group-title">General</strong>
+      <div class="field">
+        <label>Name</label>
+        <div class="field-value">
+          <dx-text-box [(value)]="environment.name"></dx-text-box>
+        </div>
+      </div>
+      <div class="field">
+        <label>Queue</label>
+        <div class="field-value">
+          <dx-text-box [(value)]="environment.queue"></dx-text-box>
+        </div>
+      </div>
+      <div class="field">
+        <label>URL</label>
+        <div class="field-value">
+          <dx-text-box [(value)]="environment.url"></dx-text-box>
+        </div>
+      </div>
+      <div class="field">
+        <label>Require approval</label>
+        <div class="field-value">
+          <dx-check-box [(value)]="environment.requireApproval"></dx-check-box>
+        </div>
+      </div>
+      <div class="field">
+        <label>Require branch up to date</label>
+        <div class="field-value">
+          <dx-check-box [(value)]="environment.requireApproval"></dx-check-box>
+        </div>
+      </div>
+    </div>
+    <div class="field-group field-group-horizontal">
+      <strong class="field-group-title">Automation Test</strong>
+      <div class="field">
+        <label>Enabled</label>
+        <div class="field-value">
+          <dx-check-box [(value)]="environment.automationTest.enabled"></dx-check-box>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

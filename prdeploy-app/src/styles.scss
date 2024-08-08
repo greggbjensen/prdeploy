@@ -39,3 +39,51 @@
   display: flex;
 }
 
+.form {
+  max-width: 1100px;
+  display: flex;
+
+  label {
+    margin: 20px 0 10px 0;
+    display: block;
+  }
+
+  .field {
+    margin: 20px 20px 0 0;
+  }
+
+  .field-row {
+    display: flex;
+    flex: 1 0;
+
+    .field-group {
+      width: 50%
+    }
+
+    .field-group-sm {
+      width: 30%
+    }
+
+    .field-group-lg {
+      width: 70%
+    }
+  }
+
+  .field-group-horizontal {
+
+    .field {
+      display: flex;
+      align-items: center;
+    }
+
+    label {
+      margin: 0 20px 0 10px;
+      width: 120px;
+    }
+
+    .field-value {
+      flex: 1 0;
+    }
+  }
+}
+

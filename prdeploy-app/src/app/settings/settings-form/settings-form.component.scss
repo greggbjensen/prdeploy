@@ -1,0 +1,18 @@
+.environment-settings {
+  margin-top: 10px;
+}
+
+::ng-deep {
+  .form .field .dx-colorbox {
+    margin-left: 13px;
+    width: 88%;
+  }
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+}
