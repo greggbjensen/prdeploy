@@ -33,7 +33,7 @@ public class DeploySettingsService : IDeploySettingsService
         _cache = cache;
     }
 
-    public async Task<DeploySettingsCompare> GetAllAsync(RepoQueryInput input)
+    public async Task<DeploySettingsCompare> CompareAsync(RepoQueryInput input)
     {
         // Add validation.
         var ownerSettings = await GetOwnerSettingsAsync(input.Owner);
@@ -49,6 +49,7 @@ public class DeploySettingsService : IDeploySettingsService
         var repoSettings = _cache.Get<DeploySettings>(repoKey);
         if (repoSettings != null)
         {
+            await _gitHubSecurity.GuardRepoAsync(owner, repo);
             return repoSettings;
         }
 
