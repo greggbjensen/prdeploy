@@ -6,14 +6,6 @@ h3 {
   align-items: center;
 }
 
-::ng-deep .environments-refesh {
-  margin-left: 8px;
-
-  .dx-icon-refresh::before {
-    color: $blue-300;
-  }
-}
-
 .environments-form {
   display: flex;
   margin-bottom: 20px;

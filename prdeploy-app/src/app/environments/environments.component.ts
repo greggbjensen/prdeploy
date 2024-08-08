@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit, ViewChild, viewChild } from '@angular/core';
+import { Component, DestroyRef, OnInit, ViewChild } from '@angular/core';
 import { DxButtonModule, DxFormModule, DxSelectBoxModule } from 'devextreme-angular';
 import { Environment, EnvironmentsGQL } from '../shared/graphql';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';

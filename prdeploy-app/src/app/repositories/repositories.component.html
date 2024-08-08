@@ -1,1 +1,11 @@
-<p>repositories works!</p>
+<h3>
+  Enabled Repositories
+  <dx-button
+    class="refresh-btn"
+    icon="refresh"
+    hint="Refresh"
+    stylingMode="text"
+    (onClick)="updateOwnerRepos()"></dx-button>
+</h3>
+
+<app-repositories-grid></app-repositories-grid>
