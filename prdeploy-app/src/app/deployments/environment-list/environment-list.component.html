@@ -47,26 +47,26 @@
     <div class="environment-actions">
       @if (d.data.locked) {
         <dx-button
-          class="environment-pull-free"
+          class="environment-pull-free danger-icon-btn"
           icon="remove"
           stylingMode="text"
           hint="/free {{ d.data.name }}"
           (onClick)="free(d.data.name, d.data.pullRequest.number)"></dx-button>
       }
       <dx-button
-        class="environment-pull-force-deploy"
+        class="environment-pull-force-deploy success-icon-btn"
         icon="add"
         stylingMode="text"
         (onClick)="showDeployForce(d.data.name)"
         hint="/deploy {{ d.data.name.toLowerCase() }} --force"></dx-button>
       <dx-button
-        class="environment-pull-redeploy"
+        class="environment-pull-redeploy primary-icon-btn"
         icon="redo"
         stylingMode="text"
         (onClick)="redeploy(d.data.name, d.data.pullRequest.number)"
         hint="/deploy {{ d.data.name.toLowerCase() }}"></dx-button>
       <dx-button
-        class="environment-pull-rollbak"
+        class="environment-pull-rollback secondary-icon-btn"
         icon="undo"
         stylingMode="text"
         (onClick)="showDeployRollback(d.data.name, d.data.pullRequest.number)"

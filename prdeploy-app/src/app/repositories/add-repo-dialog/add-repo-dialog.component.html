@@ -1,0 +1,33 @@
+<dx-popup
+  [width]="450"
+  [height]="255"
+  [showTitle]="true"
+  title="Add Repository"
+  [dragEnabled]="false"
+  [hideOnOutsideClick]="true"
+  [showCloseButton]="true"
+  container=".dx-viewport"
+  [(visible)]="visible"
+  (visibleChange)="onVisibleChange()">
+  <div class="form">
+    <div class="dx-field">
+      <div class="dx-field-label">Owner</div>
+      <div class="dx-field-value">
+        <dx-text-box [(value)]="owner"></dx-text-box>
+      </div>
+    </div>
+
+    <div class="dx-field">
+      <div class="dx-field-label">Repo</div>
+      <div class="dx-field-value">
+        <dx-text-box [(value)]="repo"></dx-text-box>
+      </div>
+    </div>
+
+    <div class="actions">
+      <dx-button class="cancel-btn" text="Cancel" type="normal" (onClick)="cancel()" height="40"> </dx-button>
+      <dx-button class="deploy-btn" text="Add" type="default" (onClick)="add()" [disabled]="processing" height="40">
+      </dx-button>
+    </div>
+  </div>
+</dx-popup>

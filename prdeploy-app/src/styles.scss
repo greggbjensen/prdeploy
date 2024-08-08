@@ -18,10 +18,24 @@
   white-space: pre-line;
 }
 
-.refresh-btn {
-  margin-left: 8px;
-
-  .dx-icon-refresh::before {
-    color: $blue-300;
-  }
+.danger-icon-btn .dx-icon {
+  color: $red-400;
 }
+
+.success-icon-btn .dx-icon {
+  color: $green-400;
+}
+
+.primary-icon-btn .dx-icon {
+  color: $blue-300;
+}
+
+.secondary-icon-btn .dx-icon {
+  color: $orange-400;
+}
+
+.page-actions {
+  margin-top: 60px;
+  display: flex;
+}
+

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { OwnerRepos } from '../graphql';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,9 @@ import { BehaviorSubject, firstValueFrom } from 'rxjs';
 export class RepoManager {
   private _repo = '';
   private _owner = '';
+
+  private _ownerReposChangedSubject = new BehaviorSubject<OwnerRepos[]>([]);
+  ownerReposChanged$ = this._ownerReposChangedSubject.asObservable();
 
   private _valueChangedSubject$ = new BehaviorSubject(false);
   valueChanged$ = this._valueChangedSubject$.asObservable();
@@ -50,6 +54,10 @@ export class RepoManager {
       this.updateQueryParams();
       this.updateValueChanged();
     }
+  }
+
+  updateOwnerRepos(ownerRepos: OwnerRepos[]) {
+    this._ownerReposChangedSubject.next(ownerRepos);
   }
 
   async updateQueryParams(additionalParams: Params = {}): Promise<void> {
