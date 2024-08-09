@@ -1,12 +1,13 @@
-.environment-settings {
-  margin-top: 10px;
+.settings-form {
+  display: flex;
 }
 
-::ng-deep {
-  .form .field .dx-colorbox {
-    margin-left: 13px;
-    width: 88%;
-  }
+::ng-deep .settings-form .form-title {
+    margin-top: 0;
+}
+
+.settings-tabs {
+  margin: 5px 20px 0 0;
 }
 
 .loading {

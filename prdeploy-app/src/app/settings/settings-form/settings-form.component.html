@@ -1,25 +1,44 @@
-<dx-tabs #dxTabs [selectedIndex]="0" [dataSource]="settingsTabs" [width]="600" stylingMode="secondary"></dx-tabs>
-<div class="form">
-  @if (settingsCompare) {
-    <app-deploy-form [settingsCompare]="settingsCompare" [level]="level"></app-deploy-form>
-    <app-jira-form [jira]="settingsCompare.jira" [level]="level"></app-jira-form>
-    <app-slack-form [slack]="settingsCompare.slack" [level]="level"></app-slack-form>
-    <div class="field-group">
-      <h3 class="field-group-title">Environments</h3>
-      <dx-accordion
-        [dataSource]="settingsCompare.environments[level]"
-        [collapsible]="false"
-        [multiple]="false"
-        id="accordion-container">
-        <div *dxTemplate="let environment of 'title'">
-          <div class="header">{{ environment.name }}</div>
-        </div>
-        <div *dxTemplate="let environment of 'item'">
-          <app-environment-form [environment]="environment"></app-environment-form>
-        </div>
-      </dx-accordion>
-    </div>
-  }
+<div class="settings-form">
+  <dx-tabs
+    #dxTabs
+    class="settings-tabs"
+    [selectedIndex]="0"
+    [dataSource]="settingsTabs"
+    [width]="200"
+    stylingMode="secondary"
+    orientation="vertical"></dx-tabs>
+  <div class="form">
+    @if (settingsCompare) {
+      @switch (dxTabs.selectedItem?.id) {
+        @case ('slack') {
+          <app-slack-form [slack]="settingsCompare.slack" [level]="level"></app-slack-form>
+        }
+        @case ('jira') {
+          <app-jira-form [jira]="settingsCompare.jira" [level]="level"></app-jira-form>
+        }
+        @case ('deployment') {
+          <app-deploy-form [settingsCompare]="settingsCompare" [level]="level"></app-deploy-form>
+        }
+        @default {
+          <div class="field-group">
+            <h3 class="form-title">Environments</h3>
+            <dx-accordion
+              [dataSource]="settingsCompare.environments[level]"
+              [collapsible]="false"
+              [multiple]="false"
+              id="accordion-container">
+              <div *dxTemplate="let environment of 'title'">
+                <div class="header">{{ environment.name }}</div>
+              </div>
+              <div *dxTemplate="let environment of 'item'">
+                <app-environment-form [environment]="environment"></app-environment-form>
+              </div>
+            </dx-accordion>
+          </div>
+        }
+      }
+    }
+  </div>
 
   @if (loading) {
     <div class="loading">

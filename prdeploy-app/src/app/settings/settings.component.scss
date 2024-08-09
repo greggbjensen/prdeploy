@@ -1,0 +1,36 @@
+@import '../../sass/variables';
+
+h3 {
+  display: flex;
+  align-items: center;
+}
+
+.tab-description {
+  display: flex;
+  align-items: center;
+  background-color: $blue-100;
+  border: 1px solid $blue-200;
+  border-radius: 3px;
+  margin: 20px 0;
+  padding: 0 15px;
+  max-width: 600px;
+
+  &.repo {
+    background-color: $green-100;
+    border: 1px solid $green-200;
+
+    .bi-info-circle {
+      color: $green-400;
+    }
+  }
+
+  .bi-info-circle {
+    font-size: 20px;
+    margin-right: 15px;
+    color: $blue-400;
+    font-weight: $font-weight-bold;
+    background-color: $white;
+    border-radius: 20px;
+    line-height: 20px;
+  }
+}

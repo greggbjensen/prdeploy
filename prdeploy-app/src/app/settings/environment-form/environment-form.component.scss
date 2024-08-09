@@ -1,3 +1,10 @@
+@import '../../../sass/variables';
+
+:host {
+  display: block;
+  width: 100%;
+}
+
 .environment-settings .test-workflow-inputs {
   margin-top: 20px;
   display: block;
@@ -13,4 +20,10 @@
 
 .field-removable {
   display: flex;
+}
+
+.field-group-title {
+  font-weight: normal;
+  border-bottom: solid 1px $border-color;
+  padding-bottom: 10px;
 }

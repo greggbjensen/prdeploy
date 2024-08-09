@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { DxButtonModule, DxTabsModule } from 'devextreme-angular';
 import { Tab } from '../shared/models';
 import { SettingsFormComponent } from './settings-form/settings-form.component';
+import { RepoManager } from '../shared/managers';
 
 @Component({
   selector: 'app-settings',
@@ -11,7 +12,9 @@ import { SettingsFormComponent } from './settings-form/settings-form.component';
   styleUrl: './settings.component.scss'
 })
 export class SettingsComponent {
-  tabs: Tab[] = [
+  @ViewChild(SettingsFormComponent) settingsForm: SettingsFormComponent;
+
+  ownerRepoTabs: Tab[] = [
     {
       id: 'owner',
       text: 'Owner Defaults'
@@ -22,5 +25,9 @@ export class SettingsComponent {
     }
   ];
 
-  updateSettings() {}
+  constructor(public repoManager: RepoManager) {}
+
+  updateSettings() {
+    this.settingsForm?.fetchSettings();
+  }
 }
