@@ -10,21 +10,21 @@
 
 <div class="settings-header">
   <dx-tabs
-    #dxTabs
     class="settings-tabs"
     [selectedIndex]="0"
     [dataSource]="ownerRepoTabs"
     [width]="300"
+    (onSelectionChanged)="selectedLevelChanged($event)"
     stylingMode="primary"></dx-tabs>
   <div class="settings-actions">
     <dx-button text="Save" type="default" (onClick)="save()"></dx-button>
     <dx-button text="Cancel" (onClick)="cancel()"></dx-button>
   </div>
 </div>
-<div class="tab-description {{ dxTabs.selectedItem?.id }}">
+<div class="tab-description {{ level }}">
   <i class="bi bi-info-circle"></i>
   <p>
-    @if (dxTabs.selectedItem?.id === 'owner') {
+    @if (level === 'owner') {
       Default settings to be used for all repositories within owner <strong>{{ this.repoManager.owner }}</strong
       >.
     } @else {
@@ -33,4 +33,4 @@
     }
   </p>
 </div>
-<app-settings-form [level]="dxTabs.selectedItem?.id || 'repo'"></app-settings-form>
+<app-settings-form [level]="level"></app-settings-form>

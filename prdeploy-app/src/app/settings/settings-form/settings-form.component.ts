@@ -62,6 +62,7 @@ export class SettingsFormComponent {
   @Input() set level(value: SettingsLevel) {
     this._level = value;
     this.updateBindingEnvironments();
+    this._changeDetectorRef.detectChanges();
   }
 
   get level() {

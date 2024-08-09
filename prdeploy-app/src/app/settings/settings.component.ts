@@ -1,8 +1,10 @@
-import { Component, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { DxButtonModule, DxTabsModule } from 'devextreme-angular';
 import { Tab } from '../shared/models';
 import { SettingsFormComponent } from './settings-form/settings-form.component';
 import { RepoManager } from '../shared/managers';
+import { SettingsLevel } from './models';
+import { SelectionChangedEvent } from 'devextreme/ui/tab_panel';
 
 @Component({
   selector: 'app-settings',
@@ -25,7 +27,16 @@ export class SettingsComponent {
     }
   ];
 
-  constructor(public repoManager: RepoManager) {}
+  level: SettingsLevel;
+
+  constructor(
+    public repoManager: RepoManager,
+    private _changeDetectorRef: ChangeDetectorRef
+  ) {}
+
+  selectedLevelChanged(event: SelectionChangedEvent): void {
+    this.level = event.addedItems[0].id;
+  }
 
   updateSettings() {
     this.settingsForm?.fetchSettings();
