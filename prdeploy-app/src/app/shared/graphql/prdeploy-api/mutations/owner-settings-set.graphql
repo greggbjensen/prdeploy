@@ -1,5 +1,0 @@
-mutation OwnerSettingsSet($input: SetOwnerSettingsInput!) {
-  ownerSettingsSet(input: $input) {
-    success
-  }
-}

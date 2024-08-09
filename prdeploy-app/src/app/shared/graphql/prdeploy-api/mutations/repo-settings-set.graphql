@@ -1,5 +1,0 @@
-mutation RepoSettingsSet($input: SetRepoSettingsInput!) {
-  repoSettingsSet(input: $input) {
-    success
-  }
-}

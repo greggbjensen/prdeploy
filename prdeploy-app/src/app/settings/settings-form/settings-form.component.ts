@@ -1,7 +1,21 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { DxAccordionModule, DxButtonModule, DxLoadIndicatorModule, DxTabsModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
-import { DeploySettingsCompare, DeploySettingsCompareGQL, EnvironmentSettings } from 'src/app/shared/graphql';
+import {
+  BadgeSettingsCompare,
+  BadgeSettingsInput,
+  BuildsSettingsCompare,
+  BuildsSettingsInput,
+  DeploySettingsCompare,
+  DeploySettingsCompareGQL,
+  DeploySettingsInput,
+  DeploySettingsSetGQL,
+  EnvironmentSettings,
+  JiraSettingsCompare,
+  JiraSettingsInput,
+  SlackSettingsCompare,
+  SlackSettingsInput
+} from 'src/app/shared/graphql';
 import { NotificationManager, RepoManager } from 'src/app/shared/managers';
 import { EnvironmentFormComponent } from '../environment-form/environment-form.component';
 import { JiraFormComponent } from '../jira-form/jira-form.component';
@@ -11,6 +25,7 @@ import { DeployFormComponent } from '../deploy-form/deploy-form.component';
 import { Tab } from 'src/app/shared/models';
 import { AddEnvironmentDialogComponent } from '../add-environment-dialog/add-environment-dialog.component';
 import _ from 'lodash';
+import { LoggingService } from 'src/app/shared/services';
 @Component({
   selector: 'app-settings-form',
   standalone: true,
@@ -71,14 +86,37 @@ export class SettingsFormComponent {
 
   constructor(
     private _deploySettingsCompareGQL: DeploySettingsCompareGQL,
+    private _deploySettingsSetGQL: DeploySettingsSetGQL,
     private _repoManager: RepoManager,
     private _notificationManager: NotificationManager,
-    private _changeDetectorRef: ChangeDetectorRef
+    private _changeDetectorRef: ChangeDetectorRef,
+    private _loggingService: LoggingService
   ) {
     this.fetchSettings();
   }
 
-  async save() {}
+  async save() {
+    this.loading = true;
+    try {
+      const ownerSettings = this.gatherSettings(this.settingsCompare, 'owner');
+      const repoSettings = this.gatherSettings(this.settingsCompare, 'repo');
+      await firstValueFrom(
+        this._deploySettingsSetGQL.mutate({
+          ownerInput: {
+            settings: ownerSettings
+          },
+          repoInput: {
+            settings: repoSettings
+          }
+        })
+      );
+
+      this._notificationManager.show('Settings save complete.');
+    } catch (error) {
+      this._notificationManager.show('Error saving settings', 'error');
+      this._loggingService.error(error, `Error saving settings.`);
+    }
+  }
 
   async resetForm() {
     // Replace current state with that from the server.
@@ -164,5 +202,50 @@ export class SettingsFormComponent {
     } else {
       this.bindingEnvironments = this.settingsCompare.environments[this._level];
     }
+  }
+
+  private gatherSettings(compare: DeploySettingsCompare, level: SettingsLevel): DeploySettingsInput {
+    const input = {} as DeploySettingsInput;
+
+    input.deployWorkflow = compare.deployWorkflow[level];
+    input.deployManagerSiteUrl = compare.deployManagerSiteUrl[level];
+    input.defaultEnvironment = compare.defaultEnvironment[level];
+    input.releaseEnvironment = compare.releaseEnvironment[level];
+    input.environments = compare.environments[level];
+
+    this.setJira(input.jira, compare.jira, level);
+    this.setBuilds(input.builds, compare.builds, level);
+    this.setSlack(input.slack, compare.slack, level);
+    this.setBadge(input.badge, compare.badge, level);
+
+    return input;
+  }
+
+  private setJira(input: JiraSettingsInput, compare: JiraSettingsCompare, level: SettingsLevel) {
+    input.addIssuesEnabled = compare.addIssuesEnabled[level];
+    input.host = compare.host[level];
+    input.username = compare.username[level];
+    input.password = compare.password[level];
+  }
+
+  private setBuilds(input: BuildsSettingsInput, compare: BuildsSettingsCompare, level: SettingsLevel) {
+    input.checkPattern = compare.checkPattern[level];
+    input.workflowPattern = compare.workflowPattern[level];
+  }
+
+  private setSlack(input: SlackSettingsInput, compare: SlackSettingsCompare, level: SettingsLevel) {
+    input.webhooks.deployUrl = compare.webhooks.deployUrl[level];
+    input.webhooks.releaseUrl = compare.webhooks.releaseUrl[level];
+    input.notificationsEnabled = compare.notificationsEnabled[level];
+    input.token = compare.token[level];
+    input.emailDomain = compare.emailDomain[level];
+    input.emailAliases = compare.emailAliases[level];
+  }
+
+  private setBadge(input: BadgeSettingsInput, compare: BadgeSettingsCompare, level: SettingsLevel) {
+    input.statusColors.error = compare.statusColors.error[level];
+    input.statusColors.warn = compare.statusColors.warn[level];
+    input.statusColors.info = compare.statusColors.info[level];
+    input.statusColors.success = compare.statusColors.success[level];
   }
 }

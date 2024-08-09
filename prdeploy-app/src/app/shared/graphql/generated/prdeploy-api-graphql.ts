@@ -630,6 +630,14 @@ export type DeployQueueUpdateMutationVariables = Exact<{
 
 export type DeployQueueUpdateMutation = { __typename?: 'DeployMutation', deployQueueUpdate: { __typename?: 'DeployQueue', environment?: string | null } };
 
+export type DeploySettingsSetMutationVariables = Exact<{
+  ownerInput: SetOwnerSettingsInput;
+  repoInput: SetRepoSettingsInput;
+}>;
+
+
+export type DeploySettingsSetMutation = { __typename?: 'DeployMutation', ownerSettingsSet: { __typename?: 'StatusResponse', success: boolean }, repoSettingsSet: { __typename?: 'StatusResponse', success: boolean } };
+
 export type OwnerRepoAddEnabledMutationVariables = Exact<{
   input: RepositoryInput;
 }>;
@@ -644,26 +652,12 @@ export type OwnerRepoRemoveEnabledMutationVariables = Exact<{
 
 export type OwnerRepoRemoveEnabledMutation = { __typename?: 'DeployMutation', ownerRepoRemoveEnabled: { __typename?: 'StatusResponse', success: boolean } };
 
-export type OwnerSettingsSetMutationVariables = Exact<{
-  input: SetOwnerSettingsInput;
-}>;
-
-
-export type OwnerSettingsSetMutation = { __typename?: 'DeployMutation', ownerSettingsSet: { __typename?: 'StatusResponse', success: boolean } };
-
 export type PullRequestAddServicesMutationVariables = Exact<{
   input: PullRequestAddServicesInput;
 }>;
 
 
 export type PullRequestAddServicesMutation = { __typename?: 'DeployMutation', pullRequestAddServices: { __typename?: 'StatusResponse', success: boolean } };
-
-export type RepoSettingsSetMutationVariables = Exact<{
-  input: SetRepoSettingsInput;
-}>;
-
-
-export type RepoSettingsSetMutation = { __typename?: 'DeployMutation', repoSettingsSet: { __typename?: 'StatusResponse', success: boolean } };
 
 export type DeployEnvironmentsAndQueuesQueryVariables = Exact<{
   input: RepoQueryInput;
@@ -784,6 +778,27 @@ export const DeployQueueUpdateDocument = gql`
       super(apollo);
     }
   }
+export const DeploySettingsSetDocument = gql`
+    mutation DeploySettingsSet($ownerInput: SetOwnerSettingsInput!, $repoInput: SetRepoSettingsInput!) {
+  ownerSettingsSet(input: $ownerInput) {
+    success
+  }
+  repoSettingsSet(input: $repoInput) {
+    success
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class DeploySettingsSetGQL extends Apollo.Mutation<DeploySettingsSetMutation, DeploySettingsSetMutationVariables> {
+    override document = DeploySettingsSetDocument;
+    override client = 'deploy';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const OwnerRepoAddEnabledDocument = gql`
     mutation OwnerRepoAddEnabled($input: RepositoryInput!) {
   ownerRepoAddEnabled(input: $input) {
@@ -820,24 +835,6 @@ export const OwnerRepoRemoveEnabledDocument = gql`
       super(apollo);
     }
   }
-export const OwnerSettingsSetDocument = gql`
-    mutation OwnerSettingsSet($input: SetOwnerSettingsInput!) {
-  ownerSettingsSet(input: $input) {
-    success
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class OwnerSettingsSetGQL extends Apollo.Mutation<OwnerSettingsSetMutation, OwnerSettingsSetMutationVariables> {
-    override document = OwnerSettingsSetDocument;
-    override client = 'deploy';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
 export const PullRequestAddServicesDocument = gql`
     mutation PullRequestAddServices($input: PullRequestAddServicesInput!) {
   pullRequestAddServices(input: $input) {
@@ -851,24 +848,6 @@ export const PullRequestAddServicesDocument = gql`
   })
   export class PullRequestAddServicesGQL extends Apollo.Mutation<PullRequestAddServicesMutation, PullRequestAddServicesMutationVariables> {
     override document = PullRequestAddServicesDocument;
-    override client = 'deploy';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const RepoSettingsSetDocument = gql`
-    mutation RepoSettingsSet($input: SetRepoSettingsInput!) {
-  repoSettingsSet(input: $input) {
-    success
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class RepoSettingsSetGQL extends Apollo.Mutation<RepoSettingsSetMutation, RepoSettingsSetMutationVariables> {
-    override document = RepoSettingsSetDocument;
     override client = 'deploy';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
