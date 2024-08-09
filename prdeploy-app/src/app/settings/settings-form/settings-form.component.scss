@@ -1,3 +1,5 @@
+@import '../../../sass/variables';
+
 .settings-form {
   display: flex;
 }
@@ -16,4 +18,11 @@
   align-items: center;
   justify-content: center;
   height: 400px;
+}
+
+::ng-deep .settings-form {
+  .dx-accordion-item-title, .dx-accordion-item-opened.dx-state-hover .dx-accordion-item-title  {
+    background-color: $gray-200;
+    text-transform: capitalize;
+  }
 }

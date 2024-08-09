@@ -83,12 +83,9 @@
     }
   }
 
-  .field-group-horizontal {
-
-    .field {
-      display: flex;
-      align-items: center;
-    }
+  .field-group-horizontal .field, .field-checkbox {
+    display: flex;
+    align-items: center;
 
     label {
       margin: 0 20px 0 10px;
@@ -97,6 +94,18 @@
 
     .field-value {
       flex: 1 0;
+    }
+  }
+
+  .field-checkbox {
+    flex-direction: row-reverse;
+
+    label {
+      width: 100%;
+    }
+
+    .field-value {
+      margin: 0 4px 0 0;
     }
   }
 }

@@ -28,7 +28,7 @@
               [multiple]="false"
               id="accordion-container">
               <div *dxTemplate="let environment of 'title'">
-                <div class="header">{{ environment.name }}</div>
+                <div class="accordion-header">{{ environment.name }}</div>
               </div>
               <div *dxTemplate="let environment of 'item'">
                 <app-environment-form [environment]="environment"></app-environment-form>
