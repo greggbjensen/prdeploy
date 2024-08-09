@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { ApolloQueryResult } from '@apollo/client/core';
 import { DxAccordionModule, DxButtonModule, DxLoadIndicatorModule, DxTabsModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
@@ -15,6 +15,7 @@ import { SettingsLevel } from '../models';
 import { SlackFormComponent } from '../slack-form/slack-form.component';
 import { DeployFormComponent } from '../deploy-form/deploy-form.component';
 import { Tab } from 'src/app/shared/models';
+import { AddEnvironmentDialogComponent } from '../add-environment-dialog/add-environment-dialog.component';
 @Component({
   selector: 'app-settings-form',
   standalone: true,
@@ -23,6 +24,7 @@ import { Tab } from 'src/app/shared/models';
     EnvironmentFormComponent,
     JiraFormComponent,
     SlackFormComponent,
+    AddEnvironmentDialogComponent,
     DxLoadIndicatorModule,
     DxAccordionModule,
     DxTabsModule,
@@ -32,6 +34,7 @@ import { Tab } from 'src/app/shared/models';
   styleUrl: './settings-form.component.scss'
 })
 export class SettingsFormComponent {
+  addEnvironmentVisible = false;
   settingsCompare: DeploySettingsCompare;
   hasEnvironments = false;
   bindingEnvironments: EnvironmentSettings[];
@@ -79,7 +82,8 @@ export class SettingsFormComponent {
 
   constructor(
     private _deploySettingsCompareGQL: DeploySettingsCompareGQL,
-    private _repoManager: RepoManager
+    private _repoManager: RepoManager,
+    private _changeDetectorRef: ChangeDetectorRef
   ) {
     this.fetchSettings();
   }
@@ -112,5 +116,32 @@ export class SettingsFormComponent {
     });
 
     this.loading = false;
+  }
+
+  async showAddEnvironmentDialog() {
+    this.addEnvironmentVisible = true;
+  }
+
+  async addEnvironment(name: string) {
+    let environments = this.settingsCompare.environments[this._level];
+    if (!environments) {
+      environments = [];
+      this.settingsCompare.environments[this._level] = environments;
+    }
+
+    if (environments.find(e => e.name.toLowerCase() === name.toLowerCase())) {
+      return;
+    }
+
+    environments.push({
+      name,
+      requireApproval: false,
+      requireBranchUpToDate: false,
+      automationTest: {
+        enabled: false
+      }
+    } as EnvironmentSettings);
+
+    this._changeDetectorRef.detectChanges();
   }
 }
