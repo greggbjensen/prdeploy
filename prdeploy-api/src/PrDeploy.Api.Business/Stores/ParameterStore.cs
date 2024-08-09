@@ -35,7 +35,7 @@ namespace PrDeploy.Api.Business.Stores
 
         public async Task<T> GetAsync<T>(string owner, string name)
         {
-            var value = await GetParameterValueAsync<T>($"{PrdeployPrefix}/{owner}/{name.ToUpperInvariant()}/");
+            var value = await GetParameterValueAsync<T>($"{PrdeployPrefix}/{owner}/{name.ToUpperInvariant()}");
             return value;
         }
 

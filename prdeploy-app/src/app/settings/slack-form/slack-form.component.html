@@ -1,0 +1,60 @@
+<div classs="field-group">
+  <h4 class="field-group-title">Slack</h4>
+  <div class="field">
+    <label>Notifications enabled</label>
+    <div class="field-value">
+      <dx-check-box [(value)]="slack.notificationsEnabled[level]"></dx-check-box>
+    </div>
+  </div>
+  <div class="field">
+    <label>Token</label>
+    <div class="field-value">
+      <dx-text-box [(value)]="slack.token[level]" [placeholder]="showOwner ? slack.token['owner'] : ''"></dx-text-box>
+    </div>
+  </div>
+  <div class="field">
+    <label>Email domain</label>
+    <div class="field-value">
+      <dx-text-box
+        [(value)]="slack.emailDomain[level]"
+        [placeholder]="showOwner ? slack.emailDomain['owner'] : ''"></dx-text-box>
+    </div>
+  </div>
+  <div class="slack-email-aliases">
+    <div>
+      <span>Email Aliases:</span>
+      <dx-button
+        class="add-workflow-input-btn success-icon-btn"
+        icon="add"
+        stylingMode="text"
+        (onClick)="addEmailAlias()"
+        hint="Add workflow input"></dx-button>
+    </div>
+    @for (item of slack.emailAliases[level] | keyvalue; track item.key) {
+      <div class="field">
+        <label
+          >Email
+          <dx-button
+            class="add-workflow-input-btn danger-icon-btn"
+            icon="remove"
+            stylingMode="text"
+            (onClick)="removeEmailAlias(item.key)"
+            hint="Add workflow input"></dx-button>
+        </label>
+        <div class="field-value field-removable">
+          <dx-text-box
+            [value]="item.key?.toString()"
+            (onValueChanged)="updateEmailAlias($event, item.key)"></dx-text-box>
+        </div>
+      </div>
+      <div class="field">
+        <label>Alias</label>
+        <div class="field-value field-removable">
+          <dx-text-box
+            [value]="item.value?.toString()"
+            (onValueChanged)="updateEmailAlias($event, item.key)"></dx-text-box>
+        </div>
+      </div>
+    }
+  </div>
+</div>

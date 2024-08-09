@@ -1,0 +1,35 @@
+<div classs="field-group">
+  <h4 class="field-group-title">Comment Badge Colors</h4>
+  <div class="field">
+    <label>Error</label>
+    <div class="field-value">
+      <dx-color-box
+        [(value)]="badge.statusColors.error[level]"
+        [placeholder]="showOwner ? badge.statusColors.error['owner'] : ''"></dx-color-box>
+    </div>
+  </div>
+  <div class="field">
+    <label>Warn</label>
+    <div class="field-value">
+      <dx-color-box
+        [(value)]="badge.statusColors.warn[level]"
+        [placeholder]="showOwner ? badge.statusColors.warn['owner'] : ''"></dx-color-box>
+    </div>
+  </div>
+  <div class="field">
+    <label>Success</label>
+    <div class="field-value">
+      <dx-color-box
+        [(value)]="badge.statusColors.success[level]"
+        [placeholder]="showOwner ? badge.statusColors.success['owner'] : ''"></dx-color-box>
+    </div>
+  </div>
+  <div class="field">
+    <label>Info</label>
+    <div class="field-value">
+      <dx-color-box
+        [(value)]="badge.statusColors.info[level]"
+        [placeholder]="showOwner ? badge.statusColors.info['owner'] : ''"></dx-color-box>
+    </div>
+  </div>
+</div>

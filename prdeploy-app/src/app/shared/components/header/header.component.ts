@@ -77,7 +77,7 @@ export class HeaderComponent implements OnInit {
   }
 
   private updateOwnerRepos(ownerRepos: OwnerRepos[]) {
-    this._ownerRepos = ownerRepos;
+    this._ownerRepos = ownerRepos || [];
     this.owners = this._ownerRepos.map(o => o.owner);
     if (!this.repoManager.owner || this.owners.includes(this.repoManager.owner.toLowerCase())) {
       this.repoManager.owner = this.owners[0];
@@ -87,7 +87,7 @@ export class HeaderComponent implements OnInit {
   }
 
   private filterOwnerRepos() {
-    this.repos = this._ownerRepos.find(r => r.owner === this.repoManager.owner).repos;
+    this.repos = this._ownerRepos.find(r => r.owner === this.repoManager.owner)?.repos || [];
     if (!this.repoManager.repo || !this.repos.includes(this.repoManager.repo.toLowerCase())) {
       this.repoManager.repo = this.repos ? this.repos[0] : null;
     }

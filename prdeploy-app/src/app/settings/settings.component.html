@@ -1,1 +1,12 @@
-<p>settings works!</p>
+<h3>
+  Settings
+  <dx-button
+    class="success-icon-btn"
+    icon="refresh"
+    hint="Refresh"
+    stylingMode="text"
+    (onClick)="updateSettings()"></dx-button>
+</h3>
+
+<dx-tabs #dxTabs [selectedIndex]="0" [dataSource]="tabs" [width]="400" stylingMode="primary"></dx-tabs>
+<app-settings-form [level]="dxTabs.selectedItem?.id || 'repo'"></app-settings-form>

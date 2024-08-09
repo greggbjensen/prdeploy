@@ -13,6 +13,7 @@ environments: # List of environments to be used.
     queue: 'PROD_PR_QUEUE'
     url: 'https://www.myorg.com'
     requireBranchUpToDate: true
+    requireApproval: true
     excludeFromRollback: [] # Services that should not be rolled back in this environment, such as databases.
     automationTest: # Automation tests to run and report on as part of the pull request deploy.
       enabled: false # Whether or not automation test run should be triggered.
@@ -33,7 +34,7 @@ slack:
   notificationsEnabled: false # Whether or not to send Slack notifications.
 badge:
   statusColors: # Colors for status badges posted to pull request comments.
-    error: 'ed6b6b'
-    warn: 'edbe3e'
-    success: '29a329'
-    info: '52a9ff'
+    error: '#ed6b6b'
+    warn: '#edbe3e'
+    success: '#29a329'
+    info: '#52a9ff'

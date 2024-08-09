@@ -121,7 +121,7 @@ public static partial class Map
         target.Password ??= source.Password;
     }
 
-    public static void Merge(Dictionary<string, string>? target, Dictionary<string, string>? source)
+    public static void Merge(Dictionary<string, object>? target, Dictionary<string, object>? source)
     {
         if (source == null || target == null)
         {

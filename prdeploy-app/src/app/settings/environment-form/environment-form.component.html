@@ -1,0 +1,84 @@
+<div class="environment-settings">
+  <div class="field-row">
+    <div classs="field-group field-group-horizontal">
+      <strong class="field-group-title">General</strong>
+      <div class="field">
+        <label>Name</label>
+        <div class="field-value">
+          <dx-text-box [(value)]="environment.name"></dx-text-box>
+        </div>
+      </div>
+      <div class="field">
+        <label>Queue</label>
+        <div class="field-value">
+          <dx-text-box [(value)]="environment.queue"></dx-text-box>
+        </div>
+      </div>
+      <div class="field">
+        <label>URL</label>
+        <div class="field-value">
+          <dx-text-box [(value)]="environment.url"></dx-text-box>
+        </div>
+      </div>
+      <div class="field">
+        <label>Require approval</label>
+        <div class="field-value">
+          <dx-check-box [(value)]="environment.requireApproval"></dx-check-box>
+        </div>
+      </div>
+      <div class="field">
+        <label>Require branch up to date</label>
+        <div class="field-value">
+          <dx-check-box [(value)]="environment.requireApproval"></dx-check-box>
+        </div>
+      </div>
+    </div>
+
+    <div class="field-group field-group-horizontal">
+      <strong class="field-group-title">Automation Test</strong>
+      <div class="field">
+        <label>Enabled</label>
+        <div class="field-value">
+          <dx-check-box [(value)]="environment.automationTest.enabled"></dx-check-box>
+        </div>
+      </div>
+      <div class="field">
+        <label>GitHub workfow</label>
+        <div class="field-value">
+          <dx-text-box [(value)]="environment.automationTest.workflow"></dx-text-box>
+        </div>
+      </div>
+      <div class="test-workflow-inputs">
+        <div>
+          <span>Workflow Inputs:</span>
+          <dx-button
+            class="add-workflow-input-btn success-icon-btn"
+            icon="add"
+            stylingMode="text"
+            (onClick)="showAddAutomationInput()"
+            hint="Add workflow input"></dx-button>
+        </div>
+        @for (item of environment.automationTest.inputs | keyvalue; track item.key) {
+          <div class="field">
+            <label>{{ item.key }}</label>
+            <div class="field-value field-removable">
+              <dx-text-box
+                [value]="item.value?.toString()"
+                (onValueChanged)="updateAutomationInput($event, item.key)"></dx-text-box>
+              <dx-button
+                class="add-workflow-input-btn danger-icon-btn"
+                icon="remove"
+                stylingMode="text"
+                (onClick)="removeAutomationInput(item.key)"
+                hint="Add workflow input"></dx-button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-add-automation-input-dialog
+  [(visible)]="addAutomationInputVisible"
+  (addInput)="addAutomationInput($event)"></app-add-automation-input-dialog>

@@ -1,0 +1,96 @@
+<div class="form">
+  @if (settingsCompare) {
+    <div class="field-row">
+      <div class="field-group-sm">
+        <h3 class="field-group-title">Deployment</h3>
+        <div class="field">
+          <label>GitHub workflow</label>
+          <div class="field-value">
+            <dx-text-box
+              class="field-value"
+              [(value)]="settingsCompare.deployWorkflow[level]"
+              [placeholder]="showOwner ? settingsCompare.deployWorkflow['owner'] : ''"></dx-text-box>
+          </div>
+        </div>
+        <div class="field">
+          <label>prdeploy portal URL</label>
+          <div class="field-value">
+            <dx-text-box
+              class="field-value"
+              [(value)]="settingsCompare.deployManagerSiteUrl[level]"
+              [placeholder]="showOwner ? settingsCompare.deployManagerSiteUrl['owner'] : ''"></dx-text-box>
+          </div>
+        </div>
+        <div class="field">
+          <label>Default Environment</label>
+          <div class="field-value">
+            <dx-select-box
+              [placeholder]="showOwner ? settingsCompare.defaultEnvironment['owner'] : ''"
+              [dataSource]="environments"
+              [searchEnabled]="true"
+              [contentEditable]="true"
+              [(value)]="settingsCompare.defaultEnvironment[level]">
+            </dx-select-box>
+          </div>
+        </div>
+        <div class="field">
+          <label>Release Environment</label>
+          <div class="field-value">
+            <dx-select-box
+              [placeholder]="showOwner ? settingsCompare.releaseEnvironment['owner'] : ''"
+              [dataSource]="environments"
+              [searchEnabled]="true"
+              [contentEditable]="true"
+              [(value)]="settingsCompare.releaseEnvironment[level]">
+            </dx-select-box>
+          </div>
+        </div>
+        <div class="field">
+          <label>Builds check pattern</label>
+          <div class="field-value">
+            <dx-text-box
+              class="field-value"
+              [(value)]="settingsCompare.builds.checkPattern[level]"
+              [placeholder]="showOwner ? settingsCompare.builds.checkPattern['owner'] : ''"></dx-text-box>
+          </div>
+        </div>
+        <div class="field">
+          <label>Builds workflow pattern</label>
+          <div class="field-value">
+            <dx-text-box
+              class="field-value"
+              [(value)]="settingsCompare.builds.workflowPattern[level]"
+              [placeholder]="showOwner ? settingsCompare.builds.workflowPattern['owner'] : ''"></dx-text-box>
+          </div>
+        </div>
+      </div>
+      <app-jira-form [jira]="settingsCompare.jira" [level]="level"></app-jira-form>
+      <app-slack-form [slack]="settingsCompare.slack" [level]="level"></app-slack-form>
+    </div>
+    <div class="field-group-lg field-group-horizontal">
+      <h3 class="field-group-title">Environments</h3>
+      <dx-accordion
+        [dataSource]="settingsCompare.environments[level]"
+        [collapsible]="false"
+        [multiple]="false"
+        id="accordion-container">
+        <div *dxTemplate="let environment of 'title'">
+          <div class="header">{{ environment.name }}</div>
+        </div>
+        <div *dxTemplate="let environment of 'item'">
+          <app-environment-form [environment]="environment"></app-environment-form>
+        </div>
+      </dx-accordion>
+      <app-badge-form [badge]="settingsCompare.badge" [level]="level"></app-badge-form>
+    </div>
+  }
+
+  @if (loading) {
+    <div class="loading">
+      <div>
+        <dx-load-indicator class="loading" [width]="80" [height]="80"></dx-load-indicator>
+        <span>Loading...</span>
+      </div>
+    </div>
+  }
+</div>
