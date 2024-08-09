@@ -4,6 +4,10 @@
   display: flex;
 }
 
+.environments-disabled {
+  color: $gray-500;
+}
+
 ::ng-deep .settings-form .form-title {
     margin-top: 0;
 }

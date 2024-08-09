@@ -2,7 +2,12 @@ import { Component, Input } from '@angular/core';
 import { ApolloQueryResult } from '@apollo/client/core';
 import { DxAccordionModule, DxLoadIndicatorModule, DxTabsModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
-import { DeploySettingsCompare, DeploySettingsCompareGQL, DeploySettingsCompareQuery } from 'src/app/shared/graphql';
+import {
+  DeploySettingsCompare,
+  DeploySettingsCompareGQL,
+  DeploySettingsCompareQuery,
+  EnvironmentSettings
+} from 'src/app/shared/graphql';
 import { RepoManager } from 'src/app/shared/managers';
 import { EnvironmentFormComponent } from '../environment-form/environment-form.component';
 import { JiraFormComponent } from '../jira-form/jira-form.component';
@@ -27,7 +32,10 @@ import { Tab } from 'src/app/shared/models';
 })
 export class SettingsFormComponent {
   settingsCompare: DeploySettingsCompare;
+  hasEnvironments = false;
+  bindingEnvironments: EnvironmentSettings[];
   loading = true;
+  showOwner = true;
   settingsTabs: Tab[] = [
     {
       id: 'environments',
@@ -54,6 +62,14 @@ export class SettingsFormComponent {
   private _level: SettingsLevel;
   @Input() set level(value: SettingsLevel) {
     this._level = value;
+    this.showOwner = this._level === 'repo';
+    this.hasEnvironments = true;
+    if (this._level === 'repo' && this.settingsCompare.environments.repo.length === 0) {
+      this.hasEnvironments = false;
+      this.bindingEnvironments = this.settingsCompare.environments.owner;
+    } else {
+      this.bindingEnvironments = this.settingsCompare.environments[this.level];
+    }
   }
 
   get level() {
