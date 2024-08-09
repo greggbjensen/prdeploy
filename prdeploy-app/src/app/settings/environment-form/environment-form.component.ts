@@ -1,10 +1,10 @@
 import { Component, Input } from '@angular/core';
 import { DxAccordionModule, DxButtonModule, DxCheckBoxModule, DxTextBoxModule } from 'devextreme-angular';
 import { EnvironmentSettings } from 'src/app/shared/graphql';
-import { AddAutomationInputDialogComponent } from '../add-automation-input-dialog/add-automation-input-dialog.component';
 import { KeyValuePipe } from '@angular/common';
 import { ValueChangedEvent } from 'devextreme/ui/text_box';
 import { SettingsLevel } from '../models';
+import { AddAutomationInputDialogComponent } from './add-automation-input-dialog/add-automation-input-dialog.component';
 
 @Component({
   selector: 'app-environment-form',

@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { DxSelectBoxModule, DxTextBoxModule } from 'devextreme-angular';
 import { DeploySettingsCompare } from 'src/app/shared/graphql';
 import { SettingsLevel } from '../models';
-import { BadgeFormComponent } from '../badge-form/badge-form.component';
+import { BadgeFormComponent } from './badge-form/badge-form.component';
 
 @Component({
   selector: 'app-deploy-form',

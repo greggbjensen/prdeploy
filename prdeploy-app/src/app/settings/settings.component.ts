@@ -29,10 +29,7 @@ export class SettingsComponent {
 
   level: SettingsLevel = 'owner';
 
-  constructor(
-    public repoManager: RepoManager,
-    private _changeDetectorRef: ChangeDetectorRef
-  ) {}
+  constructor(public repoManager: RepoManager) {}
 
   selectedLevelChanged(event: SelectionChangedEvent): void {
     this.level = event.addedItems[0].id;
