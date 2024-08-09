@@ -8,7 +8,19 @@
     (onClick)="updateSettings()"></dx-button>
 </h3>
 
-<dx-tabs #dxTabs [selectedIndex]="0" [dataSource]="ownerRepoTabs" [width]="400" stylingMode="primary"></dx-tabs>
+<div class="settings-header">
+  <dx-tabs
+    #dxTabs
+    class="settings-tabs"
+    [selectedIndex]="0"
+    [dataSource]="ownerRepoTabs"
+    [width]="300"
+    stylingMode="primary"></dx-tabs>
+  <div class="settings-actions">
+    <dx-button text="Save" type="default" (onClick)="updateSettings()"></dx-button>
+    <dx-button text="Cancel" (onClick)="updateSettings()"></dx-button>
+  </div>
+</div>
 <div class="tab-description {{ dxTabs.selectedItem?.id }}">
   <i class="bi bi-info-circle"></i>
   <p>
