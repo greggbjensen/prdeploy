@@ -20,6 +20,25 @@
         [placeholder]="showOwner ? slack.emailDomain['owner'] : ''"></dx-text-box>
     </div>
   </div>
+  <div class="field-group">
+    <h3 class="form-group-title">Webhooks</h3>
+    <div class="field">
+      <label>Deploy URL</label>
+      <div class="field-value">
+        <dx-text-box
+          [(value)]="slack.webhooks.deployUrl[level]"
+          [placeholder]="showOwner ? slack.webhooks.deployUrl['owner'] : ''"></dx-text-box>
+      </div>
+    </div>
+    <div class="field">
+      <label>Release URL</label>
+      <div class="field-value">
+        <dx-text-box
+          [(value)]="slack.webhooks.releaseUrl[level]"
+          [placeholder]="showOwner ? slack.webhooks.releaseUrl['owner'] : ''"></dx-text-box>
+      </div>
+    </div>
+  </div>
   <div class="slack-email-aliases">
     <div>
       <span>Email Aliases:</span>

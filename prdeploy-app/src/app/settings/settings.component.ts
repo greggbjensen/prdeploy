@@ -30,4 +30,12 @@ export class SettingsComponent {
   updateSettings() {
     this.settingsForm?.fetchSettings();
   }
+
+  save() {
+    this.settingsForm.save();
+  }
+
+  cancel() {
+    this.settingsForm.resetForm();
+  }
 }

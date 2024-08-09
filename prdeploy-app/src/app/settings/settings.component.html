@@ -17,8 +17,8 @@
     [width]="300"
     stylingMode="primary"></dx-tabs>
   <div class="settings-actions">
-    <dx-button text="Save" type="default" (onClick)="updateSettings()"></dx-button>
-    <dx-button text="Cancel" (onClick)="updateSettings()"></dx-button>
+    <dx-button text="Save" type="default" (onClick)="save()"></dx-button>
+    <dx-button text="Cancel" (onClick)="cancel()"></dx-button>
   </div>
 </div>
 <div class="tab-description {{ dxTabs.selectedItem?.id }}">

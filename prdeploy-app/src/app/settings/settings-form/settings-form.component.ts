@@ -82,6 +82,15 @@ export class SettingsFormComponent {
     this.fetchSettings();
   }
 
+  async save() {}
+
+  async resetForm() {
+    // Replace current state with that from the server.
+    await this.fetchSettings();
+    this._changeDetectorRef.detectChanges();
+    this._notificationManager.show(`Settings changes reverted.`);
+  }
+
   async fetchSettings() {
     this.loading = true;
 
@@ -98,9 +107,9 @@ export class SettingsFormComponent {
           }
         })
       );
+      sessionStorage.setItem('response', JSON.stringify(response));
     }
 
-    sessionStorage.setItem('response', JSON.stringify(response));
     this.settingsCompare = response.data.deploySettingsCompare;
     this.settingsCompare.environments['owner'].forEach(e => {
       e.automationTest = e.automationTest || { enabled: false };
