@@ -27,7 +27,7 @@ export class SettingsComponent {
     }
   ];
 
-  level: SettingsLevel;
+  level: SettingsLevel = 'owner';
 
   constructor(
     public repoManager: RepoManager,

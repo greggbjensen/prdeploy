@@ -109,6 +109,7 @@ export class SettingsFormComponent {
     });
 
     this.loading = false;
+    this.updateBindingEnvironments();
   }
 
   async showAddEnvironmentDialog() {
@@ -151,7 +152,7 @@ export class SettingsFormComponent {
   }
 
   private updateBindingEnvironments() {
-    if (!this.settingsCompare || !this.level) {
+    if (!this.settingsCompare || !this._level) {
       return;
     }
 
@@ -161,7 +162,7 @@ export class SettingsFormComponent {
       this.hasEnvironments = false;
       this.bindingEnvironments = this.settingsCompare.environments.owner;
     } else {
-      this.bindingEnvironments = this.settingsCompare.environments[this.level];
+      this.bindingEnvironments = this.settingsCompare.environments[this._level];
     }
   }
 }
