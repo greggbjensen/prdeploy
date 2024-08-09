@@ -8,7 +8,7 @@ import {
   DeploySettingsCompareQuery,
   EnvironmentSettings
 } from 'src/app/shared/graphql';
-import { RepoManager } from 'src/app/shared/managers';
+import { NotificationManager, RepoManager } from 'src/app/shared/managers';
 import { EnvironmentFormComponent } from '../environment-form/environment-form.component';
 import { JiraFormComponent } from '../jira-form/jira-form.component';
 import { SettingsLevel } from '../models';
@@ -66,14 +66,7 @@ export class SettingsFormComponent {
   private _level: SettingsLevel;
   @Input() set level(value: SettingsLevel) {
     this._level = value;
-    this.showOwner = this._level === 'repo';
-    this.hasEnvironments = true;
-    if (this._level === 'repo' && this.settingsCompare.environments.repo.length === 0) {
-      this.hasEnvironments = false;
-      this.bindingEnvironments = this.settingsCompare.environments.owner;
-    } else {
-      this.bindingEnvironments = this.settingsCompare.environments[this.level];
-    }
+    this.updateBindingEnvironments();
   }
 
   get level() {
@@ -83,6 +76,7 @@ export class SettingsFormComponent {
   constructor(
     private _deploySettingsCompareGQL: DeploySettingsCompareGQL,
     private _repoManager: RepoManager,
+    private _notificationManager: NotificationManager,
     private _changeDetectorRef: ChangeDetectorRef
   ) {
     this.fetchSettings();
@@ -143,5 +137,28 @@ export class SettingsFormComponent {
     } as EnvironmentSettings);
 
     this._changeDetectorRef.detectChanges();
+    this.updateBindingEnvironments();
+    this._notificationManager.show(`Environment ${name} added.`);
+  }
+
+  async removeEnvironment(name: string) {
+    const environments = this.settingsCompare.environments[this._level];
+    const index = environments.findIndex(e => e.name === name);
+    if (index >= 0) {
+      environments.splice(index, 1);
+      this.updateBindingEnvironments();
+      this._notificationManager.show(`Environment ${name} removed.`);
+    }
+  }
+
+  private updateBindingEnvironments() {
+    this.showOwner = this._level === 'repo';
+    this.hasEnvironments = true;
+    if (this._level === 'repo' && this.settingsCompare.environments.repo.length === 0) {
+      this.hasEnvironments = false;
+      this.bindingEnvironments = this.settingsCompare.environments.owner;
+    } else {
+      this.bindingEnvironments = this.settingsCompare.environments[this.level];
+    }
   }
 }

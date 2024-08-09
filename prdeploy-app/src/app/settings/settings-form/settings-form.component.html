@@ -31,13 +31,9 @@
                   (onClick)="showAddEnvironmentDialog()"></dx-button>
               </div>
             </div>
-            @if (level === 'repo') {
+            @if (level === 'repo' && !hasEnvironments) {
               <div class="environment-info">
-                <p>
-                  @if (!hasEnvironments) {
-                    No environment overrides added for this repository yet.
-                  }
-                </p>
+                <p>No environment overrides added for this repository yet.</p>
               </div>
             }
             <dx-accordion
@@ -47,7 +43,14 @@
               id="accordion-container">
               <div *dxTemplate="let environment of 'title'">
                 <div class="accordion-header {{ hasEnvironments ? '' : 'environments-disabled' }}">
-                  {{ environment.name }}
+                  <span>{{ environment.name }}</span>
+                  <dx-button
+                    class="remove-environment danger-icon-btn"
+                    icon="remove"
+                    stylingMode="text"
+                    hint="Remove Environment"
+                    (onClick)="removeEnvironment(environment.name)"
+                    [disabled]="!hasEnvironments"></dx-button>
                 </div>
               </div>
               <div *dxTemplate="let environment of 'item'">

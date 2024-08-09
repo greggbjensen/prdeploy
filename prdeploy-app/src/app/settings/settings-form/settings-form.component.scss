@@ -18,6 +18,12 @@
   }
 }
 
+.accordion-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
 ::ng-deep .settings-form .form-title {
     margin-top: 0;
 }
@@ -44,6 +50,10 @@
   margin: 10px 0;
   margin-top: -10px;
   padding: 0 15px;
+}
+
+.remove-environment {
+  margin: 0 30px 0 auto;
 }
 
 ::ng-deep .settings-form {
