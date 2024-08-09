@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ApolloQueryResult } from '@apollo/client/core';
-import { DxAccordionModule, DxLoadIndicatorModule, DxTabsModule } from 'devextreme-angular';
+import { DxAccordionModule, DxButtonModule, DxLoadIndicatorModule, DxTabsModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
 import {
   DeploySettingsCompare,
@@ -25,7 +25,8 @@ import { Tab } from 'src/app/shared/models';
     SlackFormComponent,
     DxLoadIndicatorModule,
     DxAccordionModule,
-    DxTabsModule
+    DxTabsModule,
+    DxButtonModule
   ],
   templateUrl: './settings-form.component.html',
   styleUrl: './settings-form.component.scss'

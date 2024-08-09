@@ -8,6 +8,16 @@
   color: $gray-500;
 }
 
+.environments-header {
+  display: flex;
+  align-items: center;
+
+  .environments-actions {
+    margin-left: auto;
+    margin-top: -12px;
+  }
+}
+
 ::ng-deep .settings-form .form-title {
     margin-top: 0;
 }

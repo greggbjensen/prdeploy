@@ -21,7 +21,12 @@
         }
         @default {
           <div class="field-group">
-            <h3 class="form-title">Environments</h3>
+            <div class="environments-header">
+              <h3 class="form-title">Environments</h3>
+              <div class="environments-actions">
+                <dx-button text="Add Environment" type="default" stylingMode="outlined"></dx-button>
+              </div>
+            </div>
             @if (level === 'repo') {
               <div class="environment-info">
                 <p>
