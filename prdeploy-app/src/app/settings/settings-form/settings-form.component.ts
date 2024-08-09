@@ -10,6 +10,7 @@ import { SlackFormComponent } from '../slack-form/slack-form.component';
 import { DeployFormComponent } from '../deploy-form/deploy-form.component';
 import { Tab } from 'src/app/shared/models';
 import { AddEnvironmentDialogComponent } from '../add-environment-dialog/add-environment-dialog.component';
+import _ from 'lodash';
 @Component({
   selector: 'app-settings-form',
   standalone: true,
@@ -96,7 +97,8 @@ export class SettingsFormComponent {
       })
     );
 
-    this.settingsCompare = response.data.deploySettingsCompare;
+    // Avoid read only issues by cloning.
+    this.settingsCompare = _.cloneDeep(response.data.deploySettingsCompare);
 
     this.settingsCompare.environments['owner'].forEach(e => {
       e.automationTest = e.automationTest || { enabled: false };
@@ -148,6 +150,10 @@ export class SettingsFormComponent {
   }
 
   private updateBindingEnvironments() {
+    if (!this.settingsCompare || !this.level) {
+      return;
+    }
+
     this.showOwner = this._level === 'repo';
     this.hasEnvironments = true;
     if (this._level === 'repo' && this.settingsCompare.environments.repo.length === 0) {
