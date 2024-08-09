@@ -15,6 +15,8 @@ import _ from 'lodash';
 export class SlackEmailAliasesGridComponent {
   emails: { email: string }[] = [];
   addEmailAliasDialogVisible = false;
+  bindingLevel: SettingsLevel;
+  hasAliases = false;
 
   showAddDialog() {
     this.addEmailAliasDialogVisible = true;
@@ -40,9 +42,8 @@ export class SlackEmailAliasesGridComponent {
     return this._level;
   }
 
-  constructor(private _changeDetectorRef: ChangeDetectorRef) {}
-
   add(email: string) {
+    // Must use level and not binding level here to all override on repo.
     if (!this.slack.emailAliases[this._level]) {
       this.slack.emailAliases[this._level] = {};
     }
@@ -57,17 +58,24 @@ export class SlackEmailAliasesGridComponent {
   }
 
   remove(email: any) {
-    delete this.slack.emailAliases[this._level][email];
+    delete this.slack.emailAliases[this.bindingLevel][email];
     this.updateEmailList();
   }
 
   private updateEmailList() {
-    if (this._slack.emailAliases[this.level] && this._level) {
-      this.emails = Object.keys(this.slack.emailAliases[this.level])
-        .filter(email => !_.isNil(this.slack.emailAliases[this.level][email]))
-        .map(email => ({
-          email
-        }));
+    this.hasAliases = this._slack.emailAliases[this._level] && this.getValidEmails(this._level).length > 0;
+    this.bindingLevel = this.hasAliases ? this._level : 'owner';
+
+    if (this._slack.emailAliases[this.bindingLevel] && this.bindingLevel) {
+      this.emails = this.getValidEmails(this.bindingLevel).map(email => ({
+        email
+      }));
+    } else {
+      this.emails = [];
     }
+  }
+
+  private getValidEmails(level: SettingsLevel) {
+    return Object.keys(this.slack.emailAliases[level]).filter(email => !_.isNil(this.slack.emailAliases[level][email]));
   }
 }
