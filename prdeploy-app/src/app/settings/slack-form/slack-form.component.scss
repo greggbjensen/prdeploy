@@ -1,14 +1,8 @@
 :host {
   display: block;
-  width: 500px;
+  width: 100%;
 }
 
-.slack-email-aliases {
-  margin-top: 20px;
-  display: block;
-  margin-left: 10px;
-
-  label {
-    margin-left: 15px;
-  }
+.field-group {
+  max-width: 500px;
 }

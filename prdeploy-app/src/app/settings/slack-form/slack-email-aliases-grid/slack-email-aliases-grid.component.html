@@ -1,0 +1,30 @@
+<h3 class="form-group-title">
+  <span>Email Aliases</span>
+  <dx-button text="Add Email Alias" type="default" stylingMode="outlined" (onClick)="showAddDialog()"></dx-button>
+</h3>
+<dx-data-grid
+  class="slack-email-aliases-grid"
+  [dataSource]="emails"
+  keyExpr="email"
+  [showBorders]="true"
+  [rowAlternationEnabled]="true"
+  [width]="600">
+  <dxi-column dataField="email" dataType="string"></dxi-column>
+  <dxi-column dataField="alias" caption="Alias" dataType="string" cellTemplate="aliasCellTemplate"></dxi-column>
+  <div *dxTemplate="let d of 'aliasCellTemplate'">
+    <dx-text-box [(value)]="slack.emailAliases[level][d.data.email]"></dx-text-box>
+  </div>
+  <dxi-column caption="Actions" dataType="object" [width]="70" cellTemplate="actionsCellTemplate"></dxi-column>
+  <div *dxTemplate="let d of 'actionsCellTemplate'">
+    <dx-button
+      class="danger-icon-btn"
+      icon="remove"
+      stylingMode="text"
+      hint="Remove"
+      (onClick)="remove(d.data.email)"></dx-button>
+  </div>
+</dx-data-grid>
+
+<app-add-slack-email-alias-dialog
+  [(visible)]="addEmailAliasDialogVisible"
+  (addEmailAlias)="add($event)"></app-add-slack-email-alias-dialog>

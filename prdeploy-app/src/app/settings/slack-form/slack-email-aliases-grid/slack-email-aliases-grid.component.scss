@@ -1,0 +1,12 @@
+:host {
+  width: 100%;
+  max-width: 700px;
+}
+
+.form-group-title {
+  display: flex;
+
+  span {
+    flex: 1 0;
+  }
+}
