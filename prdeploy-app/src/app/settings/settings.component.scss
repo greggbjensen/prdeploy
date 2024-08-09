@@ -73,15 +73,13 @@ h3 {
   display: flex;
   align-items: center;
   background-color: $blue-100;
-  border: 1px solid $blue-200;
-  border-radius: 3px;
+  border-radius: 5px;
   margin: 20px 0;
   padding: 0 15px;
   max-width: $max-settings-width;
 
   &.repo {
     background-color: $green-100;
-    border: 1px solid $green-200;
 
     .bi-info-circle {
       color: $green-400;
