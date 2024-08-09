@@ -1,19 +1,41 @@
 import { Component, Input } from '@angular/core';
-import { DxButtonModule, DxCheckBoxModule, DxTextBoxModule } from 'devextreme-angular';
+import { DxAccordionModule, DxButtonModule, DxCheckBoxModule, DxTextBoxModule } from 'devextreme-angular';
 import { EnvironmentSettings } from 'src/app/shared/graphql';
-import { AddAutomationInputDialogComponent } from '../add-automation-input-dialog/add-automation-input-dialog.component';
 import { KeyValuePipe } from '@angular/common';
 import { ValueChangedEvent } from 'devextreme/ui/text_box';
+import { SettingsLevel } from '../models';
+import { AddAutomationInputDialogComponent } from './add-automation-input-dialog/add-automation-input-dialog.component';
 
 @Component({
   selector: 'app-environment-form',
   standalone: true,
-  imports: [DxTextBoxModule, DxCheckBoxModule, DxButtonModule, AddAutomationInputDialogComponent, KeyValuePipe],
+  imports: [
+    DxAccordionModule,
+    DxTextBoxModule,
+    DxCheckBoxModule,
+    DxButtonModule,
+    AddAutomationInputDialogComponent,
+    KeyValuePipe
+  ],
   templateUrl: './environment-form.component.html',
   styleUrl: './environment-form.component.scss'
 })
 export class EnvironmentFormComponent {
+  @Input() environmentName: string;
   @Input() environment: EnvironmentSettings;
+  @Input() hasEnvironments: boolean;
+
+  showOwner = true;
+
+  private _level: SettingsLevel;
+  @Input() set level(value: SettingsLevel) {
+    this._level = value;
+    this.showOwner = this.level == 'repo';
+  }
+
+  get level() {
+    return this._level;
+  }
 
   addAutomationInputVisible = false;
 

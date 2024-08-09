@@ -1,0 +1,26 @@
+@import '../../../../sass/variables';
+
+:host {
+  width: 100%;
+  max-width: 700px;
+}
+
+.form-group-title {
+  display: flex;
+
+  span {
+    flex: 1 0;
+  }
+}
+
+.email-alias-info {
+  // TODO GBJ: Add to component.
+  display: flex;
+  align-items: center;
+  background-color: $white;
+  color: $gray-600;
+  border-radius: 5px;
+  margin: 10px 0;
+  margin-top: -10px;
+  padding: 0 15px;
+}

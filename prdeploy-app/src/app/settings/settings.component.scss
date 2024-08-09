@@ -1,0 +1,98 @@
+@import '../../sass/variables';
+
+$max-settings-width: 820px;
+
+.settings-header {
+  display: flex;
+  max-width: $max-settings-width;
+  border-bottom: 1px solid $border-color;
+}
+
+::ng-deep .settings-header .settings-tabs {
+  .dx-tabs-wrapper {
+    -webkit-border-before: none;
+    border-block-start: none;
+    -webkit-border-end: none;
+    border-block-end: none;
+    border-inline-end: none;
+    -webkit-border-start: none;
+    border-inline-start: none;
+
+    &.dx-tabs-wrapper::after {
+      -webkit-border-before: none;
+      border-block-start: none;
+      -webkit-border-end: none;
+      border-block-end: none;
+      border-inline-end: none;
+      -webkit-border-start: none;
+      border-inline-start: none;
+    }
+  }
+
+  .dx-tab, .dx-tab.dx-tab-selected {
+    &::after {
+      -webkit-border-before: none;
+      border-block-start: none;
+      -webkit-border-end: none;
+      border-block-end: none;
+      border-inline-end: none;
+      -webkit-border-start: none;
+      border-inline-start: none;
+    }
+
+    background-color: transparent;
+    border-radius: 5px 5px 0 0;
+    margin-bottom: 0;
+  }
+
+  .dx-tab.dx-tab-selected {
+    background-color: $gray-300;
+  }
+}
+
+.settings-actions {
+  margin-left: auto;
+  display: flex;
+  margin-bottom: 10px;
+
+  .dx-button {
+    width: 80px;
+  }
+
+  :first-child {
+    margin-right: 10px;
+  }
+}
+
+h3 {
+  display: flex;
+  align-items: center;
+}
+
+.tab-description {
+  display: flex;
+  align-items: center;
+  background-color: $blue-100;
+  border-radius: 5px;
+  margin: 20px 0;
+  padding: 0 15px;
+  max-width: $max-settings-width;
+
+  &.repo {
+    background-color: $green-100;
+
+    .bi-info-circle {
+      color: $green-400;
+    }
+  }
+
+  .bi-info-circle {
+    font-size: 20px;
+    margin-right: 15px;
+    color: $blue-400;
+    font-weight: $font-weight-bold;
+    background-color: $white;
+    border-radius: 20px;
+    line-height: 20px;
+  }
+}

@@ -31,6 +31,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'settings'
+    redirectTo: 'deployments'
   }
 ];

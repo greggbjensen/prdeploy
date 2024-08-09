@@ -1,31 +1,33 @@
-<div classs="field-group">
-  <h4 class="field-group-title">JIRA</h4>
-  <div class="field">
-    <label>Add issues enabled</label>
-    <div class="field-value">
-      <dx-check-box [(value)]="jira.addIssuesEnabled[level]"></dx-check-box>
+<div>
+  <div class="field-group">
+    <h3 class="form-title">JIRA</h3>
+    <div class="field field-checkbox">
+      <label>Add issues enabled</label>
+      <div class="field-value">
+        <dx-check-box [(value)]="jira.addIssuesEnabled[level]"></dx-check-box>
+      </div>
     </div>
-  </div>
-  <div class="field">
-    <label>Host</label>
-    <div class="field-value">
-      <dx-text-box [(value)]="jira.host[level]" [placeholder]="showOwner ? jira.host['owner'] : ''"></dx-text-box>
+    <div class="field">
+      <label>Host</label>
+      <div class="field-value">
+        <dx-text-box [(value)]="jira.host[level]" [placeholder]="showOwner ? jira.host['owner'] : ''"></dx-text-box>
+      </div>
     </div>
-  </div>
-  <div class="field">
-    <label>Username</label>
-    <div class="field-value">
-      <dx-text-box
-        [(value)]="jira.username[level]"
-        [placeholder]="showOwner ? jira.username['owner'] : ''"></dx-text-box>
+    <div class="field">
+      <label>Username</label>
+      <div class="field-value">
+        <dx-text-box
+          [(value)]="jira.username[level]"
+          [placeholder]="showOwner ? jira.username['owner'] : ''"></dx-text-box>
+      </div>
     </div>
-  </div>
-  <div class="field">
-    <label>Password (Token)</label>
-    <div class="field-value">
-      <dx-text-box
-        [(value)]="jira.password[level]"
-        [placeholder]="showOwner ? jira.password['owner'] : ''"></dx-text-box>
+    <div class="field">
+      <label>Password (Token)</label>
+      <div class="field-value">
+        <dx-text-box
+          [(value)]="jira.password[level]"
+          [placeholder]="showOwner ? jira.password['owner'] : ''"></dx-text-box>
+      </div>
     </div>
   </div>
 </div>

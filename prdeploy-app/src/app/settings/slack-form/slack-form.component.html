@@ -1,6 +1,6 @@
-<div classs="field-group">
-  <h4 class="field-group-title">Slack</h4>
-  <div class="field">
+<div class="field-group">
+  <h3 class="form-title">Slack</h3>
+  <div class="field field-checkbox">
     <label>Notifications enabled</label>
     <div class="field-value">
       <dx-check-box [(value)]="slack.notificationsEnabled[level]"></dx-check-box>
@@ -20,41 +20,26 @@
         [placeholder]="showOwner ? slack.emailDomain['owner'] : ''"></dx-text-box>
     </div>
   </div>
-  <div class="slack-email-aliases">
-    <div>
-      <span>Email Aliases:</span>
-      <dx-button
-        class="add-workflow-input-btn success-icon-btn"
-        icon="add"
-        stylingMode="text"
-        (onClick)="addEmailAlias()"
-        hint="Add workflow input"></dx-button>
+</div>
+<div class="field-group">
+  <h3 class="form-group-title">Webhooks</h3>
+  <div class="field">
+    <label>Deploy URL</label>
+    <div class="field-value">
+      <dx-text-box
+        [(value)]="slack.webhooks.deployUrl[level]"
+        [placeholder]="showOwner ? slack.webhooks.deployUrl['owner'] : ''"></dx-text-box>
     </div>
-    @for (item of slack.emailAliases[level] | keyvalue; track item.key) {
-      <div class="field">
-        <label
-          >Email
-          <dx-button
-            class="add-workflow-input-btn danger-icon-btn"
-            icon="remove"
-            stylingMode="text"
-            (onClick)="removeEmailAlias(item.key)"
-            hint="Add workflow input"></dx-button>
-        </label>
-        <div class="field-value field-removable">
-          <dx-text-box
-            [value]="item.key?.toString()"
-            (onValueChanged)="updateEmailAlias($event, item.key)"></dx-text-box>
-        </div>
-      </div>
-      <div class="field">
-        <label>Alias</label>
-        <div class="field-value field-removable">
-          <dx-text-box
-            [value]="item.value?.toString()"
-            (onValueChanged)="updateEmailAlias($event, item.key)"></dx-text-box>
-        </div>
-      </div>
-    }
   </div>
+  <div class="field">
+    <label>Release URL</label>
+    <div class="field-value">
+      <dx-text-box
+        [(value)]="slack.webhooks.releaseUrl[level]"
+        [placeholder]="showOwner ? slack.webhooks.releaseUrl['owner'] : ''"></dx-text-box>
+    </div>
+  </div>
+</div>
+<div class="slack-email-aliases">
+  <app-slack-email-aliases-grid [slack]="slack" [level]="level"></app-slack-email-aliases-grid>
 </div>

@@ -1,89 +1,70 @@
-<div class="form">
-  @if (settingsCompare) {
-    <div class="field-row">
-      <div class="field-group-sm">
-        <h3 class="field-group-title">Deployment</h3>
-        <div class="field">
-          <label>GitHub workflow</label>
-          <div class="field-value">
-            <dx-text-box
-              class="field-value"
-              [(value)]="settingsCompare.deployWorkflow[level]"
-              [placeholder]="showOwner ? settingsCompare.deployWorkflow['owner'] : ''"></dx-text-box>
+<div class="settings-form">
+  <dx-tabs
+    #dxTabs
+    class="settings-tabs"
+    [selectedIndex]="0"
+    [dataSource]="settingsTabs"
+    [width]="200"
+    stylingMode="secondary"
+    orientation="vertical"></dx-tabs>
+  <div class="form">
+    @if (settingsCompare) {
+      @switch (dxTabs.selectedItem?.id) {
+        @case ('slack') {
+          <app-slack-form [slack]="settingsCompare.slack" [level]="level"></app-slack-form>
+        }
+        @case ('jira') {
+          <app-jira-form [jira]="settingsCompare.jira" [level]="level"></app-jira-form>
+        }
+        @case ('deployment') {
+          <app-deploy-form [settingsCompare]="settingsCompare" [level]="level"></app-deploy-form>
+        }
+        @default {
+          <div class="field-group">
+            <div class="environments-header">
+              <h3 class="form-title">Environments</h3>
+              <div class="environments-actions">
+                <dx-button
+                  text="Add Environment"
+                  type="default"
+                  stylingMode="outlined"
+                  (onClick)="showAddEnvironmentDialog()"></dx-button>
+              </div>
+            </div>
+            @if (level === 'repo' && !hasEnvironments) {
+              <div class="environment-info">
+                <p>No environment overrides added for this repository yet.</p>
+              </div>
+            }
+            <dx-accordion
+              [dataSource]="bindingEnvironments"
+              [collapsible]="false"
+              [multiple]="false"
+              id="accordion-container">
+              <div *dxTemplate="let environment of 'title'">
+                <div class="accordion-header {{ hasEnvironments ? '' : 'environments-disabled' }}">
+                  <span>{{ environment.name }}</span>
+                  <dx-button
+                    class="remove-environment danger-icon-btn"
+                    icon="remove"
+                    stylingMode="text"
+                    hint="Remove Environment"
+                    (onClick)="removeEnvironment(environment.name)"
+                    [disabled]="!hasEnvironments"></dx-button>
+                </div>
+              </div>
+              <div *dxTemplate="let environment of 'item'">
+                <app-environment-form
+                  [environment]="environment"
+                  [hasEnvironments]="hasEnvironments"
+                  [level]="level"></app-environment-form>
+              </div>
+            </dx-accordion>
           </div>
-        </div>
-        <div class="field">
-          <label>prdeploy portal URL</label>
-          <div class="field-value">
-            <dx-text-box
-              class="field-value"
-              [(value)]="settingsCompare.deployManagerSiteUrl[level]"
-              [placeholder]="showOwner ? settingsCompare.deployManagerSiteUrl['owner'] : ''"></dx-text-box>
-          </div>
-        </div>
-        <div class="field">
-          <label>Default Environment</label>
-          <div class="field-value">
-            <dx-select-box
-              [placeholder]="showOwner ? settingsCompare.defaultEnvironment['owner'] : ''"
-              [dataSource]="environments"
-              [searchEnabled]="true"
-              [contentEditable]="true"
-              [(value)]="settingsCompare.defaultEnvironment[level]">
-            </dx-select-box>
-          </div>
-        </div>
-        <div class="field">
-          <label>Release Environment</label>
-          <div class="field-value">
-            <dx-select-box
-              [placeholder]="showOwner ? settingsCompare.releaseEnvironment['owner'] : ''"
-              [dataSource]="environments"
-              [searchEnabled]="true"
-              [contentEditable]="true"
-              [(value)]="settingsCompare.releaseEnvironment[level]">
-            </dx-select-box>
-          </div>
-        </div>
-        <div class="field">
-          <label>Builds check pattern</label>
-          <div class="field-value">
-            <dx-text-box
-              class="field-value"
-              [(value)]="settingsCompare.builds.checkPattern[level]"
-              [placeholder]="showOwner ? settingsCompare.builds.checkPattern['owner'] : ''"></dx-text-box>
-          </div>
-        </div>
-        <div class="field">
-          <label>Builds workflow pattern</label>
-          <div class="field-value">
-            <dx-text-box
-              class="field-value"
-              [(value)]="settingsCompare.builds.workflowPattern[level]"
-              [placeholder]="showOwner ? settingsCompare.builds.workflowPattern['owner'] : ''"></dx-text-box>
-          </div>
-        </div>
-      </div>
-      <app-jira-form [jira]="settingsCompare.jira" [level]="level"></app-jira-form>
-      <app-slack-form [slack]="settingsCompare.slack" [level]="level"></app-slack-form>
-    </div>
-    <div class="field-group-lg field-group-horizontal">
-      <h3 class="field-group-title">Environments</h3>
-      <dx-accordion
-        [dataSource]="settingsCompare.environments[level]"
-        [collapsible]="false"
-        [multiple]="false"
-        id="accordion-container">
-        <div *dxTemplate="let environment of 'title'">
-          <div class="header">{{ environment.name }}</div>
-        </div>
-        <div *dxTemplate="let environment of 'item'">
-          <app-environment-form [environment]="environment"></app-environment-form>
-        </div>
-      </dx-accordion>
-      <app-badge-form [badge]="settingsCompare.badge" [level]="level"></app-badge-form>
-    </div>
-  }
+        }
+      }
+    }
+  </div>
 
   @if (loading) {
     <div class="loading">
@@ -94,3 +75,6 @@
     </div>
   }
 </div>
+<app-add-environment-dialog
+  [(visible)]="addEnvironmentVisible"
+  (addEnvironment)="addEnvironment($event)"></app-add-environment-dialog>

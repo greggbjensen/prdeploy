@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { BadgeSettingsCompare } from 'src/app/shared/graphql';
-import { SettingsLevel } from '../models';
 import { DxColorBoxModule } from 'devextreme-angular';
+import { SettingsLevel } from '../../models';
 
 @Component({
   selector: 'app-badge-form',

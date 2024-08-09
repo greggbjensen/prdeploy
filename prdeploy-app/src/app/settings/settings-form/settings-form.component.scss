@@ -1,12 +1,35 @@
-.environment-settings {
-  margin-top: 10px;
+@import '../../../sass/variables';
+
+.settings-form {
+  display: flex;
 }
 
-::ng-deep {
-  .form .field .dx-colorbox {
-    margin-left: 13px;
-    width: 88%;
+.environments-disabled {
+  color: $gray-500;
+}
+
+.environments-header {
+  display: flex;
+  align-items: center;
+
+  .environments-actions {
+    margin-left: auto;
+    margin-top: -12px;
   }
+}
+
+.accordion-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+::ng-deep .settings-form .form-title {
+    margin-top: 0;
+}
+
+.settings-tabs {
+  margin: 5px 20px 0 0;
 }
 
 .loading {
@@ -15,4 +38,31 @@
   align-items: center;
   justify-content: center;
   height: 400px;
+}
+
+.environment-info {
+  // TODO GBJ: Add to component.
+  display: flex;
+  align-items: center;
+  background-color: $white;
+  color: $gray-600;
+  border-radius: 5px;
+  margin: 10px 0;
+  margin-top: -10px;
+  padding: 0 15px;
+}
+
+.remove-environment {
+  margin: 0 30px 0 auto;
+}
+
+::ng-deep .settings-form {
+  .dx-accordion-item-title, .dx-accordion-item-opened.dx-state-hover .dx-accordion-item-title  {
+    background-color: $gray-200;
+    text-transform: capitalize;
+  }
+
+  .dx-tabs-vertical .dx-tab {
+    padding: 12px;
+  }
 }
