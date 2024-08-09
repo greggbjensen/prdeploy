@@ -1,13 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ApolloQueryResult } from '@apollo/client/core';
-import {
-  DxAccordionModule,
-  DxCheckBoxModule,
-  DxFormModule,
-  DxLoadIndicatorModule,
-  DxSelectBoxModule,
-  DxTextBoxModule
-} from 'devextreme-angular';
+import { DxAccordionModule, DxLoadIndicatorModule, DxTabsModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
 import { DeploySettingsCompare, DeploySettingsCompareGQL, DeploySettingsCompareQuery } from 'src/app/shared/graphql';
 import { RepoManager } from 'src/app/shared/managers';
@@ -15,21 +8,19 @@ import { EnvironmentFormComponent } from '../environment-form/environment-form.c
 import { JiraFormComponent } from '../jira-form/jira-form.component';
 import { SettingsLevel } from '../models';
 import { SlackFormComponent } from '../slack-form/slack-form.component';
-import { BadgeFormComponent } from '../badge-form/badge-form.component';
+import { DeployFormComponent } from '../deploy-form/deploy-form.component';
+import { Tab } from 'src/app/shared/models';
 @Component({
   selector: 'app-settings-form',
   standalone: true,
   imports: [
+    DeployFormComponent,
     EnvironmentFormComponent,
     JiraFormComponent,
     SlackFormComponent,
-    BadgeFormComponent,
-    DxFormModule,
-    DxTextBoxModule,
-    DxSelectBoxModule,
     DxLoadIndicatorModule,
     DxAccordionModule,
-    DxCheckBoxModule
+    DxTabsModule
   ],
   templateUrl: './settings-form.component.html',
   styleUrl: './settings-form.component.scss'
@@ -37,14 +28,32 @@ import { BadgeFormComponent } from '../badge-form/badge-form.component';
 export class SettingsFormComponent {
   settingsCompare: DeploySettingsCompare;
   loading = true;
-  showOwner = true;
-  environments: string[];
+  settingsTabs: Tab[] = [
+    {
+      id: 'environments',
+      text: 'Environments',
+      icon: 'bi bi-card-list'
+    },
+    {
+      id: 'slack',
+      text: 'Slack',
+      icon: 'bi bi-slack'
+    },
+    {
+      id: 'jira',
+      text: 'JIRA',
+      icon: 'bi bi-ticket-detailed'
+    },
+    {
+      id: 'deployment',
+      text: 'Deployment',
+      icon: 'bi bi-cloud-upload'
+    }
+  ];
 
   private _level: SettingsLevel;
   @Input() set level(value: SettingsLevel) {
     this._level = value;
-    this.showOwner = this.level == 'repo';
-    this.updateEnvironmentSelection();
   }
 
   get level() {
@@ -84,15 +93,7 @@ export class SettingsFormComponent {
     this.settingsCompare.environments['repo'].forEach(e => {
       e.automationTest = e.automationTest || { enabled: false };
     });
-    this.updateEnvironmentSelection();
-    this.loading = false;
-  }
 
-  updateEnvironmentSelection() {
-    if (this.settingsCompare && this.settingsCompare.environments[this._level]) {
-      this.environments = this.settingsCompare.environments[this._level].map(e => e.name);
-    } else {
-      this.environments = [];
-    }
+    this.loading = false;
   }
 }

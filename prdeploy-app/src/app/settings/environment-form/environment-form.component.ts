@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { DxButtonModule, DxCheckBoxModule, DxTextBoxModule } from 'devextreme-angular';
+import { DxAccordionModule, DxButtonModule, DxCheckBoxModule, DxTextBoxModule } from 'devextreme-angular';
 import { EnvironmentSettings } from 'src/app/shared/graphql';
 import { AddAutomationInputDialogComponent } from '../add-automation-input-dialog/add-automation-input-dialog.component';
 import { KeyValuePipe } from '@angular/common';
@@ -8,7 +8,14 @@ import { ValueChangedEvent } from 'devextreme/ui/text_box';
 @Component({
   selector: 'app-environment-form',
   standalone: true,
-  imports: [DxTextBoxModule, DxCheckBoxModule, DxButtonModule, AddAutomationInputDialogComponent, KeyValuePipe],
+  imports: [
+    DxAccordionModule,
+    DxTextBoxModule,
+    DxCheckBoxModule,
+    DxButtonModule,
+    AddAutomationInputDialogComponent,
+    KeyValuePipe
+  ],
   templateUrl: './environment-form.component.html',
   styleUrl: './environment-form.component.scss'
 })
