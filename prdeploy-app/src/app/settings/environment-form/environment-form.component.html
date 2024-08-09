@@ -63,7 +63,7 @@
             <label>{{ item.key }}</label>
             <div class="field-value field-removable">
               <dx-text-box
-                [value]="item.value.toString()"
+                [value]="item.value?.toString()"
                 (onValueChanged)="updateAutomationInput($event, item.key)"></dx-text-box>
               <dx-button
                 class="add-workflow-input-btn danger-icon-btn"
