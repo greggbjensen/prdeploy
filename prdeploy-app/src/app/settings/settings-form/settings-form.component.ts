@@ -1,13 +1,7 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
-import { ApolloQueryResult } from '@apollo/client/core';
 import { DxAccordionModule, DxButtonModule, DxLoadIndicatorModule, DxTabsModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
-import {
-  DeploySettingsCompare,
-  DeploySettingsCompareGQL,
-  DeploySettingsCompareQuery,
-  EnvironmentSettings
-} from 'src/app/shared/graphql';
+import { DeploySettingsCompare, DeploySettingsCompareGQL, EnvironmentSettings } from 'src/app/shared/graphql';
 import { NotificationManager, RepoManager } from 'src/app/shared/managers';
 import { EnvironmentFormComponent } from '../environment-form/environment-form.component';
 import { JiraFormComponent } from '../jira-form/jira-form.component';
@@ -93,24 +87,17 @@ export class SettingsFormComponent {
 
   async fetchSettings() {
     this.loading = true;
-
-    const responseValue = sessionStorage.getItem('response');
-    let response: ApolloQueryResult<DeploySettingsCompareQuery>;
-    if (responseValue) {
-      response = JSON.parse(responseValue);
-    } else {
-      response = await firstValueFrom(
-        this._deploySettingsCompareGQL.fetch({
-          input: {
-            owner: this._repoManager.owner,
-            repo: this._repoManager.repo
-          }
-        })
-      );
-      sessionStorage.setItem('response', JSON.stringify(response));
-    }
+    const response = await firstValueFrom(
+      this._deploySettingsCompareGQL.fetch({
+        input: {
+          owner: this._repoManager.owner,
+          repo: this._repoManager.repo
+        }
+      })
+    );
 
     this.settingsCompare = response.data.deploySettingsCompare;
+
     this.settingsCompare.environments['owner'].forEach(e => {
       e.automationTest = e.automationTest || { enabled: false };
     });

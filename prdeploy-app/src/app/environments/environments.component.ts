@@ -70,7 +70,7 @@ export class EnvironmentsComponent implements OnInit {
       })
     );
 
-    this.environments = [...environmentsResponse.data.environments, EnvironmentsComponent.StableEnvironment];
+    this.environments = [...(environmentsResponse.data.environments || []), EnvironmentsComponent.StableEnvironment];
     this.updateCompareEnvironments(true);
   }
 
@@ -97,7 +97,7 @@ export class EnvironmentsComponent implements OnInit {
       this.targetEnvironment = EnvironmentsComponent.StableEnvironment;
     }
 
-    if (this.sourceEnvironment.name !== this.targetEnvironment.name) {
+    if (this.sourceEnvironment?.name !== this.targetEnvironment?.name) {
       return;
     }
 

@@ -45,6 +45,10 @@ export class EnvironmentsGridComponent {
   ) {}
 
   async updateStateComparison(): Promise<void> {
+    if (!this.sourceEnvironment || !this.targetEnvironment) {
+      return;
+    }
+
     const stateResponse = await firstValueFrom(
       this._deployStateComparisonGQL.fetch({
         input: {
