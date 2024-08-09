@@ -24,6 +24,18 @@
   height: 400px;
 }
 
+.environment-info {
+  // TODO GBJ: Add to component.
+  display: flex;
+  align-items: center;
+  background-color: $white;
+  color: $gray-600;
+  border-radius: 5px;
+  margin: 10px 0;
+  margin-top: -10px;
+  padding: 0 15px;
+}
+
 ::ng-deep .settings-form {
   .dx-accordion-item-title, .dx-accordion-item-opened.dx-state-hover .dx-accordion-item-title  {
     background-color: $gray-200;

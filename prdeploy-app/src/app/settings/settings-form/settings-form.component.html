@@ -22,6 +22,15 @@
         @default {
           <div class="field-group">
             <h3 class="form-title">Environments</h3>
+            @if (level === 'repo') {
+              <div class="environment-info">
+                <p>
+                  @if (!hasEnvironments) {
+                    No environment overrides added for this repository yet.
+                  }
+                </p>
+              </div>
+            }
             <dx-accordion
               [dataSource]="bindingEnvironments"
               [collapsible]="false"
