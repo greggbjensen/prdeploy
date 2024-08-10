@@ -10,8 +10,6 @@ public static partial class Map
             return;
         }
 
-        target.Owner ??= source.Owner;
-        target.Repo ??= source.Repo;
         target.DeployWorkflow ??= source.DeployWorkflow;
 
         // We do not try to merge lists, they override.
@@ -22,8 +20,6 @@ public static partial class Map
 
         target.DefaultEnvironment ??= source.DefaultEnvironment;
         target.ReleaseEnvironment ??= source.ReleaseEnvironment;
-        target.SettingsBranch ??= source.SettingsBranch;
-        target.DefaultBranch ??= source.DefaultBranch;
 
         if (target.Builds == null)
         {
@@ -52,7 +48,7 @@ public static partial class Map
             Merge(target.Slack, source.Slack);
         }
 
-        target.DeployManagerSiteUrl ??= source.DeployManagerSiteUrl;
+        target.PrdeployPortalUrl ??= source.PrdeployPortalUrl;
 
         if (target.Badge == null)
         {

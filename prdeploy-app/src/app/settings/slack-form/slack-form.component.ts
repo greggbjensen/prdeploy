@@ -4,6 +4,8 @@ import { SlackSettingsCompare } from 'src/app/shared/graphql';
 import { SettingsLevel } from '../models';
 import { KeyValuePipe } from '@angular/common';
 import { SlackEmailAliasesGridComponent } from './slack-email-aliases-grid/slack-email-aliases-grid.component';
+import { DxButtonTypes } from 'devextreme-angular/ui/button';
+import { DxTextBoxTypes } from 'devextreme-angular/ui/text-box';
 
 @Component({
   selector: 'app-slack-form',
@@ -15,6 +17,14 @@ import { SlackEmailAliasesGridComponent } from './slack-email-aliases-grid/slack
 export class SlackFormComponent {
   @Input() slack: SlackSettingsCompare;
 
+  tokenPasswordMode: DxTextBoxTypes.TextBoxType = 'password';
+  tokenButton: DxButtonTypes.Properties = {
+    icon: 'eyeopen',
+    stylingMode: 'text',
+    onClick: () => {
+      this.tokenPasswordMode = this.tokenPasswordMode === 'text' ? 'password' : 'text';
+    }
+  };
   showOwner = true;
 
   private _level: SettingsLevel;

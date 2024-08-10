@@ -11,8 +11,10 @@ using PrDeploy.Api.Models.General.Inputs;
 using PrDeploy.Api.Models.Settings;
 using PrDeploy.Api.Models.Settings.Compare;
 using PrDeploy.Api.Models.Settings.Inputs;
-using YamlDotNet.Serialization.NamingConventions;
 using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
+using YamlDotNet.Serialization.ObjectFactories;
+using YamlDotNet.Serialization.ObjectGraphVisitors;
 
 namespace PrDeploy.Api.Business.Services;
 public class DeploySettingsService : IDeploySettingsService
@@ -55,9 +57,6 @@ public class DeploySettingsService : IDeploySettingsService
 
         var ownerSettings = await GetOwnerSettingsAsync(owner);
         repoSettings = await GetRepoSettingsAsync(owner, repo);
-
-        repoSettings.Owner = owner;
-        repoSettings.Repo = repo;
 
         // Override default with repo.
         Map.Merge(repoSettings, ownerSettings);
@@ -184,7 +183,9 @@ public class DeploySettingsService : IDeploySettingsService
         var yaml = await File.ReadAllTextAsync("default-owner-settings.yaml");
         var deserializer = new DeserializerBuilder()
             .WithNamingConvention(CamelCaseNamingConvention.Instance)
+            .IgnoreUnmatchedProperties()
             .Build();
+
         var deploySettings = deserializer.Deserialize<DeploySettings>(yaml);
         return deploySettings;
     }

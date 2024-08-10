@@ -29,16 +29,6 @@ public static partial class Map
                 Owner = owner.ReleaseEnvironment,
                 Repo = repo.ReleaseEnvironment
             },
-            SettingsBranch = new()
-            {
-                Owner = owner.SettingsBranch,
-                Repo = repo.SettingsBranch
-            },
-            DefaultBranch = new()
-            {
-                Owner = owner.DefaultBranch,
-                Repo = repo.DefaultBranch
-            },
             // We do not try to merge lists, they override.
             Environments = new()
             {
@@ -54,10 +44,10 @@ public static partial class Map
             Builds = Compare(owner.Builds, repo.Builds),
             Jira = Compare(owner.Jira, repo.Jira),
             // TODO GBJ: Change to PrdeployPortalUrl.
-            DeployManagerSiteUrl = new()
+            PrdeployPortalUrl = new()
             {
-                Owner = owner.DeployManagerSiteUrl,
-                Repo = repo.DeployManagerSiteUrl
+                Owner = owner.PrdeployPortalUrl,
+                Repo = repo.PrdeployPortalUrl
             },
             Slack = Compare(owner.Slack, repo.Slack),
             Badge = Compare(owner.Badge, repo.Badge)

@@ -1,7 +1,22 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { DxAccordionModule, DxButtonModule, DxLoadIndicatorModule, DxTabsModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
-import { DeploySettingsCompare, DeploySettingsCompareGQL, EnvironmentSettings } from 'src/app/shared/graphql';
+import {
+  BadgeSettingsCompare,
+  BadgeSettingsInput,
+  BuildsSettingsCompare,
+  BuildsSettingsInput,
+  DeploySettingsCompare,
+  DeploySettingsCompareGQL,
+  DeploySettingsInput,
+  DeploySettingsSetGQL,
+  EnvironmentSettings,
+  EnvironmentSettingsInput,
+  JiraSettingsCompare,
+  JiraSettingsInput,
+  SlackSettingsCompare,
+  SlackSettingsInput
+} from 'src/app/shared/graphql';
 import { NotificationManager, RepoManager } from 'src/app/shared/managers';
 import { EnvironmentFormComponent } from '../environment-form/environment-form.component';
 import { JiraFormComponent } from '../jira-form/jira-form.component';
@@ -11,6 +26,17 @@ import { DeployFormComponent } from '../deploy-form/deploy-form.component';
 import { Tab } from 'src/app/shared/models';
 import { AddEnvironmentDialogComponent } from '../add-environment-dialog/add-environment-dialog.component';
 import _ from 'lodash';
+import { LoggingService } from 'src/app/shared/services';
+
+class SetCompareValue<T> {
+  hasValues: boolean = false;
+
+  constructor(
+    public compare: T,
+    public level: SettingsLevel
+  ) {}
+}
+
 @Component({
   selector: 'app-settings-form',
   standalone: true,
@@ -71,14 +97,42 @@ export class SettingsFormComponent {
 
   constructor(
     private _deploySettingsCompareGQL: DeploySettingsCompareGQL,
+    private _deploySettingsSetGQL: DeploySettingsSetGQL,
     private _repoManager: RepoManager,
     private _notificationManager: NotificationManager,
-    private _changeDetectorRef: ChangeDetectorRef
+    private _changeDetectorRef: ChangeDetectorRef,
+    private _loggingService: LoggingService
   ) {
     this.fetchSettings();
   }
 
-  async save() {}
+  async save() {
+    this.loading = true;
+    try {
+      const ownerSettings = this.gatherSettings(new SetCompareValue(this.settingsCompare, 'owner'));
+      const repoSettings = this.gatherSettings(new SetCompareValue(this.settingsCompare, 'repo'));
+      await firstValueFrom(
+        this._deploySettingsSetGQL.mutate({
+          ownerInput: {
+            owner: this._repoManager.owner,
+            settings: ownerSettings
+          },
+          repoInput: {
+            owner: this._repoManager.owner,
+            repo: this._repoManager.repo,
+            settings: repoSettings
+          }
+        })
+      );
+
+      this._notificationManager.show('Settings save complete.');
+    } catch (error) {
+      this._notificationManager.show('Error saving settings', 'error');
+      this._loggingService.error(error, `Error saving settings.`);
+    }
+
+    this.loading = false;
+  }
 
   async resetForm() {
     // Replace current state with that from the server.
@@ -163,6 +217,142 @@ export class SettingsFormComponent {
       this.bindingEnvironments = this.settingsCompare.environments.owner;
     } else {
       this.bindingEnvironments = this.settingsCompare.environments[this._level];
+    }
+  }
+
+  private gatherSettings(compareValue: SetCompareValue<DeploySettingsCompare>): DeploySettingsInput {
+    const input = {
+      jira: {},
+      builds: {},
+      badge: {},
+      slack: {
+        webhooks: {}
+      }
+    } as DeploySettingsInput;
+
+    this.set(input, 'deployWorkflow', compareValue);
+    this.set(input, 'prdeployPortalUrl', compareValue);
+    this.set(input, 'defaultEnvironment', compareValue);
+    this.set(input, 'releaseEnvironment', compareValue);
+
+    const { compare, level } = compareValue;
+    if (compare.environments && compare.environments[level].length > 0) {
+      input.environments = [];
+      compare.environments[level].forEach(e => input.environments.push(this.mapEnvironment(e)));
+    }
+
+    input.jira = {};
+    const jiraCompare = new SetCompareValue(compare.jira, level);
+    this.setJira(input.jira, jiraCompare);
+    if (!jiraCompare.hasValues) {
+      delete input.jira;
+    }
+
+    const buildsCompare = new SetCompareValue(compare.builds, level);
+    this.setBuilds(input.builds, buildsCompare);
+    if (!buildsCompare.hasValues) {
+      delete input.builds;
+    }
+
+    const slackCompare = new SetCompareValue(compare.slack, level);
+    this.setSlack(input.slack, slackCompare);
+    if (!slackCompare.hasValues) {
+      delete input.slack;
+    }
+
+    const badgeCompare = new SetCompareValue(compare.badge, level);
+    this.setBadge(input.badge, badgeCompare);
+    if (!badgeCompare.hasValues) {
+      delete input.badge;
+    }
+
+    return input;
+  }
+
+  private mapEnvironment(compare: EnvironmentSettings) {
+    const input = {} as EnvironmentSettingsInput;
+
+    this.setObjectValue(input, 'name', compare);
+    this.setObjectValue(input, 'queue', compare);
+    this.setObjectValue(input, 'url', compare);
+    this.setObjectValue(input, 'requireApproval', compare);
+    this.setObjectValue(input, 'requireBranchUpToDate', compare);
+
+    if (compare.excludeFromRollback && compare.excludeFromRollback.length > 0) {
+      // TODO: ADD excludeFromRollback to UI.
+      input.excludeFromRollback = compare.excludeFromRollback;
+    }
+
+    if (this.hasObjectValues(compare, 'automationTest')) {
+      input.automationTest = {};
+      this.setObjectValue(input.automationTest, 'enabled', compare.automationTest);
+      this.setObjectValue(input.automationTest, 'workflow', compare.automationTest);
+      if (this.hasObjectValues(compare.automationTest, 'inputs')) {
+        this.setObjectValue(input.automationTest, 'inputs', compare.automationTest);
+      }
+    }
+
+    return input;
+  }
+
+  private setJira(input: JiraSettingsInput, compareValue: SetCompareValue<JiraSettingsCompare>) {
+    this.set(input, 'addIssuesEnabled', compareValue);
+    this.set(input, 'host', compareValue);
+    this.set(input, 'username', compareValue);
+    this.set(input, 'password', compareValue);
+  }
+
+  private setBuilds(input: BuildsSettingsInput, compareValue: SetCompareValue<BuildsSettingsCompare>) {
+    this.set(input, 'checkPattern', compareValue);
+    this.set(input, 'workflowPattern', compareValue);
+  }
+
+  private setSlack(input: SlackSettingsInput, compareValue: SetCompareValue<SlackSettingsCompare>) {
+    const webhooksCompare = new SetCompareValue(compareValue.compare.webhooks, compareValue.level);
+    this.set(input.webhooks, 'deployUrl', webhooksCompare);
+    this.set(input.webhooks, 'releaseUrl', webhooksCompare);
+    if (!webhooksCompare.hasValues) {
+      delete input.webhooks;
+    }
+
+    this.set(input, 'notificationsEnabled', compareValue);
+    this.set(input, 'token', compareValue);
+    this.set(input, 'emailDomain', compareValue);
+
+    if (this.hasValues(compareValue, 'emailAliases')) {
+      this.setObjectValue(input, 'emailAliases', compareValue.compare.emailAliases);
+    }
+  }
+
+  private setBadge(input: BadgeSettingsInput, compareValue: SetCompareValue<BadgeSettingsCompare>) {
+    if (this.hasValues(compareValue, 'statusColors')) {
+      input.statusColors = {};
+      this.setObjectValue(input.statusColors, 'error', compareValue.compare.statusColors);
+      this.setObjectValue(input.statusColors, 'warn', compareValue.compare.statusColors);
+      this.setObjectValue(input.statusColors, 'info', compareValue.compare.statusColors);
+      this.setObjectValue(input.statusColors, 'success', compareValue.compare.statusColors);
+    }
+  }
+
+  private hasObjectValues<T>(compare: T, key: keyof T) {
+    return compare[key] && Object.keys(compare[key]).filter(c => !_.isNil(c)).length > 0;
+  }
+
+  private hasValues<T>(compareValue: SetCompareValue<T>, key: keyof T) {
+    return compareValue.compare[key] && Object.keys(compareValue.compare[key]).filter(c => !_.isNil(c)).length > 0;
+  }
+
+  private setObjectValue<T>(input: T, key: keyof T, compare: any) {
+    if (!_.isNil(compare[key])) {
+      input[key] = compare[key];
+    }
+  }
+
+  private set<T>(input: T, key: keyof T, compareValue: SetCompareValue<any>) {
+    const { compare, level } = compareValue;
+    if (!_.isNil(compare[key][level])) {
+      compareValue.hasValues = true;
+      input[key] = compare[key][level];
     }
   }
 }

@@ -1,0 +1,8 @@
+mutation DeploySettingsSet($ownerInput: SetOwnerSettingsInput!, $repoInput: SetRepoSettingsInput!) {
+  ownerSettingsSet(input: $ownerInput) {
+    success
+  }
+  repoSettingsSet(input: $repoInput) {
+    success
+  }
+}
