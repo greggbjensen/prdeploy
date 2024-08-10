@@ -9,7 +9,12 @@
   <div class="field">
     <label>Token</label>
     <div class="field-value">
-      <dx-text-box [(value)]="slack.token[level]" [placeholder]="showOwner ? slack.token['owner'] : ''"></dx-text-box>
+      <dx-text-box
+        [(value)]="slack.token[level]"
+        [placeholder]="showOwner ? slack.token['owner'] : ''"
+        [(mode)]="tokenPasswordMode">
+        <dxi-button name="today" location="after" [options]="tokenButton"></dxi-button>
+      </dx-text-box>
     </div>
   </div>
   <div class="field">
