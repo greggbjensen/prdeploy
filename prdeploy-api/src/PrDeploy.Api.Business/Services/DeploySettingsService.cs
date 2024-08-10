@@ -11,8 +11,10 @@ using PrDeploy.Api.Models.General.Inputs;
 using PrDeploy.Api.Models.Settings;
 using PrDeploy.Api.Models.Settings.Compare;
 using PrDeploy.Api.Models.Settings.Inputs;
-using YamlDotNet.Serialization.NamingConventions;
 using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
+using YamlDotNet.Serialization.ObjectFactories;
+using YamlDotNet.Serialization.ObjectGraphVisitors;
 
 namespace PrDeploy.Api.Business.Services;
 public class DeploySettingsService : IDeploySettingsService
@@ -183,6 +185,7 @@ public class DeploySettingsService : IDeploySettingsService
             .WithNamingConvention(CamelCaseNamingConvention.Instance)
             .IgnoreUnmatchedProperties()
             .Build();
+
         var deploySettings = deserializer.Deserialize<DeploySettings>(yaml);
         return deploySettings;
     }

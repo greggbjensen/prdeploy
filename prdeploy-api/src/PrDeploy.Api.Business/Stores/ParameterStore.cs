@@ -93,6 +93,7 @@ namespace PrDeploy.Api.Business.Stores
             {
                 _logger.LogInformation($"Updating parameter store at {path}");
                 var serializer = new SerializerBuilder()
+                    .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitEmptyCollections | DefaultValuesHandling.OmitNull)
                     .WithNamingConvention(CamelCaseNamingConvention.Instance).Build();
                 var yaml = serializer.Serialize(value);
                 var request = new PutParameterRequest
