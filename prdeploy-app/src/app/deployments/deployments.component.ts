@@ -15,7 +15,7 @@ import { DxAccordionModule, DxSelectBoxModule } from 'devextreme-angular';
 import { EnvironmentListComponent } from './environment-list/environment-list.component';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { AddPrServiceDialogComponent } from './add-pr-service-dialog/add-pr-service-dialog.component';
-import { NotificationManager, RepoManager } from '../shared/managers';
+import { NotificationManager, RepoManager, RouteManager } from '../shared/managers';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -44,6 +44,7 @@ export class DeploymentsComponent implements OnInit {
 
   constructor(
     public repoManager: RepoManager,
+    private _routeManager: RouteManager,
     private _deployEnvironmentsAndQueuesGQL: DeployEnvironmentsAndQueuesGQL,
     private _deployEnvironmentDeployGQL: DeployEnvironmentDeployGQL,
     private _notificationManager: NotificationManager,
@@ -100,7 +101,7 @@ export class DeploymentsComponent implements OnInit {
       this.deployEnvironments = response.data.deployEnvironments;
       this.deployQueues = response.data.deployQueues;
       this.updateSelectedQueue();
-      this.repoManager.updateQueryParams();
+      this._routeManager.updateQueryParams();
     } catch (error) {
       this._loggingService.error(error);
     }
@@ -125,7 +126,7 @@ export class DeploymentsComponent implements OnInit {
   async selectedQueueChange(queue?: DeployQueue): Promise<void> {
     const environment = queue?.environment;
     this._selectedEnvironment = environment;
-    this.repoManager.updateQueryParams({ environment: this._selectedEnvironment });
+    this._routeManager.updateQueryParams({ environment: this._selectedEnvironment });
   }
 
   showAddServiceToPr(): void {

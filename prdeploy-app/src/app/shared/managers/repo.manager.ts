@@ -1,6 +1,5 @@
-import { ChangeDetectorRef, Injectable } from '@angular/core';
-import { Location } from '@angular/common';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { Injectable } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { OwnerRepos } from '../graphql';
 
@@ -17,11 +16,7 @@ export class RepoManager {
   private _valueChangedSubject$ = new BehaviorSubject(false);
   valueChanged$ = this._valueChangedSubject$.asObservable();
 
-  constructor(
-    private _router: Router,
-    private _activatedRoute: ActivatedRoute,
-    private location: Location
-  ) {
+  constructor(private _activatedRoute: ActivatedRoute) {
     firstValueFrom(this._activatedRoute.queryParamMap).then(param => {
       this.repo = param.get('repo');
       this.owner = param.get('owner');
@@ -39,7 +34,6 @@ export class RepoManager {
   set repo(value: string) {
     if (value !== this.repo) {
       this._repo = value;
-      this.updateQueryParams();
       this.updateValueChanged();
     }
   }
@@ -51,30 +45,12 @@ export class RepoManager {
   set owner(value: string) {
     if (value !== this.owner) {
       this._owner = value;
-      this.updateQueryParams();
       this.updateValueChanged();
     }
   }
 
   updateOwnerRepos(ownerRepos: OwnerRepos[]) {
     this._ownerReposChangedSubject.next(ownerRepos);
-  }
-
-  async updateQueryParams(additionalParams: Params = {}): Promise<void> {
-    // Do not update while login is in process.
-    if (this.location.path().startsWith('/login')) {
-      return;
-    }
-
-    await this._router.navigate([this.location.path()], {
-      queryParams: {
-        owner: this.owner,
-        repo: this.repo,
-        ...additionalParams
-      },
-      queryParamsHandling: 'merge',
-      replaceUrl: true
-    });
   }
 
   private updateValueChanged() {

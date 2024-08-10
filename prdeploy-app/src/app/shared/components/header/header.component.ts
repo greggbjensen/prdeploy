@@ -6,7 +6,7 @@ import { AuthService } from '../../services';
 import { DxSelectBoxModule } from 'devextreme-angular';
 import { RepoManager } from '../../managers';
 import { firstValueFrom } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EnabledOwnerReposGQL, OwnerRepos } from '../../graphql';
 import { SelectionChangedEvent } from 'devextreme/ui/select_box';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -45,6 +45,7 @@ export class HeaderComponent implements OnInit {
     public repoManager: RepoManager,
     private _authService: AuthService,
     private _route: ActivatedRoute,
+    private _router: Router,
     private _enabledOwnerReposGQL: EnabledOwnerReposGQL,
     private _destoryRef: DestroyRef
   ) {}
@@ -78,6 +79,9 @@ export class HeaderComponent implements OnInit {
 
   private updateOwnerRepos(ownerRepos: OwnerRepos[]) {
     this._ownerRepos = ownerRepos || [];
+    if (this._ownerRepos.length === 0) {
+    }
+
     this.owners = this._ownerRepos.map(o => o.owner);
     if (!this.repoManager.owner || this.owners.includes(this.repoManager.owner.toLowerCase())) {
       this.repoManager.owner = this.owners[0];
