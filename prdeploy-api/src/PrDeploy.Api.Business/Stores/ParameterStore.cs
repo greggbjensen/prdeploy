@@ -68,6 +68,7 @@ namespace PrDeploy.Api.Business.Stores
                 var valueString = parameterResponse.Parameter.Value;
                 var deserializer = new DeserializerBuilder()
                     .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                    .IgnoreUnmatchedProperties()
                     .Build();
                 value = deserializer.Deserialize<T>(valueString);
             }

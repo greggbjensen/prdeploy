@@ -11,6 +11,7 @@ import {
   DeploySettingsInput,
   DeploySettingsSetGQL,
   EnvironmentSettings,
+  EnvironmentSettingsInput,
   JiraSettingsCompare,
   JiraSettingsInput,
   SlackSettingsCompare,
@@ -26,6 +27,12 @@ import { Tab } from 'src/app/shared/models';
 import { AddEnvironmentDialogComponent } from '../add-environment-dialog/add-environment-dialog.component';
 import _ from 'lodash';
 import { LoggingService } from 'src/app/shared/services';
+
+interface SetCompareValue<T> {
+  level: SettingsLevel;
+  compare: T;
+}
+
 @Component({
   selector: 'app-settings-form',
   standalone: true,
@@ -98,14 +105,17 @@ export class SettingsFormComponent {
   async save() {
     this.loading = true;
     try {
-      const ownerSettings = this.gatherSettings(this.settingsCompare, 'owner');
-      const repoSettings = this.gatherSettings(this.settingsCompare, 'repo');
+      const ownerSettings = this.gatherSettings({ compare: this.settingsCompare, level: 'owner' });
+      const repoSettings = this.gatherSettings({ compare: this.settingsCompare, level: 'repo' });
       await firstValueFrom(
         this._deploySettingsSetGQL.mutate({
           ownerInput: {
+            owner: this._repoManager.owner,
             settings: ownerSettings
           },
           repoInput: {
+            owner: this._repoManager.owner,
+            repo: this._repoManager.repo,
             settings: repoSettings
           }
         })
@@ -204,48 +214,124 @@ export class SettingsFormComponent {
     }
   }
 
-  private gatherSettings(compare: DeploySettingsCompare, level: SettingsLevel): DeploySettingsInput {
+  private gatherSettings(compareValue: SetCompareValue<DeploySettingsCompare>): DeploySettingsInput {
     const input = {} as DeploySettingsInput;
 
-    input.deployWorkflow = compare.deployWorkflow[level];
-    input.deployManagerSiteUrl = compare.deployManagerSiteUrl[level];
-    input.defaultEnvironment = compare.defaultEnvironment[level];
-    input.releaseEnvironment = compare.releaseEnvironment[level];
-    input.environments = compare.environments[level];
+    this.set(input, 'deployWorkflow', compareValue);
+    this.set(input, 'prdeployPortalUrl', compareValue);
+    this.set(input, 'defaultEnvironment', compareValue);
+    this.set(input, 'releaseEnvironment', compareValue);
 
-    this.setJira(input.jira, compare.jira, level);
-    this.setBuilds(input.builds, compare.builds, level);
-    this.setSlack(input.slack, compare.slack, level);
-    this.setBadge(input.badge, compare.badge, level);
+    const { compare, level } = compareValue;
+    if (compare.environments && compare.environments[level].length > 0) {
+      input.environments = [];
+      compare.environments[level].forEach(e => input.environments.push(this.mapEnvironment(e)));
+    }
+
+    if (compare.jira) {
+      input.jira = {};
+      this.setJira(input.jira, { compare: compare.jira, level });
+    }
+
+    if (compare.builds) {
+      input.builds = {};
+      this.setBuilds(input.builds, { compare: compare.builds, level });
+    }
+
+    if (compare.slack) {
+      input.slack = {};
+      this.setSlack(input.slack, { compare: compare.slack, level });
+    }
+
+    if (compare.badge) {
+      input.badge = {};
+      this.setBadge(input.badge, { compare: compare.badge, level });
+    }
 
     return input;
   }
 
-  private setJira(input: JiraSettingsInput, compare: JiraSettingsCompare, level: SettingsLevel) {
-    input.addIssuesEnabled = compare.addIssuesEnabled[level];
-    input.host = compare.host[level];
-    input.username = compare.username[level];
-    input.password = compare.password[level];
+  private mapEnvironment(compare: EnvironmentSettings) {
+    const input = {} as EnvironmentSettingsInput;
+
+    this.setObjectValue(input, 'name', compare);
+    this.setObjectValue(input, 'queue', compare);
+    this.setObjectValue(input, 'url', compare);
+    this.setObjectValue(input, 'requireApproval', compare);
+    this.setObjectValue(input, 'requireBranchUpToDate', compare);
+
+    if (compare.excludeFromRollback && compare.excludeFromRollback.length > 0) {
+      // TODO: ADD excludeFromRollback to UI.
+      input.excludeFromRollback = compare.excludeFromRollback;
+    }
+
+    if (this.hasObjectValues(compare, 'automationTest')) {
+      input.automationTest = {};
+      this.setObjectValue(input.automationTest, 'enabled', compare.automationTest);
+      this.setObjectValue(input.automationTest, 'workflow', compare.automationTest);
+      if (this.hasObjectValues(compare.automationTest, 'inputs')) {
+        this.setObjectValue(input.automationTest, 'inputs', compare.automationTest);
+      }
+    }
+
+    return input;
   }
 
-  private setBuilds(input: BuildsSettingsInput, compare: BuildsSettingsCompare, level: SettingsLevel) {
-    input.checkPattern = compare.checkPattern[level];
-    input.workflowPattern = compare.workflowPattern[level];
+  private setJira(input: JiraSettingsInput, compareValue: SetCompareValue<JiraSettingsCompare>) {
+    this.set(input, 'addIssuesEnabled', compareValue);
+    this.set(input, 'host', compareValue);
+    this.set(input, 'username', compareValue);
+    this.set(input, 'password', compareValue);
   }
 
-  private setSlack(input: SlackSettingsInput, compare: SlackSettingsCompare, level: SettingsLevel) {
-    input.webhooks.deployUrl = compare.webhooks.deployUrl[level];
-    input.webhooks.releaseUrl = compare.webhooks.releaseUrl[level];
-    input.notificationsEnabled = compare.notificationsEnabled[level];
-    input.token = compare.token[level];
-    input.emailDomain = compare.emailDomain[level];
-    input.emailAliases = compare.emailAliases[level];
+  private setBuilds(input: BuildsSettingsInput, compareValue: SetCompareValue<BuildsSettingsCompare>) {
+    this.set(input, 'checkPattern', compareValue);
+    this.set(input, 'workflowPattern', compareValue);
   }
 
-  private setBadge(input: BadgeSettingsInput, compare: BadgeSettingsCompare, level: SettingsLevel) {
-    input.statusColors.error = compare.statusColors.error[level];
-    input.statusColors.warn = compare.statusColors.warn[level];
-    input.statusColors.info = compare.statusColors.info[level];
-    input.statusColors.success = compare.statusColors.success[level];
+  private setSlack(input: SlackSettingsInput, compareValue: SetCompareValue<SlackSettingsCompare>) {
+    if (this.hasValues(compareValue, 'webhooks')) {
+      input.webhooks = {};
+      this.set(input.webhooks, 'deployUrl', compareValue);
+      this.set(input.webhooks, 'releaseUrl', compareValue);
+    }
+
+    this.set(input, 'notificationsEnabled', compareValue);
+    this.set(input, 'token', compareValue);
+    this.set(input, 'emailDomain', compareValue);
+
+    if (this.hasValues(compareValue, 'emailAliases')) {
+      this.set(input, 'emailAliases', compareValue);
+    }
+  }
+
+  private setBadge(input: BadgeSettingsInput, compareValue: SetCompareValue<BadgeSettingsCompare>) {
+    if (this.hasValues(compareValue, 'statusColors')) {
+      input.statusColors = {};
+      this.set(input.statusColors, 'error', compareValue);
+      this.set(input.statusColors, 'warn', compareValue);
+      this.set(input.statusColors, 'info', compareValue);
+      this.set(input.statusColors, 'success', compareValue);
+    }
+  }
+
+  private hasObjectValues<T>(compare: T, key: keyof T) {
+    return compare[key] && Object.keys(compare[key]).filter(c => _.isNil(c)).length > 0;
+  }
+
+  private hasValues<T>(compareValue: SetCompareValue<T>, key: keyof T) {
+    return compareValue.compare[key] && Object.keys(compareValue.compare[key]).filter(c => _.isNil(c)).length > 0;
+  }
+
+  private setObjectValue<T>(input: T, key: keyof T, compare: any) {
+    if (!_.isNil(compare[key])) {
+      input[key] = compare[key];
+    }
+  }
+
+  private set<T>(input: T, key: keyof T, { level, compare }: SetCompareValue<any>) {
+    if (!_.isNil(compare[level][key])) {
+      input[key] = compare[level][key];
+    }
   }
 }

@@ -56,9 +56,6 @@ public class DeploySettingsService : IDeploySettingsService
         var ownerSettings = await GetOwnerSettingsAsync(owner);
         repoSettings = await GetRepoSettingsAsync(owner, repo);
 
-        repoSettings.Owner = owner;
-        repoSettings.Repo = repo;
-
         // Override default with repo.
         Map.Merge(repoSettings, ownerSettings);
         _cache.Set(repoKey, repoSettings, RepoSettingsExpiration);
@@ -184,6 +181,7 @@ public class DeploySettingsService : IDeploySettingsService
         var yaml = await File.ReadAllTextAsync("default-owner-settings.yaml");
         var deserializer = new DeserializerBuilder()
             .WithNamingConvention(CamelCaseNamingConvention.Instance)
+            .IgnoreUnmatchedProperties()
             .Build();
         var deploySettings = deserializer.Deserialize<DeploySettings>(yaml);
         return deploySettings;

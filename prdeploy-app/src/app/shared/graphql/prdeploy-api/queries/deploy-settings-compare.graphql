@@ -8,7 +8,6 @@ query DeploySettingsCompare($input: RepoQueryInput!) {
       owner {
         name
         queue
-        color
         url
         requireApproval
         requireBranchUpToDate
@@ -22,7 +21,6 @@ query DeploySettingsCompare($input: RepoQueryInput!) {
       repo {
         name
         queue
-        color
         url
         requireApproval
         requireBranchUpToDate
@@ -49,14 +47,6 @@ query DeploySettingsCompare($input: RepoQueryInput!) {
       repo
     }
     releaseEnvironment {
-      owner
-      repo
-    }
-    defaultBranch {
-      owner
-      repo
-    }
-    settingsBranch {
       owner
       repo
     }
@@ -136,7 +126,7 @@ query DeploySettingsCompare($input: RepoQueryInput!) {
         }
       }
     }
-    deployManagerSiteUrl {
+    prdeployPortalUrl {
       owner
       repo
     }
