@@ -1,8 +1,7 @@
-import { ChangeDetectorRef, Injectable } from '@angular/core';
-import { Location } from '@angular/common';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
-import { OwnerRepos } from '../graphql';
+import { EnabledOwnerReposGQL, OwnerRepos } from '../graphql';
+import _ from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -17,17 +16,6 @@ export class RepoManager {
   private _valueChangedSubject$ = new BehaviorSubject(false);
   valueChanged$ = this._valueChangedSubject$.asObservable();
 
-  constructor(
-    private _router: Router,
-    private _activatedRoute: ActivatedRoute,
-    private location: Location
-  ) {
-    firstValueFrom(this._activatedRoute.queryParamMap).then(param => {
-      this.repo = param.get('repo');
-      this.owner = param.get('owner');
-    });
-  }
-
   get isValid(): boolean {
     return this._valueChangedSubject$.value;
   }
@@ -39,7 +27,6 @@ export class RepoManager {
   set repo(value: string) {
     if (value !== this.repo) {
       this._repo = value;
-      this.updateQueryParams();
       this.updateValueChanged();
     }
   }
@@ -51,30 +38,30 @@ export class RepoManager {
   set owner(value: string) {
     if (value !== this.owner) {
       this._owner = value;
-      this.updateQueryParams();
       this.updateValueChanged();
     }
   }
 
-  updateOwnerRepos(ownerRepos: OwnerRepos[]) {
-    this._ownerReposChangedSubject.next(ownerRepos);
+  constructor(private _enabledOwnerReposGQL: EnabledOwnerReposGQL) {}
+
+  async fetchOwnerRepos() {
+    const result = await firstValueFrom(this._enabledOwnerReposGQL.fetch());
+    this.updateOwnerRepos(result.data.enabledOwnerRepos);
   }
 
-  async updateQueryParams(additionalParams: Params = {}): Promise<void> {
-    // Do not update while login is in process.
-    if (this.location.path().startsWith('/login')) {
-      return;
+  updateOwnerRepos(ownerRepos: OwnerRepos[]) {
+    // Clean out empty owners.
+    const emptyOwners = ownerRepos.filter(o => !o.repos || o.repos.length === 0);
+    for (const empty of emptyOwners) {
+      const index = ownerRepos.findIndex(o => o.owner === empty.owner);
+      ownerRepos.splice(index, 1);
     }
 
-    await this._router.navigate([this.location.path()], {
-      queryParams: {
-        owner: this.owner,
-        repo: this.repo,
-        ...additionalParams
-      },
-      queryParamsHandling: 'merge',
-      replaceUrl: true
-    });
+    if (!_.isNil(ownerRepos) && ownerRepos.length === 0) {
+      this._valueChangedSubject$.next(true);
+    }
+
+    this._ownerReposChangedSubject.next(ownerRepos);
   }
 
   private updateValueChanged() {

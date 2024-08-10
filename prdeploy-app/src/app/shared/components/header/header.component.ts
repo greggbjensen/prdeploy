@@ -6,7 +6,7 @@ import { AuthService } from '../../services';
 import { DxSelectBoxModule } from 'devextreme-angular';
 import { RepoManager } from '../../managers';
 import { firstValueFrom } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EnabledOwnerReposGQL, OwnerRepos } from '../../graphql';
 import { SelectionChangedEvent } from 'devextreme/ui/select_box';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -45,7 +45,6 @@ export class HeaderComponent implements OnInit {
     public repoManager: RepoManager,
     private _authService: AuthService,
     private _route: ActivatedRoute,
-    private _enabledOwnerReposGQL: EnabledOwnerReposGQL,
     private _destoryRef: DestroyRef
   ) {}
 
@@ -63,8 +62,7 @@ export class HeaderComponent implements OnInit {
   }
 
   async fetchOwnerRepos() {
-    const result = await firstValueFrom(this._enabledOwnerReposGQL.fetch());
-    this.updateOwnerRepos(result.data.enabledOwnerRepos);
+    this.repoManager.fetchOwnerRepos();
   }
 
   async selectedRepoChanged(event: SelectionChangedEvent): Promise<void> {

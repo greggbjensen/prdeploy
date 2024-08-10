@@ -43,6 +43,7 @@ export class AddEnvironmentDialogComponent {
 
     this.addEnvironment.emit(this.name);
     this.visible = false;
+    this._changeDetectorRef.detectChanges();
   }
 
   cancel(): void {
