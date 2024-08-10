@@ -26,7 +26,7 @@
   <div *dxTemplate="let d of 'environmentCellTemplate'">
     <a
       class="deploy-environment"
-      [style]="{ backgroundColor: '#' + d.data.color }"
+      [style]="{ backgroundColor: d.data.color }"
       [routerLink]="['/environments']"
       [queryParams]="{ sourceEnvironment: d.data.name }"
       >{{ d.data.name }}</a

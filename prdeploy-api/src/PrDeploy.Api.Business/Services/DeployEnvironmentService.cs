@@ -15,6 +15,7 @@ namespace PrDeploy.Api.Business.Services;
 public class DeployEnvironmentService : IDeployEnvironmentService
 {
     private const string DeployStatePrefix = "DEPLOY_STATE_";
+    private const string? DefaultEnvironmentColor = "#6c757d";
     private readonly IGitHubClient _gitHubClient;
     private readonly IDeploySettingsService _deploySettingsService;
     private readonly IPullRequestService _pullRequestService;
@@ -43,7 +44,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
 
         var repoSettings = await _deploySettingsService.GetMergedAsync(input.Owner, input.Repo);
         var labels = await _gitHubClient.Issue.Labels.GetAllForRepository(input.Owner, input.Repo);
-        var environmentColors = labels.ToDictionary(l => l.Name, l => l.Color, StringComparer.OrdinalIgnoreCase);
+        var environmentColors = labels.ToDictionary(l => l.Name, l => $"#{l.Color}", StringComparer.OrdinalIgnoreCase);
         foreach (var environment in repoSettings.Environments!)
         {
             var deployEnvironment = new DeployEnvironment
@@ -52,10 +53,8 @@ public class DeployEnvironmentService : IDeployEnvironmentService
                 Url = environment.Url
             };
 
-            if (environmentColors.TryGetValue(environment.Name, out string color))
-            {
-                deployEnvironment.Color = color;
-            }
+            deployEnvironment.Color = environmentColors!.
+                GetValueOrDefault(environment.Name, DefaultEnvironmentColor);
 
             var issues = await _gitHubClient.Issue.GetAllForRepository(
                 input.Owner,

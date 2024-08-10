@@ -13,8 +13,6 @@ using PrDeploy.Api.Models.Settings.Compare;
 using PrDeploy.Api.Models.Settings.Inputs;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
-using YamlDotNet.Serialization.ObjectFactories;
-using YamlDotNet.Serialization.ObjectGraphVisitors;
 
 namespace PrDeploy.Api.Business.Services;
 public class DeploySettingsService : IDeploySettingsService
@@ -164,8 +162,8 @@ public class DeploySettingsService : IDeploySettingsService
         await _parameterStore.SetAsync(input.Owner, input.Repo, DeploySettingsKey, input.Settings, true);
 
         // Clear cache so it can update.
-        var cacheKy = GetSettingsCacheKey(input.Owner, input.Repo);
-        _cache.Remove(cacheKy);
+        var cacheKey = GetSettingsCacheKey(input.Owner, input.Repo);
+        _cache.Remove(cacheKey);
 
         return new StatusResponse
         {

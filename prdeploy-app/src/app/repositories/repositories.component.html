@@ -8,6 +8,13 @@
     (onClick)="updateOwnerRepos()"></dx-button>
 </h3>
 
+@if (displayAddRepos) {
+  <div class="add-repos-banner">
+    <i class="bi bi-exclamation-triangle"></i>
+    <p>Add at least one GitHub repository to get started.</p>
+  </div>
+}
+
 <app-repositories-grid
   [ownerRepos]="ownerRepos"
   (showAddRepo)="showAddRepo($event)"

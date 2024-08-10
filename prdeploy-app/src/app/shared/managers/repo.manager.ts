@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
-import { OwnerRepos } from '../graphql';
+import { EnabledOwnerReposGQL, OwnerRepos } from '../graphql';
+import _ from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -15,13 +15,6 @@ export class RepoManager {
 
   private _valueChangedSubject$ = new BehaviorSubject(false);
   valueChanged$ = this._valueChangedSubject$.asObservable();
-
-  constructor(private _activatedRoute: ActivatedRoute) {
-    firstValueFrom(this._activatedRoute.queryParamMap).then(param => {
-      this.repo = param.get('repo');
-      this.owner = param.get('owner');
-    });
-  }
 
   get isValid(): boolean {
     return this._valueChangedSubject$.value;
@@ -49,7 +42,25 @@ export class RepoManager {
     }
   }
 
+  constructor(private _enabledOwnerReposGQL: EnabledOwnerReposGQL) {}
+
+  async fetchOwnerRepos() {
+    const result = await firstValueFrom(this._enabledOwnerReposGQL.fetch());
+    this.updateOwnerRepos(result.data.enabledOwnerRepos);
+  }
+
   updateOwnerRepos(ownerRepos: OwnerRepos[]) {
+    // Clean out empty owners.
+    const emptyOwners = ownerRepos.filter(o => !o.repos || o.repos.length === 0);
+    for (const empty of emptyOwners) {
+      const index = ownerRepos.findIndex(o => o.owner === empty.owner);
+      ownerRepos.splice(index, 1);
+    }
+
+    if (!_.isNil(ownerRepos) && ownerRepos.length === 0) {
+      this._valueChangedSubject$.next(true);
+    }
+
     this._ownerReposChangedSubject.next(ownerRepos);
   }
 
