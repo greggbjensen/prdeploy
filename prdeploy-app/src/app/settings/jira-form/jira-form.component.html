@@ -26,7 +26,10 @@
       <div class="field-value">
         <dx-text-box
           [(value)]="jira.password[level]"
-          [placeholder]="showOwner ? jira.password['owner'] : ''"></dx-text-box>
+          [placeholder]="showOwner ? (jira.password['owner'] ? '********' : '') : ''"
+          [(mode)]="passwordMode">
+          <dxi-button name="today" location="after" [options]="passwordButton"></dxi-button>
+        </dx-text-box>
       </div>
     </div>
   </div>
