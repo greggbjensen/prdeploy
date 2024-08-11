@@ -56,12 +56,12 @@ public class DeployQueueService : IDeployQueueService
         // Compare against current queue and add command comment for new ones.
         var repoSettings = await _deploySettingsService.GetMergedAsync(owner, repo);
         var environmentSettings = _deploySettingsService.GetEnvironment(owner, repo, environment, repoSettings);
-        var currentNumbers = await GetPullNumbersAsync(owner, repo, environmentSettings.Queue);
+        var currentNumbers = await GetPullNumbersAsync(owner, repo, environmentSettings!.Queue);
 
         var newNumbers = pullNumbers.Where(n => !currentNumbers.Contains(n)).ToArray();
         if (newNumbers.Any())
         {
-            var command = environment.StartsWith(repoSettings.DefaultEnvironment, StringComparison.OrdinalIgnoreCase)
+            var command = environment.StartsWith(repoSettings.DefaultEnvironment!, StringComparison.OrdinalIgnoreCase)
                 ? @"/deploy"
                 : $@"/deploy {environment}";
             var tasks = newNumbers.Select(n => AddPullRequestCommand(owner, repo, n, command)).ToArray();

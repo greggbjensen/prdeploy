@@ -1,1 +1,1 @@
-export type ParameterLevel = 'Repo' | 'Org';
+export type ParameterLevel = 'Repo' | 'Owner';

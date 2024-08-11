@@ -1,24 +1,13 @@
 import { SSM_CLIENT } from '@src/injection-tokens';
-import { GetContentParams, RepoSettings } from '@src/models';
-import { RepoSettingsService } from '@src/services';
+import { DeploySettings } from '@src/models';
+import { DeploySettingsService } from '@src/services';
 import { SSMClientMock } from '@test/mocks';
 import { Octokit } from '@octokit/rest';
 import { container } from 'tsyringe';
 
 export class RepoSettingsHelper {
   static async mockCalls(octokit: Octokit): Promise<void> {
-    const getContent = octokit.rest.repos.getContent.bind(octokit.rest.repos);
-
     Object.assign(octokit.rest.repos, {
-      getContent: jest.fn().mockImplementation(async (params: GetContentParams) => {
-        return params.path === RepoSettingsService.RepoSettingsFile
-          ? {
-              data: {
-                content: ''
-              }
-            }
-          : await getContent(params);
-      }),
       get: jest.fn().mockResolvedValueOnce({
         data: {
           default_branch: 'main'
@@ -106,8 +95,8 @@ export class RepoSettingsHelper {
       useFactory: () => new SSMClientMock()
     });
 
-    const settingsService = container.resolve(RepoSettingsService);
+    const settingsService = container.resolve(DeploySettingsService);
     const settings = await settingsService.get();
-    container.register(RepoSettings, { useFactory: () => settings });
+    container.register(DeploySettings, { useFactory: () => settings });
   }
 }

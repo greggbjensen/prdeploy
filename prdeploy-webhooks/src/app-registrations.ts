@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import { container } from 'tsyringe';
-import { DEFAULT_SETTINGS_FILE, SSM_CLIENT } from './injection-tokens';
+import { SSM_CLIENT } from './injection-tokens';
 import { SSMClient } from '@aws-sdk/client-ssm';
 
 // Load environment variables from .env file
@@ -19,5 +19,3 @@ container.register(SSM_CLIENT, {
     });
   }
 });
-
-container.register(DEFAULT_SETTINGS_FILE, { useValue: process.env.DEFAULT_SETTINGS_FILE });

@@ -40,10 +40,10 @@ describe('setString', () => {
 
   it('sets a organization string variable in AWS Parameter Store', async () => {
     const service = container.resolve(ParameterService);
-    await service.setString('TEST_ORG_VARIABLE', 'Org variable for testing', 'Org');
+    await service.setString('TEST_OWNER_VARIABLE', 'Owner variable for testing', 'Owner');
 
-    const value = await service.getString('TEST_ORG_VARIABLE', 'Org');
-    expect(value).toEqual('Org variable for testing');
+    const value = await service.getString('TEST_OWNER_VARIABLE', 'Owner');
+    expect(value).toEqual('Owner variable for testing');
   });
 
   it('sets a repository string secret in AWS Parameter Store.', async () => {
@@ -56,10 +56,10 @@ describe('setString', () => {
 
   it('sets a organization string secret in AWS Parameter Store', async () => {
     const service = container.resolve(ParameterService);
-    await service.setString('TEST_ORG_SECRET', 'Org secret for testing', 'Org', true);
+    await service.setString('TEST_OWNER_SECRET', 'Owner secret for testing', 'Owner', true);
 
-    const value = await service.getString('TEST_ORG_SECRET', 'Org');
-    expect(value).toEqual('Org secret for testing');
+    const value = await service.getString('TEST_OWNER_SECRET', 'Owner');
+    expect(value).toEqual('Owner secret for testing');
   });
 });
 

@@ -6,19 +6,25 @@
 type DeployQuery {
   deployQueues(input: RepoQueryInput!): [DeployQueue!]!
   deploySettingsCompare(input: RepoQueryInput!): DeploySettingsCompare!
+  repoSettings(input: RepoQueryInput!): DeploySettings!
+  ownerSettings(input: OwnerQueryInput!): DeploySettings!
   deployEnvironments(input: RepoQueryInput!): [DeployEnvironment!]!
   environments(input: RepoQueryInput!): [Environment!]!
   deployStateComparison(input: DeployStateComparisonInput!): DeployStateComparison!
   openPullRequests(input: OpenPullRequestInput!): [PullRequest!]!
-  prDeployEnabledRepositories: [Repository!]!
+  enabledOwnerRepos: [OwnerRepos!]!
   repositoryServices(input: RepoQueryInput!): [String!]!
 }
 
 type DeployMutation {
-  deployQueueUpdate(input: DeployQueueUpdateInput!): DeployQueue!
   deployEnvironmentFree(input: PullDeployInput!): StatusResponse!
   deployEnvironmentDeploy(input: EnvironmentDeployInput!): StatusResponse!
   deployEnvironmentRollback(input: RollbackInput!): StatusResponse!
+  deployQueueUpdate(input: DeployQueueUpdateInput!): DeployQueue!
+  repoSettingsSet(input: SetRepoSettingsInput!): StatusResponse!
+  ownerSettingsSet(input: SetOwnerSettingsInput!): StatusResponse!
+  ownerRepoAddEnabled(input: RepositoryInput!): StatusResponse!
+  ownerRepoRemoveEnabled(input: RepositoryInput!): StatusResponse!
   pullRequestAddServices(input: PullRequestAddServicesInput!): StatusResponse!
 }
 
@@ -26,6 +32,14 @@ enum ApplyPolicy {
   BEFORE_RESOLVER
   AFTER_RESOLVER
   VALIDATION
+}
+
+input OpenPullRequestInput {
+  search: String
+  "Repository owner or organization."
+  owner: ID
+  "Repository being accessed within the owner."
+  repo: ID
 }
 
 "Pull request to deploy and merge code."
@@ -91,18 +105,35 @@ type DeployEnvironment {
   locked: Boolean!
 }
 
+"Input for a general owner query."
+input OwnerQueryInput {
+  "Repository owner or organization."
+  owner: ID
+}
+
+type DeploySettings {
+  deployWorkflow: String
+  environments: [EnvironmentSettings!]
+  services: [ServiceSettings!]
+  defaultEnvironment: String
+  releaseEnvironment: String
+  jira: JiraSettings
+  builds: BuildsSettings
+  slack: SlackSettings
+  prdeployPortalUrl: String
+  badge: BadgeSettings
+}
+
 type DeploySettingsCompare {
   deployWorkflow: OwnerRepoValueOfString!
   environments: OwnerRepoValueOfListOfEnvironmentSettings!
   services: OwnerRepoValueOfListOfServiceSettings!
   defaultEnvironment: OwnerRepoValueOfString!
   releaseEnvironment: OwnerRepoValueOfString!
-  defaultBranch: OwnerRepoValueOfString!
-  settingsBranch: OwnerRepoValueOfString!
   jira: JiraSettingsCompare!
   builds: BuildsSettingsCompare!
   slack: SlackSettingsCompare!
-  deployManagerSiteUrl: OwnerRepoValueOfString!
+  prdeployPortalUrl: OwnerRepoValueOfString!
   badge: BadgeSettingsCompare!
 }
 
@@ -122,26 +153,12 @@ type DeployQueue {
   pullRequests: [PullRequest!]!
 }
 
-input OpenPullRequestInput {
-  search: String
-  "Repository owner or organization."
-  owner: ID
-  "Repository being accessed within the owner."
-  repo: ID
-}
-
-type Repository {
+"Set of owner and associated repos."
+type OwnerRepos {
+  "Owner or organization of a set of repo."
   owner: String!
-  repo: String!
-}
-
-input DeployQueueUpdateInput {
-  environment: ID!
-  pullNumbers: [Int!]
-  "Repository owner or organization."
-  owner: ID
-  "Repository being accessed within the owner."
-  repo: ID
+  "List of repository names for owner."
+  repos: [String!]!
 }
 
 "Simple status response from a mutation."
@@ -160,8 +177,8 @@ input PullDeployInput {
 }
 
 input EnvironmentDeployInput {
-  force: Boolean!
-  retain: Boolean!
+  force: Boolean
+  retain: Boolean
   environment: ID!
   pullNumber: Int!
   "Repository owner or organization."
@@ -180,6 +197,41 @@ input RollbackInput {
   repo: ID
 }
 
+input DeployQueueUpdateInput {
+  environment: ID!
+  pullNumbers: [Int!]
+  "Repository owner or organization."
+  owner: ID
+  "Repository being accessed within the owner."
+  repo: ID
+}
+
+"Input for updating repo settings."
+input SetRepoSettingsInput {
+  "Repository owner or organization."
+  owner: ID
+  "Repository being accessed within the owner."
+  repo: ID
+  "Full settings for owner and repository."
+  settings: DeploySettingsInput
+}
+
+"Input for updating repo settings."
+input SetOwnerSettingsInput {
+  "Repository owner or organization."
+  owner: ID
+  "Full settings for owner that defaults repo settings."
+  settings: DeploySettingsInput
+}
+
+"Owner and repo name of a repository."
+input RepositoryInput {
+  "Owner or organization of a repo."
+  owner: String!
+  "Name of the repository."
+  repo: String!
+}
+
 input PullRequestAddServicesInput {
   pullNumber: Int!
   services: [String!]!
@@ -187,6 +239,19 @@ input PullRequestAddServicesInput {
   owner: ID
   "Repository being accessed within the owner."
   repo: ID
+}
+
+input DeploySettingsInput {
+  deployWorkflow: String
+  environments: [EnvironmentSettingsInput!]
+  services: [ServiceSettingsInput!]
+  defaultEnvironment: String
+  releaseEnvironment: String
+  jira: JiraSettingsInput
+  builds: BuildsSettingsInput
+  slack: SlackSettingsInput
+  prdeployPortalUrl: String
+  badge: BadgeSettingsInput
 }
 
 type BadgeSettingsCompare {
@@ -228,6 +293,45 @@ type OwnerRepoValueOfString {
   repo: String
 }
 
+type BadgeSettings {
+  statusColors: BadgeStatusColorsSettings
+}
+
+type SlackSettings {
+  token: String
+  emailDomain: String
+  emailAliases: Any
+  webhooks: SlackWebHooksSettings
+  notificationsEnabled: Boolean
+}
+
+type BuildsSettings {
+  checkPattern: String
+  workflowPattern: String
+}
+
+type JiraSettings {
+  addIssuesEnabled: Boolean
+  host: String
+  username: String
+  password: String
+}
+
+type ServiceSettings {
+  name: String!
+  path: String
+}
+
+type EnvironmentSettings {
+  name: String!
+  queue: String!
+  url: String
+  requireApproval: Boolean!
+  requireBranchUpToDate: Boolean!
+  automationTest: AutomationTestSettings
+  excludeFromRollback: [String!]
+}
+
 "Comparison of services between a source and target environment."
 type ServiceComparison {
   "Name of the service deployed."
@@ -250,23 +354,27 @@ type DeployUser {
 "The `DateTime` scalar represents an ISO-8601 compliant date time type."
 scalar DateTime
 
+scalar Any
+
 "The `Long` scalar type represents non-fractional signed whole 64-bit numeric values. Long can represent values between -(2^63) and 2^63 - 1."
 scalar Long
 
-type EnvironmentSettings {
-  name: String!
-  queue: String!
-  color: String
-  url: String
-  requireApproval: Boolean!
-  requireBranchUpToDate: Boolean!
-  automationTest: AutomationTestSettings
-  excludeFromRollback: [String!]
+type AutomationTestSettings {
+  enabled: Boolean
+  workflow: String
+  inputs: Any
 }
 
-type ServiceSettings {
-  name: String
-  path: String
+type SlackWebHooksSettings {
+  deployUrl: String
+  releaseUrl: String
+}
+
+type BadgeStatusColorsSettings {
+  error: String
+  warn: String
+  success: String
+  info: String
 }
 
 type OwnerRepoValueOfNullableOfBoolean {
@@ -291,10 +399,59 @@ type BadgeStatusColorsSettingsCompare {
   info: OwnerRepoValueOfString!
 }
 
-scalar Any
+input BadgeSettingsInput {
+  statusColors: BadgeStatusColorsSettingsInput
+}
 
-type AutomationTestSettings {
+input SlackSettingsInput {
+  token: String
+  emailDomain: String
+  emailAliases: Any
+  webhooks: SlackWebHooksSettingsInput
+  notificationsEnabled: Boolean
+}
+
+input BuildsSettingsInput {
+  checkPattern: String
+  workflowPattern: String
+}
+
+input JiraSettingsInput {
+  addIssuesEnabled: Boolean
+  host: String
+  username: String
+  password: String
+}
+
+input ServiceSettingsInput {
+  name: String!
+  path: String
+}
+
+input EnvironmentSettingsInput {
+  name: String!
+  queue: String!
+  url: String
+  requireApproval: Boolean!
+  requireBranchUpToDate: Boolean!
+  automationTest: AutomationTestSettingsInput
+  excludeFromRollback: [String!]
+}
+
+input AutomationTestSettingsInput {
   enabled: Boolean
   workflow: String
   inputs: Any
+}
+
+input SlackWebHooksSettingsInput {
+  deployUrl: String
+  releaseUrl: String
+}
+
+input BadgeStatusColorsSettingsInput {
+  error: String
+  warn: String
+  success: String
+  info: String
 }

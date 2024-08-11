@@ -3,7 +3,7 @@ import { WorkflowRun } from '@octokit/webhooks-types';
 import { Octokit } from '@octokit/rest';
 import { TemplateService } from './template-service';
 import { LogService } from './log-service';
-import { PullRequest, RepoSettings, ServiceState } from '@src/models';
+import { PullRequest, DeploySettings, ServiceState } from '@src/models';
 import { SlackService } from './slack-service';
 import { CheckService } from './check-service';
 import cache from 'memory-cache';
@@ -33,7 +33,7 @@ export class StatusService {
     private _slackService: SlackService,
     private _checkService: CheckService,
     private _deployStateService: DeployStateService,
-    private _settings: RepoSettings,
+    private _settings: DeploySettings,
     private _pullRequestService: PullRequestService,
     private _environmentUtil: EnvironmentUtil,
     private _log: LogService
@@ -116,7 +116,7 @@ export class StatusService {
         isRollback
       });
 
-      await this._slackService.postMessage('deploy', json);
+      await this._slackService.postMessage('deployUrl', json);
 
       // Send release message when it is for a release environment.
       if (environment.toLocaleLowerCase() === this._settings.releaseEnvironment.toLowerCase()) {
@@ -137,7 +137,7 @@ export class StatusService {
             builds: orderedBuilds,
             isRollback
           });
-          await this._slackService.postMessage('release', json);
+          await this._slackService.postMessage('releaseUrl', json);
           cache.put(cacheKey, true, StatusService.PostReleaseMessageDelay, (key: string) => {
             this._log.debug(`Release ${key} removed from cache.`);
           });
@@ -196,7 +196,7 @@ export class StatusService {
           isRollback
         });
 
-        await this._slackService.postMessage('deploy', slackBody);
+        await this._slackService.postMessage('deployUrl', slackBody);
       }
     } else {
       this._log.warn(`No deploy environment found for ${environment}.`);

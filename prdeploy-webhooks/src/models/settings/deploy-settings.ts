@@ -7,7 +7,7 @@ import { ServiceSettings } from './service-settings';
 import { JiraSettings } from './jira-settings';
 
 @scoped(Lifecycle.ContainerScoped)
-export class RepoSettings {
+export class DeploySettings {
   owner: string;
   repo: string;
   deployWorkflow: string;
@@ -16,10 +16,9 @@ export class RepoSettings {
   defaultEnvironment: string;
   releaseEnvironment: string;
   defaultBranch: string;
-  settingsBranch: string;
   jira: JiraSettings;
   builds: BuildsSettings;
   slack: SlackSettings;
-  deployManagerSiteUrl: string;
+  prdeployPortalUrl: string;
   badge: BadgeSettings;
 }

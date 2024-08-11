@@ -1,4 +1,4 @@
-import { EnvironmentSettings, RepoSettings } from '@src/models';
+import { EnvironmentSettings, DeploySettings } from '@src/models';
 import { Lifecycle, scoped } from 'tsyringe';
 
 @scoped(Lifecycle.ContainerScoped)
@@ -6,7 +6,7 @@ export class EnvironmentUtil {
   private static readonly NormalizeEnvironmentRegex = /(\d+)?(-lock)?$/i;
   private static readonly EnvironmentLockRegex = /(-lock)$/i;
 
-  constructor(private _settings: RepoSettings) {}
+  constructor(private _settings: DeploySettings) {}
 
   getSettings(environment: string): EnvironmentSettings {
     const lowerEnvironment = environment.toLowerCase();

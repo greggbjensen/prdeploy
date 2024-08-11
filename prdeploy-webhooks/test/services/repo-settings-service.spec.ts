@@ -1,7 +1,7 @@
 import { SSMClient } from '@aws-sdk/client-ssm';
 import { expect } from '@jest/globals';
 import { SSM_CLIENT } from '@src/injection-tokens';
-import { RepoSettingsService } from '@src/services';
+import { DeploySettingsService } from '@src/services';
 import { ContainerHelper } from '@test/helpers';
 import { container } from 'tsyringe';
 
@@ -29,7 +29,7 @@ describe('get', () => {
   });
 
   it('gets settings from repository', async () => {
-    const service = container.resolve(RepoSettingsService);
+    const service = container.resolve(DeploySettingsService);
     const settings = await service.get();
 
     expect(settings).not.toBeFalsy();

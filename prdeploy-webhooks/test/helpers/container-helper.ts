@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS_FILE, REPOSITORY } from '@src/injection-tokens';
+import { REPOSITORY } from '@src/injection-tokens';
 import { Octokit } from '@octokit/rest';
 import { container } from 'tsyringe';
 import { RepoSettingsHelper } from './repo-settings-helper';
@@ -18,8 +18,6 @@ export class ContainerHelper {
     container.register(Octokit, {
       useValue: octokit
     });
-
-    container.register(DEFAULT_SETTINGS_FILE, { useValue: './test/settings/.test-default-prdeploy.yaml' });
 
     const repository = {
       owner: { login: 'greggbjensen' },

@@ -1,6 +1,6 @@
 import { WorkflowRun } from '@octokit/webhooks-types';
 import { Octokit } from '@octokit/rest';
-import { PullRequest, RepoSettings } from '@src/models';
+import { PullRequest, DeploySettings } from '@src/models';
 import { Lifecycle, scoped } from 'tsyringe';
 import { LogService } from './log-service';
 import _ from 'lodash';
@@ -16,7 +16,7 @@ export class PullRequestService {
   constructor(
     private _octokit: Octokit,
     private _log: LogService,
-    private _settings: RepoSettings,
+    private _settings: DeploySettings,
     private _environmentUtil: EnvironmentUtil
   ) {}
 
