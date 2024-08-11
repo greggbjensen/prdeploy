@@ -11,11 +11,7 @@ console.log('Adding app-wide registrations.');
 container.register(SSM_CLIENT, {
   useFactory: () => {
     return new SSMClient({
-      region: process.env.AWS_REGION,
-      credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-      }
+      region: process.env.AWS_REGION
     });
   }
 });
