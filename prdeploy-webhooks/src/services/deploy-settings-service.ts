@@ -159,11 +159,12 @@ export class DeploySettingsService {
       } else {
         this._log.warn(`Label does not exist yet for ${lowerEnviroment}, creating it.`);
         environment.color = this.getDefaultColor(lowerEnviroment);
+        const color = environment.color.replace(/^#/, ''); // Label colors do not include the hash for hex values.
         await this._octokit.rest.issues.createLabel({
           owner: repoSettings.owner,
           repo: repoSettings.repo,
           name: lowerEnviroment,
-          color: environment.color,
+          color,
           description: `Pull request deployed to ${lowerEnviroment} environment.`
         });
       }
@@ -172,7 +173,8 @@ export class DeploySettingsService {
       const hasLockLabel = labels.some(l => l.name.toLowerCase() === environmentLock);
       if (!hasLockLabel) {
         this._log.warn(`Label does not exist yet for ${environmentLock}, creating it.`);
-        const color = this.getDefaultColor(environmentLock);
+        let color = this.getDefaultColor(environmentLock);
+        color = environment.color.replace(/^#/, ''); // Label colors do not include the hash for hex values.
         await this._octokit.rest.issues.createLabel({
           owner: repoSettings.owner,
           repo: repoSettings.repo,
