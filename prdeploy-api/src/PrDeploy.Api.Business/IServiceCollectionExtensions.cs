@@ -15,6 +15,8 @@ using PrDeploy.Api.Business.Security.Interfaces;
 using PrDeploy.Api.Business.Stores;
 using PrDeploy.Api.Business.Stores.Interfaces;
 using Amazon.SecurityToken;
+using PrDeploy.Api.Business.Auth;
+using PrDeploy.Api.Business.Auth.Interfaces;
 
 namespace PrDeploy.Api.Business;
 
@@ -27,6 +29,7 @@ public static class IServiceCollectionExtensions
 
             // GitHub.
             .Configure<GitHubAuthOptions>(configuration.GetSection("GitHubAuth"))
+            .Configure<JwtOptions>(configuration.GetSection("Jwt"))
             .AddScoped<IRestClientInstance<GitHubAuthOptions>>(s =>
             {
                 var options = s.GetRequiredService<IOptions<GitHubAuthOptions>>();
@@ -55,7 +58,8 @@ public static class IServiceCollectionExtensions
             .AddScoped<IDeploySettingsService, DeploySettingsService>()
             .AddScoped<IOwnerRepoService, OwnerRepoService>()
             .AddScoped<IGitHubAuthClient, GitHubAuthClient>()
-            .AddScoped<IGitHubSecurity, GitHubSecurity>();
+            .AddScoped<IGitHubSecurity, GitHubSecurity>()
+            .AddScoped<ICipherService, CipherService>();
 
         return services;
     }

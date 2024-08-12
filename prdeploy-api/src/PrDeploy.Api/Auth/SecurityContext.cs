@@ -1,4 +1,5 @@
-﻿using PrDeploy.Api.Business.Auth.Interfaces;
+﻿using PrDeploy.Api.Business.Auth;
+using PrDeploy.Api.Business.Auth.Interfaces;
 
 namespace PrDeploy.Api.Auth
 {
@@ -19,7 +20,7 @@ namespace PrDeploy.Api.Auth
                     return string.Empty;
                 }
 
-                var tokenClaim = _httpContextAccessor.HttpContext.User.FindFirst("Token");
+                var tokenClaim = _httpContextAccessor.HttpContext.User.FindFirst(PrDeployClaimNames.GitHubToken);
                 return tokenClaim != null ? tokenClaim.Value : string.Empty;
             }
         }

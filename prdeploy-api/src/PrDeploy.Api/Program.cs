@@ -5,6 +5,7 @@ using PrDeploy.Api.Options;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.IdentityModel.Tokens;
 using PrDeploy.Api.Auth;
 using PrDeploy.Api.Builder;
 using PrDeploy.Api.Business.Clients.Interfaces;
@@ -39,7 +40,9 @@ try
         .AddPrDeployApi(new DeployApiOptions())
         .AddPrDeployApiBusiness(configuration)
         .AddPrDeployApiModelValidation()
-        .AddGitHubAuthentication(options => configuration.Bind("GitHubAuth", options))
+        .AddGitHubAuthentication(
+            options => configuration.Bind("GitHubAuth", options), 
+            options => configuration.Bind("Jwt", options))
         .AddAuthorization(options =>
         {
             options.DefaultPolicy = new AuthorizationPolicyBuilder()

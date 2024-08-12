@@ -1,4 +1,6 @@
-﻿using System.Security.Claims;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
@@ -8,26 +10,37 @@ namespace PrDeploy.Api.Auth
 {
     public static class AuthenticationExtensions
     {
-        public static IServiceCollection AddGitHubAuthentication(this IServiceCollection services, Action<GitHubAuthOptions> configure)
+        public static IServiceCollection AddGitHubAuthentication(this IServiceCollection services, 
+            Action<GitHubAuthOptions> configureGitHub, Action<JwtOptions> configureJwt)
         {
             var gitHubAuthOptions = new GitHubAuthOptions();
-            configure(gitHubAuthOptions);
+            configureGitHub(gitHubAuthOptions);
 
-            if (string.IsNullOrWhiteSpace(gitHubAuthOptions.Authority))
-            {
-                throw new ArgumentException("GitHubAuth.Authority is required in options.");
-            }
-
-            if (string.IsNullOrWhiteSpace(gitHubAuthOptions.Audience))
-            {
-                throw new ArgumentException("GitHubAuth.Audience is required in options.");
-            }
+            var jwtOptions = new JwtOptions();
+            configureJwt(jwtOptions);
 
             services
-                .AddAuthentication(GitHubAuthenticationSchemeOptions.SchemeName)
-                .AddScheme<GitHubAuthenticationSchemeOptions, GitHubAuthenticationHandler>(
-                    GitHubAuthenticationSchemeOptions.SchemeName, _ =>
+                .AddAuthentication(options =>
                 {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                }).AddScheme<JwtBearerOptions, GitHubAuthenticationHandler>(
+                    JwtBearerDefaults.AuthenticationScheme, 
+                    o =>
+                {
+                    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key));
+                    o.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = jwtOptions.Issuer,
+                        ValidAudience = jwtOptions.Audience,
+                        IssuerSigningKey = securityKey,
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = false,
+                        ValidateIssuerSigningKey = true,
+                        NameClaimType = JwtRegisteredClaimNames.Sub
+                    };
                 });
 
             return services;
