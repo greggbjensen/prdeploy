@@ -2,54 +2,57 @@
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
+using PrDeploy.Api.Business.Auth;
+using PrDeploy.Api.Business.Auth.Interfaces;
 
 namespace PrDeploy.Api.Auth
 {
-    public class GitHubAuthenticationHandler : AuthenticationHandler<GitHubAuthenticationSchemeOptions>
+    public class GitHubAuthenticationHandler : JwtBearerHandler
     {
+        private readonly ICipherService _cipherService;
+
         public GitHubAuthenticationHandler(
-            IOptionsMonitor<GitHubAuthenticationSchemeOptions> options, 
+            IOptionsMonitor<JwtBearerOptions> options, 
             ILoggerFactory logger, 
             UrlEncoder encoder,
-            ISystemClock clock)
+            ISystemClock clock, 
+            ICipherService cipherService)
             : base(options, logger, encoder, clock)
         {
+            _cipherService = cipherService;
         }
 
-        protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+        protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            var authorization = Request.Headers.Authorization;
-            if (authorization.Count == 0 || string.IsNullOrWhiteSpace(authorization[0]))
+            var result = await base.HandleAuthenticateAsync();
+            if (!result.Succeeded)
             {
-                return Task.FromResult(AuthenticateResult.Fail("Authorization header with Bearer must be provided."));
+                return result;
             }
 
-            var value = authorization[0];
-            if (!value!.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            var claim = result.Principal.FindFirst(ClaimTypes.NameIdentifier);
+            if (claim == null)
             {
-                return Task.FromResult(AuthenticateResult.Fail("Authentication value must be Bearer."));
+                return AuthenticateResult.Fail($"Required {JwtRegisteredClaimNames.Sub} not present.");
             }
 
-            var parts = value.Split(' ');
-            if (parts.Length == 1)
-            {
-                return Task.FromResult(AuthenticateResult.Fail("Authentication Bearer token is missing."));
-            }
-
-            var token = parts[1];
+            var encryptedToken = claim.Value;
+            var gitHubToken = _cipherService.Decrypt(encryptedToken);
             var claims = new List<Claim>
             {
-                new ("Token", token)
+                // This claim is only present locally.
+                new (PrDeployClaimNames.GitHubToken, gitHubToken)
             };
-            var identity = new ClaimsIdentity(claims, GitHubAuthenticationSchemeOptions.SchemeName);
+            var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
-            var ticket = new AuthenticationTicket(principal, GitHubAuthenticationSchemeOptions.SchemeName);
+            var ticket = new AuthenticationTicket(principal, JwtBearerDefaults.AuthenticationScheme);
             Context.User = principal;
             Context.Items["User"] = principal;
 
             // We only need to verify the token is present because we pass it through for auth in GitHub.
-            return Task.FromResult(AuthenticateResult.Success(ticket));
+            return AuthenticateResult.Success(ticket);
         }
     }
 }

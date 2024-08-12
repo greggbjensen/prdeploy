@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Octokit.Internal;
 using Octokit;
 using PrDeploy.Api.Auth;
@@ -59,6 +62,14 @@ public static class IServiceCollectionExtensions
                     new ProductHeaderValue("prdeploy"), new InMemoryCredentialStore(credentials));
             })
             .AddScoped<IAuthorizationHandler, GitHubRepoAuthorizationHandler>();
+
+
+            services.AddDataProtection()
+                .UseCryptographicAlgorithms(new()
+                {
+                    EncryptionAlgorithm = EncryptionAlgorithm.AES_256_GCM,
+                    ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
+                });
 
         return services;
     }

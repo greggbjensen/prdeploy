@@ -13,6 +13,7 @@
     <PackageReference Include="AWSSDK.SSO" Version="3.7.400.4" />
     <PackageReference Include="AWSSDK.SSOOIDC" Version="3.7.400.4" />
     <PackageReference Include="LinqKit.Core" Version="1.2.4" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="8.0.7" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
     <PackageReference Include="Octokit" Version="13.0.1" />

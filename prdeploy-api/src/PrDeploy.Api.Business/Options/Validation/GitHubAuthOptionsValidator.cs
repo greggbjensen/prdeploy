@@ -7,7 +7,6 @@ namespace PrDeploy.Api.Business.Options.Validation
         public GitHubAuthOptionsValidator()
         {
             RuleFor(x => x.Authority).NotEmpty();
-            RuleFor(x => x.Audience).NotEmpty();
             RuleFor(x => x.ClientId).NotEmpty();
             RuleFor(x => x.ClientSecret).NotEmpty();
         }
