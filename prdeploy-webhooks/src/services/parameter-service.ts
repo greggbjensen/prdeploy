@@ -28,7 +28,7 @@ export class ParameterService {
 
   async getAll(): Promise<Map<string, string>> {
     const parameters = new Map<string, string>();
-    await this.populateAllParameters('Org', parameters);
+    await this.populateAllParameters('Owner', parameters);
     await this.populateAllParameters('Repo', parameters);
     return parameters;
   }

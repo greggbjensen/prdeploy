@@ -2,7 +2,7 @@ export * from './jira-issue';
 export * from './octokit-rest-types';
 export * from './settings/automation-test-settings';
 export * from './settings/jira-settings';
-export * from './settings/repo-settings';
+export * from './settings/deploy-settings';
 export * from './settings/service-settings';
 export * from './settings/environments-settings';
 export * from './settings/badge-settings';

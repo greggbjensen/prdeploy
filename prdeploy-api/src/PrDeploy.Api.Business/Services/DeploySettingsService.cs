@@ -67,7 +67,7 @@ public class DeploySettingsService : IDeploySettingsService
     {
         var repoSettings = await GetMergedAsync(owner, repo);
         var result = GetEnvironment(owner, repo, environment, repoSettings);
-        return result;
+        return result!;
     }
 
     public EnvironmentSettings? GetEnvironment(string owner, string repo, string environment,

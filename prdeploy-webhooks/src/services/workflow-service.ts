@@ -1,6 +1,6 @@
 import { Lifecycle, scoped } from 'tsyringe';
 import { LogService } from './log-service';
-import { RepoSettings } from '@src/models';
+import { DeploySettings } from '@src/models';
 import { WorkflowRun } from '@octokit/webhooks-types';
 import { Octokit } from '@octokit/rest';
 
@@ -9,7 +9,7 @@ export class WorkflowService {
   constructor(
     private _octokit: Octokit,
     private _log: LogService,
-    private _settings: RepoSettings
+    private _settings: DeploySettings
   ) {}
 
   async getRun(runId: number): Promise<WorkflowRun> {

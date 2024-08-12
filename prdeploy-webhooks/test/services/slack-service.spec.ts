@@ -29,7 +29,7 @@ describe('postMessage', () => {
   it('posts message to channel', async () => {
     const service = container.resolve(SlackService);
     await service.postMessage(
-      'deploy',
+      'deployUrl',
       `{
     "blocks": [
         {

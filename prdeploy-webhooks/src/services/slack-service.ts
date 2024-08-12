@@ -1,4 +1,4 @@
-import { RepoSettings, SlackChannelTypes, SlackUser, User } from '@src/models';
+import { DeploySettings, SlackUser, SlackWebhooksSettings, User } from '@src/models';
 import slack from 'slack';
 import { Lifecycle, scoped } from 'tsyringe';
 import { LogService } from './log-service';
@@ -9,24 +9,24 @@ export class SlackService {
   private static readonly WhitespaceRegex = /\s+/;
 
   constructor(
-    private _settings: RepoSettings,
+    private _settings: DeploySettings,
     private _log: LogService
   ) {}
 
-  async postMessage(channelType: SlackChannelTypes, json: string): Promise<void> {
+  async postMessage(webhookUrlType: keyof SlackWebhooksSettings, json: string): Promise<void> {
     if (!this._settings.slack.notificationsEnabled) {
       this._log.info('Slack notifications disabled');
       return;
     }
 
-    const webhookUrl = this._settings.slack.webhooks[channelType];
+    const webhookUrl = this._settings.slack.webhooks[webhookUrlType];
     if (!webhookUrl) {
-      this._log.warn(`No ${channelType} Slack channel specified.`);
+      this._log.warn(`No ${webhookUrlType} Slack channel specified.`);
       return;
     }
 
     // TODO: PROD Waiting for approval SLACK.  COLORED logs. Fix JSON after.
-    this._log.debug(`Sending Slack message to ${channelType} channel:\n${json}`);
+    this._log.debug(`Sending Slack message to ${webhookUrlType} channel:\n${json}`);
     try {
       JSON.parse(json);
     } catch (error) {
@@ -43,9 +43,9 @@ export class SlackService {
       });
 
       const resultText = await response.text();
-      this._log.info(`Slack ${channelType} messaged posted with response (${response.status}):\n${resultText}`);
+      this._log.info(`Slack ${webhookUrlType} messaged posted with response (${response.status}):\n${resultText}`);
     } catch (error) {
-      this._log.error(`Unable to post Slack message to ${channelType}.`, error);
+      this._log.error(`Unable to post Slack message to ${webhookUrlType}.`, error);
     }
   }
 

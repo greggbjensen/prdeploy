@@ -18,7 +18,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{2D34A5F0-59EF-49CF-A898-7FE8F87B1E2B}"
 	ProjectSection(SolutionItems) = preProject
 		scripts\GraphQlScaffold.ps1 = scripts\GraphQlScaffold.ps1
-		scripts\_Supporting.ps1 = scripts\_Supporting.ps1
 	EndProjectSection
 EndProject
 Global

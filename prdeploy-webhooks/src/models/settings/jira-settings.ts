@@ -1,6 +1,6 @@
 export interface JiraSettings {
   addIssuesEnabled: boolean;
-  host: string;
-  username: string;
-  password: string;
+  host?: string;
+  username?: string;
+  password?: string;
 }

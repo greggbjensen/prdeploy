@@ -5,7 +5,7 @@ import AdmZip from 'adm-zip';
 import _ from 'lodash';
 import { LogService } from './log-service';
 import { Lifecycle, scoped } from 'tsyringe';
-import { CheckRun, EnvironmentSettings, PullRequest, RepoSettings } from '@src/models';
+import { CheckRun, EnvironmentSettings, PullRequest, DeploySettings } from '@src/models';
 import { TemplateService } from './template-service';
 import { ArrayUtil, EnvironmentUtil } from '@src/utils';
 import path from 'path';
@@ -21,7 +21,7 @@ export class CheckService {
     private _templateService: TemplateService,
     private _slackService: SlackService,
     private _pullRequestService: PullRequestService,
-    private _settings: RepoSettings,
+    private _settings: DeploySettings,
     private _environmentUtil: EnvironmentUtil,
     private _log: LogService
   ) {}
@@ -168,7 +168,7 @@ export class CheckService {
         repo: this._settings.repo,
         environment: environmentSettings,
         badge: this._settings.badge,
-        deployManagerSiteUrl: this._settings.deployManagerSiteUrl,
+        deployManagerSiteUrl: this._settings.prdeployPortalUrl,
         incompleteChecks
       });
 
@@ -217,7 +217,7 @@ export class CheckService {
           repo: this._settings.repo,
           environment: environmentSettings,
           badge: this._settings.badge,
-          deployManagerSiteUrl: this._settings.deployManagerSiteUrl
+          deployManagerSiteUrl: this._settings.prdeployPortalUrl
         });
 
         await this._octokit.rest.issues.createComment({
@@ -240,7 +240,7 @@ export class CheckService {
           slackUser
         });
 
-        await this._slackService.postMessage('deploy', slackBody);
+        await this._slackService.postMessage('deployUrl', slackBody);
       }
     }
 
@@ -268,7 +268,7 @@ export class CheckService {
       repo: this._settings.repo,
       environment: environmentSettings,
       badge: this._settings.badge,
-      deployManagerSiteUrl: this._settings.deployManagerSiteUrl,
+      deployManagerSiteUrl: this._settings.prdeployPortalUrl,
       updateMessage
     });
 

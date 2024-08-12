@@ -1,4 +1,4 @@
-import { PullRequest, RepoSettings, WorkflowInputs } from '@src/models';
+import { PullRequest, DeploySettings, WorkflowInputs } from '@src/models';
 import { WorkflowRun } from '@octokit/webhooks-types';
 import { EnvironmentUtil } from '@src/utils';
 import { Octokit } from '@octokit/rest';
@@ -15,7 +15,7 @@ export class AutomationTestService {
     private _pullRequestService: PullRequestService,
     private _environmentUtil: EnvironmentUtil,
     private _octokit: Octokit,
-    private _settings: RepoSettings,
+    private _settings: DeploySettings,
     private _log: LogService
   ) {}
 

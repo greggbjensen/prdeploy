@@ -59,6 +59,7 @@
     "lodash": "^4.17.21",
     "memory-cache": "^0.2.0",
     "octokit": "^3.2.1",
+    "prdeploy": "file:",
     "reflect-metadata": "^0.2.2",
     "slack": "^11.0.2",
     "slackify-markdown": "github:greggbjensen/slackify-markdown#html-tag-handling",

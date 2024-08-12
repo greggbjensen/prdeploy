@@ -1,7 +1,7 @@
 import { Lifecycle, scoped } from 'tsyringe';
 import { WorkflowRun } from '@octokit/webhooks-types';
 import { DeployService, LogService, PullRequestService, StatusService } from '@src/services';
-import { RepoSettings, PullRequest } from '@src/models';
+import { DeploySettings, PullRequest } from '@src/models';
 import path from 'path';
 import { AutomationTestService } from '@src/services/automation-test-service';
 import _ from 'lodash';
@@ -16,7 +16,7 @@ export class StatusManager {
     private _automationTestService: AutomationTestService,
     private _workflowService: WorkflowService,
     private _logService: LogService,
-    private _settings: RepoSettings
+    private _settings: DeploySettings
   ) {}
 
   async processWorkflowRun(run: WorkflowRun | any, action: string): Promise<void> {

@@ -1,5 +1,5 @@
 import { Repository } from '@octokit/webhooks-types';
-import { PullRequest, RepoSettings, ServiceState } from '@src/models';
+import { PullRequest, DeploySettings, ServiceState } from '@src/models';
 import { Lifecycle, inject, scoped } from 'tsyringe';
 import { LogService } from './log-service';
 import { Octokit } from '@octokit/rest';
@@ -24,7 +24,7 @@ export class DeployService {
     private _pullRequestService: PullRequestService,
     private _deployStateService: DeployStateService,
     private _log: LogService,
-    private _settings: RepoSettings,
+    private _settings: DeploySettings,
     private _environmentUtil: EnvironmentUtil,
     @inject(REPOSITORY) private _repository: Repository
   ) {}
@@ -43,7 +43,7 @@ export class DeployService {
           repo: this._settings.repo,
           environment: environmentSettings,
           badge: this._settings.badge,
-          deployManagerSiteUrl: this._settings.deployManagerSiteUrl
+          deployManagerSiteUrl: this._settings.prdeployPortalUrl
         });
 
         await this._octokit.rest.issues.createComment({
@@ -299,7 +299,7 @@ export class DeployService {
       normalizedEnvironment,
       queuePullNumbers,
       this._repository.html_url,
-      this._settings.deployManagerSiteUrl
+      this._settings.prdeployPortalUrl
     );
 
     const environmentSettings = this._environmentUtil.getSettings(normalizedEnvironment);
@@ -307,7 +307,7 @@ export class DeployService {
       owner: this._settings.owner,
       repo: this._settings.repo,
       environment: environmentSettings,
-      deployManagerSiteUrl: this._settings.deployManagerSiteUrl,
+      deployManagerSiteUrl: this._settings.prdeployPortalUrl,
       queuePosition,
       queueTable,
       alreadyInQueue
@@ -555,7 +555,7 @@ export class DeployService {
       slackUser
     });
 
-    await this._slackService.postMessage('deploy', json);
+    await this._slackService.postMessage('deployUrl', json);
   }
 
   private async addCommentReaction(
@@ -651,7 +651,7 @@ export class DeployService {
       environment: environmentSettings,
       takenMessage
     });
-    await this._slackService.postMessage('deploy', json);
+    await this._slackService.postMessage('deployUrl', json);
   }
 
   private async getQueuePullNumbers(normalizedEnvironment: string): Promise<number[]> {

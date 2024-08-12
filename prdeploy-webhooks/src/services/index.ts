@@ -2,7 +2,7 @@ export * from './jira-service';
 export * from './pull-request-service';
 export * from './template-service';
 export * from './log-service';
-export * from './repo-settings-service';
+export * from './deploy-settings-service';
 export * from './deploy-service';
 export * from './deploy-state-service';
 export * from './slack-service';

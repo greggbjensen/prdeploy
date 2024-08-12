@@ -14,6 +14,7 @@ using PrDeploy.Api.Business.Security;
 using PrDeploy.Api.Business.Security.Interfaces;
 using PrDeploy.Api.Business.Stores;
 using PrDeploy.Api.Business.Stores.Interfaces;
+using Amazon.SecurityToken;
 
 namespace PrDeploy.Api.Business;
 
@@ -23,7 +24,8 @@ public static class IServiceCollectionExtensions
     {
 
         services
-            .Configure<AwsOptions>(configuration.GetSection("Aws"))
+
+            // GitHub.
             .Configure<GitHubAuthOptions>(configuration.GetSection("GitHubAuth"))
             .AddScoped<IRestClientInstance<GitHubAuthOptions>>(s =>
             {
@@ -34,13 +36,13 @@ public static class IServiceCollectionExtensions
                     RestClient = new RestClient(new RestClientOptions(options.Value.Authority))
                 };
             })
-            .AddScoped<IAmazonSimpleSystemsManagement>(s =>
-            {
-                var options = s.GetRequiredService<IOptions<AwsOptions>>().Value;
-                var credentials = new BasicAWSCredentials(options.AccessKeyId, options.SecretAccessKey);
-                return new AmazonSimpleSystemsManagementClient(credentials, RegionEndpoint.GetBySystemName(options.Region));
-            })
 
+            // AWS.
+            .AddDefaultAWSOptions(configuration.GetAWSOptions())
+            .AddAWSService<IAmazonSecurityTokenService>()
+            .AddAWSService<IAmazonSimpleSystemsManagement>()
+
+            // Cache.
             .AddMemoryCache()
 
             // Stores.

@@ -10,7 +10,6 @@ services:
       - '3000:3000'
     environment:
       PRIVATE_KEY_PATH: '/app/gh_app_key.pem'
-      DEFAULT_SETTINGS_FILE: '/app/settings/.default-prdeploy.yaml'
     volumes:
       - ./gh-app-key-local.pem:/app/gh_app_key.pem
       - ./.env:/app/.env

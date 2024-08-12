@@ -6,9 +6,7 @@ import { SSM_CLIENT } from '@src/injection-tokens';
 import { ContainerHelper } from '@test/helpers';
 
 // Allow test to switch between integration and mocks.
-const useMocks =
-  !(process.env.AWS_REGION && process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) ||
-  process.env.USE_MOCKS === 'true';
+const useMocks = !process.env.AWS_REGION || process.env.USE_MOCKS === 'true';
 
 beforeEach(async () => {
   await ContainerHelper.registerDefaults(!useMocks);
@@ -17,11 +15,7 @@ beforeEach(async () => {
     container.register(SSM_CLIENT, {
       useFactory: () => {
         return new SSMClient({
-          region: process.env.AWS_REGION,
-          credentials: {
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-          }
+          region: process.env.AWS_REGION
         });
       }
     });
