@@ -5,15 +5,15 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 ARG VERSION=1.0.0
 WORKDIR /src
-COPY ["prdeploy-api/nuget.config", "prdeploy-api/"]
-COPY ["prdeploy-api/src/PrDeploy.Api/PrDeploy.Api.csproj", "prdeploy-api/src/PrDeploy.Api/"]
-COPY ["prdeploy-api/src/PrDeploy.Api.Business/PrDeploy.Api.Business.csproj", "prdeploy-api/src/PrDeploy.Api.Business/"]
-COPY ["prdeploy-api/src/PrDeploy.Api.Models/PrDeploy.Api.Models.csproj", "prdeploy-api/src/PrDeploy.Api.Models/"]
+COPY ["nuget.config", "."]
+COPY ["src/PrDeploy.Api/PrDeploy.Api.csproj", "src/PrDeploy.Api/"]
+COPY ["src/PrDeploy.Api.Business/PrDeploy.Api.Business.csproj", "src/PrDeploy.Api.Business/"]
+COPY ["src/PrDeploy.Api.Models/PrDeploy.Api.Models.csproj", "src/PrDeploy.Api.Models/"]
 
-RUN dotnet restore "prdeploy-api/src/PrDeploy.Api/PrDeploy.Api.csproj" -r linux-x64 -p:Version=$VERSION -p:PublishReadyToRun=true
+RUN dotnet restore "src/PrDeploy.Api/PrDeploy.Api.csproj" -r linux-x64 -p:Version=$VERSION -p:PublishReadyToRun=true
 
-COPY "prdeploy-api" "prdeploy-api"
-WORKDIR "/src/prdeploy-api/src/PrDeploy.Api"
+COPY . .
+WORKDIR "/src/src/PrDeploy.Api"
 RUN dotnet build "PrDeploy.Api.csproj" --no-restore -c Release -r linux-x64 --no-self-contained -p:Version=$VERSION -p:PublishReadyToRun=true
 
 FROM build AS publish

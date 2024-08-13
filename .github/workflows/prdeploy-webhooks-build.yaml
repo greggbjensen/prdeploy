@@ -51,4 +51,4 @@ jobs:
           push: ${{ github.event_name == 'release' && github.event.action == 'created' }}
           tags: ${{ (github.event_name == 'release' && github.release.tag_name) && format('greggbjensen/prdeploy-webhooks:latest, greggbjensen/prdeploy-webhooks:{0}', github.release.tag_name) || 'greggbjensen/prdeploy-webhooks:temp' }}
           file: prdeploy-webhooks/Dockerfile
-          context: .
+          context: prdeploy-webhooks

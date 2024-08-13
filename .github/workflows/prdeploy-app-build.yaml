@@ -51,4 +51,4 @@ jobs:
           push: ${{ github.event_name == 'release' && github.event.action == 'created' }}
           tags: ${{ (github.event_name == 'release' && github.release.tag_name) && format('greggbjensen/prdeploy-app:latest, greggbjensen/prdeploy-app:{0}', github.release.tag_name) || 'greggbjensen/prdeploy-app:temp' }}
           file: prdeploy-app/Dockerfile
-          context: .
+          context: prdeploy-app
