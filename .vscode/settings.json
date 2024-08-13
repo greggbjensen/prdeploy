@@ -15,6 +15,9 @@
     "[yml]": {
         "editor.tabSize": 2
     },
+    "[csharp]": {
+      "editor.tabSize": 2
+    },
     "editor.detectIndentation": false,
     "editor.indentSize": "tabSize",
     "jest.runMode": "deferred",
@@ -23,5 +26,6 @@
       "**/dist": true,
       "**/package-lock.json": true
     },
-    "files.eol": "\n"
+    "files.eol": "\n",
+    "editor.tabSize": 2
   }
