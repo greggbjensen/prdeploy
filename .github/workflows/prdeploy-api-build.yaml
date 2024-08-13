@@ -12,9 +12,6 @@ on:
     paths:
       - prdeploy-api/**
       - .github/workflows/prdeploy-api-build.yaml
-  push:        # TODO: Remove after testing.
-    branches:
-      - docker-builds
   release:
     types:
       - created
