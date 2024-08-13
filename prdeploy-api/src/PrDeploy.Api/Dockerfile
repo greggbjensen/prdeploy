@@ -9,7 +9,6 @@ COPY ["prdeploy-api/nuget.config", "prdeploy-api/"]
 COPY ["prdeploy-api/src/PrDeploy.Api/PrDeploy.Api.csproj", "prdeploy-api/src/PrDeploy.Api/"]
 COPY ["prdeploy-api/src/PrDeploy.Api.Business/PrDeploy.Api.Business.csproj", "prdeploy-api/src/PrDeploy.Api.Business/"]
 COPY ["prdeploy-api/src/PrDeploy.Api.Models/PrDeploy.Api.Models.csproj", "prdeploy-api/src/PrDeploy.Api.Models/"]
-COPY [".nuget/packages", ".nuget/packages"]
 
 RUN dotnet restore "prdeploy-api/src/PrDeploy.Api/PrDeploy.Api.csproj" -r linux-x64 -p:Version=$VERSION -p:PublishReadyToRun=true
 
