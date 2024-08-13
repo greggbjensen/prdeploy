@@ -9,10 +9,12 @@ on:
       - ready_for_review
     branches:
       - main
-      - docker-builds # TODO: Remove after testing.
     paths:
       - prdeploy-api/**
       - .github/workflows/prdeploy-api-build.yaml
+  push:        # TODO: Remove after testing.
+    branches:
+      - docker-builds
   release:
     types:
       - created
