@@ -50,6 +50,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-          tags: ${{ fromJson((github.event_name == 'release' && github.release.tag_name) && format('["greggbjensen/prdeploy-api:latest", "greggbjensen/prdeploy-api:{0}"]', github.release.tag_name) ||  '["greggbjensen/prdeploy-api:test"]') }}
+          tags: ${{ (github.event_name == 'release' && github.release.tag_name) && format('greggbjensen/prdeploy-api:latest, greggbjensen/prdeploy-api:{0}', github.release.tag_name) || 'greggbjensen/prdeploy-api:test' }}
           file: prdeploy-api/src/PrDeploy.Api/Dockerfile
           context: prdeploy-api
