@@ -3,7 +3,7 @@ EXPOSE 80
 
 FROM node:18 as build
 WORKDIR /src
-COPY ["package.json", "package-lock.json", ".npmrc", "./"]
+COPY ["package.json", "package-lock.json", ".nvmrc", "./"]
 RUN npm ci
 COPY . .
 RUN npm run build
