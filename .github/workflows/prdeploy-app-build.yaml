@@ -1,4 +1,4 @@
-name: prdeploy-api - Build
+name: prdeploy-app - Build
 
 on:
   pull_request:
@@ -10,8 +10,8 @@ on:
     branches:
       - main
     paths:
-      - prdeploy-api/**
-      - .github/workflows/prdeploy-api-build.yaml
+      - prdeploy-app/**
+      - .github/workflows/prdeploy-app-build.yaml
   push:        # TODO: Remove after testing.
     branches:
       - docker-builds
@@ -34,7 +34,7 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
         with:
-          sparse-checkout: prdeploy-api
+          sparse-checkout: prdeploy-app
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -49,6 +49,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-          tags: ${{ (github.event_name == 'release' && github.release.tag_name) && format('greggbjensen/prdeploy-api:latest, greggbjensen/prdeploy-api:{0}', github.release.tag_name) || 'greggbjensen/prdeploy-api:temp' }}
-          file: prdeploy-api/Dockerfile
+          tags: ${{ (github.event_name == 'release' && github.release.tag_name) && format('greggbjensen/prdeploy-app:latest, greggbjensen/prdeploy-app:{0}', github.release.tag_name) || 'greggbjensen/prdeploy-app:temp' }}
+          file: prdeploy-app/Dockerfile
           context: .
