@@ -1,0 +1,26 @@
+name: prdeploy-api - build
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+    branches:
+      - main
+    paths:
+      - prdeploy-api/**
+      - .github/workflows/prdeploy-api-build.yaml
+  release:
+    types:
+      - created
+  workflow_dispatch:
+
+jobs:
+  ci:
+    name: CI
+    uses: ./.github/workflows/_container-build.yaml
+    secrets: inherit
+    with:
+      service_name: prdeploy-api
