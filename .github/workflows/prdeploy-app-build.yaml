@@ -1,4 +1,4 @@
-name: prdeploy-app - Build
+name: prdeploy-app - build
 
 on:
   pull_request:

@@ -1,4 +1,4 @@
-name: "[Subworkflow] Build Image"
+name: "[Subworkflow] Container build"
 
 on:
   workflow_call:

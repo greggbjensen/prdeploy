@@ -1,4 +1,4 @@
-name: prdeploy-webhooks - Build
+name: prdeploy-webhooks - build
 
 on:
   pull_request:

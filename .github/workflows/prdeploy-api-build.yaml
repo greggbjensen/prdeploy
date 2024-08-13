@@ -1,4 +1,4 @@
-name: prdeploy-api - Build
+name: prdeploy-api - build
 
 on:
   pull_request:
