@@ -1,22 +1,29 @@
 
 
 global:
+  nameOverride: ""
+  fullnameOverride: "prdeploy"
+  ingress:
+    host: localhost:4301
+    tls:
+      secretName: prdeploy-tls
+  aws:
+    region: us-west-2
   image:
     registry: greggbjensen
   serviceAccounts:
     backend:  # Shared by prdeploy-api and prdeploy-webhooks and needs permissions to AWS Parameter Store.
       create: true
       automount: true
-      annotations: {}
+      annotations:
+        eks.amazonaws.com/role-arn: ''
       name: "prdeploy-backend"
     frontend:
       create: true
       automount: true
-      annotations: {}
+      annotations:
+        eks.amazonaws.com/role-arn: ''
       name: "prdeploy-frontend"
-
-nameOverride: ""
-fullnameOverride: ""
 
 ingress:
   enabled: true
@@ -24,8 +31,6 @@ ingress:
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: localhost:4301
   paths:
     - path: /
       pathType: Prefix
@@ -39,7 +44,3 @@ ingress:
       pathType: Prefix
       service: prdeploy-webhoooks
       port: 80
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local

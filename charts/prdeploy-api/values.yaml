@@ -1,0 +1,70 @@
+global:
+  nameOverride: ""
+  fullnameOverride: "prdeploy"
+  ingress:
+    host: localhost:4301
+    tls:
+      secretName: prdeploy-tls
+  aws:
+    region: us-west-2
+  image:
+    registry: greggbjensen
+  serviceAccounts:
+    backend:  # Shared by prdeploy-api and prdeploy-webhooks and needs permissions to AWS Parameter Store.
+      create: true
+      automount: true
+      annotations: {}
+      name: "prdeploy-backend"
+
+aspnetcore_environment: production
+
+externalSecrets:
+  GitHubAuth__ClientId: /prdeploy/GitHubAuth__ClientId
+  GitHubAuth__ClientSecret: /prdeploy/GitHubAuth__ClientSecret
+  Jwt__Key: /prdeploy/Jwt__Key
+  Jwt__TokenEncryptionKey: /prdeploy/Jwt__TokenEncryptionKey
+
+replicaCount: 1
+
+image:
+  repository: prdeploy-api
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 512Mi
+  requests:
+    cpu: 300m
+    memory: 256Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

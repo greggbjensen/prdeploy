@@ -1,6 +1,6 @@
 apiVersion: v2
-name: prdeploy
-description: GitHub App that allows the entire build-deploy lifecycle to happen within a feature branch.
+name: prdeploy-api
+description: API to retrieve and update GitHub deployments and queues.
 icon: https://prdeploy.readthedocs.io/en/latest/assets/images/logo-large.png
 type: application
 version: 1.0.0
