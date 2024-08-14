@@ -1,0 +1,6 @@
+apiVersion: v2
+name: prdeploy
+description: GitHub App that allows the entire build-deploy lifecycle to happen within a feature branch.
+type: application
+version: 0.1.0
+appVersion: "1.16.0"

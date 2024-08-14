@@ -1,0 +1,45 @@
+
+
+global:
+  image:
+    registry: greggbjensen
+  serviceAccounts:
+    backend:  # Shared by prdeploy-api and prdeploy-webhooks and needs permissions to AWS Parameter Store.
+      create: true
+      automount: true
+      annotations: {}
+      name: "prdeploy-backend"
+    frontend:
+      create: true
+      automount: true
+      annotations: {}
+      name: "prdeploy-frontend"
+
+nameOverride: ""
+fullnameOverride: ""
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: localhost:4301
+  paths:
+    - path: /
+      pathType: Prefix
+      service: prdeploy-app
+      port: 80
+    - path: /api
+      pathType: Prefix
+      service: prdeploy-api
+      port: 80
+    - path: /webhooks
+      pathType: Prefix
+      service: prdeploy-webhoooks
+      port: 80
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
