@@ -51,7 +51,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-Create the name of the service account to use
+Create the name of the secure service account to use with parameter store access.
 */}}
 {{- define "prdeploy.serviceAccounts.backend" -}}
 {{- if .Values.global.serviceAccounts.backend.create }}
@@ -60,3 +60,15 @@ Create the name of the service account to use
 {{- default "default" .Values.global.serviceAccounts.backend.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Create the name of the limited service account to use for the web app.
+*/}}
+{{- define "prdeploy.serviceAccounts.frontend" -}}
+{{- if .Values.global.serviceAccounts.frontend.create }}
+{{- default (include "prdeploy.fullname" .) .Values.global.serviceAccounts.frontend.name }}
+{{- else }}
+{{- default "default" .Values.global.serviceAccounts.frontend.name }}
+{{- end }}
+{{- end }}
+
