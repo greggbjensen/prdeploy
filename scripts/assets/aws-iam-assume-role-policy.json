@@ -9,7 +9,7 @@
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
         "StringEquals": {
-          "oidc.eks.{{AWS_REGION}}.amazonaws.com:sub": "system:serviceaccount:prdeploy:mcm-api-import"
+          "oidc.eks.{{AWS_REGION}}.amazonaws.com:sub": "system:serviceaccount:prdeploy:prdeploy-backend"
         }
       }
     }
