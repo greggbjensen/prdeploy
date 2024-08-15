@@ -1,1 +1,1 @@
-The prdeploy-api is installed and running at {{ include "prdeploy.url" . }}
+The prdeploy-app is installed and running at {{ include "prdeploy.url" . }}

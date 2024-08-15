@@ -52,24 +52,22 @@ jobs:
               --create-namespace \
               --set installCRDs=true
 
-          chartFiles=$(find charts -name "Chart.yaml" -print0 | xargs -0 realpath)
+          chartFiles=("charts/prdeploy-api", "charts/prdeploy-app", "charts/prdeploy-webhooks", "charts/prdeploy")
 
           mkdir helm-charts
           cd helm-charts
 
-          for chartFile in $chartFiles
-          do
-              chart=$(dirname $chartFile)
-              name=$(basename chart)
+          for chartFile in ${chartFiles[@]}; do
+            echo "**Building chart $chartFile **"
+            chart=$(dirname $chartFile)
+            name=$(basename chart)
 
-              sed -i "s/^\(app\)\?\(\s*[Vv]ersion:\s*\).\+/\1\2""$VERSION""/" $chartFile
+            sed -i "s/^\(app\)\?\(\s*[Vv]ersion:\s*\).\+/\1\2""$VERSION""/" $chartFile
 
-              cat $chartFile
-
-              helm dependency update $chart
-              helm lint $chart
-              helm install $name $chart --dry-run --debug
-              helm package $chart  # Packages files to helm-charts.
+            helm dependency update $chart
+            helm lint $chart
+            helm install $name $chart --dry-run --debug
+            helm package $chart  # Packages files to helm-charts.
           done
 
       - name: Push Helm charts
