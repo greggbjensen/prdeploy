@@ -1,1 +1,1 @@
-The prdeploy-webhooks aPI is running at {{- include "prdeploy.url" . }}/webhooks
+The prdeploy-webhooks is installed and running at {{ include "prdeploy.url" . }}/webhooks
