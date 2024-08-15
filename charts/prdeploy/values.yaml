@@ -4,8 +4,9 @@ global:
   nameOverride: ""
   fullnameOverride: "prdeploy"
   ingress:
-    host: localhost:4301
+    host: localhost
     tls:
+      enabled: true
       secretName: prdeploy-tls
   aws:
     region: us-west-2
@@ -21,8 +22,6 @@ global:
     frontend:
       create: true
       automount: true
-      annotations:
-        eks.amazonaws.com/role-arn: ''
       name: "prdeploy-frontend"
 
 ingress:
@@ -43,3 +42,12 @@ ingress:
       pathType: Prefix
       service: prdeploy-webhooks
       port: 80
+
+prdeploy-api:
+  fullnameOverride: prdeploy-api
+
+prdeploy-app:
+  fullnameOverride: prdeploy-app
+
+prdeploy-webhooks:
+  fullnameOverride: prdeploy-webhooks
