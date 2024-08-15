@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "prdeploy-api.name" -}}
+{{- define "prdeploy-app.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "prdeploy-api.fullname" -}}
+{{- define "prdeploy-app.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -44,7 +44,7 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create a fully qualified image name, including the registry if one is set.
 */}}
-{{- define "prdeploy-api.image" -}}
+{{- define "prdeploy-app.image" -}}
 {{- if .Values.global.image.registry }}
 {{- .Values.global.image.registry }}/
 {{- end }}
@@ -54,16 +54,16 @@ Create a fully qualified image name, including the registry if one is set.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "prdeploy-api.chart" -}}
+{{- define "prdeploy-app.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "prdeploy-api.labels" -}}
-helm.sh/chart: {{ include "prdeploy-api.chart" . }}
-{{ include "prdeploy-api.selectorLabels" . }}
+{{- define "prdeploy-app.labels" -}}
+helm.sh/chart: {{ include "prdeploy-app.chart" . }}
+{{ include "prdeploy-app.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -73,19 +73,19 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "prdeploy-api.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "prdeploy-api.name" . }}
+{{- define "prdeploy-app.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "prdeploy-app.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "prdeploy-api.serviceAccountName" -}}
-{{- if .Values.global.serviceAccounts.backend.create }}
-{{- default (include "prdeploy.fullname" .) .Values.global.serviceAccounts.backend.name }}
+{{- define "prdeploy-app.serviceAccountName" -}}
+{{- if .Values.global.serviceAccounts.frontend.create }}
+{{- default (include "prdeploy.fullname" .) .Values.global.serviceAccounts.frontend.name }}
 {{- else }}
-{{- default "default" .Values.global.serviceAccounts.backend.name }}
+{{- default "default" .Values.global.serviceAccounts.frontend.name }}
 {{- end }}
 {{- end }}
 

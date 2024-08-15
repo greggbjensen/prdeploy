@@ -1,3 +1,7 @@
+# Default values for prdeploy-app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
 global:
   nameOverride: ""
   fullnameOverride: "prdeploy"
@@ -10,24 +14,21 @@ global:
   image:
     registry: greggbjensen
   serviceAccounts:
-    backend:
+    frontend:
       create: true
       automount: true
-      annotations: {}
-      name: "prdeploy-backend"
+      annotations:
+        eks.amazonaws.com/role-arn: ''
+      name: "prdeploy-frontend"
 
-aspnetcore_environment: production
-
-externalSecrets:
-  GitHubAuth__ClientId: /prdeploy/GitHubAuth__ClientId
-  GitHubAuth__ClientSecret: /prdeploy/GitHubAuth__ClientSecret
-  Jwt__Key: /prdeploy/Jwt__Key
-  Jwt__TokenEncryptionKey: /prdeploy/Jwt__TokenEncryptionKey
+github:
+  oauth:
+    clientId: '<GitHub Client ID>'
 
 replicaCount: 1
 
 image:
-  repository: prdeploy-api
+  repository: prdeploy-app
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
@@ -50,11 +51,11 @@ securityContext: {}
 
 resources:
   limits:
-    cpu: 1000m
-    memory: 512Mi
+    cpu: 100m
+    memory: 32Mi
   requests:
-    cpu: 300m
-    memory: 256Mi
+    cpu: 10m
+    memory: 10Mi
 
 autoscaling:
   enabled: true
@@ -68,3 +69,5 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+contentSecurityPolicy: {}

@@ -1,0 +1,79 @@
+{{- $fullName := include "prdeploy-webhooks.fullname" . -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "prdeploy-webhooks.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "prdeploy-webhooks.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        {{- with .Values.podAnnotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "prdeploy-webhooks.selectorLabels" . | nindent 8 }}
+    spec:
+      imagePullSecrets:
+        - name: shared-ecr-docker-credentials
+      serviceAccountName: {{ include "prdeploy-webhooks.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: {{ include "prdeploy-webhooks.image" . | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+            {{- if .Values.externalSecrets }}
+            - secretRef:
+                name: {{ $fullName }}-external
+            {{- end }}
+          env:
+            - name: PORT
+              value: "80"
+            - name: PRIVATE_KEY_PATH
+              value: "/app/gh_app_key.pem"
+            - name: AWS_REGION
+              value: {{ .Values.global.aws.region | quote }}
+            - name: LOG_LEVEL
+              value: {{ .Values.logging.level | quote }}
+            - name: ENABLE_OCTOKIT_LOGGING
+              value: {{ .Values.logging.enableOctokit | quote }}
+            - name: ENABLE_CONSOLE_LOGGING
+              value: {{ .Values.logging.enableConsole | quote }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+          - mountPath: /app/gh_app_key.pem
+            name: secrets
+            subPath: gh_app_key.pem
+            readOnly: true
+      volumes:
+      - name: secrets
+        secret:
+          secretName: {{ $fullName }}-external
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

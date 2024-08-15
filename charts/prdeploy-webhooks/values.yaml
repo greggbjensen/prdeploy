@@ -1,3 +1,7 @@
+# Default values for prdeploy-webhooks.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
 global:
   nameOverride: ""
   fullnameOverride: "prdeploy"
@@ -16,18 +20,20 @@ global:
       annotations: {}
       name: "prdeploy-backend"
 
-aspnetcore_environment: production
+logging:
+  level: debug
+  enableOctokit: true
+  enableConsole: true
 
 externalSecrets:
-  GitHubAuth__ClientId: /prdeploy/GitHubAuth__ClientId
-  GitHubAuth__ClientSecret: /prdeploy/GitHubAuth__ClientSecret
-  Jwt__Key: /prdeploy/Jwt__Key
-  Jwt__TokenEncryptionKey: /prdeploy/Jwt__TokenEncryptionKey
+  APP_ID: /prdeploy/APP_ID
+  WEBHOOK_SECRET: /prdeploy/WEBHOOK_SECRET
+  gh_app_key.pem: /prdeploy/gh_app_key.pem
 
 replicaCount: 1
 
 image:
-  repository: prdeploy-api
+  repository: prdeploy-webhooks
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
@@ -37,10 +43,12 @@ fullnameOverride: ""
 
 podAnnotations: {}
 
-podSecurityContext: {}
+podSecurityContext:
+  {}
   # fsGroup: 2000
 
-securityContext: {}
+securityContext:
+  {}
   # capabilities:
   #   drop:
   #   - ALL
@@ -50,14 +58,14 @@ securityContext: {}
 
 resources:
   limits:
-    cpu: 1000m
-    memory: 512Mi
-  requests:
     cpu: 300m
-    memory: 256Mi
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 64Mi
 
 autoscaling:
-  enabled: true
+  enabled: false # Do not autoscale for memory cache.
   minReplicas: 1
   maxReplicas: 10
   targetCPUUtilizationPercentage: 80
@@ -68,3 +76,5 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+contentSecurityPolicy: {}
