@@ -1,0 +1,11 @@
+prdeploy-api:
+  image:
+    tag: 1.0.0-local
+
+prdeploy-app:
+  image:
+    tag: 1.0.0-local
+
+prdeploy-webhooks:
+  image:
+    tag: 1.0.0-local

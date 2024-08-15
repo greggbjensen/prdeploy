@@ -43,3 +43,12 @@ ingress:
       pathType: Prefix
       service: prdeploy-webhooks
       port: 80
+
+prdeploy-api:
+  fullnameOverride: prdeploy-api
+
+prdeploy-app:
+  fullnameOverride: prdeploy-app
+
+prdeploy-webhooks:
+  fullnameOverride: prdeploy-webhooks

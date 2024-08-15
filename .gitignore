@@ -1,3 +1,5 @@
 site/
 .venv/
 prdeploy-api/src/PrDeploy.Api/.env
+scripts/.env
+charts/**/charts

@@ -1,11 +1,8 @@
-version: '3.4'
-
 services:
   prdeploy-api:
-    image: "${CONTAINER_REGISTRY:-prdeploy.local/}prdeploy-api:${VERSION:-1.0.0-local}"
+    image: "${CONTAINER_REGISTRY:-greggbjensen/}prdeploy-api:${VERSION:-1.0.0-local}"
     build:
-      context: ../
-      dockerfile: prdeploy-api/src/PrDeploy.Api/Dockerfile
+      context: .
       args:
         VERSION: "${VERSION:-1.0.0-local}"
     environment:
