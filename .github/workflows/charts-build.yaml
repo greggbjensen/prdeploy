@@ -1,0 +1,72 @@
+name: charts - build
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+    branches:
+      - main
+    paths:
+      - charts/**
+      - .github/workflows/charts-build.yaml
+  push:
+    branches:
+      - helm-charts
+  release:
+    types:
+      - created
+  workflow_dispatch:
+
+jobs:
+  helm:
+    name: Build
+    runs-on: ubuntu-latest
+    concurrency:
+      group: helm-${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+    env:
+      DOCKER_BUILDKIT: 1
+      HELM_EXPERIMENTAL_OCI: 1
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: charts
+
+      - name: Create kind cluster
+        uses: helm/kind-action@v1.9.0
+
+      - name: Helm lint and package
+        env:
+          VERSION: ${{ (github.event_name == 'release' && github.release.tag_name) && github.release.tag_name || 'temp' }}
+        run: |
+          chartFiles=$(find charts -name "Chart.yaml" -print0 | xargs -0 realpath)
+
+          mkdir helm-charts
+          cd helm-charts
+
+          for chartFile in $chartFiles
+          do
+              chart=$(dirname $chartFile)
+              name=$(basename chart)
+
+              sed -i "s/^\(app\)\?\([Vv]ersion:\s*\).\+/\1\2$VERSION/" $chartFile
+
+              helm dependency update $chart
+              helm lint $chart
+              helm install $name $chart --dry-run --debug
+              helm package $chart  # Packages files to helm-charts.
+          done
+
+      - name: Push Helm charts
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        run: |
+          echo ${{ secrets.DOCKERHUB_TOKEN }} | --password-stdin helm registry login registry-1.docker.io -u ${{ secrets.DOCKERHUB_USERNAME }}
+          charts=$(find ./helm-charts -maxdepth 1 -name "*.tgz")
+          for chart in $charts
+          do
+            helm push $chart oci://registry-1.docker.io/greggbjensen/charts
+          done
