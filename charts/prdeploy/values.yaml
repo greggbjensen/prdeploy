@@ -4,7 +4,7 @@ global:
   nameOverride: ""
   fullnameOverride: "prdeploy"
   ingress:
-    host: localhost:4301
+    host: localhost
     tls:
       secretName: prdeploy-tls
   aws:
