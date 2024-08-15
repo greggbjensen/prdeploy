@@ -62,7 +62,9 @@ jobs:
               chart=$(dirname $chartFile)
               name=$(basename chart)
 
-              sed -i "s/^\s*\(app\)\?\([Vv]ersion:\s*\).\+/\1\2$VERSION/" $chartFile
+              sed -i 's/^\s*\(app\)\?\([Vv]ersion:\s*\).\+/\1\2"$VERSION"/' $chartFile
+
+              cat $chartFile
 
               helm dependency update $chart
               helm lint $chart
