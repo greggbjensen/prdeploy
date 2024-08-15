@@ -1,0 +1,80 @@
+# Default values for prdeploy-webhooks.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  nameOverride: ""
+  fullnameOverride: "prdeploy"
+  ingress:
+    host: localhost:4301
+    tls:
+      secretName: prdeploy-tls
+  aws:
+    region: us-west-2
+  image:
+    registry: greggbjensen
+  serviceAccounts:
+    backend:
+      create: true
+      automount: true
+      annotations: {}
+      name: "prdeploy-backend"
+
+logging:
+  level: debug
+  enableOctokit: true
+  enableConsole: true
+
+externalSecrets:
+  APP_ID: /prdeploy/APP_ID
+  WEBHOOK_SECRET: /prdeploy/WEBHOOK_SECRET
+  gh_app_key.pem: /prdeploy/gh_app_key.pem
+
+replicaCount: 1
+
+image:
+  repository: prdeploy-webhooks
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+securityContext:
+  {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources:
+  limits:
+    cpu: 300m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 64Mi
+
+autoscaling:
+  enabled: false # Do not autoscale for memory cache.
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+contentSecurityPolicy: {}

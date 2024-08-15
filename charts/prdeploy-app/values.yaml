@@ -1,0 +1,73 @@
+# Default values for prdeploy-app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  nameOverride: ""
+  fullnameOverride: "prdeploy"
+  ingress:
+    host: localhost:4301
+    tls:
+      secretName: prdeploy-tls
+  aws:
+    region: us-west-2
+  image:
+    registry: greggbjensen
+  serviceAccounts:
+    frontend:
+      create: true
+      automount: true
+      annotations:
+        eks.amazonaws.com/role-arn: ''
+      name: "prdeploy-frontend"
+
+github:
+  oauth:
+    clientId: '<GitHub Client ID>'
+
+replicaCount: 1
+
+image:
+  repository: prdeploy-app
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 32Mi
+  requests:
+    cpu: 10m
+    memory: 10Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+contentSecurityPolicy: {}

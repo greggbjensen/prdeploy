@@ -1,0 +1,7 @@
+apiVersion: v2
+name: prdeploy-app
+description: Web application for Engineers, QA, and Product Owners to be able to review and deploy services.
+icon: https://prdeploy.readthedocs.io/en/latest/assets/images/logo-large.png
+type: application
+version: 1.0.0
+appVersion: "1.0.0"

@@ -1,0 +1,45 @@
+
+
+global:
+  nameOverride: ""
+  fullnameOverride: "prdeploy"
+  ingress:
+    host: localhost:4301
+    tls:
+      secretName: prdeploy-tls
+  aws:
+    region: us-west-2
+  image:
+    registry: greggbjensen
+  serviceAccounts:
+    backend:  # Shared by prdeploy-api and prdeploy-webhooks and needs permissions to AWS Parameter Store.
+      create: true
+      automount: true
+      annotations:
+        eks.amazonaws.com/role-arn: ''
+      name: "prdeploy-backend"
+    frontend:
+      create: true
+      automount: true
+      annotations:
+        eks.amazonaws.com/role-arn: ''
+      name: "prdeploy-frontend"
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+  paths:
+    - path: /
+      pathType: Prefix
+      service: prdeploy-app
+      port: 80
+    - path: /api
+      pathType: Prefix
+      service: prdeploy-api
+      port: 80
+    - path: /webhooks
+      pathType: Prefix
+      service: prdeploy-webhooks
+      port: 80
