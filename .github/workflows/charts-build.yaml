@@ -41,7 +41,7 @@ jobs:
 
       - name: Helm lint and package
         env:
-          VERSION: ${{ (github.event_name == 'release' && github.release.tag_name) && github.release.tag_name || 'temp' }}
+          VERSION: ${{ (github.event_name == 'release' && github.release.tag_name) && github.release.tag_name || '0.0.1' }}
         run: |
           chartFiles=$(find charts -name "Chart.yaml" -print0 | xargs -0 realpath)
 

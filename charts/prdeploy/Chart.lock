@@ -1,0 +1,12 @@
+dependencies:
+- name: prdeploy-api
+  repository: file://../prdeploy-api
+  version: 1.0.0
+- name: prdeploy-app
+  repository: file://../prdeploy-app
+  version: 1.0.0
+- name: prdeploy-webhooks
+  repository: file://../prdeploy-webhooks
+  version: 1.0.0
+digest: sha256:855b224a55e8f90d4789b82e392536b1ff0fb0d94af0844dae215da66372b18d
+generated: "2024-08-14T19:53:03.0254542-06:00"
