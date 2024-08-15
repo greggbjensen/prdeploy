@@ -3,3 +3,4 @@ site/
 prdeploy-api/src/PrDeploy.Api/.env
 scripts/.env
 charts/**/charts
+scripts/temp/

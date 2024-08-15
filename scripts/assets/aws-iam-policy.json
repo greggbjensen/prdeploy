@@ -1,0 +1,16 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ssm:PutParameter",
+        "ssm:GetParametersByPath",
+        "ssm:GetParameter"
+      ],
+      "Resource": [
+        "arn:aws:ssm:{{AWS_REGION}}:{{AWS_ACCOUNT_ID}}:parameter//prdeploy/*"
+      ]
+    }
+  ]
+}

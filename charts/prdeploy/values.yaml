@@ -6,6 +6,7 @@ global:
   ingress:
     host: localhost
     tls:
+      enabled: true
       secretName: prdeploy-tls
   aws:
     region: us-west-2
@@ -21,8 +22,6 @@ global:
     frontend:
       create: true
       automount: true
-      annotations:
-        eks.amazonaws.com/role-arn: ''
       name: "prdeploy-frontend"
 
 ingress:
