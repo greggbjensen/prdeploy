@@ -2,6 +2,12 @@
 
 Gets a set of release tags for deployment of Docker images and helm charts, this included `latest` and multiple versions like `1.2.15`, `1.2`, and `1`.
 
+## Inputs
+
+### `repository`
+
+The docker repository to generate tags for.  Example: `greggbjensen/prdeploy`
+
 ## Outputs
 
 ### `tags`
@@ -14,6 +20,8 @@ The comma separated list of tags to use.
 - name: Deploy tags
   id: deploy_tags
   uses: greggbjensen/prdeploy/.github/actions/deploy-tags@main
+  with:
+    image: ${{ inputs.service_name }}
 
 - name: Docker build and push
   uses: docker/build-push-action@v5
