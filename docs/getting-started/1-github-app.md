@@ -23,7 +23,7 @@ Generating a secret with Node:
 node -e "console.log(require('crypto').randomBytes(64).toString('base64'));"
 ```
 
-Make sure to copy the **Secret** set above into your notes.
+Make sure to copy the **Secret** set above into your notes for use with AWS Parameter Store.
 
 7. Set each of the **Permissions** as follows:
 
@@ -63,12 +63,17 @@ Workflow run
 ## 2. Display information
 
 1. Scroll to the bottom of the GitHub App **About** page.
-2. Under **Display information** click on **Upload a logo...**
+2. Under **Display information** click on **Upload a logo...**.
 3. Download and select the file from `https://github.com/greggbjensen/prdeploy/blob/main/docs/assets/images/logo-large.png`.
 
-## 3. Private key
-1. At the bottom of the page click on **Generate a private key**.
-2. A `.pem` file will automatically download, remember this file location for AWS Parameter Store setup.
+## 3. Credentials and Private key
+
+1. From the top of the page add the following to your notes for use with AWS Parameter Store:
+  * App ID
+  * Client ID
+
+2. At the bottom of the page click on **Generate a private key**.
+3. A `.pem` file will automatically download, remember this file location for AWS Parameter Store.
 
 ## 4. Install App
 1. Click on **Install App** on the left nav.
