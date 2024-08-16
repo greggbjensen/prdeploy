@@ -54,13 +54,13 @@ The **prdeploy** app loads external secrets, saves settings, and tracks deployme
 | ------------------------------------ | ----------------------------------------------------------------------- |
 | /prdeploy/APP_ID                     | ID from GitHub App.                                                     |
 | /prdeploy/WEBHOOK_SECRET             | Webhook secret configured for GitHub App.                               |
-| /prdeploy/gh_app_key.pem             | Secret app key downloaded from GitHub App.                              |
+| /prdeploy/gh_app_key.pem             | Secret app key downloaded from GitHub App, copy and paste contents.     |
 | /prdeploy/GitHubAuth\_\_ClientId     | Client ID for GitHub OAuth App.                                         |
 | /prdeploy/GitHubAuth\_\_ClientSecret | Client Secret for GitHub OAuth App.                                     |
 | /prdeploy/Jwt\_\_Key                 | Generated JWT validation key.                                           |
 | /prdeploy/Jwt\_\_TokenEncryptionKey  | Generated JWT token encryption key.<br>Should not be the same as above. |
 
-`NOTE:` To generate a unique encryption key, you can run the following:
+`NOTE:` To generate a unique JWT and encryption key, you can run the following:
 
 ```bash
 node -e "console.log(require('crypto').randomBytes(256).toString('base64'));"
