@@ -37,6 +37,8 @@ jobs:
       - name: Deploy tags
         id: deploy_tags
         uses: ./.github/actions/deploy-tags
+        with:
+          repository: greggbjensen/${{ inputs.service_name }}
 
       - name: Docker build and push
         uses: docker/build-push-action@v5
