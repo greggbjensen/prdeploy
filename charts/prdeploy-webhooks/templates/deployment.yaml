@@ -44,6 +44,8 @@ spec:
               value: "/app/gh_app_key.pem"
             - name: AWS_REGION
               value: {{ .Values.global.aws.region | quote }}
+            - name: AWS_SECRET_PATH_PREFIX
+              value: {{ .Values.global.aws.secretPathPrefix | quote }}
             - name: LOG_LEVEL
               value: {{ .Values.logging.level | quote }}
             - name: ENABLE_OCTOKIT_LOGGING

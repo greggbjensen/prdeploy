@@ -14,6 +14,7 @@ using PrDeploy.Api.Models;
 using PrDeploy.Api.Models.Auth;
 using Serilog;
 using Serilog.Formatting.Json;
+using IServiceCollectionExtensions = PrDeploy.Api.IServiceCollectionExtensions;
 using Path = System.IO.Path;
 
 try
@@ -35,9 +36,7 @@ try
         .WriteTo.Console(new JsonFormatter(renderMessage: true))
         .CreateBootstrapLogger();
 
-    builder.Services
-        .AddHttpContextAccessor()
-        .AddPrDeployApi(new DeployApiOptions())
+    IServiceCollectionExtensions.AddPrDeployApi()
         .AddPrDeployApiBusiness(configuration)
         .AddPrDeployApiModelValidation()
         .AddGitHubAuthentication(

@@ -7,6 +7,7 @@ global:
       secretName: prdeploy-tls
   aws:
     region: us-west-2
+    secretPathPrefix: /prdeploy
   image:
     registry: greggbjensen
   serviceAccounts:
@@ -19,10 +20,10 @@ global:
 aspnetcore_environment: production
 
 externalSecrets:
-  GitHubAuth__ClientId: /prdeploy/GitHubAuth__ClientId
-  GitHubAuth__ClientSecret: /prdeploy/GitHubAuth__ClientSecret
-  Jwt__Key: /prdeploy/Jwt__Key
-  Jwt__TokenEncryptionKey: /prdeploy/Jwt__TokenEncryptionKey
+  GitHubAuth__ClientId: GitHubAuth__ClientId
+  GitHubAuth__ClientSecret: GitHubAuth__ClientSecret
+  Jwt__Key: Jwt__Key
+  Jwt__TokenEncryptionKey: Jwt__TokenEncryptionKey
 
 replicaCount: 1
 

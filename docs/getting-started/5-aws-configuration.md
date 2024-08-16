@@ -11,12 +11,12 @@ The **prdeploy** app loads external secrets, saves settings, and tracks deployme
     {
       "Effect": "Allow",
       "Principal": {
-        "Federated": "arn:aws:iam::{{AWS_ACCOUNT_ID}}:oidc-provider/oidc.eks.{{AWS_REGION}}.amazonaws.com"
+        "Federated": "arn:aws:iam::{{AWS_ACCOUNT_ID}}:oidc-provider/oidc.eks.{{AWS_REGION}}.amazonaws.com/id/{{PROVDER_ID}}"
       },
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
         "StringEquals": {
-          "oidc.eks.{{AWS_REGION}}.amazonaws.com:sub": "system:serviceaccount:prdeploy:prdeploy-backend"
+          "oidc.eks.{{AWS_REGION}}.amazonaws.com/id/{{PROVDER_ID}}:sub": "system:serviceaccount:prdeploy:prdeploy-backend"
         }
       }
     }
@@ -24,7 +24,7 @@ The **prdeploy** app loads external secrets, saves settings, and tracks deployme
 }
 ```
 
-2. Create the following IAM policy as `prdeploy-backend`:
+2. Create the following IAM policy as `prdeploy-backend` and associate it to the role:
 
 ```json
 {

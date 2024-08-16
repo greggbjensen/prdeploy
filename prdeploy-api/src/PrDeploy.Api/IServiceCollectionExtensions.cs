@@ -1,13 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
-using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Octokit.Internal;
 using Octokit;
 using PrDeploy.Api.Auth;
 using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Filters;
-using PrDeploy.Api.Options;
 using PrDeploy.Api.Business.Auth.Interfaces;
 using PrDeploy.Api.Schema.Mutations;
 using PrDeploy.Api.Schema.Queries;
@@ -16,7 +14,7 @@ namespace PrDeploy.Api;
 
 public static class IServiceCollectionExtensions
 {
-    public static IServiceCollection AddPrDeployApi(this IServiceCollection services, DeployApiOptions options)
+    public static IServiceCollection AddPrDeployApi(this IServiceCollection services)
     {
         services
             .AddGraphQLServer()
