@@ -2,7 +2,7 @@ In order to be able to listen and respond to pull request events, we need to cre
 
 ## 1. Create GitHub App
 
-1. Go to https://github.com and sign in.
+1. Navigate to https://github.com and sign in.
 2. Click on your profile photo in the top right and choose **Your Organizations**.
 3. Click on the organization you want to add **prdeploy** to.
 4. Select the **Settings** tab, expand **Developer settings** on the left nav and choose **GitHub Apps**.
@@ -64,13 +64,13 @@ Workflow run
 
 1. Scroll to the bottom of the GitHub App **About** page.
 2. Under **Display information** click on **Upload a logo...**.
-3. Download and select the file from `https://github.com/greggbjensen/prdeploy/blob/main/docs/assets/images/logo-large.png`.
+3. Download and select the file from `https://github.com/greggbjensen/prdeploy/blob/main/docs/assets/images/logo-128x128.png`.
 
 ## 3. Credentials and Private key
 
 1. From the top of the page add the following to your notes for use with AWS Parameter Store:
-  * App ID
-  * Client ID
+    * App ID
+    * Client ID
 
 2. At the bottom of the page click on **Generate a private key**.
 3. A `.pem` file will automatically download, remember this file location for AWS Parameter Store.
@@ -82,3 +82,4 @@ Workflow run
 4. From the drop down, choose each repository you want to use **prdeploy** with.
 5. Click **Install**.
 
+[Next step - 2. GitHub OAuth App](getting-started/2-github-oauth-app.md)
