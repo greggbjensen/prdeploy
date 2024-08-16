@@ -41,7 +41,7 @@ jobs:
 
       - name: Helm lint and package
         env:
-          VERSION: ${{ (github.event_name == 'release' && github.release.tag_name) && github.release.tag_name || '0.0.1' }}
+          VERSION: ${{ (github.event_name == 'release' && github.event.release.tag_name) && github.event.release.tag_name || '0.0.1' }}
         run: |
 
           helm repo add external-secrets https://charts.external-secrets.io
@@ -72,7 +72,7 @@ jobs:
       - name: Push Helm charts
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         run: |
-          echo ${{ secrets.DOCKERHUB_TOKEN }} | --password-stdin helm registry login registry-1.docker.io -u ${{ secrets.DOCKERHUB_USERNAME }}
+          echo ${{ secrets.DOCKERHUB_TOKEN }} | helm registry login registry-1.docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
           charts=$(find ./helm-charts -maxdepth 1 -name "*.tgz")
           for chart in $charts
           do

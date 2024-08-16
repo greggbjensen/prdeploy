@@ -21,7 +21,9 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
         with:
-          sparse-checkout: ${{ inputs.service_name }}
+          sparse-checkout: |
+            .github/actions
+            ${{ inputs.service_name }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -32,10 +34,14 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Deploy tags
+        id: deploy_tags
+        uses: ./.github/actions/deploy-tags
+
       - name: Docker build and push
         uses: docker/build-push-action@v5
         with:
           push: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-          tags: ${{ (github.event_name == 'release' && github.release.tag_name) && format('greggbjensen/{0}:latest, greggbjensen/{0}:{1}', inputs.service_name, github.release.tag_name) || format('greggbjensen/{0}:temp', inputs.service_name) }}
+          tags: ${{ steps.deploy_tags.outputs.tags }}
           file: ${{ inputs.service_name }}/Dockerfile
           context: ${{ inputs.service_name }}

@@ -1,0 +1,28 @@
+name: Date version
+description: Gets a set of release tags for deployment of Docker images and helm charts, this included `latest` and multiple versions like `1.2.15`, `1.2`, and `1`.
+outputs:
+  tags:
+    value: ${{ steps.deploy_tags.outputs.tags }}
+    description: The comma separated list of tags to use.
+
+runs:
+  using: "composite"
+  steps:
+
+  - name: Get deploy tags
+    id: deploy_tags
+    shell: bash
+    env:
+      RELEASE_TAG: ${{ (github.event_name == 'release' && github.event.release.tag_name) && format('greggbjensen/{0}:latest, greggbjensen/{0}:{1}', inputs.service_name, github.event.release.tag_name) || format('greggbjensen/{0}:temp', inputs.service_name) }}
+    run: |
+      if [ "$RELEASE_TAG" == "temp" ]; then
+        echo "tags=temp" >> $GITHUB_OUTPUT
+        exit 0
+      fi
+
+      IFS='.' read -ra parts <<< "$RELEASE_TAG"
+      patch=$RELEASE_TAG
+      minor="${parts[0]}.${parts[1]}"
+      major="${parts[0]}"
+      tags="$patch, $minor, $major, latest"
+      echo "tags=$tags" >> $GITHUB_OUTPUT
