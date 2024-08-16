@@ -34,7 +34,7 @@ image:
   tag: ""
 
 nameOverride: ""
-fullnameOverride: ""
+fullnameOverride: "prdeploy-api"
 
 podAnnotations: {}
 
