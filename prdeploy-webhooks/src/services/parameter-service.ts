@@ -15,7 +15,6 @@ import { ParameterLevel } from './models';
 
 @scoped(Lifecycle.ContainerScoped)
 export class ParameterService {
-  private static readonly PARAMETER_STORE_ROOT = 'prdeploy';
   private static readonly MAX_HISTORY_PER_PAGE = 50;
   private static readonly EMPTY_STRING_VALUE = '<EMPTY>';
   private static readonly PATH_TO_NAME_REGEX = /^.*\//;
@@ -145,8 +144,8 @@ export class ParameterService {
 
   private getPath(level: ParameterLevel): string {
     return level === 'Repo'
-      ? `/${ParameterService.PARAMETER_STORE_ROOT}/${this._repository.owner.login}/${this._repository.name}`
-      : `/${ParameterService.PARAMETER_STORE_ROOT}/${this._repository.owner.login}`;
+      ? `/${process.env.AWS_SECRET_PATH_PREFIX}/${this._repository.owner.login}/${this._repository.name}`
+      : `/${process.env.AWS_SECRET_PATH_PREFIX}/${this._repository.owner.login}`;
   }
 
   private async populateAllParameters(level: ParameterLevel, parameters: Map<string, string>): Promise<void> {

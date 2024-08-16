@@ -11,6 +11,7 @@ global:
       secretName: prdeploy-tls
   aws:
     region: us-west-2
+    secretPathPrefix: /prdeploy
   image:
     registry: greggbjensen
   serviceAccounts:
@@ -26,9 +27,9 @@ logging:
   enableConsole: true
 
 externalSecrets:
-  APP_ID: /prdeploy/APP_ID
-  WEBHOOK_SECRET: /prdeploy/WEBHOOK_SECRET
-  gh_app_key.pem: /prdeploy/gh_app_key.pem
+  APP_ID: APP_ID
+  WEBHOOK_SECRET: WEBHOOK_SECRET
+  gh_app_key.pem: gh_app_key.pem
 
 replicaCount: 1
 

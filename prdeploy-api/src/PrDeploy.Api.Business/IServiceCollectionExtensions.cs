@@ -30,6 +30,7 @@ public static class IServiceCollectionExtensions
             // GitHub.
             .Configure<GitHubAuthOptions>(configuration.GetSection("GitHubAuth"))
             .Configure<JwtOptions>(configuration.GetSection("Jwt"))
+            .Configure<AwsExtendedOptions>(configuration.GetSection("Aws"))
             .AddScoped<IRestClientInstance<GitHubAuthOptions>>(s =>
             {
                 var options = s.GetRequiredService<IOptions<GitHubAuthOptions>>();

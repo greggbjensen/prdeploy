@@ -1,7 +1,7 @@
 apiVersion: v2
 name: chart-prdeploy-api
 description: API to retrieve and update GitHub deployments and queues.
-icon: https://prdeploy.readthedocs.io/en/latest/assets/images/logo-large.png
+icon: https://prdeploy.readthedocs.io/en/latest/assets/images/logo-128x128.png
 type: application
 version: 1.0.0
 appVersion: "1.0.0"

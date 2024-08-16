@@ -1,67 +1,85 @@
 In order to be able to listen and respond to pull request events, we need to create a GitHub App for prdeploy.
 
-## 1. App
+## 1. Create GitHub App
 
-1. Create a new **prdeploy** GitHub App in your organization.
+1. Navigate to https://github.com and sign in.
+2. Click on your profile photo in the top right and choose **Your Organizations**.
+3. Click on the organization you want to add **prdeploy** to.
+4. Select the **Settings** tab, expand **Developer settings** on the left nav and choose **GitHub Apps**.
+5. Click **New GitHub App** in the top right.
+6. Fill in at least the following information:
 
-## 2. Permissions
+| Field           | Value                                                                       |
+| --------------- | --------------------------------------------------------------------------- |
+| GitHub App Name | prdeploy                                                                    |
+| Description     | Allows the entire build-deploy lifecycle to happen within a feature branch. |
+| Homepage URL    | https://prdeploy.myorg.com                                                  |
+| Webhook URL     | https://prdeploy.myorg.com/webhooks                                         |
+| Secret          | _Any secure set of characters (see below)._                                 |
 
-Grant app the following permissions:
+Generating a secret with Node:
 
-  **Repository Permissions**
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('base64'));"
+```
 
-  | Scope          | Permission     |
-  | -------------- | -------------- |
-  | Actions        | Read and write |
-  | Administration | Read-only      |
-  | Checks         | Read-only      |
-  | Contents       | Read and write |
-  | Issues         | Read-only      |
-  | Metadata       | Read-only      |
-  | Pull requests  | Read and write |
+Make sure to copy the **Secret** set above into your notes for use with AWS Parameter Store.
 
-  **Organization Permissions**
+7. Set each of the **Permissions** as follows:
 
-  | Scope     | Permission |
-  | --------- | ---------- |
-  | Members   | Read-only  |
+**Repository Permissions**
 
-  **Account Permissions**
+| Scope          | Permission     |
+| -------------- | -------------- |
+| Actions        | Read-only      |
+| Administration | Read-only      |
+| Checks         | Read-only      |
+| Issues         | Read-only      |
+| Metadata       | Read-only      |
+| Pull requests  | Read and write |
 
-  | Scope           | Permission |
-  | --------------- | ---------- |
-  | Email addresses | Read-only  |
+**Organization Permissions**
 
+| Scope   | Permission |
+| ------- | ---------- |
+| Members | Read-only  |
 
-## 3. Events
+**Account Permissions**
 
-Subscribe app to these events:
+| Scope           | Permission |
+| --------------- | ---------- |
+| Email addresses | Read-only  |
 
-  ```
-  Issue comment
-  Pull request
-  Workflow run
-  ```
+8. Subscribe to the following events:
 
-## 4. Installation
+```
+Issue comment
+Pull request
+Workflow run
+```
+9. **Where can this GitHub App be installed?** should be set to **Only on this account**.
+10. Click **Create GitHub App**.
 
-Install the **prdeploy** app to your repository.
+## 2. Display information
 
-## 5. Configure Parameter Store
+1. Scroll to the bottom of the GitHub App **About** page.
+2. Under **Display information** click on **Upload a logo...**.
+3. Download and select the file from `https://github.com/greggbjensen/prdeploy/blob/main/docs/assets/images/logo-128x128.png`.
 
-1. Create a pull request and **prdeploy** will initialize all the required AWS Parameter Store variables.
-2. The following values can be configured in AWS Parameter Store after they are created:
+## 3. Credentials and Private key
 
-    Each parameter is prefixed with the path  `/prdeploy/myorg/`
+1. From the top of the page add the following to your notes for use with AWS Parameter Store:
+    * App ID
+    * Client ID
 
-    | Parameter               | Description                                       | Example                                                                                                                                 |
-    |-------------------------|---------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
-    | DEPLOY_MANAGER_SITE_URL | The URL of the site the Deployment Manager is on. | https://prdeploy.myorg.com                                                                                                              |
-    | EMAIL_ALIASES           | Aliases to correct email addresses for Slack.     | "jim.smith@myorg.com": "james.smith@myorg.com"<br>"john.doe@myorg.com": "jdoe@myorg.com"<br>"will.harris@myorg.com": "billyh@myorg.com" |
-    | JIRA_HOST               | Domain name of your Atlassian instance.           | myorg.atlassian.net                                                                                                                     |
-    | JIRA_USERNAME           | Username the JIRA API token was generated for.    | greggbjensen@myorg.com                                                                                                                  |
-    | JIRA_PASSWORD           | JIRA API token.                                   | abc.def.hij                                                                                                                             |
-    | SLACK_EMAIL_DOMAIN      | Root domain for your organization in Slack.       | myorg.com                                                                                                                               |
-    | SLACK_TOKEN             | SLACK API token.                                  | abc_def_hij                                                                                                                             |
-    | SLACK_WEBHOOKS_DEPLOY   | SLACK Webhook URL for deployment channel notices. | https://hooks_slack_com/services/aaa/bbb/ccc                                                                                            |
-    | SLACK_WEBHOOKS_RELEASE  | SLACK Webhook URL for release channel notices.    | https://hooks_slack_com/services/aaa/bbb/ccc                                                                                            |
+2. At the bottom of the page click on **Generate a private key**.
+3. A `.pem` file will automatically download, remember this file location for AWS Parameter Store.
+
+## 4. Install App
+1. Click on **Install App** on the left nav.
+2. Click **Install** to the right of your organization.
+3. Select **Only select repositories**.
+4. From the drop down, choose each repository you want to use **prdeploy** with.
+5. Click **Install**.
+
+[Next step - 2. GitHub OAuth App](getting-started/2-github-oauth-app.md)

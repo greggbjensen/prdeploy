@@ -1,10 +1,30 @@
-The web portal for **prdeploy** allows you to view and manage settings and deployments. These are the installation instructions for Kubernetes.
+The **prdeploy** app loads external secrets, saves settings, and tracks deployment versions through AWS parameter store.
 
-Each repository can have it's own set of environments and services that **prdeploy** manages. Here is how to configure those settings.
+## 1. AWS role and permissions
 
-## AWS configuration
+1. Create a new role of `prdeloy-backend` with the following assume policy.
 
-1. Create the following IAM policy as `prdeploy-backend`:
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::{{AWS_ACCOUNT_ID}}:oidc-provider/oidc.eks.{{AWS_REGION}}.amazonaws.com/id/{{PROVDER_ID}}"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "oidc.eks.{{AWS_REGION}}.amazonaws.com/id/{{PROVDER_ID}}:sub": "system:serviceaccount:prdeploy:prdeploy-backend"
+        }
+      }
+    }
+  ]
+}
+```
+
+2. Create the following IAM policy as `prdeploy-backend` and associate it to the role:
 
 ```json
 {
@@ -25,6 +45,9 @@ Each repository can have it's own set of environments and services that **prdepl
 }
 ```
 
+## 2. Parameter store configuration.
+
+1. Navigate to...
 2. Add the following entries as `SecureString` to AWS Parameter Store:
 
 | Name                                 | Value                                                                   |
@@ -40,29 +63,5 @@ Each repository can have it's own set of environments and services that **prdepl
 `NOTE:` To generate a unique encryption key, you can run the following:
 
 ```bash
-node -e "console.log(require('crypto').randomBytes(256).toString('base64'));
+node -e "console.log(require('crypto').randomBytes(256).toString('base64'));"
 ```
-
-## Helm chart install
-
-1. Install the prerequists in Kubernetes:
-
-   1. ingress-nginx
-   2. cert-manager with letsencrypt
-   3. External secrets
-
-   _NOTE: For effeciency settings cache only updates every 5 minutes._
-
-2. Labels will be automatically created for each environment in your repository.
-   1. Environment labels should be the badge color you want for the environment icon.
-3. In order for a completed or failed deploy status message to show the version, you must provide a `build-details` artifact to your builds that includes a `build-details.json` file with at least the following:
-   1. The [build-details](/.github/actions/build-details/README.md#build-details-action) action can provide this.
-
-```json
-{
-  "version": "2023.11.30-r7040754105"
-}
-```
-
-5. Go to **Settings** and **General** for your repository and check `Always suggest updating pull request branches` to get the pull request **Update** button.
-   1. This makes it much easier to update your pull requests to latest before deploying.
