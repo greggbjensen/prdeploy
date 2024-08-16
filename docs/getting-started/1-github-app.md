@@ -1,6 +1,6 @@
 In order to be able to listen and respond to pull request events, we need to create a GitHub App for prdeploy.
 
-## Create GitHub App
+## 1. Create GitHub App
 
 1. Go to https://github.com and sign in.
 2. Click on your profile photo in the top right and choose **Your Organizations**.
@@ -23,16 +23,17 @@ Generating a secret with Node:
 node -e "console.log(require('crypto').randomBytes(64).toString('base64'));"
 ```
 
+Make sure to copy the **Secret** set above into your notes.
+
 7. Set each of the **Permissions** as follows:
 
 **Repository Permissions**
 
 | Scope          | Permission     |
 | -------------- | -------------- |
-| Actions        | Read and write |
+| Actions        | Read-only      |
 | Administration | Read-only      |
 | Checks         | Read-only      |
-| Contents       | Read and write |
 | Issues         | Read-only      |
 | Metadata       | Read-only      |
 | Pull requests  | Read and write |
@@ -56,5 +57,23 @@ Issue comment
 Pull request
 Workflow run
 ```
+9. **Where can this GitHub App be installed?** should be set to **Only on this account**.
+10. Click **Create GitHub App**.
 
-9. Click **Create GitHub App**.
+## 2. Display information
+
+1. Scroll to the bottom of the GitHub App **About** page.
+2. Under **Display information** click on **Upload a logo...**
+3. Download and select the file from `https://github.com/greggbjensen/prdeploy/blob/main/docs/assets/images/logo-large.png`.
+
+## 3. Private key
+1. At the bottom of the page click on **Generate a private key**.
+2. A `.pem` file will automatically download, remember this file location for AWS Parameter Store setup.
+
+## 4. Install App
+1. Click on **Install App** on the left nav.
+2. Click **Install** to the right of your organization.
+3. Select **Only select repositories**.
+4. From the drop down, choose each repository you want to use **prdeploy** with.
+5. Click **Install**.
+
