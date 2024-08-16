@@ -53,12 +53,12 @@ namespace PrDeploy.Api.Business.Clients
             var response = await _client.PostAsync<AccessTokenResponse>(request);
 
             // Swap GitHub access token for full signed JWT.
-            response!.AccessToken = await CreateJwt(response!.AccessToken);
+            response!.AccessToken = CreateJwt(response!.AccessToken);
 
             return response!;
         }
 
-        public async Task<string> CreateJwt(string gitHubToken)
+        public string CreateJwt(string gitHubToken)
         {
             var encryptedToken = _cipherService.Encrypt(gitHubToken);
             var key = Encoding.ASCII.GetBytes(_jwtOptions.Key);

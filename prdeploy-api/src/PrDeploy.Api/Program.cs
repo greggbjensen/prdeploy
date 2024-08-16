@@ -36,7 +36,8 @@ try
         .WriteTo.Console(new JsonFormatter(renderMessage: true))
         .CreateBootstrapLogger();
 
-    IServiceCollectionExtensions.AddPrDeployApi()
+    builder.Services
+        .AddPrDeployApi()
         .AddPrDeployApiBusiness(configuration)
         .AddPrDeployApiModelValidation()
         .AddGitHubAuthentication(
