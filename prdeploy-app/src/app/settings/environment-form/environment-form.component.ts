@@ -5,6 +5,7 @@ import { KeyValuePipe } from '@angular/common';
 import { ValueChangedEvent } from 'devextreme/ui/text_box';
 import { SettingsLevel } from '../models';
 import { AddAutomationInputDialogComponent } from './add-automation-input-dialog/add-automation-input-dialog.component';
+import { AddExcludeRollbackServiceDialogComponent } from './add-exclude-rollback-service-dialog/add-exclude-rollback-service-dialog.component';
 
 @Component({
   selector: 'app-environment-form',
@@ -15,6 +16,7 @@ import { AddAutomationInputDialogComponent } from './add-automation-input-dialog
     DxCheckBoxModule,
     DxButtonModule,
     AddAutomationInputDialogComponent,
+    AddExcludeRollbackServiceDialogComponent,
     KeyValuePipe
   ],
   templateUrl: './environment-form.component.html',
@@ -38,6 +40,26 @@ export class EnvironmentFormComponent {
   }
 
   addAutomationInputVisible = false;
+  addExcludeRollbackServiceVisible = false;
+
+  showAddExcludeRollbackService() {
+    this.addExcludeRollbackServiceVisible = true;
+  }
+
+  addExcludeRollbackService(name: string) {
+    if (!this.environment.excludeFromRollback) {
+      this.environment.excludeFromRollback = [];
+    }
+
+    if (!this.environment.excludeFromRollback.find(e => e.toLocaleLowerCase() === name.toLowerCase())) {
+      this.environment.excludeFromRollback.push(name);
+    }
+  }
+
+  removeExcludeRollbackService(name: any) {
+    const index = this.environment.excludeFromRollback.indexOf(name);
+    this.environment.excludeFromRollback.splice(index, 1);
+  }
 
   showAddAutomationInput() {
     this.addAutomationInputVisible = true;
