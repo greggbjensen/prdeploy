@@ -1,5 +1,5 @@
 apiVersion: v2
-name: prdeploy-webhooks
+name: chart-prdeploy-webhooks
 description: Manages feature branch deployments across environments through a pull request.
 icon: https://prdeploy.readthedocs.io/en/latest/assets/images/logo-large.png
 type: application
