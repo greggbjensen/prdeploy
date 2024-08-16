@@ -82,4 +82,4 @@ Workflow run
 4. From the drop down, choose each repository you want to use **prdeploy** with.
 5. Click **Install**.
 
-[Next step - 2. GitHub OAuth App](getting-started/2-github-oauth-app.md)
+[Next step - 2. GitHub OAuth App](./2-github-oauth-app.md)

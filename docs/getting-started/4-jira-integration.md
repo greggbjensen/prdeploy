@@ -9,4 +9,4 @@ When a pull request is create the prdeploy app will check the branch name for an
 6. Enter the **Label** of `prdeloy` and click **Create**.
 7. Copy the API token to your notes for the **prdeloy** portal settings.
 
-[Next step - 5. AWS Configuration](getting-started/5-aws-configuration.md)
+[Next step - 5. AWS Configuration](./5-aws-configuration.md)

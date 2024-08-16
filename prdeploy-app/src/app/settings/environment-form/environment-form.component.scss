@@ -5,7 +5,7 @@
   width: 100%;
 }
 
-.environment-settings .test-workflow-inputs {
+.environment-settings .add-items {
   margin-top: 20px;
   display: block;
   margin-left: 10px;
@@ -14,12 +14,26 @@
     margin-left: 15px;
   }
 }
-.add-workflow-input-btn {
+
+.add-item-input-btn {
   margin-left: 22px;
+
+  &.exclude-rollback {
+    margin-left: 0;
+  }
 }
 
 .field-removable {
   display: flex;
+}
+
+.exclude-rollback-field {
+  margin-top: 5px;
+
+  label {
+    margin-left: 165px;
+    width: 145px;
+  }
 }
 
 .field-group-title {

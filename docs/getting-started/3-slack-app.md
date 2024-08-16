@@ -54,4 +54,4 @@ users:read.email
 5. Click on **Allow**.
 6. Copy both Webhook URLS to your notes for the **prdeloy** portal settings.
 
-[Next step - 4. Jira Integration](getting-started/4-jira-integration.md)
+[Next step - 4. Jira Integration](./4-jira-integration.md)

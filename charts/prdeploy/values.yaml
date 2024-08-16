@@ -10,6 +10,7 @@ global:
       secretName: prdeploy-tls
   aws:
     region: us-west-2
+    secretPathPrefix: /prdeploy
   image:
     registry: greggbjensen
   serviceAccounts:

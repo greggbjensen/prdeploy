@@ -31,6 +31,30 @@
         <dx-check-box [(value)]="environment.requireBranchUpToDate" [disabled]="!hasEnvironments"></dx-check-box>
       </div>
     </div>
+    <div class="add-items">
+      <span>Exclude from rollback</span>
+      <dx-button
+        class="add-item-input-btn success-icon-btn exclude-rollback"
+        icon="add"
+        stylingMode="text"
+        (onClick)="showAddExcludeRollbackService()"
+        hint="Add service to exclude"
+        [disabled]="!hasEnvironments"></dx-button>
+    </div>
+    @for (item of environment.excludeFromRollback; track item) {
+      <div class="field exclude-rollback-field">
+        <label>{{ item }}</label>
+        <div class="field-value field-removable">
+          <dx-button
+            class="add-workflow-input-btn danger-icon-btn"
+            icon="remove"
+            stylingMode="text"
+            (onClick)="removeExcludeRollbackService(item)"
+            hint="Remove service to exclude"
+            [disabled]="!hasEnvironments"></dx-button>
+        </div>
+      </div>
+    }
   </div>
 
   <div class="field-group field-group-horizontal">
@@ -47,11 +71,11 @@
         <dx-text-box [(value)]="environment.automationTest.workflow" [disabled]="!hasEnvironments"></dx-text-box>
       </div>
     </div>
-    <div class="test-workflow-inputs">
+    <div class="add-items">
       <div>
-        <span>Workflow Inputs:</span>
+        <span>Workflow inputs</span>
         <dx-button
-          class="add-workflow-input-btn success-icon-btn"
+          class="add-item-input-btn success-icon-btn"
           icon="add"
           stylingMode="text"
           (onClick)="showAddAutomationInput()"
@@ -83,3 +107,7 @@
 <app-add-automation-input-dialog
   [(visible)]="addAutomationInputVisible"
   (addInput)="addAutomationInput($event)"></app-add-automation-input-dialog>
+
+<app-add-exclude-rollback-service-dialog
+  [(visible)]="addExcludeRollbackServiceVisible"
+  (addInput)="addExcludeRollbackService($event)"></app-add-exclude-rollback-service-dialog>

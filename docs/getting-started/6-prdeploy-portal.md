@@ -1,55 +1,40 @@
 The web portal for **prdeploy** allows you to view and manage settings and deployments. These are the installation instructions for Kubernetes.
 
-Each repository can have it's own set of environments and services that **prdeploy** manages. Here is how to configure those settings.
-
-## AWS configuration
-
-1. Create the following IAM policy as `prdeploy-backend`:
-
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "ssm:PutParameter",
-        "ssm:GetParametersByPath",
-        "ssm:GetParameter"
-      ],
-      "Resource": [
-        "arn:aws:ssm:{{AWS_REGION}}:{{AWS_ACCOUNT_ID}}:parameter//prdeploy/*"
-      ]
-    }
-  ]
-}
-```
-
-2. Add the following entries as `SecureString` to AWS Parameter Store:
-
-| Name                                 | Value                                                                   |
-| ------------------------------------ | ----------------------------------------------------------------------- |
-| /prdeploy/APP_ID                     | ID from GitHub App.                                                     |
-| /prdeploy/WEBHOOK_SECRET             | Webhook secret configured for GitHub App.                               |
-| /prdeploy/gh_app_key.pem             | Secret app key downloaded from GitHub App.                              |
-| /prdeploy/GitHubAuth\_\_ClientId     | Client ID for GitHub OAuth App.                                         |
-| /prdeploy/GitHubAuth\_\_ClientSecret | Client Secret for GitHub OAuth App.                                     |
-| /prdeploy/Jwt\_\_Key                 | Generated JWT validation key.                                           |
-| /prdeploy/Jwt\_\_TokenEncryptionKey  | Generated JWT token encryption key.<br>Should not be the same as above. |
-
-`NOTE:` To generate a unique encryption key, you can run the following:
-
-```bash
-node -e "console.log(require('crypto').randomBytes(256).toString('base64'));"
-```
-
-## Helm chart install
+## 1. Helm chart install
 
 1. Install the prerequists in Kubernetes:
+    1. [ingress-nginx](https://kubernetes.github.io/ingress-nginx/deploy/#quick-start)
+    2. [cert-manager with letsencrypt](https://medium.com/@manojit123/lets-encrypt-certificate-using-cert-manager-on-kubernetes-http-challenge-687ce3718baf)
+    3. [external-secrets](https://external-secrets.io/v0.4.3/guides-getting-started/)
+2. Create a new file `prdeploy-values.yaml` and add the following content:
 
-   1. ingress-nginx
-   2. cert-manager with letsencrypt
-   3. External secrets
+```yaml
+global:
+  ingress:
+    host: prdeploy.myorg.com
+  aws:
+    region: us-west-2
+  serviceAccounts:
+    backend:
+      annotations:
+        eks.amazonaws.com/role-arn: '<Role ARN of prdeploy-backend from AWS Configuration>'
+
+chart-prdeploy-app:
+  github:
+    oauth:
+      clientId: '<GitHub App OAuth Client ID>'
+```
+
+2. Run the following command with helm:
+
+```bash
+helm upgrade prdeploy oci://registry-1.docker.io/greggbjensen/prdeploy \
+  --install --reset-values --force --create-namespace -n prdeploy \
+  -f ./prdeploy-values.yaml
+```
+
+
+## 2. Settings
 
    _NOTE: For effeciency settings cache only updates every 5 minutes._
 
@@ -66,3 +51,5 @@ node -e "console.log(require('crypto').randomBytes(256).toString('base64'));"
 
 5. Go to **Settings** and **General** for your repository and check `Always suggest updating pull request branches` to get the pull request **Update** button.
    1. This makes it much easier to update your pull requests to latest before deploying.
+
+[Next step - 7. GitHub Actions](./7-github-actions.md)

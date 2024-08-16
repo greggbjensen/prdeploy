@@ -25,4 +25,4 @@ For authorization of the portal to view deployments, we need to create an GitHub
 3. Download and select the file from `https://github.com/greggbjensen/prdeploy/blob/main/docs/assets/images/logo-128x128.png`.
 4. Click **Update application**.
 
-[Next step - 3. Slack App](getting-started/3-slack-app.md)
+[Next step - 3. Slack App](./3-slack-app.md)
