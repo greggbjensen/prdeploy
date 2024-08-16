@@ -1,5 +1,9 @@
 name: Date version
 description: Gets a set of release tags for deployment of Docker images and helm charts, this included `latest` and multiple versions like `1.2.15`, `1.2`, and `1`.
+inputs:
+  repository:
+    required: true
+    description: The docker repository to generate tags for.
 outputs:
   tags:
     value: ${{ steps.deploy_tags.outputs.tags }}
@@ -13,7 +17,8 @@ runs:
     id: deploy_tags
     shell: bash
     env:
-      RELEASE_TAG: ${{ (github.event_name == 'release' && github.event.release.tag_name) && format('greggbjensen/{0}:latest, greggbjensen/{0}:{1}', inputs.service_name, github.event.release.tag_name) || format('greggbjensen/{0}:temp', inputs.service_name) }}
+      REPOSITORY: ${{ inputs.repository }}
+      RELEASE_TAG: ${{ (github.event_name == 'release' && github.event.release.tag_name) && github.event.release.tag_name || 'temp' }}
     run: |
       if [ "$RELEASE_TAG" == "temp" ]; then
         echo "tags=temp" >> $GITHUB_OUTPUT
@@ -21,8 +26,9 @@ runs:
       fi
 
       IFS='.' read -ra parts <<< "$RELEASE_TAG"
-      patch=$RELEASE_TAG
-      minor="${parts[0]}.${parts[1]}"
-      major="${parts[0]}"
-      tags="$patch, $minor, $major, latest"
+      patch="$REPOSITORY:$RELEASE_TAG"
+      minor="$REPOSITORY:${parts[0]}.${parts[1]}"
+      major="$REPOSITORY:${parts[0]}"
+      latest="$REPOSITORY:latest"
+      tags="$patch, $minor, $major, $latest"
       echo "tags=$tags" >> $GITHUB_OUTPUT

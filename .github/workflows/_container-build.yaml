@@ -45,3 +45,11 @@ jobs:
           tags: ${{ steps.deploy_tags.outputs.tags }}
           file: ${{ inputs.service_name }}/Dockerfile
           context: ${{ inputs.service_name }}
+
+      - name: Docker Hub description
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          repository: greggbjensen/${{ inputs.service_name }}
+          readme-filepath: ${{ inputs.service_name }}/README.md

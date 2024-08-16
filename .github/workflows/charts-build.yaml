@@ -76,5 +76,5 @@ jobs:
           charts=$(find ./helm-charts -maxdepth 1 -name "*.tgz")
           for chart in $charts
           do
-            helm push $chart oci://registry-1.docker.io/greggbjensen/charts
+            helm push $chart oci://registry-1.docker.io/greggbjensen
           done
