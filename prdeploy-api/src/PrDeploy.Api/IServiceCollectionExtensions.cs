@@ -65,7 +65,7 @@ public static class IServiceCollectionExtensions
             services.AddDataProtection()
                 .UseCryptographicAlgorithms(new()
                 {
-                    EncryptionAlgorithm = EncryptionAlgorithm.AES_256_GCM,
+                    EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
                     ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
                 });
 
