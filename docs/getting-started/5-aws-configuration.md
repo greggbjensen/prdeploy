@@ -65,3 +65,5 @@ The **prdeploy** app loads external secrets, saves settings, and tracks deployme
 ```bash
 node -e "console.log(require('crypto').randomBytes(256).toString('base64'));"
 ```
+
+[Next step - 6. prdeploy portal](./6-prdeploy-portal.md)

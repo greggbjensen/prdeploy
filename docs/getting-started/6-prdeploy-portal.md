@@ -66,3 +66,5 @@ node -e "console.log(require('crypto').randomBytes(256).toString('base64'));"
 
 5. Go to **Settings** and **General** for your repository and check `Always suggest updating pull request branches` to get the pull request **Update** button.
    1. This makes it much easier to update your pull requests to latest before deploying.
+
+[Next step - 7. GitHub Actions](./7-github-actions.md)
