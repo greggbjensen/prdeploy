@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "prdeploy-webhooks.fullname" . }}
+  labels:
+    {{- include "prdeploy-webhooks.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 3000
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "prdeploy-webhooks.selectorLabels" . | nindent 4 }}
