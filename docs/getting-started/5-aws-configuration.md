@@ -38,7 +38,7 @@ The **prdeploy** app loads external secrets, saves settings, and tracks deployme
         "ssm:GetParameter"
       ],
       "Resource": [
-        "arn:aws:ssm:{{AWS_REGION}}:{{AWS_ACCOUNT_ID}}:parameter//prdeploy/*"
+        "arn:aws:ssm:{{AWS_REGION}}:{{AWS_ACCOUNT_ID}}:parameter/prdeploy*"
       ]
     }
   ]
