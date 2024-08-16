@@ -52,6 +52,6 @@ users:read.email
 3. At the bottom of the page, click on **Add New Webhook to Workspace**.
 4. Select a channel to post your Prod only release notes to.
 5. Click on **Allow**.
-6. Copy both Webhook URLS to your notes.
+6. Copy both Webhook URLS to your notes for the **prdeloy** portal settings.
 
-[Next step - 4. ?](getting-started/4-slack-app.md)
+[Next step - 4. Jira Integration](getting-started/4-jira-integration.md)
