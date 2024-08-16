@@ -40,7 +40,7 @@ Each repository can have it's own set of environments and services that **prdepl
 `NOTE:` To generate a unique encryption key, you can run the following:
 
 ```bash
-node -e "console.log(require('crypto').randomBytes(256).toString('base64'));
+node -e "console.log(require('crypto').randomBytes(256).toString('base64'));"
 ```
 
 ## Helm chart install
