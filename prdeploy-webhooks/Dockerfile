@@ -1,7 +1,7 @@
 FROM node:20 as base
 ENV NODE_ENV production
 USER node
-EXPOSE 80
+EXPOSE 3000
 
 FROM node:20 as build
 WORKDIR /src
