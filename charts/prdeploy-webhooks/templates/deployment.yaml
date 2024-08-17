@@ -39,7 +39,7 @@ spec:
             {{- end }}
           env:
             - name: PORT
-              value: "80"
+              value: "3000"
             - name: PRIVATE_KEY_PATH
               value: "/app/gh_app_key.pem"
             - name: AWS_REGION
