@@ -4,6 +4,8 @@ repo_url: https://github.com/greggbjensen/prdeploy
 edit_uri: blob/main/docs/
 theme:
   name: material
+  favicon: assets/images/favicon.png
+  logo: assets/images/logo.svg
 markdown_extensions:
   - toc:
       permalink: true
