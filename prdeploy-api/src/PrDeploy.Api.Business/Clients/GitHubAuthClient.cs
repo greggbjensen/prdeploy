@@ -3,12 +3,14 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Octokit;
 using PrDeploy.Api.Business.Auth;
 using PrDeploy.Api.Business.Auth.Interfaces;
 using PrDeploy.Api.Business.Clients.Interfaces;
+using PrDeploy.Api.Business.Mapping;
 using PrDeploy.Api.Business.Options;
 using PrDeploy.Api.Models.Auth;
 using RestSharp;
@@ -18,6 +20,7 @@ namespace PrDeploy.Api.Business.Clients
     public class GitHubAuthClient : IGitHubAuthClient
     {
         private readonly ICipherService _cipherService;
+        private readonly IServiceProvider _serviceProvider;
         private readonly IValidator<AccessTokenRequest> _validator;
         private readonly IRestClient _client;
         private readonly GitHubAuthOptions _gitHubOptions;
@@ -26,10 +29,12 @@ namespace PrDeploy.Api.Business.Clients
         public GitHubAuthClient(IRestClientInstance<GitHubAuthOptions> restClientInstance,
             IOptions<JwtOptions> jwtOptions,
             ICipherService cipherService,
+            IServiceProvider serviceProvider,
             IValidator<AccessTokenRequest> validator)
         {
             _jwtOptions = jwtOptions.Value;
             _cipherService = cipherService;
+            _serviceProvider = serviceProvider;
             _validator = validator;
             _client = restClientInstance.RestClient;
             _gitHubOptions = restClientInstance.Options;
@@ -58,7 +63,16 @@ namespace PrDeploy.Api.Business.Clients
             return response!;
         }
 
-        public string CreateJwt(string gitHubToken)
+        public async Task<UserInfo> GetUserInfoAsync()
+        {
+            // We have to resolve this here to make sure there is a token.
+            var gitHubClient = _serviceProvider.GetRequiredService<IGitHubClient>();
+            var user = await gitHubClient.User.Current();
+            var userInfo = Map.UserInfo(user);
+            return userInfo ?? new UserInfo();
+        }
+
+        private string CreateJwt(string gitHubToken)
         {
             var encryptedToken = _cipherService.Encrypt(gitHubToken);
             var key = Encoding.ASCII.GetBytes(_jwtOptions.Key);

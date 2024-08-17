@@ -3,34 +3,38 @@ import { Router } from '@angular/router';
 import { AuthConfig, OAuthErrorEvent, OAuthService } from 'angular-oauth2-oidc';
 import { BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { User } from '../../models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private static readonly DefaultUrl = '/deployments';
   private static readonly LoginUrl = '/login';
 
+  private userSubject$ = new BehaviorSubject<User>(null);
+  user$ = this.userSubject$.asObservable();
+
   private isAuthenticatedSubject$ = new BehaviorSubject<boolean>(false);
-  public isAuthenticated$ = this.isAuthenticatedSubject$.asObservable();
+  isAuthenticated$ = this.isAuthenticatedSubject$.asObservable();
 
   private isDoneLoadingSubject$ = new BehaviorSubject<boolean>(false);
-  public isDoneLoading$ = this.isDoneLoadingSubject$.asObservable();
-
-  private navigateToLoginPage() {
-    this._router.navigateByUrl(AuthService.LoginUrl);
-  }
+  isDoneLoading$ = this.isDoneLoadingSubject$.asObservable();
 
   constructor(
     private _oauthService: OAuthService,
     private _router: Router
   ) {}
 
-  public login(targetUrl?: string) {
+  get user(): User {
+    return this.userSubject$.value;
+  }
+
+  login(targetUrl?: string) {
     // Note: before version 9.1.0 of the library you needed to
     // call encodeURIComponent on the argument to the method.
     this._oauthService.initLoginFlow(targetUrl || this._router.url);
   }
 
-  public async runInitialLoginSequence(): Promise<void> {
+  async runInitialLoginSequence(): Promise<void> {
     await this._oauthService.tryLogin();
     this.updateIsAuthenticated();
     if (!this.isAuthenticatedSubject$.value) {
@@ -52,18 +56,18 @@ export class AuthService {
     this.isDoneLoadingSubject$.next(true);
   }
 
-  public logout(forbidden = false) {
+  logout(forbidden = false) {
     this._oauthService.logOut();
     this._router.navigate([AuthService.LoginUrl], {
       queryParams: !forbidden ? null : { forbidden }
     });
   }
 
-  public hasValidToken() {
+  hasValidToken() {
     return this._oauthService.hasValidAccessToken();
   }
 
-  public initialize(authConfig: AuthConfig): void {
+  initialize(authConfig: AuthConfig): void {
     this._oauthService.configure(authConfig);
 
     // Useful for debugging:
@@ -102,17 +106,35 @@ export class AuthService {
     this.updateIsAuthenticated();
 
     this._oauthService.events.pipe(filter(e => ['token_received'].includes(e.type))).subscribe(async () => {
-      // const user = (await this._oauthService.loadUserProfile()) as User;
-      // this.userSubject$.next(user);
+      await this.tryLoadUser();
       this.updateIsAuthenticated();
     });
 
     this._oauthService.events
       .pipe(filter(e => ['session_terminated', 'session_error'].includes(e.type)))
       .subscribe(() => this.navigateToLoginPage());
+
+    this.isDoneLoading$.subscribe(async done => {
+      if (!done) {
+        return;
+      }
+      await this.tryLoadUser();
+    });
+  }
+
+  private async tryLoadUser() {
+    const isAuthenticated = this._oauthService.hasValidAccessToken();
+    if (isAuthenticated && !this.user) {
+      const userInfo: any = await this._oauthService.loadUserProfile();
+      this.userSubject$.next(userInfo.info as User);
+    }
   }
 
   private updateIsAuthenticated(): void {
     this.isAuthenticatedSubject$.next(this._oauthService.hasValidAccessToken());
+  }
+
+  private navigateToLoginPage() {
+    this._router.navigateByUrl(AuthService.LoginUrl);
   }
 }
