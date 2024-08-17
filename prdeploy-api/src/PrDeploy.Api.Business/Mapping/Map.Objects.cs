@@ -1,10 +1,25 @@
-using PrDeploy.Api.Models.OwnerRepo;
+using Octokit;
+using PrDeploy.Api.Models.Auth;
 using PrDeploy.Api.Models.PullRequests;
-using PrDeploy.Api.Models.Settings;
+using PullRequest = PrDeploy.Api.Models.PullRequests.PullRequest;
+using Repository = PrDeploy.Api.Models.OwnerRepo.Repository;
 
 namespace PrDeploy.Api.Business.Mapping;
 public static partial class Map
 {
+    public static UserInfo? UserInfo(User? source) =>
+        source != null
+            ? new UserInfo
+            {
+                Id = source.Id,
+                AvatarUrl = source.AvatarUrl,
+                Login = source.Login,
+                Name = !string.IsNullOrEmpty(source.Name) ? source.Name : source.Login,
+                Admin = source.SiteAdmin,
+                Type = (GitHubAccountType)source.Type.GetValueOrDefault()
+            }
+            : null;
+
     public static PullRequest? PullRequest(Octokit.PullRequest? source) =>
         source != null
             ? new PullRequest

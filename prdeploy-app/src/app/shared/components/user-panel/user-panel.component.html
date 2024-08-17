@@ -1,7 +1,11 @@
 <div class="user-panel">
   <div class="user-info">
     <div class="image-container">
-      <i class="dx-icon dx-icon-user"></i>
+      @if (user) {
+        <img [src]="user.avatarUrl" [title]="user.name" />
+      } @else {
+        <i class="dx-icon dx-icon-user"></i>
+      }
     </div>
   </div>
   @if (menuMode === 'context') {

@@ -1,3 +1,5 @@
+using System.Net;
+using System.Text.Json;
 using HotChocolate.AspNetCore;
 using PrDeploy.Api;
 using PrDeploy.Api.Business;
@@ -5,7 +7,7 @@ using PrDeploy.Api.Options;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.IdentityModel.Tokens;
+using Octokit;
 using PrDeploy.Api.Auth;
 using PrDeploy.Api.Builder;
 using PrDeploy.Api.Business.Clients.Interfaces;
@@ -14,8 +16,9 @@ using PrDeploy.Api.Models;
 using PrDeploy.Api.Models.Auth;
 using Serilog;
 using Serilog.Formatting.Json;
-using IServiceCollectionExtensions = PrDeploy.Api.IServiceCollectionExtensions;
 using Path = System.IO.Path;
+using GreenDonut;
+using System.Text.Json.Serialization;
 
 try
 {
@@ -85,6 +88,12 @@ try
     app.UseEndpoints(endpoints =>
     {
         // Simple GitHub Access Token proxy.
+        var apiJsonSerializerOptions = new JsonSerializerOptions
+        {
+            Converters = { new JsonStringEnumConverter() },
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
         endpoints.MapPost("/api/oauth/access_token", async (HttpRequest request, IGitHubAuthClient authClient) =>
         {
             var form = await request.ReadFormAsync();
@@ -117,6 +126,24 @@ try
             return result;
         })
         .AllowAnonymous();
+
+        // User info endpoint since GitHub does not provide one for OAuth.
+        endpoints.MapGet("/api/oauth/userinfo", async (HttpRequest request, IGitHubAuthClient authClient) =>
+        {
+            IResult result;
+            try
+            {
+                var userInfo = await authClient.GetUserInfoAsync();
+                result = Results.Json(userInfo, apiJsonSerializerOptions, statusCode: StatusCodes.Status200OK);
+            }
+            catch (HttpRequestException e)
+            {
+                Log.Logger.Error(e, $"Error getting user info ({e.StatusCode}).");
+                result = Results.StatusCode((int)e.StatusCode!);
+            }
+
+            return result;
+        });
 
         endpoints.MapGraphQL().WithOptions(new GraphQLServerOptions {
             Tool = { Enable = false } // Use Apollo Playground instead of Banana Cake Pop.
