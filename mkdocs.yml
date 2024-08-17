@@ -5,10 +5,11 @@ edit_uri: blob/main/docs/
 theme:
   name: material
   favicon: assets/images/favicon.png
-  logo: assets/images/logo.svg
+  logo: assets/images/favicon.png
 markdown_extensions:
   - toc:
       permalink: true
+  - attr_list
 nav:
   - Introduction: 'index.md'
   - 'Getting started':
