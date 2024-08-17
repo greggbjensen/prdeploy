@@ -45,13 +45,9 @@
 }
 
 <div class="page-actions">
-  <dx-button
-    class="add-service-pr-btn"
-    text="Add Services to Pull Request"
-    type="normal"
-    (onClick)="showAddServiceToPr()"
-    height="40">
-  </dx-button>
+  <button class="add-service-pr-btn" mat-flat-button (click)="showAddServiceToPr()">
+    Add Services to Pull Request
+  </button>
 </div>
 
 <app-add-pr-service-dialog [(visible)]="addServiceToPrVisible"></app-add-pr-service-dialog>

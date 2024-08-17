@@ -1,0 +1,130 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+@import '@angular/material/core/theming/_palettes';
+@import '../sass/variables';
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+// 50 : #e2f2fd,
+// 100 : #b8def9,
+// 200 : #88c9f6,
+// 300 : #58b3f2,
+// 400 : #35a2ef,
+// 500 : #1192ec,
+// 600 : #0f8aea,
+// 700 : #0c7fe7,
+// 800 : #0a75e4,
+// 900 : #0563df,
+
+$theme-primary: $blue;
+$theme-secondary: $gray-600;
+$theme-neutral: $gray-500;
+$theme-neutral-variant: $gray-400;
+
+$prdeploy-primary-palette: _apply-patches((
+  0: shade-color($theme-primary, 100%),
+  10: shade-color($theme-primary, 90%),
+  20: shade-color($theme-primary, 75%),
+  25: shade-color($theme-primary, 60%),
+  30: shade-color($theme-primary, 45%),
+  35: shade-color($theme-primary, 30%),
+  40: shade-color($theme-primary, 15%),
+  50: $theme-primary,
+  60: tint-color($theme-primary, 15%),
+  70: tint-color($theme-primary, 30%),
+  80: tint-color($theme-primary, 45%),
+  90: tint-color($theme-primary, 60%),
+  95: tint-color($theme-primary, 70%),
+  98: tint-color($theme-primary, 80%),
+  99: tint-color($theme-primary, 90%),
+  100: tint-color($theme-primary, 100%),
+  secondary: (
+    0: shade-color($theme-secondary, 100%),
+    10: shade-color($theme-secondary, 90%),
+    20: shade-color($theme-secondary, 75%),
+    25: shade-color($theme-secondary, 60%),
+    30: shade-color($theme-secondary, 45%),
+    35: shade-color($theme-secondary, 30%),
+    40: shade-color($theme-secondary, 15%),
+    50: $theme-secondary,
+    60: tint-color($theme-secondary, 15%),
+    70: tint-color($theme-secondary, 30%),
+    80: tint-color($theme-secondary, 45%),
+    90: tint-color($theme-secondary, 60%),
+    95: tint-color($theme-secondary, 70%),
+    98: tint-color($theme-secondary, 80%),
+    99: tint-color($theme-secondary, 90%),
+    100: tint-color($theme-secondary, 100%),
+  ),
+  neutral: (
+    0: shade-color($theme-neutral, 100%),
+    10: shade-color($theme-neutral, 90%),
+    20: shade-color($theme-neutral, 75%),
+    25: shade-color($theme-neutral, 60%),
+    30: shade-color($theme-neutral, 45%),
+    35: shade-color($theme-neutral, 30%),
+    40: shade-color($theme-neutral, 15%),
+    50: $theme-neutral,
+    60: tint-color($theme-neutral, 15%),
+    70: tint-color($theme-neutral, 30%),
+    80: tint-color($theme-neutral, 45%),
+    90: tint-color($theme-neutral, 60%),
+    95: tint-color($theme-neutral, 70%),
+    98: tint-color($theme-neutral, 80%),
+    99: tint-color($theme-neutral, 90%),
+    100: tint-color($theme-neutral, 100%),
+  ),
+  neutral-variant: (
+    0: shade-color($theme-neutral-variant, 100%),
+    10: shade-color($theme-neutral-variant, 90%),
+    20: shade-color($theme-neutral-variant, 75%),
+    25: shade-color($theme-neutral-variant, 60%),
+    30: shade-color($theme-neutral-variant, 45%),
+    35: shade-color($theme-neutral-variant, 30%),
+    40: shade-color($theme-neutral-variant, 15%),
+    50: $theme-neutral-variant,
+    60: tint-color($theme-neutral-variant, 15%),
+    70: tint-color($theme-neutral-variant, 30%),
+    80: tint-color($theme-neutral-variant, 45%),
+    90: tint-color($theme-neutral-variant, 60%),
+    95: tint-color($theme-neutral-variant, 70%),
+    98: tint-color($theme-neutral-variant, 80%),
+    99: tint-color($theme-neutral-variant, 90%),
+    100: tint-color($theme-neutral-variant, 100%),
+  ),
+));
+
+// Define the theme object.
+$prdeploy-app-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: $prdeploy-primary-palette,
+    tertiary: mat.$azure-palette
+  ),
+  typography: (
+    brand-family: 'system-ui'
+  ),
+  density: (
+    scale: 0,
+  )
+));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+:root {
+  @include mat.all-component-themes($prdeploy-app-theme);
+}
+
+// Comment out the line below if you want to use the pre-defined typography utility classes.
+// For more information: https://material.angular.io/guide/typography#using-typography-styles-in-your-application.
+// @include mat.typography-hierarchy($prdeploy-app-theme);
+
+// Comment out the line below if you want to use the deprecated `color` inputs.
+// @include mat.color-variants-backwards-compatibility($prdeploy-app-theme);

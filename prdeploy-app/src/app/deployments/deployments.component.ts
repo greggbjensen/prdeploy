@@ -1,5 +1,6 @@
 import { Component, DestroyRef, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
 import { firstValueFrom } from 'rxjs';
 import {
   DeployEnvironment,
@@ -24,6 +25,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrls: ['./deployments.component.scss'],
   standalone: true,
   imports: [
+    MatButtonModule,
     DxButtonModule,
     DxSelectBoxModule,
     EnvironmentListComponent,

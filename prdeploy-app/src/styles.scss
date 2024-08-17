@@ -2,6 +2,9 @@
 
 @import './sass/variables';
 
+html, body { height: 100%; }
+body { margin: 0; }
+
 .text-right {
   text-align: right;
 }

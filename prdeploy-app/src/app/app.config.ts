@@ -20,6 +20,7 @@ import { HttpLink } from 'apollo-angular/http';
 import { ApolloClientOptions, InMemoryCache } from '@apollo/client/core';
 import { OAuthModule, OAuthModuleConfig, OAuthStorage } from 'angular-oauth2-oidc';
 import { DOCUMENT } from '@angular/common';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export function storageFactory(): OAuthStorage {
   return localStorage;
@@ -76,6 +77,6 @@ export const appConfig: ApplicationConfig = {
       deps: [HttpLink]
     },
     // Interceptors.
-    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }, provideAnimationsAsync()
   ]
 };
