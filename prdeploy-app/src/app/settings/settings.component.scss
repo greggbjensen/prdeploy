@@ -30,6 +30,10 @@ $max-settings-width: 820px;
   }
 
   .dx-tab, .dx-tab.dx-tab-selected {
+    background-color: transparent;
+    border-radius: 5px 5px 0 0;
+    margin-bottom: 0;
+
     &::after {
       -webkit-border-before: none;
       border-block-start: none;
@@ -39,10 +43,6 @@ $max-settings-width: 820px;
       -webkit-border-start: none;
       border-inline-start: none;
     }
-
-    background-color: transparent;
-    border-radius: 5px 5px 0 0;
-    margin-bottom: 0;
   }
 
   .dx-tab.dx-tab-selected {

@@ -55,10 +55,11 @@
       font-size: 14px;
       color: $blue-700;
       cursor: pointer;
+      text-decoration: underline;
+
       &:hover {
         color: $link-hover-color;
       }
-      text-decoration: underline;
     }
   }
 

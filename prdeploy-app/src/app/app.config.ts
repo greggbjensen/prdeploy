@@ -4,7 +4,7 @@ import { routes } from './app.routes';
 import { BrowserModule } from '@angular/platform-browser';
 import { MarkdownModule } from 'ngx-markdown';
 import { HttpErrorInterceptor } from './shared/interceptors';
-import { HTTP_INTERCEPTORS, withInterceptorsFromDi, provideHttpClient, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, withInterceptorsFromDi, provideHttpClient } from '@angular/common/http';
 import { OAuthOptions } from './shared/options';
 import { APP_INITIALIZER, importProvidersFrom } from '@angular/core';
 import {
@@ -41,13 +41,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()),
-    importProvidersFrom(
-      BrowserModule,
-      MarkdownModule.forRoot(),
-      HttpClientModule,
-      OAuthModule.forRoot(),
-      RouterModule.forRoot([])
-    ),
+    importProvidersFrom(BrowserModule, MarkdownModule.forRoot(), OAuthModule.forRoot(), RouterModule.forRoot([])),
     AppConfigService,
     {
       provide: APP_INITIALIZER,
