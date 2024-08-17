@@ -8,7 +8,9 @@
 
 <h3>
   Queues
-  <dx-button class="primary-icon-btn" icon="refresh" hint="Refresh" stylingMode="text" (onClick)="update()"></dx-button>
+  <button mat-icon-button>
+    <mat-icon>refresh</mat-icon>
+  </button>
 </h3>
 @if (deployQueues.length > 0) {
   <dx-accordion
@@ -45,7 +47,7 @@
 }
 
 <div class="page-actions">
-  <button class="add-service-pr-btn" mat-stroked-button (click)="showAddServiceToPr()">
+  <button mat-button class="add-service-pr-btn" color="accent" (click)="showAddServiceToPr()">
     Add Services to Pull Request
   </button>
 </div>

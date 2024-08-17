@@ -1,5 +1,6 @@
 import { Component, DestroyRef, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { firstValueFrom } from 'rxjs';
 import {
@@ -26,6 +27,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   standalone: true,
   imports: [
     MatButtonModule,
+    MatIconModule,
     DxButtonModule,
     DxSelectBoxModule,
     EnvironmentListComponent,
