@@ -1,10 +1,11 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
-import { DxButtonModule, DxPopupModule, DxTextBoxModule } from 'devextreme-angular';
+import { MatButtonModule } from '@angular/material/button';
+import { DxPopupModule, DxTextBoxModule } from 'devextreme-angular';
 
 @Component({
   selector: 'app-add-environment-dialog',
   standalone: true,
-  imports: [DxPopupModule, DxButtonModule, DxTextBoxModule],
+  imports: [DxPopupModule, MatButtonModule, DxTextBoxModule],
   templateUrl: './add-environment-dialog.component.html',
   styleUrl: './add-environment-dialog.component.scss'
 })

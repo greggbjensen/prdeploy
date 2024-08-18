@@ -22,18 +22,6 @@ a {
   color: $gray-600;
 }
 
-::ng-deep .environment-locked {
-  cursor: default;
-
-  .dx-button-content {
-    padding: 0;
-
-    .dx-icon {
-      color: $gray-500;
-    }
-  }
-}
-
 ::ng-deep .environment-table td {
   vertical-align: middle !important;
 }

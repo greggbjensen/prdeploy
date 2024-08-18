@@ -2,6 +2,9 @@
 
 @import './sass/variables';
 
+html, body { height: 100%; }
+body { margin: 0; }
+
 .text-right {
   text-align: right;
 }
@@ -31,7 +34,7 @@
 }
 
 .secondary-icon-btn .dx-icon {
-  color: $orange-400;
+  color: $orange-100;
 }
 
 .page-actions {

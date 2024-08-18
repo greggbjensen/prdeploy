@@ -1,12 +1,14 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { DxButtonModule, DxDataGridModule } from 'devextreme-angular';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { DxDataGridModule } from 'devextreme-angular';
 import { OwnerRepos } from 'src/app/shared/graphql';
 import { Repository } from 'src/app/shared/models';
 
 @Component({
   selector: 'app-repositories-grid',
   standalone: true,
-  imports: [DxDataGridModule, DxButtonModule],
+  imports: [DxDataGridModule, MatButtonModule, MatIconModule],
   templateUrl: './repositories-grid.component.html',
   styleUrl: './repositories-grid.component.scss'
 })

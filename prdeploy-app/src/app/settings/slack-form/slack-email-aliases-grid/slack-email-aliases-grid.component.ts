@@ -1,14 +1,16 @@
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
-import { DxButtonModule, DxDataGridModule, DxTextBoxModule } from 'devextreme-angular';
+import { Component, Input } from '@angular/core';
+import { DxDataGridModule, DxTextBoxModule } from 'devextreme-angular';
 import { SlackSettingsCompare } from 'src/app/shared/graphql';
 import { SettingsLevel } from '../../models';
 import { AddSlackEmailAliasDialogComponent } from '../add-slack-email-alias-dialog/add-slack-email-alias-dialog.component';
 import _ from 'lodash';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-slack-email-aliases-grid',
   standalone: true,
-  imports: [AddSlackEmailAliasDialogComponent, DxDataGridModule, DxButtonModule, DxTextBoxModule],
+  imports: [AddSlackEmailAliasDialogComponent, DxDataGridModule, MatButtonModule, MatIconModule, DxTextBoxModule],
   templateUrl: './slack-email-aliases-grid.component.html',
   styleUrl: './slack-email-aliases-grid.component.scss'
 })

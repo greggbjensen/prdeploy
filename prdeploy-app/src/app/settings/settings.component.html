@@ -1,11 +1,8 @@
 <h3>
   Settings
-  <dx-button
-    class="primary-icon-btn"
-    icon="refresh"
-    hint="Refresh"
-    stylingMode="text"
-    (onClick)="updateSettings()"></dx-button>
+  <button mat-icon-button title="Refresh" color="accent" (click)="updateSettings()">
+    <mat-icon>sync</mat-icon>
+  </button>
 </h3>
 
 <div class="settings-header">
@@ -17,8 +14,8 @@
     (onSelectionChanged)="selectedLevelChanged($event)"
     stylingMode="primary"></dx-tabs>
   <div class="settings-actions">
-    <dx-button text="Save" type="default" (onClick)="save()"></dx-button>
-    <dx-button text="Cancel" (onClick)="cancel()"></dx-button>
+    <button mat-stroked-button color="primary" (onClick)="cancel()">Cancel</button>
+    <button mat-flat-button color="primary" (onClick)="save()">Save</button>
   </div>
 </div>
 <div class="tab-description {{ level }}">

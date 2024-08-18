@@ -1,11 +1,8 @@
 <h3>
   Enabled Repositories
-  <dx-button
-    class="primary-icon-btn"
-    icon="refresh"
-    hint="Refresh"
-    stylingMode="text"
-    (onClick)="updateOwnerRepos()"></dx-button>
+  <button mat-icon-button title="Refresh" color="accent" (click)="updateOwnerRepos()">
+    <mat-icon>sync</mat-icon>
+  </button>
 </h3>
 
 @if (displayAddRepos) {
@@ -21,7 +18,7 @@
   (onRemoveRepo)="removeRepo($event)"></app-repositories-grid>
 
 <div class="page-actions">
-  <dx-button text="Add Repository" type="normal" (onClick)="showAddRepo()" height="40"> </dx-button>
+  <button mat-stroked-button color="primary" class="add-service-pr-btn" (click)="showAddRepo()">Add Repository</button>
 </div>
 
 <app-add-repo-dialog

@@ -1,11 +1,8 @@
 <h3>
   Environment States
-  <dx-button
-    class="primary-icon-btn"
-    icon="refresh"
-    hint="Refresh"
-    stylingMode="text"
-    (onClick)="environtmentsGrid.updateStateComparison()"></dx-button>
+  <button mat-icon-button title="Refresh" color="accent" (click)="environtmentsGrid.updateStateComparison()">
+    <mat-icon>sync</mat-icon>
+  </button>
 </h3>
 
 <form class="environments-form">

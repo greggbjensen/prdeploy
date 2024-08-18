@@ -50,6 +50,7 @@
               "node_modules/devextreme/dist/css/dx.common.css",
               "node_modules/bootstrap-icons/font/bootstrap-icons.css",
               "src/themes/generated/theme.prdeploy.scss",
+              "src/themes/m3-theme.scss",
               "src/dx-styles.scss",
               "src/styles.scss"
             ],

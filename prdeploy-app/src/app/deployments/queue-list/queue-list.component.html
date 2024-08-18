@@ -17,12 +17,9 @@
         &nbsp;&nbsp;<span>{{ pullRequest.title }}</span>
       </div>
       <span class="queue-pull-updated">{{ pullRequest.updatedAt | date: 'short' }}</span>
-      <dx-button
-        class="queue-pull-delete"
-        icon="remove"
-        stylingMode="text"
-        (onClick)="remove(pullRequest)"
-        hint="Remove from queue"></dx-button>
+      <button mat-icon-button color="warn" title="Remove from queue" (click)="remove(pullRequest)">
+        <mat-icon>close</mat-icon>
+      </button>
       <app-pull-request-popover
         [pullRequest]="pullRequest"
         target="#pr-queue-{{ pullRequest.number }}"></app-pull-request-popover>
@@ -42,12 +39,14 @@
     [minSearchLength]="2"
     [showDataBeforeSearch]="true">
   </dx-select-box>
-  <dx-button
-    icon="add"
-    stylingMode="text"
-    hint="Add to queue"
-    [disabled]="!pullSelectBox.selectedItem"
-    (onClick)="add(pullSelectBox.selectedItem)"></dx-button>
+  <button
+    mat-icon-button
+    color="success"
+    title="Add to queue"
+    (click)="add(pullSelectBox.selectedItem)"
+    [disabled]="!pullSelectBox.selectedItem">
+    <mat-icon>add</mat-icon>
+  </button>
 
   <dx-load-panel [visible]="loading" [position]="{ of: queue?.environment + '-queue-list', offset: { y: 230 } }">
   </dx-load-panel>

@@ -12,6 +12,8 @@ import { DeployRollbackDialogComponent } from '../deploy-rollback-dialog/deploy-
 import { DeployForceDialogComponent } from '../deploy-force-dialog/deploy-force-dialog.component';
 import { NotificationManager, RepoManager } from 'src/app/shared/managers';
 import { RouterModule } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-environment-list',
@@ -24,6 +26,8 @@ import { RouterModule } from '@angular/router';
     DxoLoadPanelModule,
     DxTemplateModule,
     DxButtonModule,
+    MatButtonModule,
+    MatIconModule,
     PullRequestPopoverComponent,
     DeployForceDialogComponent,
     DeployRollbackDialogComponent,

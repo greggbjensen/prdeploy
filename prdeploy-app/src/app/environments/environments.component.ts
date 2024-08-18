@@ -1,5 +1,5 @@
 import { Component, DestroyRef, OnInit, ViewChild } from '@angular/core';
-import { DxButtonModule, DxFormModule, DxSelectBoxModule } from 'devextreme-angular';
+import { DxFormModule, DxSelectBoxModule } from 'devextreme-angular';
 import { Environment, EnvironmentsGQL } from '../shared/graphql';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
@@ -7,11 +7,13 @@ import { SelectionChangedEvent } from 'devextreme/ui/select_box';
 import { ActivatedRoute } from '@angular/router';
 import { RepoManager } from '../shared/managers';
 import { EnvironmentsGridComponent } from './environments-grid/environments-grid.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-environments',
   standalone: true,
-  imports: [DxButtonModule, DxFormModule, DxSelectBoxModule, EnvironmentsGridComponent],
+  imports: [MatButtonModule, MatIconModule, DxFormModule, DxSelectBoxModule, EnvironmentsGridComponent],
   templateUrl: './environments.component.html',
   styleUrl: './environments.component.scss'
 })

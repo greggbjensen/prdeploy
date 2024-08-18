@@ -10,21 +10,15 @@
   <div *dxTemplate="let d of 'ownerCellTemplate'">
     <div class="owner-cell">
       <span>{{ d.value }}</span>
-      <dx-button
-        class="primary-icon-btn"
-        icon="add"
-        stylingMode="text"
-        hint="Add"
-        (onClick)="addRepo(d.value)"></dx-button>
+      <button mat-icon-button color="success" title="Add repository" (click)="addRepo(d.value)">
+        <mat-icon>add</mat-icon>
+      </button>
     </div>
   </div>
   <dxi-column caption="Actions" dataType="object" [width]="80" cellTemplate="actionsCellTemplate"></dxi-column>
   <div *dxTemplate="let d of 'actionsCellTemplate'">
-    <dx-button
-      class="danger-icon-btn"
-      icon="remove"
-      stylingMode="text"
-      hint="Remove"
-      (onClick)="removeRepo(d.data)"></dx-button>
+    <button mat-icon-button color="warn" title="Remove repository" (click)="removeRepo(d.value)">
+      <mat-icon>close</mat-icon>
+    </button>
   </div>
 </dx-data-grid>

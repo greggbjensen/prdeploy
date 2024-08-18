@@ -1,6 +1,6 @@
 <h3 class="form-group-title">
   <span>Email Aliases</span>
-  <dx-button text="Add Email Alias" type="default" stylingMode="outlined" (onClick)="showAddDialog()"></dx-button>
+  <button mat-stroked-button color="primary" (click)="showAddDialog()">Add Email Alias</button>
 </h3>
 @if (!hasAliases && level === 'repo') {
   <div class="email-alias-info">
@@ -23,13 +23,9 @@
   </div>
   <dxi-column caption="Actions" dataType="object" [width]="70" cellTemplate="actionsCellTemplate"></dxi-column>
   <div *dxTemplate="let d of 'actionsCellTemplate'">
-    <dx-button
-      class="danger-icon-btn"
-      icon="remove"
-      stylingMode="text"
-      hint="Remove"
-      (onClick)="remove(d.data?.email)"
-      [disabled]="!hasAliases"></dx-button>
+    <button mat-icon-button color="warn" title="Remove alias" (click)="remove(d.data?.email)" [disabled]="!hasAliases">
+      <mat-icon>close</mat-icon>
+    </button>
   </div>
 </dx-data-grid>
 

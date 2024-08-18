@@ -4,7 +4,7 @@ import { routes } from './app.routes';
 import { BrowserModule } from '@angular/platform-browser';
 import { MarkdownModule } from 'ngx-markdown';
 import { HttpErrorInterceptor } from './shared/interceptors';
-import { HTTP_INTERCEPTORS, withInterceptorsFromDi, provideHttpClient, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, withInterceptorsFromDi, provideHttpClient } from '@angular/common/http';
 import { OAuthOptions } from './shared/options';
 import { APP_INITIALIZER, importProvidersFrom } from '@angular/core';
 import {
@@ -20,6 +20,7 @@ import { HttpLink } from 'apollo-angular/http';
 import { ApolloClientOptions, InMemoryCache } from '@apollo/client/core';
 import { OAuthModule, OAuthModuleConfig, OAuthStorage } from 'angular-oauth2-oidc';
 import { DOCUMENT } from '@angular/common';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export function storageFactory(): OAuthStorage {
   return localStorage;
@@ -41,13 +42,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()),
-    importProvidersFrom(
-      BrowserModule,
-      MarkdownModule.forRoot(),
-      HttpClientModule,
-      OAuthModule.forRoot(),
-      RouterModule.forRoot([])
-    ),
+    importProvidersFrom(BrowserModule, MarkdownModule.forRoot(), OAuthModule.forRoot(), RouterModule.forRoot([])),
     AppConfigService,
     {
       provide: APP_INITIALIZER,
@@ -82,6 +77,6 @@ export const appConfig: ApplicationConfig = {
       deps: [HttpLink]
     },
     // Interceptors.
-    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }, provideAnimationsAsync()
   ]
 };

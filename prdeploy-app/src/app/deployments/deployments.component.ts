@@ -1,5 +1,7 @@
 import { Component, DestroyRef, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { firstValueFrom } from 'rxjs';
 import {
   DeployEnvironment,
@@ -13,7 +15,6 @@ import { DxTemplateModule } from 'devextreme-angular/core';
 import { DxAccordionModule, DxSelectBoxModule } from 'devextreme-angular';
 
 import { EnvironmentListComponent } from './environment-list/environment-list.component';
-import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { AddPrServiceDialogComponent } from './add-pr-service-dialog/add-pr-service-dialog.component';
 import { NotificationManager, RepoManager, RouteManager } from '../shared/managers';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -24,7 +25,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrls: ['./deployments.component.scss'],
   standalone: true,
   imports: [
-    DxButtonModule,
+    MatButtonModule,
+    MatIconModule,
     DxSelectBoxModule,
     EnvironmentListComponent,
     DxAccordionModule,

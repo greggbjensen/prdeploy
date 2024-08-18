@@ -17,6 +17,8 @@ import { DxoItemDraggingModule, DxoLoadPanelModule } from 'devextreme-angular/ui
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DatePipe } from '@angular/common';
 import { RepoManager } from 'src/app/shared/managers';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-queue-list',
@@ -29,6 +31,8 @@ import { RepoManager } from 'src/app/shared/managers';
     DxoLoadPanelModule,
     DxTemplateModule,
     DxButtonModule,
+    MatButtonModule,
+    MatIconModule,
     PullRequestPopoverComponent,
     DxSelectBoxModule,
     DxLoadPanelModule,

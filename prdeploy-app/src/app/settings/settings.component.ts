@@ -1,15 +1,17 @@
-import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
-import { DxButtonModule, DxTabsModule } from 'devextreme-angular';
+import { Component, ViewChild } from '@angular/core';
+import { DxTabsModule } from 'devextreme-angular';
 import { Tab } from '../shared/models';
 import { SettingsFormComponent } from './settings-form/settings-form.component';
 import { RepoManager } from '../shared/managers';
 import { SettingsLevel } from './models';
 import { SelectionChangedEvent } from 'devextreme/ui/tab_panel';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [SettingsFormComponent, DxButtonModule, DxTabsModule],
+  imports: [SettingsFormComponent, MatButtonModule, MatIconModule, DxTabsModule],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'
 })

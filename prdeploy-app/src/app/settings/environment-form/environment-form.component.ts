@@ -1,11 +1,13 @@
 import { Component, Input } from '@angular/core';
-import { DxAccordionModule, DxButtonModule, DxCheckBoxModule, DxTextBoxModule } from 'devextreme-angular';
+import { DxAccordionModule, DxCheckBoxModule, DxTextBoxModule } from 'devextreme-angular';
 import { EnvironmentSettings } from 'src/app/shared/graphql';
 import { KeyValuePipe } from '@angular/common';
 import { ValueChangedEvent } from 'devextreme/ui/text_box';
 import { SettingsLevel } from '../models';
 import { AddAutomationInputDialogComponent } from './add-automation-input-dialog/add-automation-input-dialog.component';
 import { AddExcludeRollbackServiceDialogComponent } from './add-exclude-rollback-service-dialog/add-exclude-rollback-service-dialog.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-environment-form',
@@ -14,7 +16,8 @@ import { AddExcludeRollbackServiceDialogComponent } from './add-exclude-rollback
     DxAccordionModule,
     DxTextBoxModule,
     DxCheckBoxModule,
-    DxButtonModule,
+    MatButtonModule,
+    MatIconModule,
     AddAutomationInputDialogComponent,
     AddExcludeRollbackServiceDialogComponent,
     KeyValuePipe

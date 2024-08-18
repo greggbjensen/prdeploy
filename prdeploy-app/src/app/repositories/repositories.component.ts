@@ -2,18 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { RepositoriesGridComponent } from './repositories-grid/repositories-grid.component';
 import { EnabledOwnerReposGQL, OwnerRepoRemoveEnabledGQL, OwnerRepos } from '../shared/graphql';
 import { firstValueFrom } from 'rxjs';
-import { DxButtonModule } from 'devextreme-angular';
 import { confirm } from 'devextreme/ui/dialog';
 import { AddRepoDialogComponent } from './add-repo-dialog/add-repo-dialog.component';
 import { Repository } from '../shared/models';
 import { NotificationManager, RepoManager } from '../shared/managers';
 import { LoggingService } from '../shared/services';
 import { ActivatedRoute } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-repositories',
   standalone: true,
-  imports: [DxButtonModule, RepositoriesGridComponent, AddRepoDialogComponent],
+  imports: [MatButtonModule, MatIconModule, RepositoriesGridComponent, AddRepoDialogComponent],
   templateUrl: './repositories.component.html',
   styleUrl: './repositories.component.scss'
 })
