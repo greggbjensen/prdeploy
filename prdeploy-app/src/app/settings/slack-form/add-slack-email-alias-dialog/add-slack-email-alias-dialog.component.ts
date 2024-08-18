@@ -1,11 +1,12 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
-import { DxButtonModule, DxPopupModule } from 'devextreme-angular';
+import { MatButtonModule } from '@angular/material/button';
+import { DxPopupModule } from 'devextreme-angular';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 
 @Component({
   selector: 'app-add-slack-email-alias-dialog',
   standalone: true,
-  imports: [DxPopupModule, DxButtonModule, DxTextBoxModule],
+  imports: [DxPopupModule, MatButtonModule, DxTextBoxModule],
   templateUrl: './add-slack-email-alias-dialog.component.html',
   styleUrl: './add-slack-email-alias-dialog.component.scss'
 })

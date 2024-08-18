@@ -24,11 +24,9 @@
             <div class="environments-header">
               <h3 class="form-title">Environments</h3>
               <div class="environments-actions">
-                <dx-button
-                  text="Add Environment"
-                  type="default"
-                  stylingMode="outlined"
-                  (onClick)="showAddEnvironmentDialog()"></dx-button>
+                <button mat-stroked-button color="primary" title="Add environment" (click)="showAddEnvironmentDialog()">
+                  Add Environment
+                </button>
               </div>
             </div>
             @if (level === 'repo' && !hasEnvironments) {
@@ -44,13 +42,14 @@
               <div *dxTemplate="let environment of 'title'">
                 <div class="accordion-header {{ hasEnvironments ? '' : 'environments-disabled' }}">
                   <span>{{ environment.name }}</span>
-                  <dx-button
-                    class="remove-environment danger-icon-btn"
-                    icon="remove"
-                    stylingMode="text"
-                    hint="Remove Environment"
-                    (onClick)="removeEnvironment(environment.name)"
-                    [disabled]="!hasEnvironments"></dx-button>
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    class="remove-environment"
+                    title="Remove environment"
+                    (click)="removeEnvironment(environment.name)">
+                    <mat-icon>close</mat-icon>
+                  </button>
                 </div>
               </div>
               <div *dxTemplate="let environment of 'item'">

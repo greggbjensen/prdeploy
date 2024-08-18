@@ -1,10 +1,11 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
-import { DxButtonModule, DxPopupModule, DxTextBoxModule } from 'devextreme-angular';
+import { MatButtonModule } from '@angular/material/button';
+import { DxPopupModule, DxTextBoxModule } from 'devextreme-angular';
 
 @Component({
   selector: 'app-add-exclude-rollback-service-dialog',
   standalone: true,
-  imports: [DxPopupModule, DxButtonModule, DxTextBoxModule],
+  imports: [DxPopupModule, MatButtonModule, DxTextBoxModule],
   templateUrl: './add-exclude-rollback-service-dialog.component.html',
   styleUrl: './add-exclude-rollback-service-dialog.component.scss'
 })

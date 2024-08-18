@@ -33,25 +33,29 @@
     </div>
     <div class="add-items">
       <span>Exclude from rollback</span>
-      <dx-button
-        class="add-item-input-btn success-icon-btn exclude-rollback"
-        icon="add"
-        stylingMode="text"
-        (onClick)="showAddExcludeRollbackService()"
-        hint="Add service to exclude"
-        [disabled]="!hasEnvironments"></dx-button>
+      <button
+        mat-icon-button
+        color="success"
+        class="add-item-input-btn exclude-rollback"
+        title="Add service to exclude"
+        (click)="showAddExcludeRollbackService()"
+        [disabled]="!hasEnvironments">
+        <mat-icon>add</mat-icon>
+      </button>
     </div>
     @for (item of environment.excludeFromRollback; track item) {
       <div class="field exclude-rollback-field">
         <label>{{ item }}</label>
         <div class="field-value field-removable">
-          <dx-button
-            class="add-workflow-input-btn danger-icon-btn"
-            icon="remove"
-            stylingMode="text"
-            (onClick)="removeExcludeRollbackService(item)"
-            hint="Remove service to exclude"
-            [disabled]="!hasEnvironments"></dx-button>
+          <button
+            mat-icon-button
+            color="warn"
+            class="add-workflow-input-btn exclude-rollback"
+            title="Remove service to exclude"
+            (click)="removeExcludeRollbackService(item)"
+            [disabled]="!hasEnvironments">
+            <mat-icon>close</mat-icon>
+          </button>
         </div>
       </div>
     }
@@ -74,13 +78,15 @@
     <div class="add-items">
       <div>
         <span>Workflow inputs</span>
-        <dx-button
-          class="add-item-input-btn success-icon-btn"
-          icon="add"
-          stylingMode="text"
-          (onClick)="showAddAutomationInput()"
-          hint="Add workflow input"
-          [disabled]="!hasEnvironments"></dx-button>
+        <button
+          mat-icon-button
+          color="success"
+          class="add-item-input-btn exclude-rollback"
+          title="Add workflow input"
+          (click)="showAddAutomationInput()"
+          [disabled]="!hasEnvironments">
+          <mat-icon>add</mat-icon>
+        </button>
       </div>
       @for (item of environment.automationTest.inputs | keyvalue; track item.key) {
         <div class="field">
@@ -90,13 +96,15 @@
               [value]="item.value?.toString()"
               (onValueChanged)="updateAutomationInput($event, item.key)"
               [disabled]="!hasEnvironments"></dx-text-box>
-            <dx-button
-              class="add-workflow-input-btn danger-icon-btn"
-              icon="remove"
-              stylingMode="text"
-              (onClick)="removeAutomationInput(item.key)"
-              hint="Add workflow input"
-              [disabled]="!hasEnvironments"></dx-button>
+            <button
+              mat-icon-button
+              color="warn"
+              class="add-workflow-input-btn exclude-rollback"
+              title="Remove workflow input"
+              (click)="removeAutomationInput(item.key)"
+              [disabled]="!hasEnvironments">
+              <mat-icon>close</mat-icon>
+            </button>
           </div>
         </div>
       }

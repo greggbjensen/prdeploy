@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
-import { DxButtonModule, DxPopupModule, DxTextBoxModule } from 'devextreme-angular';
+import { MatButtonModule } from '@angular/material/button';
+import { DxPopupModule, DxTextBoxModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
 import { OwnerRepoAddEnabledGQL } from 'src/app/shared/graphql';
 import { NotificationManager } from 'src/app/shared/managers';
@@ -9,7 +10,7 @@ import { LoggingService } from 'src/app/shared/services';
 @Component({
   selector: 'app-add-repo-dialog',
   standalone: true,
-  imports: [DxPopupModule, DxTextBoxModule, DxButtonModule],
+  imports: [DxPopupModule, DxTextBoxModule, MatButtonModule],
   templateUrl: './add-repo-dialog.component.html',
   styleUrl: './add-repo-dialog.component.scss'
 })

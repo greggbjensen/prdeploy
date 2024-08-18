@@ -21,8 +21,7 @@
     <div class="buttons">
       @for (button of buttons; track button) {
         <div class="button">
-          <dx-button [text]="button.text" [type]="button.type" (onClick)="buttonClicked(button.text)">
-          </dx-button>
+          <button mat-stroked-button color="primary" (click)="buttonClicked(button.text)">{{ button.text }}</button>
         </div>
       }
     </div>

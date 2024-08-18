@@ -1,15 +1,16 @@
 import { Component } from '@angular/core';
 import { Subject } from 'rxjs';
-import { DxButtonModule, DxPopupModule } from 'devextreme-angular';
+import { DxPopupModule } from 'devextreme-angular';
 import { SafeHtmlPipe } from 'src/app/shared/pipes';
 import { DialogButton } from '../models/dialog-button';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   standalone: true,
   selector: 'nav-dialog',
   templateUrl: './dialog.component.html',
   styleUrls: ['./dialog.component.scss'],
-  imports: [DxPopupModule, DxButtonModule, SafeHtmlPipe]
+  imports: [DxPopupModule, MatButtonModule, SafeHtmlPipe]
 })
 export class DialogComponent {
   private subject: Subject<string>;

@@ -1,6 +1,6 @@
 <h3>
   Deployments
-  <button mat-icon-button color="accent" (click)="update()">
+  <button mat-icon-button title="Refresh" color="accent" (click)="update()">
     <mat-icon>sync</mat-icon>
   </button>
 </h3>
@@ -10,7 +10,7 @@
 
 <h3>
   Queues
-  <button mat-icon-button color="accent" (click)="update()">
+  <button mat-icon-button title="Refresh" color="accent" (click)="update()">
     <mat-icon>sync</mat-icon>
   </button>
 </h3>
@@ -25,7 +25,7 @@
         <span class="queue-environment">{{ queue.environment }}</span>
         <span class="queue-count">{{ queue.pullRequests.length }}</span>
         @if (queue.pullRequests.length) {
-          <button mat-icon-button color="accent" (click)="triggerDeployments(queue)">
+          <button mat-icon-button color="accent" title="Refresh" (click)="triggerDeployments(queue)">
             <mat-icon>refresh</mat-icon>
           </button>
         }
@@ -46,7 +46,7 @@
 }
 
 <div class="page-actions">
-  <button mat-flat-button color="primary" class="add-service-pr-btn" (click)="showAddServiceToPr()">
+  <button mat-stroked-button color="primary" class="add-service-pr-btn" (click)="showAddServiceToPr()">
     Add Services to Pull Request
   </button>
 </div>

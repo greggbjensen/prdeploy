@@ -1,18 +1,19 @@
 import { Component } from '@angular/core';
 import { Subject } from 'rxjs';
 import DialogUtils from '../dialog-utils';
-import { DxButtonModule, DxCheckBoxModule, DxPopupModule } from 'devextreme-angular';
+import { DxCheckBoxModule, DxPopupModule } from 'devextreme-angular';
 import { StatusDialogType } from '../models/status-dialog-type';
 import { DialogButton } from '../models/dialog-button';
 
 import { SafeHtmlPipe } from 'src/app/shared/pipes';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   standalone: true,
   selector: 'status-dialog',
   templateUrl: './status-dialog.component.html',
   styleUrls: ['./status-dialog.component.scss'],
-  imports: [DxPopupModule, DxCheckBoxModule, DxButtonModule, SafeHtmlPipe]
+  imports: [DxPopupModule, DxCheckBoxModule, MatButtonModule, SafeHtmlPipe]
 })
 export class StatusDialogComponent {
   private subject: Subject<string>;
