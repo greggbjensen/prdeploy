@@ -8,7 +8,7 @@
 $theme-primary: $blue;
 $theme-secondary: $gray-600;
 $theme-tertiary: $blue-300;
-$theme-error: $red;
+$theme-error: $red-300;
 $theme-neutral: $gray-500;
 $theme-neutral-variant: $gray-400;
 
@@ -152,6 +152,73 @@ $dark-theme: mat.define-theme((
 
   // Colors: 'none', primary, accent, warn
   // https://v6.material.angular.io/components/button/examples.
+  // Icons.
+  // https://fonts.google.com/icons?icon.query=refresh
   @include mat.color-variants-backwards-compatibility($light-theme);
+
+  // Extensions
+  .mat-success.mat-mdc-button-base {
+    --mdc-text-button-label-text-color: #198754;
+    --mdc-protected-button-label-text-color: #198754;
+    --mdc-filled-button-container-color: #198754;
+    --mdc-filled-button-label-text-color: white;
+    --mdc-outlined-button-label-text-color: #198754;
+    --mat-text-button-state-layer-color: #198754;
+    --mat-text-button-ripple-color: rgba(187, 45, 59, 0.12);
+    --mat-protected-button-state-layer-color: #198754;
+    --mat-protected-button-ripple-color: rgba(187, 45, 59, 0.12);
+    --mat-filled-button-state-layer-color: white;
+    --mat-filled-button-ripple-color: rgba(255, 255, 255, 0.12);
+    --mat-outlined-button-state-layer-color: #198754;
+    --mat-outlined-button-ripple-color: rgba(187, 45, 59, 0.12);
+    --mdc-icon-button-icon-color: #198754;
+    --mat-icon-button-state-layer-color: #198754;
+    --mat-icon-button-ripple-color: rgba(187, 45, 59, 0.12);
+  }
+
+  .mat-success {
+    --mat-option-selected-state-label-text-color: #160507;
+    --mat-option-selected-state-layer-color: #a3cfbb;
+    --mdc-circular-progress-active-indicator-color: #198754;
+    --mat-full-pseudo-checkbox-selected-icon-color: #198754;
+    --mat-full-pseudo-checkbox-selected-checkmark-color: white;
+    --mat-minimal-pseudo-checkbox-selected-checkmark-color: #198754;
+    --mat-stepper-header-selected-state-icon-background-color: #198754;
+    --mat-stepper-header-selected-state-icon-foreground-color: white;
+    --mat-stepper-header-edit-state-icon-background-color: #198754;
+    --mat-stepper-header-edit-state-icon-foreground-color: white;
+  }
+
+  .mat-alternate.mat-mdc-button-base {
+    --mdc-text-button-label-text-color: #fd7e14;
+    --mdc-protected-button-label-text-color: #fd7e14;
+    --mdc-filled-button-container-color: #fd7e14;
+    --mdc-filled-button-label-text-color: white;
+    --mdc-outlined-button-label-text-color: #fd7e14;
+    --mat-text-button-state-layer-color: #fd7e14;
+    --mat-text-button-ripple-color: rgba(187, 45, 59, 0.12);
+    --mat-protected-button-state-layer-color: #fd7e14;
+    --mat-protected-button-ripple-color: rgba(187, 45, 59, 0.12);
+    --mat-filled-button-state-layer-color: white;
+    --mat-filled-button-ripple-color: rgba(255, 255, 255, 0.12);
+    --mat-outlined-button-state-layer-color: #fd7e14;
+    --mat-outlined-button-ripple-color: rgba(187, 45, 59, 0.12);
+    --mdc-icon-button-icon-color: #fd7e14;
+    --mat-icon-button-state-layer-color: #fd7e14;
+    --mat-icon-button-ripple-color: rgba(187, 45, 59, 0.12);
+  }
+
+  .mat-alternate {
+    --mat-option-selected-state-label-text-color: #160507;
+    --mat-option-selected-state-layer-color: #ffe5d0;
+    --mdc-circular-progress-active-indicator-color: #fd7e14;
+    --mat-full-pseudo-checkbox-selected-icon-color: #fd7e14;
+    --mat-full-pseudo-checkbox-selected-checkmark-color: white;
+    --mat-minimal-pseudo-checkbox-selected-checkmark-color: #fd7e14;
+    --mat-stepper-header-selected-state-icon-background-color: #fd7e14;
+    --mat-stepper-header-selected-state-icon-foreground-color: white;
+    --mat-stepper-header-edit-state-icon-background-color: #fd7e14;
+    --mat-stepper-header-edit-state-icon-foreground-color: white;
+  }
 }
 

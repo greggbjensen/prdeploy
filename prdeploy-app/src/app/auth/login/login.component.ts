@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { DxButtonModule } from 'devextreme-angular';
 import { AuthService } from 'src/app/shared/services';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterModule, DxButtonModule],
+  imports: [RouterModule, MatButtonModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })

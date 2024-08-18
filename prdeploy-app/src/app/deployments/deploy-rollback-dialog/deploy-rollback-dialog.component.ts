@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
-import { DxButtonModule, DxNumberBoxModule, DxPopupModule } from 'devextreme-angular';
+import { MatButtonModule } from '@angular/material/button';
+import { DxNumberBoxModule, DxPopupModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
 import { DeployEnvironmentRollbackGQL } from 'src/app/shared/graphql';
 import { NotificationManager } from 'src/app/shared/managers';
@@ -9,7 +10,7 @@ import { LoggingService } from 'src/app/shared/services';
 @Component({
   selector: 'app-deploy-rollback-dialog',
   standalone: true,
-  imports: [DxPopupModule, DxButtonModule, DxNumberBoxModule],
+  imports: [DxPopupModule, MatButtonModule, DxNumberBoxModule],
   templateUrl: './deploy-rollback-dialog.component.html',
   styleUrl: './deploy-rollback-dialog.component.scss'
 })

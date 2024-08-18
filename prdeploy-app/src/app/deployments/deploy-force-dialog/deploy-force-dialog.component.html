@@ -30,15 +30,10 @@
       </div>
     </div>
     <div class="deploy-actions">
-      <dx-button class="cancel-btn" text="Cancel" type="normal" (onClick)="cancel()" height="40"> </dx-button>
-      <dx-button
-        class="deploy-btn"
-        text="Deploy"
-        type="default"
-        (onClick)="forceDeploy()"
-        [disabled]="!selectedPullRequest || processing"
-        height="40">
-      </dx-button>
+      <button mat-stroked-button color="primary" (click)="cancel()">Cancel</button>
+      <button mat-flat-button color="primary" (click)="forceDeploy()" [disabled]="!selectedPullRequest || processing">
+        Deploy
+      </button>
     </div>
   </div>
 </dx-popup>

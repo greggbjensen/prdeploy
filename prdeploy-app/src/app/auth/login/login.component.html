@@ -8,7 +8,9 @@
     }
     <img class="logo" alt="prdeploy" src="/assets/images/logo.svg" />
     <div class="actions">
-      <dx-button class="login-btn" type="default" [routerLink]="['/deployments']">Login with GitHub</dx-button>
+      <button mat-flat-button color="primary" class="login-btn" [routerLink]="['/deployments']">
+        Login with GitHub
+      </button>
     </div>
   </section>
 }

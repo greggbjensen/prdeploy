@@ -44,15 +44,14 @@
       </div>
     </dx-drop-down-box>
     <div class="dialog-actions">
-      <dx-button class="cancel-btn" text="Cancel" type="normal" (onClick)="cancel()" height="40"> </dx-button>
-      <dx-button
-        class="add-services-btn"
-        text="Add Services"
-        type="default"
-        (onClick)="addServicesToPr()"
-        [disabled]="!selectedPullRequest || processing || !selectedServices?.length"
-        height="40">
-      </dx-button>
+      <button mat-stroked-button color="primary" (click)="cancel()">Cancel</button>
+      <button
+        mat-flat-button
+        color="primary"
+        (click)="addServicesToPr()"
+        [disabled]="!selectedPullRequest || processing || !selectedServices?.length">
+        Add Services
+      </button>
     </div>
   </div>
 </dx-popup>

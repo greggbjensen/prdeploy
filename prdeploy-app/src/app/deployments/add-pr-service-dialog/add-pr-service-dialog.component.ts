@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import {
-  DxButtonModule,
   DxDropDownBoxModule,
   DxListComponent,
   DxListModule,
@@ -22,7 +22,7 @@ import { LoggingService } from 'src/app/shared/services';
 @Component({
   selector: 'app-add-pr-service-dialog',
   standalone: true,
-  imports: [DxPopupModule, DxSelectBoxModule, DxListModule, DxDropDownBoxModule, DxButtonModule],
+  imports: [DxPopupModule, DxSelectBoxModule, DxListModule, DxDropDownBoxModule, MatButtonModule],
   templateUrl: './add-pr-service-dialog.component.html',
   styleUrl: './add-pr-service-dialog.component.scss'
 })

@@ -32,11 +32,3 @@ h3 {
   margin-left: auto;
   margin-right: 15px;
 }
-
-::ng-deep .trigger-deployments .dx-icon-redo::before {
-  color: $blue-300;
-}
-
-::ng-deep .environments-refesh .dx-icon-refresh::before {
-  color: $blue-300;
-}

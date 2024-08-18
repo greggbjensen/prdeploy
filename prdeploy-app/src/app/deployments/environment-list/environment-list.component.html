@@ -12,7 +12,7 @@
     cellTemplate="environmentCellTemplate"></dxi-column>
   <dxi-column
     dataField="locked"
-    [width]="33"
+    [width]="36"
     dataType="boolean"
     cellTemplate="lockedCellTemplate"
     headerCellTemplate="lockedHeaderTemplate"></dxi-column>
@@ -20,7 +20,7 @@
   <dxi-column dataField="updatedAt" [width]="145" dataType="date" cellTemplate="updatedAtCellTemplate"></dxi-column>
   <dxi-column caption="User" [width]="140" dataType="object" cellTemplate="userCellTemplate"></dxi-column>
   <dxi-column dataField="url" [width]="225" cellTemplate="linkCellTemplate" caption="URL"></dxi-column>
-  <dxi-column caption="Actions" dataType="object" [width]="155" cellTemplate="actionsCellTemplate"></dxi-column>
+  <dxi-column caption="Actions" dataType="object" [width]="173" cellTemplate="actionsCellTemplate"></dxi-column>
   <dxo-load-panel></dxo-load-panel>
 
   <div *dxTemplate="let d of 'environmentCellTemplate'">
@@ -34,43 +34,47 @@
   </div>
 
   <div *dxTemplate="let d of 'lockedHeaderTemplate'">
-    <dx-button class="environment-locked" icon="lock" stylingMode="text" hint="locked"></dx-button>
+    <mat-icon title="Locked">lock</mat-icon>
   </div>
 
   <div *dxTemplate="let d of 'lockedCellTemplate'">
     @if (d.data.locked) {
-      <dx-button class="environment-locked" icon="lock" stylingMode="text" hint="locked"></dx-button>
+      <mat-icon title="Locked">lock</mat-icon>
     }
   </div>
 
   <div *dxTemplate="let d of 'actionsCellTemplate'">
     <div class="environment-actions">
-      @if (d.data.locked) {
-        <dx-button
-          class="environment-pull-free danger-icon-btn"
-          icon="remove"
-          stylingMode="text"
-          hint="/free {{ d.data.name }}"
-          (onClick)="free(d.data.name, d.data.pullRequest.number)"></dx-button>
+      @if (!d.data.locked) {
+        <button
+          mat-icon-button
+          color="warn"
+          title="/free {{ d.data.name }}"
+          (click)="free(d.data.name, d.data.pullRequest.number)">
+          <mat-icon>remove</mat-icon>
+        </button>
       }
-      <dx-button
-        class="environment-pull-force-deploy success-icon-btn"
-        icon="add"
-        stylingMode="text"
-        (onClick)="showDeployForce(d.data.name)"
-        hint="/deploy {{ d.data.name.toLowerCase() }} --force"></dx-button>
-      <dx-button
-        class="environment-pull-redeploy primary-icon-btn"
-        icon="redo"
-        stylingMode="text"
-        (onClick)="redeploy(d.data.name, d.data.pullRequest.number)"
-        hint="/deploy {{ d.data.name.toLowerCase() }}"></dx-button>
-      <dx-button
-        class="environment-pull-rollback secondary-icon-btn"
-        icon="undo"
-        stylingMode="text"
-        (onClick)="showDeployRollback(d.data.name, d.data.pullRequest.number)"
-        hint="/rollback {{ d.data.name.toLowerCase() }}"></dx-button>
+      <button
+        mat-icon-button
+        color="success"
+        title="/deploy {{ d.data.name.toLowerCase() }} --force"
+        (click)="showDeployForce(d.data.name)">
+        <mat-icon>add</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        color="accent"
+        title="/deploy {{ d.data.name.toLowerCase() }}"
+        (click)="redeploy(d.data.name, d.data.pullRequest.number)">
+        <mat-icon>rotate_right</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        color="alternate"
+        title="/rollback {{ d.data.name.toLowerCase() }}"
+        (click)="showDeployRollback(d.data.name, d.data.pullRequest.number)">
+        <mat-icon>rotate_left</mat-icon>
+      </button>
     </div>
   </div>
 

@@ -15,7 +15,6 @@ import { DxTemplateModule } from 'devextreme-angular/core';
 import { DxAccordionModule, DxSelectBoxModule } from 'devextreme-angular';
 
 import { EnvironmentListComponent } from './environment-list/environment-list.component';
-import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { AddPrServiceDialogComponent } from './add-pr-service-dialog/add-pr-service-dialog.component';
 import { NotificationManager, RepoManager, RouteManager } from '../shared/managers';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -28,7 +27,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   imports: [
     MatButtonModule,
     MatIconModule,
-    DxButtonModule,
     DxSelectBoxModule,
     EnvironmentListComponent,
     DxAccordionModule,
