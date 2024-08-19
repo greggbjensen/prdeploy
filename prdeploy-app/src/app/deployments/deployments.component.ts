@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,6 +18,7 @@ import { EnvironmentListComponent } from './environment-list/environment-list.co
 import { AddPrServiceDialogComponent } from './add-pr-service-dialog/add-pr-service-dialog.component';
 import { NotificationManager, RepoManager, RouteManager } from '../shared/managers';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-deployments',
@@ -33,14 +34,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     DxTemplateModule,
     QueueListComponent,
     AddPrServiceDialogComponent
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DeploymentsComponent implements OnInit {
   deployEnvironments: DeployEnvironment[] = [];
   deployQueues: DeployQueue[] = [];
   loading = true;
   selectedQueueIndex = 0;
-  addServiceToPrVisible = false;
 
   private _selectedEnvironment: string;
 
@@ -51,8 +52,10 @@ export class DeploymentsComponent implements OnInit {
     private _deployEnvironmentDeployGQL: DeployEnvironmentDeployGQL,
     private _notificationManager: NotificationManager,
     private _loggingService: LoggingService,
+    private _dialog: MatDialog,
     private _activatedRoute: ActivatedRoute,
-    private _destroyRef: DestroyRef
+    private _destroyRef: DestroyRef,
+    private _changeDetectorRef: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -90,6 +93,7 @@ export class DeploymentsComponent implements OnInit {
     }
 
     this.loading = true;
+    this._changeDetectorRef.detectChanges();
 
     try {
       const response = await firstValueFrom(
@@ -109,6 +113,7 @@ export class DeploymentsComponent implements OnInit {
     }
 
     this.loading = false;
+    this._changeDetectorRef.detectChanges();
   }
 
   updateSelectedQueue(): void {
@@ -132,6 +137,9 @@ export class DeploymentsComponent implements OnInit {
   }
 
   showAddServiceToPr(): void {
-    this.addServiceToPrVisible = true;
+    this._dialog.open(AddPrServiceDialogComponent, {
+      height: '320px',
+      width: '500px'
+    });
   }
 }

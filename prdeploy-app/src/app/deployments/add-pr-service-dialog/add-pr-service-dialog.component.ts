@@ -1,10 +1,17 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, DestroyRef, ViewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
+import {
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle
+} from '@angular/material/dialog';
 import {
   DxDropDownBoxModule,
   DxListComponent,
   DxListModule,
-  DxPopupModule,
   DxSelectBoxComponent,
   DxSelectBoxModule
 } from 'devextreme-angular';
@@ -17,12 +24,22 @@ import {
   RepositoryServicesGQL
 } from 'src/app/shared/graphql';
 import { NotificationManager, RepoManager } from 'src/app/shared/managers';
+import { DialogResult } from 'src/app/shared/models';
 import { LoggingService } from 'src/app/shared/services';
 
 @Component({
   selector: 'app-add-pr-service-dialog',
   standalone: true,
-  imports: [DxPopupModule, DxSelectBoxModule, DxListModule, DxDropDownBoxModule, MatButtonModule],
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
+    DxSelectBoxModule,
+    DxListModule,
+    DxDropDownBoxModule,
+    MatButtonModule
+  ],
   templateUrl: './add-pr-service-dialog.component.html',
   styleUrl: './add-pr-service-dialog.component.scss'
 })
@@ -30,43 +47,35 @@ export class AddPrServiceDialogComponent {
   @ViewChild('selectPullRequest') selectPullRequestComponent: DxSelectBoxComponent;
   @ViewChild(DxListComponent, { static: false }) listView: DxListComponent;
 
-  private _visible = false;
-
-  get visible() {
-    return this._visible;
-  }
-
   selectedPullRequest: PullRequest;
   openPullRequests: CustomStore<PullRequest, number>;
   repositoryServices: string[];
   selectedServices: string[] = [];
   processing = false;
 
-  @Input()
-  set visible(value: boolean) {
-    this._visible = value;
-    this.clearFields();
-
-    if (this.visible) {
-      firstValueFrom(
-        this._repositoryServicesGQL.fetch({ input: { owner: this._repoManager.owner, repo: this._repoManager.repo } })
-      ).then(response => {
-        this.repositoryServices = response.data.repositoryServices;
-      });
-    }
-  }
-
-  @Output() visibleChange = new EventEmitter<boolean>();
-
   constructor(
     private _openPullRequestsGQL: OpenPullRequestsGQL,
     private _pullRequestAddServicesGQL: PullRequestAddServicesGQL,
     private _repositoryServicesGQL: RepositoryServicesGQL,
-    private _changeDetectorRef: ChangeDetectorRef,
+    private _destroyRef: DestroyRef,
     private _notificationManager: NotificationManager,
     private _repoManager: RepoManager,
+    private _dialogRef: MatDialogRef<AddPrServiceDialogComponent>,
     private _loggingService: LoggingService
   ) {
+    this._dialogRef
+      .afterOpened()
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(() => {
+        this.clearFields();
+
+        firstValueFrom(
+          this._repositoryServicesGQL.fetch({ input: { owner: this._repoManager.owner, repo: this._repoManager.repo } })
+        ).then(response => {
+          this.repositoryServices = response.data.repositoryServices;
+        });
+      });
+
     this.openPullRequests = new CustomStore<PullRequest, number>({
       key: 'number',
       load: async options => {
@@ -104,16 +113,12 @@ export class AddPrServiceDialogComponent {
       );
 
       this._notificationManager.show(`Add services comment added, it may take a minute to update.`);
-      this.visible = false;
+      this._dialogRef.close(DialogResult.Save);
     } catch (error) {
       this._loggingService.error(error);
     }
 
     this.processing = false;
-  }
-
-  onVisibleChange(): void {
-    this.visibleChange.emit(this.visible);
   }
 
   onDropDownBoxValueChanged(): void {
@@ -135,8 +140,7 @@ export class AddPrServiceDialogComponent {
   }
 
   cancel(): void {
-    this.visible = false;
-    this._changeDetectorRef.detectChanges();
+    this._dialogRef.close(DialogResult.Cancel);
   }
 
   private clearFields() {
@@ -147,6 +151,5 @@ export class AddPrServiceDialogComponent {
     if (this.selectPullRequestComponent) {
       this.selectPullRequestComponent.value = null;
     }
-    this._changeDetectorRef.detectChanges();
   }
 }

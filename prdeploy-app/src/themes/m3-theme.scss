@@ -3,6 +3,7 @@
 
 @use 'sass:map';
 @use '@angular/material' as mat;
+@use '@angular/cdk' as cdk;
 @import '../sass/variables';
 
 $theme-primary: $blue;
@@ -148,6 +149,8 @@ $dark-theme: mat.define-theme((
 ));
 
 :root {
+  @include cdk.overlay();
+
   @include mat.all-component-themes($light-theme);
 
   // Colors: 'none', primary, accent, warn
