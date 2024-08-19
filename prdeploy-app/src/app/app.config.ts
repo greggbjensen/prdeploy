@@ -21,6 +21,7 @@ import { ApolloClientOptions, InMemoryCache } from '@apollo/client/core';
 import { OAuthModule, OAuthModuleConfig, OAuthStorage } from 'angular-oauth2-oidc';
 import { DOCUMENT } from '@angular/common';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
 export function storageFactory(): OAuthStorage {
   return localStorage;
@@ -43,6 +44,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()),
     importProvidersFrom(BrowserModule, MarkdownModule.forRoot(), OAuthModule.forRoot(), RouterModule.forRoot([])),
+    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { floatLabel: 'always' } },
     AppConfigService,
     {
       provide: APP_INITIALIZER,
@@ -77,6 +79,7 @@ export const appConfig: ApplicationConfig = {
       deps: [HttpLink]
     },
     // Interceptors.
-    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }, provideAnimationsAsync()
+    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
+    provideAnimationsAsync()
   ]
 };

@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatExpansionModule, MatExpansionPanel } from '@angular/material/expansion';
 import { firstValueFrom } from 'rxjs';
 import {
   DeployEnvironment,
@@ -11,14 +12,12 @@ import {
 } from 'src/app/shared/graphql';
 import { LoggingService } from 'src/app/shared/services';
 import { QueueListComponent } from './queue-list/queue-list.component';
-import { DxTemplateModule } from 'devextreme-angular/core';
-import { DxAccordionModule, DxSelectBoxModule } from 'devextreme-angular';
-
 import { EnvironmentListComponent } from './environment-list/environment-list.component';
 import { AddPrServiceDialogComponent } from './add-pr-service-dialog/add-pr-service-dialog.component';
 import { NotificationManager, RepoManager, RouteManager } from '../shared/managers';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-deployments',
@@ -28,16 +27,17 @@ import { MatDialog } from '@angular/material/dialog';
   imports: [
     MatButtonModule,
     MatIconModule,
-    DxSelectBoxModule,
+    MatExpansionModule,
+    MatProgressSpinnerModule,
     EnvironmentListComponent,
-    DxAccordionModule,
-    DxTemplateModule,
     QueueListComponent,
     AddPrServiceDialogComponent
   ],
+  viewProviders: [MatExpansionPanel],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DeploymentsComponent implements OnInit {
+  readonly panelOpenState = signal(false);
   deployEnvironments: DeployEnvironment[] = [];
   deployQueues: DeployQueue[] = [];
   loading = true;
