@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -37,13 +37,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DeploymentsComponent implements OnInit {
-  readonly panelOpenState = signal(false);
   deployEnvironments: DeployEnvironment[] = [];
   deployQueues: DeployQueue[] = [];
   loading = true;
-  selectedQueueIndex = 0;
-
-  private _selectedEnvironment: string;
+  selectedEnvironment: string;
 
   constructor(
     public repoManager: RepoManager,
@@ -60,7 +57,7 @@ export class DeploymentsComponent implements OnInit {
 
   ngOnInit(): void {
     firstValueFrom(this._activatedRoute.queryParamMap).then(param => {
-      this._selectedEnvironment = param.get('environment');
+      this.selectedEnvironment = param.get('environment');
     });
 
     this.repoManager.valueChanged$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => this.update());
@@ -106,7 +103,6 @@ export class DeploymentsComponent implements OnInit {
       );
       this.deployEnvironments = response.data.deployEnvironments;
       this.deployQueues = response.data.deployQueues;
-      this.updateSelectedQueue();
       this._routeManager.updateQueryParams();
     } catch (error) {
       this._loggingService.error(error);
@@ -114,12 +110,6 @@ export class DeploymentsComponent implements OnInit {
 
     this.loading = false;
     this._changeDetectorRef.detectChanges();
-  }
-
-  updateSelectedQueue(): void {
-    if (this._selectedEnvironment) {
-      this.selectedQueueIndex = this.deployQueues.findIndex(q => q.environment == this._selectedEnvironment);
-    }
   }
 
   async queueUpdateStarted(): Promise<void> {
@@ -132,8 +122,10 @@ export class DeploymentsComponent implements OnInit {
 
   async selectedQueueChange(queue?: DeployQueue): Promise<void> {
     const environment = queue?.environment;
-    this._selectedEnvironment = environment;
-    this._routeManager.updateQueryParams({ environment: this._selectedEnvironment });
+    this.selectedEnvironment = environment;
+    if (environment) {
+      this._routeManager.updateQueryParams({ environment: this.selectedEnvironment });
+    }
   }
 
   showAddServiceToPr(): void {

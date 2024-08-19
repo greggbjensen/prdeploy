@@ -17,7 +17,9 @@
 @if (deployQueues.length > 0) {
   <mat-accordion>
     @for (queue of deployQueues; track queue.environment) {
-      <mat-expansion-panel>
+      <mat-expansion-panel
+        expanded="{{ queue.environment === selectedEnvironment }}"
+        (opened)="selectedQueueChange(queue)">
         <mat-expansion-panel-header>
           <div class="queue-title">
             <span class="queue-environment">{{ queue.environment }}</span>
@@ -40,7 +42,7 @@
     }
   </mat-accordion>
 } @else {
-  <mat-spinner></mat-spinner>
+  <mat-spinner class="loading-spinner"></mat-spinner>
 }
 
 <div class="page-actions">

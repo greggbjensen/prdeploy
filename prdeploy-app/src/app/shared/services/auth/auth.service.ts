@@ -7,7 +7,6 @@ import { User } from '../../models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private static readonly DefaultUrl = '/deployments';
   private static readonly LoginUrl = '/login';
 
   private userSubject$ = new BehaviorSubject<User>(null);
@@ -49,8 +48,6 @@ export class AuthService {
       }
       console.log(`There was state of ${this._oauthService.state}, so we are sending you to: ${stateUrl}`);
       this._router.navigateByUrl(stateUrl);
-    } else {
-      this._router.navigate([AuthService.DefaultUrl]);
     }
 
     this.isDoneLoadingSubject$.next(true);

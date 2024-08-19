@@ -99,7 +99,7 @@ namespace PrDeploy.Api.Business.Security
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, $"User did not have access to {owner}, trying user account");
+                _logger.LogWarning($"User did not have access to {owner}, trying user account.\n{ex.Message}");
             }
 
             if (!hasAccess)
@@ -109,9 +109,9 @@ namespace PrDeploy.Api.Business.Security
                     var user = await _client.User.Current();
                     hasAccess = string.Equals(owner, user.Login, StringComparison.OrdinalIgnoreCase);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    _logger.LogWarning(e, $"User did not have access {owner} user account");
+                    _logger.LogWarning($"User did not have access {owner} user account.\n {ex.Message}");
                 }
             }
 
