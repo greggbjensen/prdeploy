@@ -10,6 +10,8 @@ import { LoggingService } from '../shared/services';
 import { ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
+import { AddRepoDialogData } from './add-repo-dialog/add-repo-dialog-data';
 
 @Component({
   selector: 'app-repositories',
@@ -24,13 +26,12 @@ export class RepositoriesComponent implements OnInit {
     private _ownerRepoRemoveEnabledGQL: OwnerRepoRemoveEnabledGQL,
     private _notificationManager: NotificationManager,
     private _repoManager: RepoManager,
+    private _dialog: MatDialog,
     private _activatedRoute: ActivatedRoute,
     private _loggingService: LoggingService
   ) {}
 
   ownerRepos: OwnerRepos[];
-  addRepoVisible = false;
-  addRepoOwner = '';
   displayAddRepos = false;
 
   ngOnInit(): void {
@@ -53,9 +54,19 @@ export class RepositoriesComponent implements OnInit {
     }
   }
 
-  showAddRepo(owner: string = ''): void {
-    this.addRepoOwner = owner;
-    this.addRepoVisible = true;
+  async showAddRepo(owner: string = '') {
+    const dialogRef = this._dialog.open<AddRepoDialogComponent, AddRepoDialogData, Repository>(AddRepoDialogComponent, {
+      data: {
+        owner
+      },
+      width: '450px',
+      height: '300px'
+    });
+
+    const repository = await firstValueFrom(dialogRef.afterClosed());
+    if (repository) {
+      this.updateOwnerRepos();
+    }
   }
 
   async removeRepo(repository: Repository) {

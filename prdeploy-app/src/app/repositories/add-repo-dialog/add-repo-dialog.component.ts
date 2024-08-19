@@ -1,55 +1,55 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, DestroyRef, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { DxPopupModule, DxTextBoxModule } from 'devextreme-angular';
+import { DxTextBoxModule } from 'devextreme-angular';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle
+} from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
 import { OwnerRepoAddEnabledGQL } from 'src/app/shared/graphql';
 import { NotificationManager } from 'src/app/shared/managers';
 import { Repository } from 'src/app/shared/models';
 import { LoggingService } from 'src/app/shared/services';
+import { AddRepoDialogData } from './add-repo-dialog-data';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-add-repo-dialog',
   standalone: true,
-  imports: [DxPopupModule, DxTextBoxModule, MatButtonModule],
+  imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, DxTextBoxModule, MatButtonModule],
   templateUrl: './add-repo-dialog.component.html',
   styleUrl: './add-repo-dialog.component.scss'
 })
 export class AddRepoDialogComponent {
-  @Output() visibleChange = new EventEmitter<boolean>();
-  @Output() repoAdded = new EventEmitter<Repository>();
-  @Input() owner = '';
   repo: string;
   processing = false;
-
-  private _visible = false;
-
-  get visible() {
-    return this._visible;
-  }
-
-  @Input()
-  set visible(value: boolean) {
-    this._visible = value;
-    this.clearFields();
-  }
 
   constructor(
     private _ownerRepoAddEnabledGQL: OwnerRepoAddEnabledGQL,
     private _notificationManager: NotificationManager,
     private _loggingService: LoggingService,
-    private _changeDetectorRef: ChangeDetectorRef
-  ) {}
+    private _destroyRef: DestroyRef,
+    private _dialogRef: MatDialogRef<AddRepoDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: AddRepoDialogData
+  ) {
+    this._dialogRef
+      .afterOpened()
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(() => {
+        this.clearFields();
+      });
+  }
 
   clearFields() {
     this.repo = '';
   }
 
-  onVisibleChange(): void {
-    this.visibleChange.emit(this.visible);
-  }
-
   async add(): Promise<void> {
-    if (!this.owner && this.repo) {
+    if (!this.data.owner && this.repo) {
       return;
     }
 
@@ -57,7 +57,7 @@ export class AddRepoDialogComponent {
 
     try {
       const repository: Repository = {
-        owner: this.owner,
+        owner: this.data.owner,
         repo: this.repo
       };
       await firstValueFrom(
@@ -66,10 +66,8 @@ export class AddRepoDialogComponent {
         })
       );
 
-      this.repoAdded.emit(repository);
-      this._notificationManager.show(`Repository ${this.owner}/${this.repo} added.`);
-      this.visible = false;
-      this._changeDetectorRef.detectChanges();
+      this._notificationManager.show(`Repository ${this.data.owner}/${this.repo} added.`);
+      this._dialogRef.close(repository);
     } catch (error) {
       this._loggingService.error(error, `Error adding repository.`);
       this._notificationManager.show('Error adding repository.', 'error');
@@ -79,7 +77,6 @@ export class AddRepoDialogComponent {
   }
 
   cancel(): void {
-    this.visible = false;
-    this._changeDetectorRef.detectChanges();
+    this._dialogRef.close(null);
   }
 }

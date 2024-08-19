@@ -11,18 +11,18 @@ import {
 import { DxTextBoxModule } from 'devextreme-angular';
 
 @Component({
-  selector: 'app-add-exclude-rollback-service-dialog',
+  selector: 'app-add-environment-dialog',
   standalone: true,
   imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatButtonModule, DxTextBoxModule],
-  templateUrl: './add-exclude-rollback-service-dialog.component.html',
-  styleUrl: './add-exclude-rollback-service-dialog.component.scss'
+  templateUrl: './add-environment-dialog.component.html',
+  styleUrl: './add-environment-dialog.component.scss'
 })
-export class AddExcludeRollbackServiceDialogComponent {
+export class AddEnvironmentDialogComponent {
   name = '';
 
   constructor(
     private _destroyRef: DestroyRef,
-    private _dialogRef: MatDialogRef<AddExcludeRollbackServiceDialogComponent>
+    private _dialogRef: MatDialogRef<AddEnvironmentDialogComponent>
   ) {
     this._dialogRef
       .afterOpened()

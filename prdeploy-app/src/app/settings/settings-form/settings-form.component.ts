@@ -24,11 +24,12 @@ import { SettingsLevel } from '../models';
 import { SlackFormComponent } from '../slack-form/slack-form.component';
 import { DeployFormComponent } from '../deploy-form/deploy-form.component';
 import { Tab } from 'src/app/shared/models';
-import { AddEnvironmentDialogComponent } from '../add-environment-dialog/add-environment-dialog.component';
+import { AddEnvironmentDialogComponent } from './add-environment-dialog/add-environment-dialog.component';
 import _ from 'lodash';
 import { LoggingService } from 'src/app/shared/services';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 
 class SetCompareValue<T> {
   hasValues: boolean = false;
@@ -58,7 +59,6 @@ class SetCompareValue<T> {
   styleUrl: './settings-form.component.scss'
 })
 export class SettingsFormComponent {
-  addEnvironmentVisible = false;
   settingsCompare: DeploySettingsCompare;
   hasEnvironments = false;
   bindingEnvironments: EnvironmentSettings[];
@@ -103,6 +103,7 @@ export class SettingsFormComponent {
     private _deploySettingsSetGQL: DeploySettingsSetGQL,
     private _repoManager: RepoManager,
     private _notificationManager: NotificationManager,
+    private _dialog: MatDialog,
     private _changeDetectorRef: ChangeDetectorRef,
     private _loggingService: LoggingService
   ) {
@@ -170,7 +171,15 @@ export class SettingsFormComponent {
   }
 
   async showAddEnvironmentDialog() {
-    this.addEnvironmentVisible = true;
+    const dialogRef = this._dialog.open<AddEnvironmentDialogComponent, void, string>(AddEnvironmentDialogComponent, {
+      width: '450px',
+      height: '210px'
+    });
+
+    const environmentName = await firstValueFrom(dialogRef.afterClosed());
+    if (environmentName) {
+      this.addEnvironment(environmentName);
+    }
   }
 
   async addEnvironment(name: string) {

@@ -2,10 +2,12 @@ import { Component, Input } from '@angular/core';
 import { DxDataGridModule, DxTextBoxModule } from 'devextreme-angular';
 import { SlackSettingsCompare } from 'src/app/shared/graphql';
 import { SettingsLevel } from '../../models';
-import { AddSlackEmailAliasDialogComponent } from '../add-slack-email-alias-dialog/add-slack-email-alias-dialog.component';
+import { AddSlackEmailAliasDialogComponent } from './add-slack-email-alias-dialog/add-slack-email-alias-dialog.component';
 import _ from 'lodash';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { firstValueFrom } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-slack-email-aliases-grid',
@@ -16,12 +18,24 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class SlackEmailAliasesGridComponent {
   emails: { email: string }[] = [];
-  addEmailAliasDialogVisible = false;
   bindingLevel: SettingsLevel;
   hasAliases = false;
 
-  showAddDialog() {
-    this.addEmailAliasDialogVisible = true;
+  constructor(private _dialog: MatDialog) {}
+
+  async showAddDialog() {
+    const dialogRef = this._dialog.open<AddSlackEmailAliasDialogComponent, void, string>(
+      AddSlackEmailAliasDialogComponent,
+      {
+        width: '450px',
+        height: '210px'
+      }
+    );
+
+    const email = await firstValueFrom(dialogRef.afterClosed());
+    if (email) {
+      this.add(email);
+    }
   }
 
   private _slack: SlackSettingsCompare;
