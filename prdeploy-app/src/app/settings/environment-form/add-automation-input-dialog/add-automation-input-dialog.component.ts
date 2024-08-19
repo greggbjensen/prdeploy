@@ -1,40 +1,39 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
-import { DxPopupModule, DxTextBoxModule } from 'devextreme-angular';
+import {
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle
+} from '@angular/material/dialog';
+import { DxTextBoxModule } from 'devextreme-angular';
 
 @Component({
   selector: 'app-add-automation-input-dialog',
   standalone: true,
-  imports: [DxPopupModule, MatButtonModule, DxTextBoxModule],
+  imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatButtonModule, DxTextBoxModule],
   templateUrl: './add-automation-input-dialog.component.html',
   styleUrl: './add-automation-input-dialog.component.scss'
 })
 export class AddAutomationInputDialogComponent {
-  @Output() visibleChange = new EventEmitter<boolean>();
-  @Output() addInput = new EventEmitter<string>();
-
   name = '';
 
-  private _visible = false;
-
-  get visible() {
-    return this._visible;
+  constructor(
+    private _destroyRef: DestroyRef,
+    private _dialogRef: MatDialogRef<AddAutomationInputDialogComponent>
+  ) {
+    this._dialogRef
+      .afterOpened()
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(() => {
+        this.clearFields();
+      });
   }
-
-  @Input()
-  set visible(value: boolean) {
-    this._visible = value;
-    this.clearFields();
-  }
-
-  constructor(private _changeDetectorRef: ChangeDetectorRef) {}
 
   clearFields() {
     this.name = '';
-  }
-
-  onVisibleChange(): void {
-    this.visibleChange.emit(this.visible);
   }
 
   add(): void {
@@ -42,12 +41,10 @@ export class AddAutomationInputDialogComponent {
       return;
     }
 
-    this.addInput.emit(this.name);
-    this.visible = false;
+    this._dialogRef.close(this.name);
   }
 
   cancel(): void {
-    this.visible = false;
-    this._changeDetectorRef.detectChanges();
+    this._dialogRef.close(null);
   }
 }

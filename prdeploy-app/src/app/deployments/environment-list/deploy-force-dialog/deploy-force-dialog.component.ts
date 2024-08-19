@@ -1,41 +1,43 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, DestroyRef, Inject, ViewChild } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { DeployEnvironmentDeployGQL, OpenPullRequestsGQL, PullRequest } from 'src/app/shared/graphql';
 import { LoggingService } from 'src/app/shared/services';
-import { DxCheckBoxModule, DxPopupModule, DxSelectBoxComponent, DxSelectBoxModule } from 'devextreme-angular';
+import { DxCheckBoxModule, DxSelectBoxComponent, DxSelectBoxModule } from 'devextreme-angular';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle
+} from '@angular/material/dialog';
 import CustomStore from 'devextreme/data/custom_store';
 import { NotificationManager } from 'src/app/shared/managers';
-import { Repository } from 'src/app/shared/models';
+import { DialogResult } from 'src/app/shared/models';
 import { MatButtonModule } from '@angular/material/button';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DeployForceDialogData } from './deploy-force-dialog-data';
 
 @Component({
   selector: 'app-deploy-force-dialog',
   templateUrl: './deploy-force-dialog.component.html',
   styleUrls: ['./deploy-force-dialog.component.scss'],
   standalone: true,
-  imports: [DxPopupModule, DxSelectBoxModule, MatButtonModule, DxCheckBoxModule]
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
+    DxSelectBoxModule,
+    MatButtonModule,
+    DxCheckBoxModule
+  ]
 })
 export class DeployForceDialogComponent {
-  @Input() repository: Repository;
-  @Input() environment: string;
-
   @ViewChild('selectPullRequest') selectPullRequestComponent: DxSelectBoxComponent;
 
   processing = false;
   retainLocks = false;
-  private _visible = false;
-
-  get visible() {
-    return this._visible;
-  }
-
-  @Input()
-  set visible(value: boolean) {
-    this._visible = value;
-    this.clearFields();
-  }
-
-  @Output() visibleChange = new EventEmitter<boolean>();
 
   selectedPullRequest: PullRequest;
   openPullRequests: CustomStore<PullRequest, number>;
@@ -45,16 +47,25 @@ export class DeployForceDialogComponent {
     private _deployEnvironmentDeployGQL: DeployEnvironmentDeployGQL,
     private _notificationManager: NotificationManager,
     private _loggingService: LoggingService,
-    private _changeDetectorRef: ChangeDetectorRef
+    private _destroyRef: DestroyRef,
+    private _dialogRef: MatDialogRef<DeployForceDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: DeployForceDialogData
   ) {
+    this._dialogRef
+      .afterOpened()
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(() => {
+        this.clearFields();
+      });
+
     this.openPullRequests = new CustomStore<PullRequest, number>({
       key: 'number',
       load: async options => {
         const result = await firstValueFrom(
           this._openPullRequestsGQL.fetch({
             input: {
-              owner: this.repository.owner,
-              repo: this.repository.repo,
+              owner: this.data.repository.owner,
+              repo: this.data.repository.repo,
               search: options.searchValue
             }
           })
@@ -75,9 +86,9 @@ export class DeployForceDialogComponent {
       await firstValueFrom(
         this._deployEnvironmentDeployGQL.mutate({
           input: {
-            owner: this.repository.owner,
-            repo: this.repository.repo,
-            environment: this.environment,
+            owner: this.data.repository.owner,
+            repo: this.data.repository.repo,
+            environment: this.data.environment,
             pullNumber: this.selectedPullRequest.number,
             force: true,
             retain: this.retainLocks
@@ -85,8 +96,10 @@ export class DeployForceDialogComponent {
         })
       );
 
-      this._notificationManager.show(`Force deploy ${this.environment} comment added, it may take a minute to update.`);
-      this.visible = false;
+      this._notificationManager.show(
+        `Force deploy ${this.data.environment} comment added, it may take a minute to update.`
+      );
+      this._dialogRef.close(DialogResult.Save);
     } catch (error) {
       this._loggingService.error(error);
     }
@@ -95,12 +108,7 @@ export class DeployForceDialogComponent {
   }
 
   cancel(): void {
-    this.visible = false;
-    this._changeDetectorRef.detectChanges();
-  }
-
-  onVisibleChange(): void {
-    this.visibleChange.emit(this.visible);
+    this._dialogRef.close(DialogResult.Cancel);
   }
 
   private clearFields() {
@@ -110,6 +118,5 @@ export class DeployForceDialogComponent {
     if (this.selectPullRequestComponent) {
       this.selectPullRequestComponent.value = null;
     }
-    this._changeDetectorRef.detectChanges();
   }
 }

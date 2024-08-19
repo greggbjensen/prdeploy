@@ -1,14 +1,5 @@
-<dx-popup
-  [width]="450"
-  [height]="210"
-  [showTitle]="true"
-  title="Add Service to Exclude from Rollback"
-  [dragEnabled]="false"
-  [hideOnOutsideClick]="true"
-  [showCloseButton]="true"
-  container=".dx-viewport"
-  [(visible)]="visible"
-  (visibleChange)="onVisibleChange()">
+<h2 mat-dialog-title>Add Service to Exclude from Rollback</h2>
+<mat-dialog-content>
   <div class="form">
     <div class="dx-field">
       <div class="dx-field-label">Name</div>
@@ -16,10 +7,9 @@
         <dx-text-box [(value)]="name"></dx-text-box>
       </div>
     </div>
-
-    <div class="actions">
-      <button mat-stroked-button color="primary" (click)="cancel()">Cancel</button>
-      <button mat-flat-button color="primary" (click)="add()">Add Exclude</button>
-    </div>
   </div>
-</dx-popup>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-stroked-button color="primary" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="primary" (click)="add()">Add Exclude</button>
+</mat-dialog-actions>

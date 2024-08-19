@@ -109,13 +109,3 @@
     }
   </div>
 </dx-data-grid>
-
-<app-deploy-force-dialog
-  [environment]="actionEnvironment"
-  [repository]="repoManager"
-  [(visible)]="forceDeployVisible"></app-deploy-force-dialog>
-<app-deploy-rollback-dialog
-  [environment]="actionEnvironment"
-  [repository]="repoManager"
-  [pullNumber]="actionPullNumber"
-  [(visible)]="deployRollbackVisible"></app-deploy-rollback-dialog>

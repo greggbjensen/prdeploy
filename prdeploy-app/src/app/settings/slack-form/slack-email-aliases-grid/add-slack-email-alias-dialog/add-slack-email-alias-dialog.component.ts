@@ -8,21 +8,21 @@ import {
   MatDialogRef,
   MatDialogTitle
 } from '@angular/material/dialog';
-import { DxTextBoxModule } from 'devextreme-angular';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 
 @Component({
-  selector: 'app-add-exclude-rollback-service-dialog',
+  selector: 'app-add-slack-email-alias-dialog',
   standalone: true,
   imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatButtonModule, DxTextBoxModule],
-  templateUrl: './add-exclude-rollback-service-dialog.component.html',
-  styleUrl: './add-exclude-rollback-service-dialog.component.scss'
+  templateUrl: './add-slack-email-alias-dialog.component.html',
+  styleUrl: './add-slack-email-alias-dialog.component.scss'
 })
-export class AddExcludeRollbackServiceDialogComponent {
-  name = '';
+export class AddSlackEmailAliasDialogComponent {
+  email = '';
 
   constructor(
     private _destroyRef: DestroyRef,
-    private _dialogRef: MatDialogRef<AddExcludeRollbackServiceDialogComponent>
+    private _dialogRef: MatDialogRef<AddSlackEmailAliasDialogComponent>
   ) {
     this._dialogRef
       .afterOpened()
@@ -33,15 +33,15 @@ export class AddExcludeRollbackServiceDialogComponent {
   }
 
   clearFields() {
-    this.name = '';
+    this.email = '';
   }
 
   add(): void {
-    if (!this.name) {
+    if (!this.email) {
       return;
     }
 
-    this._dialogRef.close(this.name);
+    this._dialogRef.close(this.email);
   }
 
   cancel(): void {

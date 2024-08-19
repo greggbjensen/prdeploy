@@ -8,12 +8,15 @@ import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DatePipe } from '@angular/common';
 import { DxTemplateModule } from 'devextreme-angular/core';
 import { DxiColumnModule, DxoLoadPanelModule } from 'devextreme-angular/ui/nested';
-import { DeployRollbackDialogComponent } from '../deploy-rollback-dialog/deploy-rollback-dialog.component';
-import { DeployForceDialogComponent } from '../deploy-force-dialog/deploy-force-dialog.component';
+import { DeployRollbackDialogComponent } from './deploy-rollback-dialog/deploy-rollback-dialog.component';
+import { DeployForceDialogComponent } from './deploy-force-dialog/deploy-force-dialog.component';
 import { NotificationManager, RepoManager } from 'src/app/shared/managers';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { DeployForceDialogData } from './deploy-force-dialog/deploy-force-dialog-data';
+import { DeployRollbackDialogData } from './deploy-rollback-dialog/deploy-rollback-dialog-data';
 
 @Component({
   selector: 'app-environment-list',
@@ -40,7 +43,6 @@ export class EnvironmentListComponent implements AfterViewInit {
 
   @Input() set loading(value: boolean) {
     this._loading = value;
-    this.forceDeployVisible = false;
     if (this.environmentDataGrid) {
       if (value) {
         this.environmentDataGrid.instance.beginCustomLoading('Loading...');
@@ -49,11 +51,6 @@ export class EnvironmentListComponent implements AfterViewInit {
       }
     }
   }
-
-  actionEnvironment: string;
-  actionPullNumber: number;
-  forceDeployVisible: boolean;
-  deployRollbackVisible: boolean;
 
   get loading(): boolean {
     return this._loading;
@@ -68,7 +65,8 @@ export class EnvironmentListComponent implements AfterViewInit {
     private _deployEnvironmentDeployGQL: DeployEnvironmentDeployGQL,
     private _deployEnvironmentFreeGQL: DeployEnvironmentFreeGQL,
     private _notificationManager: NotificationManager,
-    private _loggingService: LoggingService
+    private _loggingService: LoggingService,
+    private _dialog: MatDialog
   ) {}
 
   ngAfterViewInit(): void {
@@ -95,14 +93,26 @@ export class EnvironmentListComponent implements AfterViewInit {
   }
 
   showDeployForce(environment: string): void {
-    this.forceDeployVisible = true;
-    this.actionEnvironment = environment;
+    this._dialog.open<DeployForceDialogComponent, DeployForceDialogData>(DeployForceDialogComponent, {
+      data: {
+        repository: this.repoManager,
+        environment
+      },
+      width: '450px',
+      height: '350px'
+    });
   }
 
   showDeployRollback(environment: string, pullNumber: number): void {
-    this.deployRollbackVisible = true;
-    this.actionPullNumber = pullNumber;
-    this.actionEnvironment = environment;
+    this._dialog.open<DeployRollbackDialogComponent, DeployRollbackDialogData>(DeployRollbackDialogComponent, {
+      data: {
+        pullNumber,
+        environment,
+        repository: this.repoManager
+      },
+      width: '400px',
+      height: '260px'
+    });
   }
 
   async redeploy(environment: string, pullNumber: number): Promise<void> {

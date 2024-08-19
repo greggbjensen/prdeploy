@@ -8,6 +8,8 @@ import { AddAutomationInputDialogComponent } from './add-automation-input-dialog
 import { AddExcludeRollbackServiceDialogComponent } from './add-exclude-rollback-service-dialog/add-exclude-rollback-service-dialog.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-environment-form',
@@ -42,11 +44,21 @@ export class EnvironmentFormComponent {
     return this._level;
   }
 
-  addAutomationInputVisible = false;
-  addExcludeRollbackServiceVisible = false;
+  constructor(private _dialog: MatDialog) {}
 
-  showAddExcludeRollbackService() {
-    this.addExcludeRollbackServiceVisible = true;
+  async showAddExcludeRollbackService() {
+    const dialogRef = this._dialog.open<AddExcludeRollbackServiceDialogComponent, void, string>(
+      AddExcludeRollbackServiceDialogComponent,
+      {
+        width: '450px',
+        height: '210px'
+      }
+    );
+
+    const serviceName = await firstValueFrom(dialogRef.afterClosed());
+    if (serviceName) {
+      this.addExcludeRollbackService(serviceName);
+    }
   }
 
   addExcludeRollbackService(name: string) {
@@ -64,8 +76,19 @@ export class EnvironmentFormComponent {
     this.environment.excludeFromRollback.splice(index, 1);
   }
 
-  showAddAutomationInput() {
-    this.addAutomationInputVisible = true;
+  async showAddAutomationInput() {
+    const dialogRef = this._dialog.open<AddAutomationInputDialogComponent, void, string>(
+      AddAutomationInputDialogComponent,
+      {
+        width: '450px',
+        height: '210px'
+      }
+    );
+
+    const automationInputName = await firstValueFrom(dialogRef.afterClosed());
+    if (automationInputName) {
+      this.addAutomationInput(automationInputName);
+    }
   }
 
   addAutomationInput(name: string) {

@@ -20,8 +20,3 @@
 <div class="page-actions">
   <button mat-stroked-button color="primary" class="add-service-pr-btn" (click)="showAddRepo()">Add Repository</button>
 </div>
-
-<app-add-repo-dialog
-  [(visible)]="addRepoVisible"
-  (repoAdded)="updateOwnerRepos()"
-  [owner]="addRepoOwner"></app-add-repo-dialog>
