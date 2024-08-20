@@ -16,17 +16,36 @@ import { Repository } from 'src/app/shared/models';
 import { LoggingService } from 'src/app/shared/services';
 import { AddRepoDialogData } from './add-repo-dialog-data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MtxButtonModule } from '@ng-matero/extensions/button';
 
 @Component({
   selector: 'app-add-repo-dialog',
   standalone: true,
-  imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, DxTextBoxModule, MatButtonModule],
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
+    MtxButtonModule,
+    DxTextBoxModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule
+  ],
   templateUrl: './add-repo-dialog.component.html',
   styleUrl: './add-repo-dialog.component.scss'
 })
 export class AddRepoDialogComponent {
-  repo: string;
   processing = false;
+
+  form = new FormGroup({
+    owner: new FormControl('', Validators.required),
+    repo: new FormControl('', Validators.required)
+  });
 
   constructor(
     private _ownerRepoAddEnabledGQL: OwnerRepoAddEnabledGQL,
@@ -44,20 +63,25 @@ export class AddRepoDialogComponent {
   }
 
   clearFields() {
-    this.repo = '';
+    this.form.reset();
+    this.form.patchValue({
+      owner: this.data.owner || ''
+    });
   }
 
   async add(): Promise<void> {
-    if (!this.data.owner && this.repo) {
+    if (!this.form.valid) {
       return;
     }
 
     this.processing = true;
 
     try {
+      const owner = this.form.value.owner;
+      const repo = this.form.value.repo;
       const repository: Repository = {
-        owner: this.data.owner,
-        repo: this.repo
+        owner,
+        repo
       };
       await firstValueFrom(
         this._ownerRepoAddEnabledGQL.mutate({
@@ -65,7 +89,7 @@ export class AddRepoDialogComponent {
         })
       );
 
-      this._notificationManager.show(`Repository ${this.data.owner}/${this.repo} added.`);
+      this._notificationManager.show(`Repository ${owner}/${repo} added.`);
       this._dialogRef.close(repository);
     } catch (error) {
       this._loggingService.error(error, `Error adding repository.`);

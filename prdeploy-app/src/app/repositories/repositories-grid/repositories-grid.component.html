@@ -17,7 +17,7 @@
   </div>
   <dxi-column caption="Actions" dataType="object" [width]="80" cellTemplate="actionsCellTemplate"></dxi-column>
   <div *dxTemplate="let d of 'actionsCellTemplate'">
-    <button mat-icon-button color="warn" title="Remove repository" (click)="removeRepo(d.value)">
+    <button mat-icon-button color="warn" title="Remove repository" (click)="removeRepo(d.data)">
       <mat-icon>close</mat-icon>
     </button>
   </div>
