@@ -1,18 +1,11 @@
 <h2 mat-dialog-title>Rollback {{ data.environment }}</h2>
 <mat-dialog-content>
-  <form>
+  <form [formGroup]="form">
     <mat-form-field class="example-full-width">
       <mat-label>Rollback count</mat-label>
+      <input matInput type="number" [min]="1" formControlName="rollbackCount" />
     </mat-form-field>
   </form>
-  <div class="form">
-    <div class="dx-fieldset">
-      <div class="dx-field-label">Rollback count</div>
-      <div class="dx-field-value">
-        <dx-number-box [min]="1" [(value)]="rollbackCount"></dx-number-box>
-      </div>
-    </div>
-  </div>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-stroked-button color="primary" (click)="cancel()">Cancel</button>

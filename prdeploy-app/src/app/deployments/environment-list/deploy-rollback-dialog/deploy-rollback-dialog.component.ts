@@ -8,7 +8,6 @@ import {
   MatDialogRef,
   MatDialogTitle
 } from '@angular/material/dialog';
-import { DxNumberBoxModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
 import { DeployEnvironmentRollbackGQL } from 'src/app/shared/graphql';
 import { NotificationManager } from 'src/app/shared/managers';
@@ -17,6 +16,7 @@ import { DeployRollbackDialogData } from './deploy-rollback-dialog-data';
 import { DialogResult } from 'src/app/shared/models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatInputModule } from '@angular/material/input';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-deploy-rollback-dialog',
@@ -28,14 +28,17 @@ import { MatInputModule } from '@angular/material/input';
     MatDialogClose,
     MatButtonModule,
     MatInputModule,
-    DxNumberBoxModule
+    ReactiveFormsModule
   ],
   templateUrl: './deploy-rollback-dialog.component.html',
   styleUrl: './deploy-rollback-dialog.component.scss'
 })
 export class DeployRollbackDialogComponent {
+  form = new FormGroup({
+    rollbackCount: new FormControl(1)
+  });
+
   processing = false;
-  rollbackCount = 1;
 
   constructor(
     private _deployEnvironmentDeployGQL: DeployEnvironmentRollbackGQL,
@@ -56,6 +59,7 @@ export class DeployRollbackDialogComponent {
     this.processing = true;
 
     try {
+      const rollbackCount = this.form.value.rollbackCount;
       await firstValueFrom(
         this._deployEnvironmentDeployGQL.mutate({
           input: {
@@ -63,7 +67,7 @@ export class DeployRollbackDialogComponent {
             repo: this.data.repository.repo,
             environment: this.data.environment,
             pullNumber: this.data.pullNumber,
-            count: this.rollbackCount > 1 ? this.rollbackCount : undefined
+            count: rollbackCount
           }
         })
       );
@@ -84,7 +88,9 @@ export class DeployRollbackDialogComponent {
   }
 
   private clearFields() {
-    this.rollbackCount = 1;
+    this.form.reset({
+      rollbackCount: 1
+    });
     this.processing = false;
   }
 }
