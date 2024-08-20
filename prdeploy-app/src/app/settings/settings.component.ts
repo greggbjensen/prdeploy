@@ -1,40 +1,29 @@
 import { Component, ViewChild } from '@angular/core';
 import { DxTabsModule } from 'devextreme-angular';
-import { Tab } from '../shared/models';
 import { SettingsFormComponent } from './settings-form/settings-form.component';
 import { RepoManager } from '../shared/managers';
 import { SettingsLevel } from './models';
-import { SelectionChangedEvent } from 'devextreme/ui/tab_panel';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
+import { AlertPanelComponent } from '../shared/components';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [SettingsFormComponent, MatButtonModule, MatIconModule, DxTabsModule],
+  imports: [SettingsFormComponent, MatButtonModule, MatIconModule, DxTabsModule, MatTabsModule, AlertPanelComponent],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'
 })
 export class SettingsComponent {
   @ViewChild(SettingsFormComponent) settingsForm: SettingsFormComponent;
 
-  ownerRepoTabs: Tab[] = [
-    {
-      id: 'owner',
-      text: 'Owner Defaults'
-    },
-    {
-      id: 'repo',
-      text: 'Repository Override'
-    }
-  ];
-
   level: SettingsLevel = 'owner';
 
   constructor(public repoManager: RepoManager) {}
 
-  selectedLevelChanged(event: SelectionChangedEvent): void {
-    this.level = event.addedItems[0].id;
+  selectedLevelChanged(event: MatTabChangeEvent): void {
+    this.level = event.tab.position === 1 ? 'owner' : 'repo';
   }
 
   updateSettings() {

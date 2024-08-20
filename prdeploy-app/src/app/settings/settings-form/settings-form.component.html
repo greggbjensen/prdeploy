@@ -1,15 +1,22 @@
-<div class="settings-form">
-  <dx-tabs
-    #dxTabs
-    class="settings-tabs"
-    [selectedIndex]="0"
-    [dataSource]="settingsTabs"
-    [width]="200"
-    stylingMode="secondary"
-    orientation="vertical"></dx-tabs>
-  <div class="form">
+<div class="settings-container">
+  <mat-selection-list
+    class="mat-elevation-z3 settings-left-nav"
+    [multiple]="false"
+    [hideSingleSelectionIndicator]="true"
+    (selectionChange)="settingsNavChange($event)"
+    #settingsNav>
+    @for (tab of settingsTabs; track tab.id) {
+      <mat-list-option [value]="tab.id">
+        <div class="settings-menu-item{{ tab.id === activeTabId ? ' settings-nav-selected' : '' }}">
+          <mat-icon>{{ tab.icon }}</mat-icon
+          ><span>{{ tab.text }} </span>
+        </div>
+      </mat-list-option>
+    }
+  </mat-selection-list>
+  <div class="settings-form">
     @if (settingsCompare) {
-      @switch (dxTabs.selectedItem?.id) {
+      @switch (settingsNav.selectedOptions.selected[0].value) {
         @case ('slack') {
           <app-slack-form [slack]="settingsCompare.slack" [level]="level"></app-slack-form>
         }
@@ -66,11 +73,6 @@
   </div>
 
   @if (loading) {
-    <div class="loading">
-      <div>
-        <dx-load-indicator class="loading" [width]="80" [height]="80"></dx-load-indicator>
-        <span>Loading...</span>
-      </div>
-    </div>
+    <mat-spinner></mat-spinner>
   }
 </div>

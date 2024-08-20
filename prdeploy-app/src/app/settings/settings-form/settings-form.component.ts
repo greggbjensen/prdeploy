@@ -1,5 +1,5 @@
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
-import { DxAccordionModule, DxLoadIndicatorModule, DxTabsModule } from 'devextreme-angular';
+import { AfterViewInit, ChangeDetectorRef, Component, Input, ViewChild } from '@angular/core';
+import { DxAccordionModule, DxTabsModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
 import {
   BadgeSettingsCompare,
@@ -23,13 +23,15 @@ import { JiraFormComponent } from '../jira-form/jira-form.component';
 import { SettingsLevel } from '../models';
 import { SlackFormComponent } from '../slack-form/slack-form.component';
 import { DeployFormComponent } from '../deploy-form/deploy-form.component';
-import { Tab } from 'src/app/shared/models';
 import { AddEnvironmentDialogComponent } from './add-environment-dialog/add-environment-dialog.component';
 import _ from 'lodash';
 import { LoggingService } from 'src/app/shared/services';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatListModule, MatSelectionList, MatSelectionListChange } from '@angular/material/list';
+import { Tab } from 'src/app/shared/models';
 
 class SetCompareValue<T> {
   hasValues: boolean = false;
@@ -49,16 +51,19 @@ class SetCompareValue<T> {
     JiraFormComponent,
     SlackFormComponent,
     AddEnvironmentDialogComponent,
-    DxLoadIndicatorModule,
+    MatProgressSpinnerModule,
     DxAccordionModule,
     DxTabsModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatListModule
   ],
   templateUrl: './settings-form.component.html',
   styleUrl: './settings-form.component.scss'
 })
-export class SettingsFormComponent {
+export class SettingsFormComponent implements AfterViewInit {
+  @ViewChild(MatSelectionList) settingsNav: MatSelectionList;
+
   settingsCompare: DeploySettingsCompare;
   hasEnvironments = false;
   bindingEnvironments: EnvironmentSettings[];
@@ -68,30 +73,32 @@ export class SettingsFormComponent {
     {
       id: 'environments',
       text: 'Environments',
-      icon: 'bi bi-card-list'
+      icon: 'list_alt',
+      selected: true
     },
     {
       id: 'slack',
       text: 'Slack',
-      icon: 'bi bi-slack'
+      icon: 'chat_bubble_outlined'
     },
     {
       id: 'jira',
       text: 'JIRA',
-      icon: 'bi bi-ticket-detailed'
+      icon: 'workspaces'
     },
     {
       id: 'deployment',
       text: 'Deployment',
-      icon: 'bi bi-cloud-upload'
+      icon: 'cloud'
     }
   ];
+
+  activeTabId: string = 'environments';
 
   private _level: SettingsLevel;
   @Input() set level(value: SettingsLevel) {
     this._level = value;
     this.updateBindingEnvironments();
-    this._changeDetectorRef.detectChanges();
   }
 
   get level() {
@@ -108,6 +115,21 @@ export class SettingsFormComponent {
     private _loggingService: LoggingService
   ) {
     this.fetchSettings();
+  }
+
+  ngAfterViewInit(): void {
+    const selectOption = this.settingsNav.options.find(o => o.value === this.activeTabId);
+    if (selectOption) {
+      this.settingsNav.selectedOptions.select(selectOption);
+    }
+  }
+
+  settingsNavChange(event: MatSelectionListChange) {
+    this.activeTabId = event.options[0].value;
+  }
+
+  isSettingsNavSelected(tab: Tab) {
+    return tab.id == this.activeTabId;
   }
 
   async save() {

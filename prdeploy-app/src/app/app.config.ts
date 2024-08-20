@@ -22,6 +22,7 @@ import { OAuthModule, OAuthModuleConfig, OAuthStorage } from 'angular-oauth2-oid
 import { DOCUMENT } from '@angular/common';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { MatIconRegistry } from '@angular/material/icon';
 
 export function storageFactory(): OAuthStorage {
   return localStorage;
@@ -48,16 +49,19 @@ export const appConfig: ApplicationConfig = {
     AppConfigService,
     {
       provide: APP_INITIALIZER,
-      useFactory: (appConfigService: AppConfigService, injector: Injector, document: Document) => async () => {
-        await appConfigService.load();
-        const options = injector.get(OAuthOptions);
-        const config = authConfig(options, document);
-        const authService = injector.get(AuthService);
-        authService.initialize(config);
-        authService.runInitialLoginSequence();
-      },
+      useFactory:
+        (appConfigService: AppConfigService, injector: Injector, document: Document, iconRegistry: MatIconRegistry) =>
+        async () => {
+          iconRegistry.setDefaultFontSetClass('material-icons-outlined');
+          await appConfigService.load();
+          const options = injector.get(OAuthOptions);
+          const config = authConfig(options, document);
+          const authService = injector.get(AuthService);
+          authService.initialize(config);
+          authService.runInitialLoginSequence();
+        },
       multi: true,
-      deps: [AppConfigService, Injector, DOCUMENT]
+      deps: [AppConfigService, Injector, DOCUMENT, MatIconRegistry]
     },
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
     { provide: OAuthModuleConfig, useValue: authModuleConfig },

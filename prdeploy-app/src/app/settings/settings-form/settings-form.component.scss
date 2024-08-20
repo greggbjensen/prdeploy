@@ -1,7 +1,12 @@
 @import '../../../sass/variables';
 
-.settings-form {
+.settings-container {
   display: flex;
+  align-items: flex-start;
+}
+
+.settings-form {
+  width: 100%;
 }
 
 .environments-disabled {
@@ -65,4 +70,35 @@
   .dx-tabs-vertical .dx-tab {
     padding: 12px;
   }
+}
+
+.mat-mdc-tab-body {
+  position: relative;
+}
+
+.settings-left-nav {
+  margin: 2px 25px 10px 10px;
+
+  .mdc-list-item.mdc-list-item--selected {
+    background-color: $gray-200;
+  }
+}
+
+.settings-menu-item {
+  display: flex;
+  align-items: center;
+
+  .mat-icon {
+    margin-right: 7px;
+  }
+
+  .mat-mdc-list-item {
+    padding: 0;
+  }
+}
+
+.mat-mdc-spinner {
+  position: absolute;
+  top: 0;
+  left: auto;
 }
