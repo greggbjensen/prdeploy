@@ -1,4 +1,4 @@
-<table mat-table [dataSource]="data" class="mat-elevation-z8">
+<table mat-table [dataSource]="data" class="mat-elevation-z3">
   <ng-container matColumnDef="environment">
     <th mat-header-cell *matHeaderCellDef>Environment</th>
     <td mat-cell *matCellDef="let environment">
@@ -12,118 +12,96 @@
     </td>
   </ng-container>
 
+  <ng-container matColumnDef="locked">
+    <th mat-header-cell *matHeaderCellDef><mat-icon title="Locked">lock</mat-icon></th>
+    <td mat-cell *matCellDef="let environment">
+      @if (environment.locked) {
+        <mat-icon title="Locked">lock</mat-icon>
+      }
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="pull-request">
+    <th mat-header-cell *matHeaderCellDef>Pull Request</th>
+    <td mat-cell *matCellDef="let environment">
+      @if (environment.pullRequest; as pullRequest) {
+        <a id="pr-{{ environment.name }}-{{ pullRequest.number }}" [href]="pullRequest.url" target="_blank"
+          >#{{ pullRequest.number }}</a
+        >
+        &nbsp;<span>{{ pullRequest.title }}</span>
+        <app-pull-request-popover
+          [pullRequest]="pullRequest"
+          target="#pr-{{ environment.name }}-{{ pullRequest.number }}"></app-pull-request-popover>
+      }
+      @if (!environment.pullRequest) {
+        <span class="environment-unknown">Unknown</span>
+      }
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="updated-at">
+    <th mat-header-cell *matHeaderCellDef>Updated At</th>
+    <td mat-cell *matCellDef="let environment">
+      @if (environment.pullRequest?.updatedAt) {
+        {{ environment.pullRequest?.updatedAt | date: 'short' }}
+      }
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="user">
+    <th mat-header-cell *matHeaderCellDef>User</th>
+    <td mat-cell *matCellDef="let environment">
+      @if (environment.pullRequest?.user; as user) {
+        {{ user.name }}
+      }
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="url">
+    <th mat-header-cell *matHeaderCellDef>URL</th>
+    <td mat-cell *matCellDef="let environment">
+      <a [href]="environment.url" target="_blank">{{ environment.url }}</a>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Actions</th>
+    <td mat-cell *matCellDef="let environment">
+      <div class="environment-actions">
+        @if (!environment.locked) {
+          <button
+            mat-icon-button
+            color="warn"
+            title="/free {{ environment.name }}"
+            (click)="free(environment.name, environment.pullRequest.number)">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+        <button
+          mat-icon-button
+          color="success"
+          title="/deploy {{ environment.name.toLowerCase() }} --force"
+          (click)="showDeployForce(environment.name)">
+          <mat-icon>add</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          color="accent"
+          title="/deploy {{ environment.name.toLowerCase() }}"
+          (click)="redeploy(environment.name, environment.pullRequest.number)">
+          <mat-icon>rotate_right</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          color="alternate"
+          title="/rollback {{ environment.name.toLowerCase() }}"
+          (click)="showDeployRollback(environment.name, environment.pullRequest.number)">
+          <mat-icon>rotate_left</mat-icon>
+        </button>
+      </div>
+    </td>
+  </ng-container>
+
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>
-
-<dx-data-grid
-  #environmentDataGrid
-  class="environment-table"
-  [dataSource]="data"
-  keyExpr="name"
-  [showBorders]="true"
-  [rowAlternationEnabled]="true">
-  <dxi-column
-    dataField="environment"
-    alignment="center"
-    [width]="110"
-    cellTemplate="environmentCellTemplate"></dxi-column>
-  <dxi-column
-    dataField="locked"
-    [width]="36"
-    dataType="boolean"
-    cellTemplate="lockedCellTemplate"
-    headerCellTemplate="lockedHeaderTemplate"></dxi-column>
-  <dxi-column caption="Pull Request" dataType="object" cellTemplate="pullRequestCellTemplate"></dxi-column>
-  <dxi-column dataField="updatedAt" [width]="145" dataType="date" cellTemplate="updatedAtCellTemplate"></dxi-column>
-  <dxi-column caption="User" [width]="140" dataType="object" cellTemplate="userCellTemplate"></dxi-column>
-  <dxi-column dataField="url" [width]="225" cellTemplate="linkCellTemplate" caption="URL"></dxi-column>
-  <dxi-column caption="Actions" dataType="object" [width]="173" cellTemplate="actionsCellTemplate"></dxi-column>
-  <dxo-load-panel></dxo-load-panel>
-
-  <div *dxTemplate="let d of 'environmentCellTemplate'">
-    <a
-      class="deploy-environment"
-      [style]="{ backgroundColor: d.data.color }"
-      [routerLink]="['/environments']"
-      [queryParams]="{ sourceEnvironment: d.data.name }"
-      >{{ d.data.name }}</a
-    >
-  </div>
-
-  <div *dxTemplate="let d of 'lockedHeaderTemplate'">
-    <mat-icon title="Locked">lock</mat-icon>
-  </div>
-
-  <div *dxTemplate="let d of 'lockedCellTemplate'">
-    @if (d.data.locked) {
-      <mat-icon title="Locked">lock</mat-icon>
-    }
-  </div>
-
-  <div *dxTemplate="let d of 'actionsCellTemplate'">
-    <div class="environment-actions">
-      @if (!d.data.locked) {
-        <button
-          mat-icon-button
-          color="warn"
-          title="/free {{ d.data.name }}"
-          (click)="free(d.data.name, d.data.pullRequest.number)">
-          <mat-icon>close</mat-icon>
-        </button>
-      }
-      <button
-        mat-icon-button
-        color="success"
-        title="/deploy {{ d.data.name.toLowerCase() }} --force"
-        (click)="showDeployForce(d.data.name)">
-        <mat-icon>add</mat-icon>
-      </button>
-      <button
-        mat-icon-button
-        color="accent"
-        title="/deploy {{ d.data.name.toLowerCase() }}"
-        (click)="redeploy(d.data.name, d.data.pullRequest.number)">
-        <mat-icon>rotate_right</mat-icon>
-      </button>
-      <button
-        mat-icon-button
-        color="alternate"
-        title="/rollback {{ d.data.name.toLowerCase() }}"
-        (click)="showDeployRollback(d.data.name, d.data.pullRequest.number)">
-        <mat-icon>rotate_left</mat-icon>
-      </button>
-    </div>
-  </div>
-
-  <div *dxTemplate="let d of 'linkCellTemplate'">
-    <a [href]="d.data.url" target="_blank">{{ d.data.url }}</a>
-  </div>
-
-  <div *dxTemplate="let d of 'updatedAtCellTemplate'">
-    @if (d.data.pullRequest?.updatedAt) {
-      {{ d.data.pullRequest?.updatedAt | date: 'short' }}
-    }
-  </div>
-
-  <div *dxTemplate="let d of 'userCellTemplate'">
-    @if (d.data.pullRequest?.user; as user) {
-      {{ user.name }}
-    }
-  </div>
-
-  <div *dxTemplate="let d of 'pullRequestCellTemplate'">
-    @if (d.data.pullRequest; as pullRequest) {
-      <a id="pr-{{ d.data.name }}-{{ pullRequest.number }}" [href]="pullRequest.url" target="_blank"
-        >#{{ pullRequest.number }}</a
-      >
-      &nbsp;<span>{{ pullRequest.title }}</span>
-      <app-pull-request-popover
-        [pullRequest]="pullRequest"
-        target="#pr-{{ d.data.name }}-{{ pullRequest.number }}"></app-pull-request-popover>
-    }
-    @if (!d.data.pullRequest) {
-      <span class="environment-unknown">Unknown</span>
-    }
-  </div>
-</dx-data-grid>

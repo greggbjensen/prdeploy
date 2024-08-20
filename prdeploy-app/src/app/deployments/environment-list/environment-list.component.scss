@@ -1,5 +1,31 @@
 @import '../../../sass/variables';
 
+.mat-column-environment {
+  width: 110px;
+  text-align: center;
+}
+
+.mat-column-locked {
+  width: 36px;
+  text-align: center;
+}
+
+.mat-column-updated-at {
+  width: 145px;
+}
+
+.mat-column-user {
+  width: 140px;
+}
+
+.mat-column-url {
+  width: 225px;
+}
+
+.mat-column-actions {
+  width: 155px;
+}
+
 .deploy-environment {
   color: $white;
   font-size: 11px;
@@ -20,10 +46,6 @@ a {
 .environment-unknown {
   text-transform: uppercase;
   color: $gray-600;
-}
-
-::ng-deep .environment-table td {
-  vertical-align: middle !important;
 }
 
 .environment-actions {
