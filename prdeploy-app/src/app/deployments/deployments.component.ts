@@ -88,10 +88,11 @@ export class DeploymentsComponent implements OnInit {
 
   async update(): Promise<void> {
     try {
-      this.loading = true;
-      if (!this.repoManager.isValid) {
+      if (!this.repoManager.owner || !this.repoManager.repo) {
         return;
       }
+
+      this.loading = true;
 
       const response = await firstValueFrom(
         this._deployEnvironmentsAndQueuesGQL.fetch({

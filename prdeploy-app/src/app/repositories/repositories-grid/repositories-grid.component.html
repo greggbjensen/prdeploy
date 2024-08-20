@@ -1,24 +1,22 @@
-<dx-data-grid
-  class="repositories-grid"
-  [dataSource]="repositories"
-  keyExpr="repo"
-  [showBorders]="true"
-  [rowAlternationEnabled]="true"
-  [width]="500">
-  <dxi-column dataField="repo" caption="Repository" dataType="string"></dxi-column>
-  <dxi-column dataField="owner" dataType="string" [groupIndex]="0" groupCellTemplate="ownerCellTemplate"></dxi-column>
-  <div *dxTemplate="let d of 'ownerCellTemplate'">
-    <div class="owner-cell">
-      <span>{{ d.value }}</span>
-      <button mat-icon-button color="success" title="Add repository" (click)="addRepo(d.value)">
+<mat-list class="mat-elevation-z3 repositories-list">
+  @for (owner of owners; track owners) {
+    <div mat-subheader class="repositories-list-item">
+      <span>{{ owner }}</span>
+      <button mat-icon-button color="success" title="Add repository" (click)="addRepo(owner)">
         <mat-icon>add</mat-icon>
       </button>
     </div>
-  </div>
-  <dxi-column caption="Actions" dataType="object" [width]="80" cellTemplate="actionsCellTemplate"></dxi-column>
-  <div *dxTemplate="let d of 'actionsCellTemplate'">
-    <button mat-icon-button color="warn" title="Remove repository" (click)="removeRepo(d.data)">
-      <mat-icon>close</mat-icon>
-    </button>
-  </div>
-</dx-data-grid>
+    <mat-divider></mat-divider>
+    @for (repository of repositories; track repository) {
+      <mat-list-item>
+        <mat-icon matListItemIcon>folder</mat-icon>
+        <div matListItemTitle class="repositories-list-item">
+          <span>{{ repository.repo }}</span>
+          <button mat-icon-button color="warn" title="Remove repository" (click)="removeRepo(repository)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </mat-list-item>
+    }
+  }
+</mat-list>

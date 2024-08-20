@@ -1,9 +1,8 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { DxDataGridModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
 import {
   DeployStateComparison,
@@ -16,7 +15,7 @@ import { RepoManager } from 'src/app/shared/managers';
 @Component({
   selector: 'app-environments-grid',
   standalone: true,
-  imports: [DxDataGridModule, MatTableModule, MatSortModule, MatProgressSpinnerModule],
+  imports: [MatTableModule, MatSortModule, MatProgressSpinnerModule],
   templateUrl: './environments-grid.component.html',
   styleUrl: './environments-grid.component.scss'
 })
