@@ -84,20 +84,22 @@
           (click)="showDeployForce(environment.name)">
           <mat-icon>add</mat-icon>
         </button>
-        <button
-          mat-icon-button
-          color="accent"
-          title="/deploy {{ environment.name.toLowerCase() }}"
-          (click)="redeploy(environment.name, environment.pullRequest.number)">
-          <mat-icon>rotate_right</mat-icon>
-        </button>
-        <button
-          mat-icon-button
-          color="alternate"
-          title="/rollback {{ environment.name.toLowerCase() }}"
-          (click)="showDeployRollback(environment.name, environment.pullRequest.number)">
-          <mat-icon>rotate_left</mat-icon>
-        </button>
+        @if (environment.pullRequest) {
+          <button
+            mat-icon-button
+            color="accent"
+            title="/deploy {{ environment.name.toLowerCase() }}"
+            (click)="redeploy(environment.name, environment.pullRequest.number)">
+            <mat-icon>rotate_right</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            color="alternate"
+            title="/rollback {{ environment.name.toLowerCase() }}"
+            (click)="showDeployRollback(environment.name, environment.pullRequest.number)">
+            <mat-icon>rotate_left</mat-icon>
+          </button>
+        }
       </div>
     </td>
   </ng-container>

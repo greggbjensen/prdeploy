@@ -16,11 +16,20 @@ import { LoggingService } from 'src/app/shared/services';
 import { DeployRollbackDialogData } from './deploy-rollback-dialog-data';
 import { DialogResult } from 'src/app/shared/models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-deploy-rollback-dialog',
   standalone: true,
-  imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatButtonModule, DxNumberBoxModule],
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
+    MatButtonModule,
+    MatInputModule,
+    DxNumberBoxModule
+  ],
   templateUrl: './deploy-rollback-dialog.component.html',
   styleUrl: './deploy-rollback-dialog.component.scss'
 })

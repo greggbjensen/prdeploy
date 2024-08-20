@@ -1,15 +1,21 @@
 <h2 mat-dialog-title>Force Deploy {{ data.environment }}</h2>
 <mat-dialog-content>
-  <form>
+  <form [formGroup]="form">
     <p>Choose a pull request to force to {{ data.environment }}:</p>
     <mat-form-field>
-      <mat-label>Hello</mat-label>
-      <input #input type="text" placeholder="Select pull request" matInput [matAutocomplete]="auto" />
+      <mat-label>Pull Request</mat-label>
+      <input
+        #input
+        type="text"
+        formControlName="pullRequest"
+        placeholder="Select pull request"
+        matInput
+        [matAutocomplete]="auto" />
       <mat-autocomplete
         requireSelection
         #auto="matAutocomplete"
-        (optionSelected)="selectPullRequest($event)"
-        [displayWith]="formatPullRequest">
+        [displayWith]="formatPullRequest"
+        (optionSelected)="selectPullRequest($event)">
         @for (pullRequest of openPullRequests2; track pullRequest.number) {
           <mat-option [value]="pullRequest">
             {{ formatPullRequest(pullRequest) }}
@@ -17,12 +23,10 @@
         }
       </mat-autocomplete>
     </mat-form-field>
-    <mat-checkbox [checked]="retainLocks" (change)="updateRetainLocks($event)"> Retain locks </mat-checkbox>
+    <mat-checkbox formControlName="retainLocks"> Retain locks </mat-checkbox>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-stroked-button color="primary" (click)="cancel()">Cancel</button>
-  <button mat-flat-button color="primary" (click)="forceDeploy()" [disabled]="!selectedPullRequest || processing">
-    Deploy
-  </button>
+  <button mat-flat-button color="primary" (click)="forceDeploy()" [disabled]="!form.valid || processing">Deploy</button>
 </mat-dialog-actions>

@@ -17,9 +17,11 @@ import { DialogResult } from 'src/app/shared/models';
 import { MatButtonModule } from '@angular/material/button';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DeployForceDialogData } from './deploy-force-dialog-data';
-import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-deploy-force-dialog',
@@ -34,14 +36,20 @@ import { MatInputModule } from '@angular/material/input';
     MatAutocompleteModule,
     MatInputModule,
     MatCheckboxModule,
-    MatButtonModule
+    MatButtonModule,
+    MatFormFieldModule,
+    ReactiveFormsModule
   ]
 })
 export class DeployForceDialogComponent {
   @ViewChild('selectPullRequest') selectPullRequestComponent: DxSelectBoxComponent;
 
   processing = false;
-  retainLocks = false;
+
+  form = new FormGroup({
+    pullRequest: new FormControl('', [Validators.required]),
+    retainLocks: new FormControl(false)
+  });
 
   selectedPullRequest: PullRequest;
   openPullRequests: CustomStore<PullRequest, number>;
@@ -91,15 +99,12 @@ export class DeployForceDialogComponent {
   }
 
   formatPullRequest(item: PullRequest) {
-    return item ? `#${item.number}  ${item.title}  (${item.user?.name})` : '';
+    return item && item.number ? `#${item.number}  ${item.title}  (${item.user?.name})` : '';
   }
 
   selectPullRequest(event: MatAutocompleteSelectedEvent) {
     this.selectedPullRequest = event.option.value;
-  }
-
-  updateRetainLocks(event: MatCheckboxChange) {
-    this.retainLocks = event.checked;
+    this.form.controls.pullRequest.setValue(this.formatPullRequest(this.selectedPullRequest));
   }
 
   async forceDeploy(): Promise<void> {
@@ -114,7 +119,7 @@ export class DeployForceDialogComponent {
             environment: this.data.environment,
             pullNumber: this.selectedPullRequest.number,
             force: true,
-            retain: this.retainLocks
+            retain: this.form.value.retainLocks
           }
         })
       );
@@ -137,6 +142,6 @@ export class DeployForceDialogComponent {
   private clearFields() {
     this.selectedPullRequest = null;
     this.processing = false;
-    this.retainLocks = false;
+    this.form.reset();
   }
 }
