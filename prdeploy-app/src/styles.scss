@@ -17,99 +17,16 @@ body { margin: 0; }
   text-align: center;
 }
 
-.dx-toast-message {
-  white-space: pre-line;
-}
-
-.danger-icon-btn .dx-icon {
-  color: $red-400;
-}
-
-.success-icon-btn .dx-icon {
-  color: $green-400;
-}
-
-.primary-icon-btn .dx-icon {
-  color: $blue-300;
-}
-
-.secondary-icon-btn .dx-icon {
-  color: $orange-100;
-}
-
 .page-actions {
   margin-top: 60px;
   display: flex;
 }
 
-.form {
-  display: flex;
+.fill-width {
   width: 100%;
-  max-width: 600px;
-
-  .form-title {
-    margin-top: 0;
-  }
-
-  .field-group {
-    width: 100%;
-  }
-
-  label {
-    margin: 20px 0 10px 0;
-    display: block;
-  }
-
-  .field {
-    margin: 20px 20px 0 0;
-
-    .dx-colorbox {
-      margin-left: 13px;
-      width: 88%;
-    }
-  }
-
-  .field-row {
-    display: flex;
-    flex: 1 0;
-
-    .field-group {
-      width: 50%
-    }
-
-    .field-group-sm {
-      width: 30%
-    }
-
-    .field-group-lg {
-      width: 70%
-    }
-  }
-
-  .field-group-horizontal .field, .field-checkbox {
-    display: flex;
-    align-items: center;
-
-    label {
-      margin: 0 20px 0 10px;
-      width: 120px;
-    }
-
-    .field-value {
-      flex: 1 0;
-    }
-  }
-
-  .field-checkbox {
-    flex-direction: row-reverse;
-
-    label {
-      width: 100%;
-    }
-
-    .field-value {
-      margin: 0 4px 0 0;
-    }
-  }
 }
 
+.mat-mdc-form-field-icon-suffix > .clear-field-btn {
+  margin-right: -18px;
+  color: $danger;
+}

@@ -11,6 +11,11 @@
         placeholder="Select pull request"
         matInput
         [matAutocomplete]="auto" />
+      @if (selectedPullRequest) {
+        <button mat-icon-button matSuffix class="clear-field-btn" (click)="clearPullRequest($event)">
+          <mat-icon matSuffix>close</mat-icon>
+        </button>
+      }
       <mat-icon matSuffix>arrow_drop_down</mat-icon>
       <mat-autocomplete
         #auto="matAutocomplete"

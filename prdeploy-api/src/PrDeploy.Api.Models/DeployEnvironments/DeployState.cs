@@ -3,6 +3,6 @@
     public class DeployState
     {
         public int PullNumber { get; set; }
-        public List<DeployedService> Services { get; set; } = null!;
+        public List<DeployedService>? Services { get; set; } = null!;
     }
 }

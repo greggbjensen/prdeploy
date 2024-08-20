@@ -84,6 +84,12 @@ export class DeployForceDialogComponent implements OnInit, AfterViewInit {
     this.filterPullRequests();
   }
 
+  clearPullRequest(event: MouseEvent) {
+    event.stopPropagation();
+    this.selectedPullRequest = null;
+    this.form.controls.pullRequest.reset();
+  }
+
   async filterPullRequests(search: string = '') {
     const result = await firstValueFrom(
       this._openPullRequestsGQL.fetch({

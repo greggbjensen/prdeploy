@@ -1,0 +1,15 @@
+@import '../../../sass/variables';
+
+.services-list {
+  height: 235px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  border: solid 1px $border-color;
+  border-radius: $border-radius;
+}
+
+.services-container label {
+  display: block;
+  margin: 0 0 10px 3px;
+  color: $body-color;
+}

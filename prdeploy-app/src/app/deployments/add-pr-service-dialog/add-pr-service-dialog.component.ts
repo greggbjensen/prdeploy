@@ -1,6 +1,10 @@
+import { KeyValuePipe } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
 import {
   MatDialogActions,
   MatDialogClose,
@@ -8,14 +12,10 @@ import {
   MatDialogRef,
   MatDialogTitle
 } from '@angular/material/dialog';
-import {
-  DxDropDownBoxModule,
-  DxListComponent,
-  DxListModule,
-  DxSelectBoxComponent,
-  DxSelectBoxModule
-} from 'devextreme-angular';
-import CustomStore from 'devextreme/data/custom_store';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MtxButtonModule } from '@ng-matero/extensions/button';
 import { firstValueFrom } from 'rxjs';
 import {
   OpenPullRequestsGQL,
@@ -26,6 +26,8 @@ import {
 import { NotificationManager, RepoManager } from 'src/app/shared/managers';
 import { DialogResult } from 'src/app/shared/models';
 import { LoggingService } from 'src/app/shared/services';
+import { AlertPanelComponent } from 'src/app/shared/components';
+import { MatListModule, MatSelectionList } from '@angular/material/list';
 
 @Component({
   selector: 'app-add-pr-service-dialog',
@@ -35,23 +37,35 @@ import { LoggingService } from 'src/app/shared/services';
     MatDialogContent,
     MatDialogActions,
     MatDialogClose,
-    DxSelectBoxModule,
-    DxListModule,
-    DxDropDownBoxModule,
-    MatButtonModule
+    MatButtonModule,
+    MatAutocompleteModule,
+    MatInputModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatListModule,
+    MatCheckboxModule,
+    MtxButtonModule,
+    ReactiveFormsModule,
+    AlertPanelComponent,
+    KeyValuePipe
   ],
   templateUrl: './add-pr-service-dialog.component.html',
   styleUrl: './add-pr-service-dialog.component.scss'
 })
 export class AddPrServiceDialogComponent {
-  @ViewChild('selectPullRequest') selectPullRequestComponent: DxSelectBoxComponent;
-  @ViewChild(DxListComponent, { static: false }) listView: DxListComponent;
+  @ViewChild(MatSelectionList, { static: false }) listView: MatSelectionList;
 
+  form = new FormGroup({
+    pullRequest: new FormControl('', [Validators.required])
+  });
+
+  Object = Object;
   selectedPullRequest: PullRequest;
-  openPullRequests: CustomStore<PullRequest, number>;
+  openPullRequests: PullRequest[];
   repositoryServices: string[];
   selectedServices: string[] = [];
   processing = false;
+  loadingServices = true;
 
   constructor(
     private _openPullRequestsGQL: OpenPullRequestsGQL,
@@ -65,35 +79,55 @@ export class AddPrServiceDialogComponent {
     this._dialogRef
       .afterOpened()
       .pipe(takeUntilDestroyed())
-      .subscribe(() => {
+      .subscribe(async () => {
         this.clearFields();
 
-        firstValueFrom(
+        this.loadingServices = true;
+        const response = await firstValueFrom(
           this._repositoryServicesGQL.fetch({ input: { owner: this._repoManager.owner, repo: this._repoManager.repo } })
-        ).then(response => {
-          this.repositoryServices = response.data.repositoryServices;
-        });
+        );
+        this.repositoryServices = response.data.repositoryServices;
+        this.loadingServices = false;
       });
 
-    this.openPullRequests = new CustomStore<PullRequest, number>({
-      key: 'number',
-      load: async options => {
-        const result = await firstValueFrom(
-          this._openPullRequestsGQL.fetch({
-            input: {
-              owner: this._repoManager.owner,
-              repo: this._repoManager.repo,
-              search: options.searchValue
-            }
-          })
-        );
-        return result.data.openPullRequests;
-      }
-    });
+    this.filterPullRequests();
   }
 
-  pullRequestDisplayExpr(item: PullRequest): string {
-    return item ? `#${item.number}  ${item.title}  (${item.user?.name})` : '';
+  async filterPullRequests(search: string = '') {
+    const result = await firstValueFrom(
+      this._openPullRequestsGQL.fetch({
+        input: {
+          owner: this._repoManager.owner,
+          repo: this._repoManager.repo,
+          search
+        }
+      })
+    );
+
+    this.openPullRequests = result.data.openPullRequests;
+  }
+
+  toggleServiceSelected(event: MatCheckboxChange, service: string) {
+    if (event.checked) {
+      this.selectedServices.push(service);
+    } else {
+      const index = this.selectedServices.indexOf(service);
+      this.selectedServices.splice(index, 1);
+    }
+  }
+
+  formatPullRequest(item: PullRequest) {
+    return item && item.number ? `#${item.number}  ${item.title}  (${item.user?.name})` : '';
+  }
+
+  selectPullRequest(event: MatAutocompleteSelectedEvent) {
+    this.selectedPullRequest = event.option.value;
+  }
+
+  clearPullRequest(event: MouseEvent) {
+    event.stopPropagation();
+    this.selectedPullRequest = null;
+    this.form.controls.pullRequest.reset();
   }
 
   async addServicesToPr(): Promise<void> {
@@ -125,7 +159,7 @@ export class AddPrServiceDialogComponent {
   }
 
   onSelectedServicesChange(): void {
-    this.selectedServices = this.listView.selectedItems;
+    this.selectedServices = this.listView.options.filter(o => o.selected).map(o => o.value);
   }
 
   updateListSelection() {
@@ -134,7 +168,7 @@ export class AddPrServiceDialogComponent {
     }
 
     if (!this.selectedServices || this.selectedServices.length === 0) {
-      this.listView.selectedItems = [];
+      this.selectedServices = [];
     }
   }
 
@@ -147,8 +181,6 @@ export class AddPrServiceDialogComponent {
     this.processing = false;
     this.selectedServices = [];
     this.updateListSelection();
-    if (this.selectPullRequestComponent) {
-      this.selectPullRequestComponent.value = null;
-    }
+    this.form.controls.pullRequest.reset();
   }
 }

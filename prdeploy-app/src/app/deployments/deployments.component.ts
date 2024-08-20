@@ -133,7 +133,7 @@ export class DeploymentsComponent implements OnInit {
   showAddServiceToPr(): void {
     this._dialog.open<AddPrServiceDialogComponent>(AddPrServiceDialogComponent, {
       width: '500px',
-      height: '320px'
+      height: '480px'
     });
   }
 }

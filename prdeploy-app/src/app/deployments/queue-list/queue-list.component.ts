@@ -84,6 +84,12 @@ export class QueueListComponent implements AfterViewInit {
     this.filterPullRequests();
   }
 
+  clearPullRequest(event: MouseEvent) {
+    event.stopPropagation();
+    this.pullRequestToAdd = null;
+    this.pullRequestControl.reset();
+  }
+
   async drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.pullData, event.previousIndex, event.currentIndex);
     const pullNumbers = this.pullData.map(i => i.number);
