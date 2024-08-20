@@ -68,7 +68,7 @@
     <th mat-header-cell *matHeaderCellDef>Actions</th>
     <td mat-cell *matCellDef="let environment">
       <div class="environment-actions">
-        @if (!environment.locked) {
+        @if (environment.locked) {
           <button
             mat-icon-button
             color="warn"

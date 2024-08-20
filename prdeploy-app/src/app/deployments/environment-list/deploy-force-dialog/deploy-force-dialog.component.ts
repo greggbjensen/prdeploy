@@ -2,7 +2,7 @@ import { Component, DestroyRef, Inject, ViewChild } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { DeployEnvironmentDeployGQL, OpenPullRequestsGQL, PullRequest } from 'src/app/shared/graphql';
 import { LoggingService } from 'src/app/shared/services';
-import { DxCheckBoxModule, DxSelectBoxComponent, DxSelectBoxModule } from 'devextreme-angular';
+import { DxSelectBoxComponent } from 'devextreme-angular';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -17,6 +17,9 @@ import { DialogResult } from 'src/app/shared/models';
 import { MatButtonModule } from '@angular/material/button';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DeployForceDialogData } from './deploy-force-dialog-data';
+import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-deploy-force-dialog',
@@ -28,9 +31,10 @@ import { DeployForceDialogData } from './deploy-force-dialog-data';
     MatDialogContent,
     MatDialogActions,
     MatDialogClose,
-    DxSelectBoxModule,
-    MatButtonModule,
-    DxCheckBoxModule
+    MatAutocompleteModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatButtonModule
   ]
 })
 export class DeployForceDialogComponent {
@@ -41,6 +45,7 @@ export class DeployForceDialogComponent {
 
   selectedPullRequest: PullRequest;
   openPullRequests: CustomStore<PullRequest, number>;
+  openPullRequests2: PullRequest[];
 
   constructor(
     private _openPullRequestsGQL: OpenPullRequestsGQL,
@@ -57,6 +62,16 @@ export class DeployForceDialogComponent {
       .subscribe(() => {
         this.clearFields();
       });
+
+    firstValueFrom(
+      this._openPullRequestsGQL.fetch({
+        input: {
+          owner: this.data.repository.owner,
+          repo: this.data.repository.repo
+          // search: options.searchValue
+        }
+      })
+    ).then(result => (this.openPullRequests2 = result.data.openPullRequests));
 
     this.openPullRequests = new CustomStore<PullRequest, number>({
       key: 'number',
@@ -75,8 +90,16 @@ export class DeployForceDialogComponent {
     });
   }
 
-  pullRequestDisplayExpr(item: PullRequest) {
+  formatPullRequest(item: PullRequest) {
     return item ? `#${item.number}  ${item.title}  (${item.user?.name})` : '';
+  }
+
+  selectPullRequest(event: MatAutocompleteSelectedEvent) {
+    this.selectedPullRequest = event.option.value;
+  }
+
+  updateRetainLocks(event: MatCheckboxChange) {
+    this.retainLocks = event.checked;
   }
 
   async forceDeploy(): Promise<void> {
@@ -115,8 +138,5 @@ export class DeployForceDialogComponent {
     this.selectedPullRequest = null;
     this.processing = false;
     this.retainLocks = false;
-    if (this.selectPullRequestComponent) {
-      this.selectPullRequestComponent.value = null;
-    }
   }
 }

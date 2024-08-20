@@ -84,7 +84,7 @@ export class EnvironmentListComponent implements AfterViewInit {
         repository: this.repoManager,
         environment
       },
-      width: '450px',
+      width: '550px',
       height: '350px'
     });
   }
