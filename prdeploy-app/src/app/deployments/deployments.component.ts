@@ -63,7 +63,9 @@ export class DeploymentsComponent implements OnInit {
     });
   }
 
-  async triggerDeployments(queue: DeployQueue): Promise<void> {
+  async triggerDeployments(event: MouseEvent, queue: DeployQueue): Promise<void> {
+    event.stopPropagation();
+
     try {
       // Re-trigger first item in queue.
       const pullRequest = queue.pullRequests[0];

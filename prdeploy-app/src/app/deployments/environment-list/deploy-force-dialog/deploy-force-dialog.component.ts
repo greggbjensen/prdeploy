@@ -1,8 +1,7 @@
-import { AfterViewInit, Component, DestroyRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, Inject, OnInit } from '@angular/core';
 import { debounceTime, firstValueFrom } from 'rxjs';
 import { DeployEnvironmentDeployGQL, OpenPullRequestsGQL, PullRequest } from 'src/app/shared/graphql';
 import { LoggingService } from 'src/app/shared/services';
-import { DxSelectBoxComponent } from 'devextreme-angular';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -42,8 +41,6 @@ import _ from 'lodash';
   ]
 })
 export class DeployForceDialogComponent implements OnInit, AfterViewInit {
-  @ViewChild('selectPullRequest') selectPullRequestComponent: DxSelectBoxComponent;
-
   processing = false;
 
   form = new FormGroup({
@@ -70,6 +67,7 @@ export class DeployForceDialogComponent implements OnInit, AfterViewInit {
         this.clearFields();
       });
   }
+
   ngAfterViewInit(): void {
     this.form.controls.pullRequest.valueChanges
       .pipe(takeUntilDestroyed(this._destroyRef), debounceTime(300))

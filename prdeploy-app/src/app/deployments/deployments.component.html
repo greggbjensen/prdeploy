@@ -25,7 +25,11 @@
             <span class="queue-environment">{{ queue.environment }}</span>
             <span class="queue-count">{{ queue.pullRequests.length }}</span>
             @if (queue.pullRequests.length) {
-              <button mat-icon-button color="accent" title="Refresh" (click)="triggerDeployments(queue)">
+              <button
+                mat-icon-button
+                color="accent"
+                title="Trigger deployments"
+                (click)="triggerDeployments($event, queue)">
                 <mat-icon>refresh</mat-icon>
               </button>
             }

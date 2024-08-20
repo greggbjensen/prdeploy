@@ -1,7 +1,6 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import CustomStore from 'devextreme/data/custom_store';
+import { AfterViewInit, Component, DestroyRef, EventEmitter, Input, Output } from '@angular/core';
 import { ItemReorderedEvent } from 'devextreme/ui/list';
-import { firstValueFrom } from 'rxjs';
+import { debounceTime, firstValueFrom } from 'rxjs';
 import {
   DeployQueue,
   DeployQueueUpdateGQL,
@@ -9,18 +8,22 @@ import {
   OpenPullRequestsGQL,
   PullRequest
 } from 'src/app/shared/graphql';
-import { DxSelectBoxModule, DxLoadPanelModule } from 'devextreme-angular';
 import { MtxPopoverModule } from '@ng-matero/extensions/popover';
-import { DxButtonModule } from 'devextreme-angular/ui/button';
-import { DxTemplateModule } from 'devextreme-angular/core';
-import { DxoItemDraggingModule, DxoLoadPanelModule } from 'devextreme-angular/ui/nested';
-import { DxListModule } from 'devextreme-angular/ui/list';
 import { DatePipe } from '@angular/common';
 import { RepoManager } from 'src/app/shared/managers';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MarkdownComponent } from 'ngx-markdown';
 import { CleanMarkdownPipe } from 'src/app/shared/pipes';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import _ from 'lodash';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { CdkDragDrop, CdkDropList, CdkDrag, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-queue-list',
@@ -28,26 +31,29 @@ import { CleanMarkdownPipe } from 'src/app/shared/pipes';
   styleUrls: ['./queue-list.component.scss'],
   standalone: true,
   imports: [
-    DxListModule,
-    DxoItemDraggingModule,
-    DxoLoadPanelModule,
-    DxTemplateModule,
-    DxButtonModule,
+    MatAutocompleteModule,
     MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatListModule,
     MatIconModule,
     MtxPopoverModule,
     MarkdownComponent,
-    DxSelectBoxModule,
-    DxLoadPanelModule,
+    ReactiveFormsModule,
+    MatProgressSpinnerModule,
+    CdkDropList,
+    CdkDrag,
     DatePipe,
     CleanMarkdownPipe
   ]
 })
-export class QueueListComponent {
+export class QueueListComponent implements AfterViewInit {
   @Input() set queue(value: DeployQueue) {
     this._queue = value;
     if (value) {
-      this.pullData = value.pullRequests;
+      // Make not read only.
+      this.pullData = [...value.pullRequests];
     } else {
       this.pullData = [];
     }
@@ -57,38 +63,62 @@ export class QueueListComponent {
     return this._queue;
   }
 
-  pullData: any;
+  pullData: PullRequest[];
+
+  pullRequestControl = new FormControl('', [Validators.required]);
 
   private _queue?: DeployQueue;
 
   @Input() loading = true;
   @Output() queueUpdateStarted: EventEmitter<number[]> = new EventEmitter<number[]>();
   @Output() queueUpdateComplete: EventEmitter<number[]> = new EventEmitter<number[]>();
-  openPullRequests: CustomStore<PullRequest, number>;
+  openPullRequests: PullRequest[];
+  pullRequestToAdd: PullRequest;
 
   constructor(
     private _openPullRequestsGQL: OpenPullRequestsGQL,
     private _deployQueueUpdateGQL: DeployQueueUpdateGQL,
-    private _repoManager: RepoManager
+    private _repoManager: RepoManager,
+    private _destroyRef: DestroyRef
   ) {
-    this.openPullRequests = new CustomStore<PullRequest, number>({
-      key: 'number',
-      load: async options => {
-        const result = await firstValueFrom(
-          this._openPullRequestsGQL.fetch({
-            input: {
-              owner: this._repoManager.owner,
-              repo: this._repoManager.repo,
-              search: options.searchValue
-            }
-          })
-        );
-        return result.data.openPullRequests;
-      }
-    });
+    this.filterPullRequests();
   }
 
-  pullRequestDisplayExpr(item: PullRequest) {
+  async drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.pullData, event.previousIndex, event.currentIndex);
+    const pullNumbers = this.pullData.map(i => i.number);
+    await this.updatePullNumbers(pullNumbers);
+  }
+
+  ngAfterViewInit(): void {
+    this.pullRequestControl.valueChanges
+      .pipe(takeUntilDestroyed(this._destroyRef), debounceTime(300))
+      .subscribe(value => {
+        if (!_.isObject(value)) {
+          this.filterPullRequests(value);
+        }
+      });
+  }
+
+  async filterPullRequests(search: string = '') {
+    const result = await firstValueFrom(
+      this._openPullRequestsGQL.fetch({
+        input: {
+          owner: this._repoManager.owner,
+          repo: this._repoManager.repo,
+          search
+        }
+      })
+    );
+
+    this.openPullRequests = result.data.openPullRequests;
+  }
+
+  selectPullRequest(event: MatAutocompleteSelectedEvent) {
+    this.pullRequestToAdd = event.option.value;
+  }
+
+  formatPullRequest(item: PullRequest) {
     return item ? `#${item.number}  ${item.title}  (${item.user?.name})` : '';
   }
 
@@ -115,6 +145,8 @@ export class QueueListComponent {
     const pullNumbers = this.queue?.pullRequests.map(p => p.number);
     pullNumbers?.push(pullRequest.number);
     await this.updatePullNumbers(pullNumbers);
+    this.pullRequestControl.reset();
+    this.pullRequestToAdd = null;
   }
 
   private async updatePullNumbers(
