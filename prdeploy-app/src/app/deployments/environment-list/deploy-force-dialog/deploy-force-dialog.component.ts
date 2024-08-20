@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { AfterViewInit, Component, DestroyRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { debounceTime, firstValueFrom } from 'rxjs';
 import { DeployEnvironmentDeployGQL, OpenPullRequestsGQL, PullRequest } from 'src/app/shared/graphql';
 import { LoggingService } from 'src/app/shared/services';
 import { DxSelectBoxComponent } from 'devextreme-angular';
@@ -21,6 +21,7 @@ import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/ma
 import { MatInputModule } from '@angular/material/input';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import _ from 'lodash';
 
 @Component({
   selector: 'app-deploy-force-dialog',
@@ -40,7 +41,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     ReactiveFormsModule
   ]
 })
-export class DeployForceDialogComponent implements OnInit {
+export class DeployForceDialogComponent implements OnInit, AfterViewInit {
   @ViewChild('selectPullRequest') selectPullRequestComponent: DxSelectBoxComponent;
 
   processing = false;
@@ -59,6 +60,7 @@ export class DeployForceDialogComponent implements OnInit {
     private _notificationManager: NotificationManager,
     private _loggingService: LoggingService,
     private _dialogRef: MatDialogRef<DeployForceDialogComponent>,
+    private _destroyRef: DestroyRef,
     @Inject(MAT_DIALOG_DATA) public data: DeployForceDialogData
   ) {
     this._dialogRef
@@ -67,8 +69,15 @@ export class DeployForceDialogComponent implements OnInit {
       .subscribe(() => {
         this.clearFields();
       });
-
-    this.form.controls.pullRequest.valueChanges.pipe(takeUntilDestroyed());
+  }
+  ngAfterViewInit(): void {
+    this.form.controls.pullRequest.valueChanges
+      .pipe(takeUntilDestroyed(this._destroyRef), debounceTime(300))
+      .subscribe(value => {
+        if (!_.isObject(value)) {
+          this.filterPullRequests(value);
+        }
+      });
   }
 
   ngOnInit(): void {
@@ -95,7 +104,6 @@ export class DeployForceDialogComponent implements OnInit {
 
   selectPullRequest(event: MatAutocompleteSelectedEvent) {
     this.selectedPullRequest = event.option.value;
-    this.form.controls.pullRequest.setValue(this.formatPullRequest(this.selectedPullRequest));
   }
 
   async forceDeploy(): Promise<void> {

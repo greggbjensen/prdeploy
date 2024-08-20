@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -51,12 +51,13 @@ export class DeploymentsComponent implements OnInit {
     private _loggingService: LoggingService,
     private _dialog: MatDialog,
     private _activatedRoute: ActivatedRoute,
+    private _destroyRef: DestroyRef,
     private _changeDetectorRef: ChangeDetectorRef
-  ) {
-    this.repoManager.valueChanged$.pipe(takeUntilDestroyed()).subscribe(() => this.update());
-  }
+  ) {}
 
   ngOnInit(): void {
+    this.repoManager.valueChanged$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => this.update());
+
     firstValueFrom(this._activatedRoute.queryParamMap).then(param => {
       this.selectedEnvironment = param.get('environment');
     });

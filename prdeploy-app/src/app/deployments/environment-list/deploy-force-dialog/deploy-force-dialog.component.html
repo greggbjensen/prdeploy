@@ -12,7 +12,6 @@
         matInput
         [matAutocomplete]="auto" />
       <mat-autocomplete
-        requireSelection
         #auto="matAutocomplete"
         [displayWith]="formatPullRequest"
         (optionSelected)="selectPullRequest($event)">
@@ -28,5 +27,11 @@
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-stroked-button color="primary" (click)="cancel()">Cancel</button>
-  <button mat-flat-button color="primary" (click)="forceDeploy()" [disabled]="!form.valid || processing">Deploy</button>
+  <button
+    mat-flat-button
+    color="primary"
+    (click)="forceDeploy()"
+    [disabled]="!form.valid || !selectedPullRequest || processing">
+    Deploy
+  </button>
 </mat-dialog-actions>
