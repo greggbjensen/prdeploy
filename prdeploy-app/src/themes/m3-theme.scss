@@ -70,8 +70,14 @@ $_palettes: (
   ),
   neutral: (
     0: shade-color($theme-neutral, 100%),
+    4: shade-color($theme-neutral, 96%),
+    5: shade-color($theme-neutral, 95%),
     10: shade-color($theme-neutral, 90%),
+    12: shade-color($theme-neutral, 88%),
+    17: shade-color($theme-neutral, 82%),
     20: shade-color($theme-neutral, 75%),
+    22: shade-color($theme-neutral, 70%),
+    24: shade-color($theme-neutral, 68%),
     25: shade-color($theme-neutral, 60%),
     30: shade-color($theme-neutral, 45%),
     35: shade-color($theme-neutral, 30%),
@@ -80,11 +86,15 @@ $_palettes: (
     60: tint-color($theme-neutral, 15%),
     70: tint-color($theme-neutral, 30%),
     80: tint-color($theme-neutral, 45%),
+    87: tint-color($theme-neutral, 45%),
     90: tint-color($theme-neutral, 60%),
-    95: tint-color($theme-neutral, 70%),
-    98: tint-color($theme-neutral, 80%),
-    99: tint-color($theme-neutral, 90%),
-    100: tint-color($theme-neutral, 100%),
+    92: tint-color($theme-neutral, 79%),
+    94: tint-color($theme-neutral, 83%),
+    95: tint-color($theme-neutral, 87%),
+    96: tint-color($theme-neutral, 90%),
+    98: tint-color($theme-neutral, 92%),
+    99: tint-color($theme-neutral, 97%),
+    100: tint-color($theme-neutral, 100%)
   ),
   neutral-variant: (
     0: shade-color($theme-neutral-variant, 100%),
@@ -138,6 +148,9 @@ $light-theme: mat.define-theme((
     theme-type: light,
     primary: $_primary,
     tertiary: $_tertiary,
+  ),
+  density: (
+    scale: 0,
   )
 ));
 $dark-theme: mat.define-theme((
@@ -145,6 +158,9 @@ $dark-theme: mat.define-theme((
     theme-type: dark,
     primary: $_primary,
     tertiary: $_tertiary,
+  ),
+  density: (
+    scale: 0,
   )
 ));
 
@@ -161,6 +177,13 @@ $dark-theme: mat.define-theme((
 
   .small-form-field {
     @include mat.form-field-density(-4);
+  }
+
+  // Missing from theme.
+  @for $z-value from 0 through 24 {
+    .mat-elevation-z#{$z-value} {
+      @include mat.elevation(2);
+    }
   }
 
   // Extensions

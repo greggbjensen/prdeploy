@@ -1,26 +1,15 @@
 <div class="user-panel">
-  <div class="user-info">
-    <div class="image-container">
-      @if (user) {
-        <img [src]="user.avatarUrl" [title]="user.name" />
-      } @else {
-        <i class="dx-icon dx-icon-user"></i>
-      }
-    </div>
-  </div>
-  @if (menuMode === 'context') {
-    <dx-context-menu
-      [items]="menuItems"
-      target=".user-button"
-      showEvent="dxclick"
-      [position]="{
-        my: 'top',
-        at: 'bottom'
-      }"
-      cssClass="user-menu">
-    </dx-context-menu>
-  }
-  @if (menuMode === 'list') {
-    <dx-list class="dx-toolbar-menu-action" [items]="menuItems"> </dx-list>
-  }
+  <button class="user-btn" mat-icon-button [matMenuTriggerFor]="menu">
+    @if (user) {
+      <img [src]="user.avatarUrl" [title]="user.name" />
+    } @else {
+      <mat-icon>user</mat-icon>
+    }
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Logout</span>
+    </button>
+  </mat-menu>
 </div>

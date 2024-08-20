@@ -6,11 +6,9 @@ import { RepoManager } from '../../managers';
 import { firstValueFrom } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { OwnerRepos } from '../../graphql';
-import { SelectionChangedEvent } from 'devextreme/ui/select_box';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 
 @Component({
@@ -18,7 +16,7 @@ import { MatSelectChange, MatSelectModule } from '@angular/material/select';
   templateUrl: 'header.component.html',
   styleUrls: ['./header.component.scss'],
   standalone: true,
-  imports: [MatToolbarModule, MatButtonModule, MatIconModule, MatMenuModule, MatSelectModule, UserPanelComponent]
+  imports: [MatToolbarModule, MatButtonModule, MatIconModule, MatSelectModule, UserPanelComponent]
 })
 export class HeaderComponent implements OnInit {
   @Output()
@@ -32,15 +30,6 @@ export class HeaderComponent implements OnInit {
 
   owners: string[];
   repos: string[];
-  userMenuItems = [
-    {
-      text: 'Logout',
-      icon: 'runner',
-      onClick: () => {
-        this._authService.logout();
-      }
-    }
-  ];
 
   private _ownerRepos: OwnerRepos[] = [];
 
