@@ -1,13 +1,14 @@
 @import '../../../sass/variables';
 
 .mat-column-environment {
-  width: 110px;
+  width: 125px;
   text-align: center;
 }
 
 .mat-column-locked {
   width: 36px;
   text-align: center;
+  color: $gray-500;
 }
 
 .mat-column-updated-at {
