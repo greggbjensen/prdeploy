@@ -55,3 +55,16 @@ body { margin: 0; }
   margin: 20px auto 0 auto;
   z-index: $zindex-modal + 1;
 }
+
+.field-section {
+  padding: 0 10px;
+  margin-left: -15px;
+
+  .mat-mdc-form-field, .mat-mdc-checkbox {
+    margin-left: 15px;
+  }
+
+  .mat-mdc-checkbox {
+    min-width: 212px;
+  }
+}

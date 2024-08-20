@@ -1,44 +1,31 @@
 <div class="environment-settings">
   <form>
     <h4 class="field-group-title">General</h4>
-    <mat-form-field class="example-full-width">
-      <mat-label>Name</mat-label>
-      <input matInput type="text" [(ngModel)]="environment.name" name="name" />
-    </mat-form-field>
-  </form>
+    <div class="field-section">
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input matInput type="text" [(ngModel)]="environment.name" name="name" [disabled]="!hasEnvironments" />
+      </mat-form-field>
 
-  <div class="field-group field-group-horizontal">
-    <h4 class="field-group-title">General</h4>
-    <div class="field">
-      <label>Name</label>
-      <div class="field-value">
-        <dx-text-box [(value)]="environment.name" [disabled]="!hasEnvironments"></dx-text-box>
+      <mat-form-field>
+        <mat-label>Queue</mat-label>
+        <input matInput type="text" [(ngModel)]="environment.queue" name="queue" [disabled]="!hasEnvironments" />
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>URL</mat-label>
+        <input matInput type="text" [(ngModel)]="environment.url" name="url" [disabled]="!hasEnvironments" />
+      </mat-form-field>
+
+      <div class="field-section">
+        <mat-checkbox [(ngModel)]="environment.requireApproval" name="requireApproval">Require approval</mat-checkbox>
+
+        <mat-checkbox [(ngModel)]="environment.requireBranchUpToDate" name="requireBranchUpToDate">
+          Require branch up to date
+        </mat-checkbox>
       </div>
     </div>
-    <div class="field">
-      <label>Queue</label>
-      <div class="field-value">
-        <dx-text-box [(value)]="environment.queue" [disabled]="!hasEnvironments"></dx-text-box>
-      </div>
-    </div>
-    <div class="field">
-      <label>URL</label>
-      <div class="field-value">
-        <dx-text-box [(value)]="environment.url" [disabled]="!hasEnvironments"></dx-text-box>
-      </div>
-    </div>
-    <div class="field">
-      <label>Require approval</label>
-      <div class="field-value">
-        <dx-check-box [(value)]="environment.requireApproval" [disabled]="!hasEnvironments"></dx-check-box>
-      </div>
-    </div>
-    <div class="field">
-      <label>Require branch up to date</label>
-      <div class="field-value">
-        <dx-check-box [(value)]="environment.requireBranchUpToDate" [disabled]="!hasEnvironments"></dx-check-box>
-      </div>
-    </div>
+
     <div class="add-items">
       <span>Exclude from rollback</span>
       <button
@@ -67,22 +54,22 @@
         </div>
       </div>
     }
-  </div>
 
-  <div class="field-group field-group-horizontal">
     <h4 class="field-group-title">Automation Test</h4>
-    <div class="field">
-      <label>Enabled</label>
-      <div class="field-value">
-        <dx-check-box [(value)]="environment.automationTest.enabled" [disabled]="!hasEnvironments"></dx-check-box>
-      </div>
+    <div class="field-section">
+      <mat-checkbox [(ngModel)]="environment.automationTest.enabled" name="automationTestEnabled">Enabled</mat-checkbox>
+
+      <mat-form-field>
+        <mat-label>GitHub workfow</mat-label>
+        <input
+          matInput
+          type="text"
+          [(ngModel)]="environment.automationTest.workflow"
+          name="automationTestWorkflow"
+          [disabled]="!hasEnvironments" />
+      </mat-form-field>
     </div>
-    <div class="field">
-      <label>GitHub workfow</label>
-      <div class="field-value">
-        <dx-text-box [(value)]="environment.automationTest.workflow" [disabled]="!hasEnvironments"></dx-text-box>
-      </div>
-    </div>
+
     <div class="add-items">
       <div>
         <span>Workflow inputs</span>
@@ -117,5 +104,5 @@
         </div>
       }
     </div>
-  </div>
+  </form>
 </div>
