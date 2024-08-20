@@ -10,7 +10,7 @@ import {
   PullRequest
 } from 'src/app/shared/graphql';
 import { DxSelectBoxModule, DxLoadPanelModule } from 'devextreme-angular';
-import { PullRequestPopoverComponent } from '../pull-request-popover/pull-request-popover.component';
+import { MtxPopoverModule } from '@ng-matero/extensions/popover';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DxTemplateModule } from 'devextreme-angular/core';
 import { DxoItemDraggingModule, DxoLoadPanelModule } from 'devextreme-angular/ui/nested';
@@ -19,6 +19,8 @@ import { DatePipe } from '@angular/common';
 import { RepoManager } from 'src/app/shared/managers';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MarkdownComponent } from 'ngx-markdown';
+import { CleanMarkdownPipe } from 'src/app/shared/pipes';
 
 @Component({
   selector: 'app-queue-list',
@@ -33,10 +35,12 @@ import { MatIconModule } from '@angular/material/icon';
     DxButtonModule,
     MatButtonModule,
     MatIconModule,
-    PullRequestPopoverComponent,
+    MtxPopoverModule,
+    MarkdownComponent,
     DxSelectBoxModule,
     DxLoadPanelModule,
-    DatePipe
+    DatePipe,
+    CleanMarkdownPipe
   ]
 })
 export class QueueListComponent {

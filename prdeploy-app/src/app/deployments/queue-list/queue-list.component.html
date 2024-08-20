@@ -13,18 +13,35 @@
     <div *dxTemplate="let pullRequest of 'item'; let queueIndex = index" class="queue-pull">
       <div class="queue-pull-title">
         <span class="queue-order">{{ queueIndex + 1 }}</span>
-        <a id="pr-queue-{{ pullRequest.number }}" [href]="pullRequest.url" target="_blank">#{{ pullRequest.number }}</a>
+        <a
+          id="pr-queue-{{ pullRequest.number }}"
+          #popoverTrigger="mtxPopoverTrigger"
+          [mtxPopoverTriggerFor]="popover"
+          [mtxPopoverTriggerData]="{ pullRequest }"
+          [href]="pullRequest.url"
+          target="_blank"
+          >#{{ pullRequest.number }}</a
+        >
         &nbsp;&nbsp;<span>{{ pullRequest.title }}</span>
       </div>
       <span class="queue-pull-updated">{{ pullRequest.updatedAt | date: 'short' }}</span>
       <button mat-icon-button color="warn" title="Remove from queue" (click)="remove(pullRequest)">
         <mat-icon>close</mat-icon>
       </button>
-      <app-pull-request-popover
-        [pullRequest]="pullRequest"
-        target="#pr-queue-{{ pullRequest.number }}"></app-pull-request-popover>
     </div>
   </dx-list>
+
+  <mtx-popover #popover="mtxPopover">
+    <ng-template mtxPopoverContent let-pullRequest="pullRequest">
+      <div style="max-width: 300px">
+        <div class="pull-head">
+          <span class="pull-user">{{ pullRequest.user?.name }}</span>
+          <span>{{ pullRequest.updatedAt | date: 'short' }}</span>
+        </div>
+        <markdown [data]="pullRequest.body | cleanMarkdown" [disableSanitizer]="true"> </markdown>
+      </div>
+    </ng-template>
+  </mtx-popover>
 }
 
 <div class="add-pull-row">

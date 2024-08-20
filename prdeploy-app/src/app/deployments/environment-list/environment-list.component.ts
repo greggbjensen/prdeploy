@@ -2,7 +2,6 @@ import { AfterViewInit, Component, Input } from '@angular/core';
 import { DeployEnvironment, DeployEnvironmentDeployGQL, DeployEnvironmentFreeGQL } from 'src/app/shared/graphql';
 import { firstValueFrom } from 'rxjs';
 import { LoggingService } from 'src/app/shared/services';
-import { PullRequestPopoverComponent } from '../pull-request-popover/pull-request-popover.component';
 import { DatePipe } from '@angular/common';
 import { DeployRollbackDialogComponent } from './deploy-rollback-dialog/deploy-rollback-dialog.component';
 import { DeployForceDialogComponent } from './deploy-force-dialog/deploy-force-dialog.component';
@@ -14,6 +13,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { DeployForceDialogData } from './deploy-force-dialog/deploy-force-dialog-data';
 import { DeployRollbackDialogData } from './deploy-rollback-dialog/deploy-rollback-dialog-data';
+import { MtxPopoverModule } from '@ng-matero/extensions/popover';
+import { MarkdownComponent } from 'ngx-markdown';
+import { CleanMarkdownPipe } from 'src/app/shared/pipes';
 
 @Component({
   selector: 'app-environment-list',
@@ -24,10 +26,12 @@ import { DeployRollbackDialogData } from './deploy-rollback-dialog/deploy-rollba
     MatButtonModule,
     MatIconModule,
     MatTableModule,
-    PullRequestPopoverComponent,
     DeployForceDialogComponent,
     DeployRollbackDialogComponent,
+    MtxPopoverModule,
+    MarkdownComponent,
     DatePipe,
+    CleanMarkdownPipe,
     RouterModule
   ]
 })

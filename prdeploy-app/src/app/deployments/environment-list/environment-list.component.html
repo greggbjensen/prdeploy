@@ -25,13 +25,16 @@
     <th mat-header-cell *matHeaderCellDef>Pull Request</th>
     <td mat-cell *matCellDef="let environment">
       @if (environment.pullRequest; as pullRequest) {
-        <a id="pr-{{ environment.name }}-{{ pullRequest.number }}" [href]="pullRequest.url" target="_blank"
+        <a
+          id="pr-{{ environment.name }}-{{ pullRequest.number }}"
+          #popoverTrigger="mtxPopoverTrigger"
+          [mtxPopoverTriggerFor]="popover"
+          [mtxPopoverTriggerData]="{ pullRequest }"
+          [href]="pullRequest.url"
+          target="_blank"
           >#{{ pullRequest.number }}</a
         >
         &nbsp;<span>{{ pullRequest.title }}</span>
-        <app-pull-request-popover
-          [pullRequest]="pullRequest"
-          target="#pr-{{ environment.name }}-{{ pullRequest.number }}"></app-pull-request-popover>
       }
       @if (!environment.pullRequest) {
         <span class="environment-unknown">Unknown</span>
@@ -107,3 +110,15 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>
+
+<mtx-popover #popover="mtxPopover">
+  <ng-template mtxPopoverContent let-pullRequest="pullRequest">
+    <div style="max-width: 300px">
+      <div class="pull-head">
+        <span class="pull-user">{{ pullRequest.user?.name }}</span>
+        <span>{{ pullRequest.updatedAt | date: 'short' }}</span>
+      </div>
+      <markdown [data]="pullRequest.body | cleanMarkdown" [disableSanitizer]="true"> </markdown>
+    </div>
+  </ng-template>
+</mtx-popover>

@@ -46,6 +46,15 @@ a {
   flex: 1;
 }
 
+.pull-head {
+  display: flex;
+}
+
+.pull-user {
+  font-weight: $font-weight-bold;
+  flex: 1;
+}
+
 ::ng-deep .queue-pull-delete .dx-icon.dx-icon-remove::before {
   color: $red-400;
 }

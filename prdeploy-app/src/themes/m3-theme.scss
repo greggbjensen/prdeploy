@@ -3,6 +3,7 @@
 
 @use 'sass:map';
 @use '@angular/material' as mat;
+@use '@ng-matero/extensions' as mtx;
 @use '@angular/cdk' as cdk;
 @import '../sass/variables';
 
@@ -145,7 +146,7 @@ $_tertiary: map.merge(map.get($_palettes, tertiary), $_rest);
 
 $theme-font-family: 'Helvetica Neue,Segoe UI,helvetica,verdana,sans-serif';
 
-$light-theme: mat.define-theme((
+$config: (
   color: (
     theme-type: light,
     primary: $_primary,
@@ -158,21 +159,12 @@ $light-theme: mat.define-theme((
   density: (
     scale: 0
   )
-));
-$dark-theme: mat.define-theme((
-  color: (
-    theme-type: dark,
-    primary: $_primary,
-    tertiary: $_tertiary
-  ),
-  typography: (
-    brand-family: $theme-font-family,
-    plain-family: $theme-font-family
-  ),
-  density: (
-    scale: 0
-  )
-));
+);
+
+$light-theme: mat.private-deep-merge-all(
+  mat.define-theme($config),
+  mtx.define-theme($config)
+);
 
 @include mat.core();
 
@@ -180,6 +172,7 @@ $dark-theme: mat.define-theme((
   @include cdk.overlay();
 
   @include mat.all-component-themes($light-theme);
+  @include mtx.all-component-themes($light-theme);
 
   // Colors: 'none', primary, accent, warn
   // https://v6.material.angular.io/components/button/examples.
