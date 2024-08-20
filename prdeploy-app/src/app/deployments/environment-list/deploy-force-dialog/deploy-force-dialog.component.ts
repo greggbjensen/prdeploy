@@ -21,6 +21,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import _ from 'lodash';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-deploy-force-dialog',
@@ -34,6 +35,7 @@ import _ from 'lodash';
     MatDialogClose,
     MatAutocompleteModule,
     MatInputModule,
+    MatIconModule,
     MatCheckboxModule,
     MatButtonModule,
     MatFormFieldModule,
