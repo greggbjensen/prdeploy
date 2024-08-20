@@ -5,7 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { LoggingService } from 'src/app/shared/services';
 import { PullRequestPopoverComponent } from '../pull-request-popover/pull-request-popover.component';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
-import { DatePipe } from '@angular/common';
+import { DatePipe, JsonPipe } from '@angular/common';
 import { DxTemplateModule } from 'devextreme-angular/core';
 import { DxiColumnModule, DxoLoadPanelModule } from 'devextreme-angular/ui/nested';
 import { DeployRollbackDialogComponent } from './deploy-rollback-dialog/deploy-rollback-dialog.component';
@@ -15,6 +15,7 @@ import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
 import { DeployForceDialogData } from './deploy-force-dialog/deploy-force-dialog-data';
 import { DeployRollbackDialogData } from './deploy-rollback-dialog/deploy-rollback-dialog-data';
 
@@ -31,10 +32,12 @@ import { DeployRollbackDialogData } from './deploy-rollback-dialog/deploy-rollba
     DxButtonModule,
     MatButtonModule,
     MatIconModule,
+    MatTableModule,
     PullRequestPopoverComponent,
     DeployForceDialogComponent,
     DeployRollbackDialogComponent,
     DatePipe,
+    JsonPipe,
     RouterModule
   ]
 })
@@ -57,6 +60,8 @@ export class EnvironmentListComponent implements AfterViewInit {
   }
 
   @ViewChild('environmentDataGrid') environmentDataGrid: DxDataGridComponent | undefined;
+
+  displayedColumns: string[] = ['environment'];
 
   private _loading = false;
 

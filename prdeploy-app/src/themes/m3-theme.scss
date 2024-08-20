@@ -143,11 +143,17 @@ $_rest: (
 $_primary: map.merge(map.get($_palettes, primary), $_rest);
 $_tertiary: map.merge(map.get($_palettes, tertiary), $_rest);
 
+$theme-font-family: 'Helvetica Neue,Segoe UI,helvetica,verdana,sans-serif';
+
 $light-theme: mat.define-theme((
   color: (
     theme-type: light,
     primary: $_primary,
-    tertiary: $_tertiary,
+    tertiary: $_tertiary
+  ),
+  typography: (
+    brand-family: $theme-font-family,
+    plain-family: $theme-font-family
   ),
   density: (
     scale: 0,
@@ -157,12 +163,18 @@ $dark-theme: mat.define-theme((
   color: (
     theme-type: dark,
     primary: $_primary,
-    tertiary: $_tertiary,
+    tertiary: $_tertiary
+  ),
+  typography: (
+    brand-family: $theme-font-family,
+    plain-family: $theme-font-family
   ),
   density: (
     scale: 0,
   )
 ));
+
+@include mat.core();
 
 :root {
   @include cdk.overlay();
@@ -177,13 +189,6 @@ $dark-theme: mat.define-theme((
 
   .small-form-field {
     @include mat.form-field-density(-4);
-  }
-
-  // Missing from theme.
-  @for $z-value from 0 through 24 {
-    .mat-elevation-z#{$z-value} {
-      @include mat.elevation(2);
-    }
   }
 
   // Extensions
@@ -251,4 +256,3 @@ $dark-theme: mat.define-theme((
     --mat-stepper-header-edit-state-icon-foreground-color: white;
   }
 }
-
