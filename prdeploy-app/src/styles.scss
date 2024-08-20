@@ -56,6 +56,10 @@ body { margin: 0; }
   z-index: $zindex-modal + 1;
 }
 
+.mat-mdc-form-field.form-field-2x {
+  min-width: 440px;
+}
+
 .field-section {
   padding: 0 10px;
   margin-left: -15px;
@@ -66,5 +70,6 @@ body { margin: 0; }
 
   .mat-mdc-checkbox {
     min-width: 212px;
+    margin-bottom: 10px;
   }
 }

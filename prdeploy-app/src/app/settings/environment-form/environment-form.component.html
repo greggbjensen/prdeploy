@@ -12,7 +12,7 @@
         <input matInput type="text" [(ngModel)]="environment.queue" name="queue" [disabled]="!hasEnvironments" />
       </mat-form-field>
 
-      <mat-form-field>
+      <mat-form-field class="form-field-2x">
         <mat-label>URL</mat-label>
         <input matInput type="text" [(ngModel)]="environment.url" name="url" [disabled]="!hasEnvironments" />
       </mat-form-field>
@@ -59,7 +59,7 @@
     <div class="field-section">
       <mat-checkbox [(ngModel)]="environment.automationTest.enabled" name="automationTestEnabled">Enabled</mat-checkbox>
 
-      <mat-form-field>
+      <mat-form-field class="form-field-2x">
         <mat-label>GitHub workfow</mat-label>
         <input
           matInput
