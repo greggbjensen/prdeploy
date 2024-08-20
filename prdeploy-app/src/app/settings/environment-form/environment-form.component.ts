@@ -10,6 +10,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-environment-form',
@@ -20,6 +23,9 @@ import { firstValueFrom } from 'rxjs';
     DxCheckBoxModule,
     MatButtonModule,
     MatIconModule,
+    MatInputModule,
+    FormsModule,
+    MatCheckboxModule,
     AddAutomationInputDialogComponent,
     AddExcludeRollbackServiceDialogComponent,
     KeyValuePipe

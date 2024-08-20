@@ -1,4 +1,12 @@
 <div class="environment-settings">
+  <form>
+    <h4 class="field-group-title">General</h4>
+    <mat-form-field class="example-full-width">
+      <mat-label>Name</mat-label>
+      <input matInput type="text" [(ngModel)]="environment.name" name="name" />
+    </mat-form-field>
+  </form>
+
   <div class="field-group field-group-horizontal">
     <h4 class="field-group-title">General</h4>
     <div class="field">
