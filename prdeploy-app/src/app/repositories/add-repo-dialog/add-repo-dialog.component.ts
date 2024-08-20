@@ -1,6 +1,5 @@
 import { Component, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { DxTextBoxModule } from 'devextreme-angular';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -30,7 +29,6 @@ import { MtxButtonModule } from '@ng-matero/extensions/button';
     MatDialogActions,
     MatDialogClose,
     MtxButtonModule,
-    DxTextBoxModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,

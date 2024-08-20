@@ -22,6 +22,13 @@ body { margin: 0; }
   display: flex;
 }
 
+.fields-fill-width {
+
+  .mat-mdc-form-field {
+    width: 100%;
+  }
+}
+
 .fill-width {
   width: 100%;
 }
