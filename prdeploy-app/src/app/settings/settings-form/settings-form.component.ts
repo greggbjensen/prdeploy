@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, Input, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
 import { DxAccordionModule, DxTabsModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
 import {
@@ -32,6 +32,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatListModule, MatSelectionList, MatSelectionListChange } from '@angular/material/list';
 import { Tab } from 'src/app/shared/models';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 class SetCompareValue<T> {
   hasValues: boolean = false;
@@ -111,10 +112,9 @@ export class SettingsFormComponent implements AfterViewInit {
     private _repoManager: RepoManager,
     private _notificationManager: NotificationManager,
     private _dialog: MatDialog,
-    private _changeDetectorRef: ChangeDetectorRef,
     private _loggingService: LoggingService
   ) {
-    this.fetchSettings();
+    this._repoManager.valueChanged$.pipe(takeUntilDestroyed()).subscribe(() => this.fetchSettings());
   }
 
   ngAfterViewInit(): void {
@@ -163,7 +163,6 @@ export class SettingsFormComponent implements AfterViewInit {
   async resetForm() {
     // Replace current state with that from the server.
     await this.fetchSettings();
-    this._changeDetectorRef.detectChanges();
     this._notificationManager.show(`Settings changes reverted.`);
   }
 
@@ -228,7 +227,6 @@ export class SettingsFormComponent implements AfterViewInit {
       }
     } as EnvironmentSettings);
 
-    this._changeDetectorRef.detectChanges();
     this.updateBindingEnvironments();
     this._notificationManager.show(`Environment ${name} added.`);
   }
