@@ -1,21 +1,24 @@
 import { Component, Input, Output, EventEmitter, OnInit, DestroyRef } from '@angular/core';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { UserPanelComponent } from '../user-panel/user-panel.component';
-import { DxButtonModule } from 'devextreme-angular/ui/button';
-import { DxToolbarModule } from 'devextreme-angular/ui/toolbar';
 import { AuthService } from '../../services';
-import { DxSelectBoxModule } from 'devextreme-angular';
 import { RepoManager } from '../../managers';
 import { firstValueFrom } from 'rxjs';
-import { ActivatedRoute, Router } from '@angular/router';
-import { EnabledOwnerReposGQL, OwnerRepos } from '../../graphql';
+import { ActivatedRoute } from '@angular/router';
+import { OwnerRepos } from '../../graphql';
 import { SelectionChangedEvent } from 'devextreme/ui/select_box';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+
 @Component({
   selector: 'app-header',
   templateUrl: 'header.component.html',
   styleUrls: ['./header.component.scss'],
   standalone: true,
-  imports: [DxToolbarModule, DxButtonModule, DxSelectBoxModule, UserPanelComponent]
+  imports: [MatToolbarModule, MatButtonModule, MatIconModule, MatMenuModule, MatSelectModule, UserPanelComponent]
 })
 export class HeaderComponent implements OnInit {
   @Output()
@@ -65,12 +68,12 @@ export class HeaderComponent implements OnInit {
     this.repoManager.fetchOwnerRepos();
   }
 
-  async selectedRepoChanged(event: SelectionChangedEvent): Promise<void> {
-    this.repoManager.repo = event.selectedItem;
+  async selectedRepoChanged(event: MatSelectChange): Promise<void> {
+    this.repoManager.repo = event.value;
   }
 
-  async selectedOwnerChanged(event: SelectionChangedEvent): Promise<void> {
-    this.repoManager.owner = event.selectedItem;
+  async selectedOwnerChanged(event: MatSelectChange): Promise<void> {
+    this.repoManager.owner = event.value;
     this.filterOwnerRepos();
   }
 
