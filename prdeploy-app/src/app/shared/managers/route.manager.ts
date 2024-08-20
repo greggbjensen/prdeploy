@@ -1,4 +1,4 @@
-import { DestroyRef, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { RepoManager } from './repo.manager';
@@ -14,18 +14,15 @@ export class RouteManager {
     private _location: Location,
     private _router: Router,
     private _activatedRoute: ActivatedRoute,
-    private _repoManager: RepoManager,
-    private _destroyRef: DestroyRef
+    private _repoManager: RepoManager
   ) {
     firstValueFrom(this._activatedRoute.queryParamMap).then(param => {
       this._repoManager.repo = param.get('repo');
       this._repoManager.owner = param.get('owner');
     });
-    this._repoManager.valueChanged$
-      .pipe(takeUntilDestroyed(this._destroyRef))
-      .subscribe(() => this.updateQueryParams());
+    this._repoManager.valueChanged$.pipe(takeUntilDestroyed()).subscribe(() => this.updateQueryParams());
     this._repoManager.ownerReposChanged$
-      .pipe(takeUntilDestroyed(this._destroyRef))
+      .pipe(takeUntilDestroyed())
       .subscribe(ownerRepos => this.checkHasRepos(ownerRepos));
   }
 

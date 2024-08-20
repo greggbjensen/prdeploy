@@ -1,4 +1,4 @@
-import { Component, DestroyRef } from '@angular/core';
+import { Component } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -20,13 +20,10 @@ import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 export class AddSlackEmailAliasDialogComponent {
   email = '';
 
-  constructor(
-    private _destroyRef: DestroyRef,
-    private _dialogRef: MatDialogRef<AddSlackEmailAliasDialogComponent>
-  ) {
+  constructor(private _dialogRef: MatDialogRef<AddSlackEmailAliasDialogComponent>) {
     this._dialogRef
       .afterOpened()
-      .pipe(takeUntilDestroyed(this._destroyRef))
+      .pipe(takeUntilDestroyed())
       .subscribe(() => {
         this.clearFields();
       });

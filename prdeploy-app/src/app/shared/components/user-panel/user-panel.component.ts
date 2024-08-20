@@ -1,4 +1,4 @@
-import { Component, DestroyRef } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../services';
@@ -16,11 +16,8 @@ import { MatIconModule } from '@angular/material/icon';
 export class UserPanelComponent {
   user: User = null;
 
-  constructor(
-    private _authService: AuthService,
-    private _destroyRef: DestroyRef
-  ) {
-    this._authService.user$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(user => (this.user = user));
+  constructor(private _authService: AuthService) {
+    this._authService.user$.pipe(takeUntilDestroyed()).subscribe(user => (this.user = user));
   }
 
   async logout() {

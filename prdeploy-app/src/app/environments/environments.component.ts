@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { DxFormModule, DxSelectBoxModule } from 'devextreme-angular';
 import { Environment, EnvironmentsGQL } from '../shared/graphql';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -27,8 +27,7 @@ export class EnvironmentsComponent implements OnInit {
   constructor(
     private _environmentsGQL: EnvironmentsGQL,
     private _repoManager: RepoManager,
-    private _route: ActivatedRoute,
-    private _destroyRef: DestroyRef
+    private _route: ActivatedRoute
   ) {}
 
   environments: Environment[];
@@ -41,7 +40,7 @@ export class EnvironmentsComponent implements OnInit {
     firstValueFrom(this._route.queryParamMap).then(param => {
       this._initialSourceEnvironment = param.get('sourceEnvironment');
     });
-    this._repoManager.valueChanged$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => this.loadEnvironments());
+    this._repoManager.valueChanged$.pipe(takeUntilDestroyed()).subscribe(() => this.loadEnvironments());
   }
 
   sourceEnvironmentChanged(event: SelectionChangedEvent): void {

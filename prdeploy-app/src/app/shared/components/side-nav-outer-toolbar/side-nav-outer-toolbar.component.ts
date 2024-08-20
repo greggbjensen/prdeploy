@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, Inject, DestroyRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Inject } from '@angular/core';
 import { DxTreeViewTypes } from 'devextreme-angular/ui/tree-view';
 import { DxDrawerModule } from 'devextreme-angular/ui/drawer';
 import { DxScrollViewModule, DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
@@ -38,8 +38,7 @@ export class SideNavOuterToolbarComponent implements OnInit {
     private _screen: ScreenService,
     private _router: Router,
     private _authService: AuthService,
-    @Inject(DOCUMENT) private _document: Document,
-    private _destroyRef: DestroyRef
+    @Inject(DOCUMENT) private _document: Document
   ) {
     this._authService.isAuthenticated$
       .pipe(takeUntilDestroyed())
@@ -49,13 +48,13 @@ export class SideNavOuterToolbarComponent implements OnInit {
   ngOnInit() {
     this.menuOpened = this._screen.sizes['screen-large'];
 
-    this._router.events.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(val => {
+    this._router.events.pipe(takeUntilDestroyed()).subscribe(val => {
       if (val instanceof NavigationEnd) {
         this.selectedRoute = val.urlAfterRedirects.split('?')[0];
       }
     });
 
-    this._screen.changed.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => this.updateDrawer());
+    this._screen.changed.pipe(takeUntilDestroyed()).subscribe(() => this.updateDrawer());
 
     this.updateDrawer();
   }

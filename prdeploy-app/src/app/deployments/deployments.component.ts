@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -51,7 +51,6 @@ export class DeploymentsComponent implements OnInit {
     private _loggingService: LoggingService,
     private _dialog: MatDialog,
     private _activatedRoute: ActivatedRoute,
-    private _destroyRef: DestroyRef,
     private _changeDetectorRef: ChangeDetectorRef
   ) {}
 
@@ -60,7 +59,7 @@ export class DeploymentsComponent implements OnInit {
       this.selectedEnvironment = param.get('environment');
     });
 
-    this.repoManager.valueChanged$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => this.update());
+    this.repoManager.valueChanged$.pipe(takeUntilDestroyed()).subscribe(() => this.update());
   }
 
   async triggerDeployments(queue: DeployQueue): Promise<void> {

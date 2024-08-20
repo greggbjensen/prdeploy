@@ -1,7 +1,6 @@
-import { Component, Input, Output, EventEmitter, OnInit, DestroyRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { UserPanelComponent } from '../user-panel/user-panel.component';
-import { AuthService } from '../../services';
 import { RepoManager } from '../../managers';
 import { firstValueFrom } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
@@ -35,9 +34,7 @@ export class HeaderComponent implements OnInit {
 
   constructor(
     public repoManager: RepoManager,
-    private _authService: AuthService,
-    private _route: ActivatedRoute,
-    private _destoryRef: DestroyRef
+    private _route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -49,7 +46,7 @@ export class HeaderComponent implements OnInit {
     this.fetchOwnerRepos();
 
     this.repoManager.ownerReposChanged$
-      .pipe(takeUntilDestroyed(this._destoryRef))
+      .pipe(takeUntilDestroyed())
       .subscribe(ownerRepos => this.updateOwnerRepos(ownerRepos));
   }
 

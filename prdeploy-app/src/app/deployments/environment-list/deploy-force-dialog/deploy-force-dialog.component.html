@@ -16,7 +16,7 @@
         #auto="matAutocomplete"
         [displayWith]="formatPullRequest"
         (optionSelected)="selectPullRequest($event)">
-        @for (pullRequest of openPullRequests2; track pullRequest.number) {
+        @for (pullRequest of openPullRequests; track pullRequest.number) {
           <mat-option [value]="pullRequest">
             {{ formatPullRequest(pullRequest) }}
           </mat-option>

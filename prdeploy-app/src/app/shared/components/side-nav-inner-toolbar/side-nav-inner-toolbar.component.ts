@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, Inject, DestroyRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DxTreeViewTypes } from 'devextreme-angular/ui/tree-view';
 import { DxDrawerModule } from 'devextreme-angular/ui/drawer';
@@ -44,21 +44,20 @@ export class SideNavInnerToolbarComponent implements OnInit {
   constructor(
     private screen: ScreenService,
     private router: Router,
-    @Inject(DOCUMENT) private _document: Document,
-    private _destroyRef: DestroyRef
+    @Inject(DOCUMENT) private _document: Document
   ) {}
 
   ngOnInit() {
     this.menuOpened = this.screen.sizes['screen-large'];
 
     // Prevent memory leaks with takeUntilDestroyed, so you don't need to unsubscribe.
-    this.router.events.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(val => {
+    this.router.events.pipe(takeUntilDestroyed()).subscribe(val => {
       if (val instanceof NavigationEnd) {
         this.selectedRoute = val.urlAfterRedirects.split('?')[0];
       }
     });
 
-    this.screen.changed.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => this.updateDrawer());
+    this.screen.changed.pipe(takeUntilDestroyed()).subscribe(() => this.updateDrawer());
 
     this.updateDrawer();
   }

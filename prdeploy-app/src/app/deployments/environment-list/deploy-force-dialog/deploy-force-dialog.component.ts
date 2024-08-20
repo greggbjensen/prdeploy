@@ -1,4 +1,4 @@
-import { Component, DestroyRef, Inject, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { DeployEnvironmentDeployGQL, OpenPullRequestsGQL, PullRequest } from 'src/app/shared/graphql';
 import { LoggingService } from 'src/app/shared/services';
@@ -11,7 +11,6 @@ import {
   MatDialogRef,
   MatDialogTitle
 } from '@angular/material/dialog';
-import CustomStore from 'devextreme/data/custom_store';
 import { NotificationManager } from 'src/app/shared/managers';
 import { DialogResult } from 'src/app/shared/models';
 import { MatButtonModule } from '@angular/material/button';
@@ -41,7 +40,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     ReactiveFormsModule
   ]
 })
-export class DeployForceDialogComponent {
+export class DeployForceDialogComponent implements OnInit {
   @ViewChild('selectPullRequest') selectPullRequestComponent: DxSelectBoxComponent;
 
   processing = false;
@@ -52,50 +51,42 @@ export class DeployForceDialogComponent {
   });
 
   selectedPullRequest: PullRequest;
-  openPullRequests: CustomStore<PullRequest, number>;
-  openPullRequests2: PullRequest[];
+  openPullRequests: PullRequest[];
 
   constructor(
     private _openPullRequestsGQL: OpenPullRequestsGQL,
     private _deployEnvironmentDeployGQL: DeployEnvironmentDeployGQL,
     private _notificationManager: NotificationManager,
     private _loggingService: LoggingService,
-    private _destroyRef: DestroyRef,
     private _dialogRef: MatDialogRef<DeployForceDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DeployForceDialogData
   ) {
     this._dialogRef
       .afterOpened()
-      .pipe(takeUntilDestroyed(this._destroyRef))
+      .pipe(takeUntilDestroyed())
       .subscribe(() => {
         this.clearFields();
       });
 
-    firstValueFrom(
+    this.form.controls.pullRequest.valueChanges.pipe(takeUntilDestroyed());
+  }
+
+  ngOnInit(): void {
+    this.filterPullRequests();
+  }
+
+  async filterPullRequests(search: string = '') {
+    const result = await firstValueFrom(
       this._openPullRequestsGQL.fetch({
         input: {
           owner: this.data.repository.owner,
-          repo: this.data.repository.repo
-          // search: options.searchValue
+          repo: this.data.repository.repo,
+          search
         }
       })
-    ).then(result => (this.openPullRequests2 = result.data.openPullRequests));
+    );
 
-    this.openPullRequests = new CustomStore<PullRequest, number>({
-      key: 'number',
-      load: async options => {
-        const result = await firstValueFrom(
-          this._openPullRequestsGQL.fetch({
-            input: {
-              owner: this.data.repository.owner,
-              repo: this.data.repository.repo,
-              search: options.searchValue
-            }
-          })
-        );
-        return result.data.openPullRequests;
-      }
-    });
+    this.openPullRequests = result.data.openPullRequests;
   }
 
   formatPullRequest(item: PullRequest) {

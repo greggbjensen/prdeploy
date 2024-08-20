@@ -1,4 +1,4 @@
-import { Component, DestroyRef, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { DxTextBoxModule } from 'devextreme-angular';
 import {
@@ -32,13 +32,12 @@ export class AddRepoDialogComponent {
     private _ownerRepoAddEnabledGQL: OwnerRepoAddEnabledGQL,
     private _notificationManager: NotificationManager,
     private _loggingService: LoggingService,
-    private _destroyRef: DestroyRef,
     private _dialogRef: MatDialogRef<AddRepoDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: AddRepoDialogData
   ) {
     this._dialogRef
       .afterOpened()
-      .pipe(takeUntilDestroyed(this._destroyRef))
+      .pipe(takeUntilDestroyed())
       .subscribe(() => {
         this.clearFields();
       });

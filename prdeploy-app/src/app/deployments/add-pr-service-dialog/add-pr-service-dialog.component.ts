@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -57,7 +57,6 @@ export class AddPrServiceDialogComponent {
     private _openPullRequestsGQL: OpenPullRequestsGQL,
     private _pullRequestAddServicesGQL: PullRequestAddServicesGQL,
     private _repositoryServicesGQL: RepositoryServicesGQL,
-    private _destroyRef: DestroyRef,
     private _notificationManager: NotificationManager,
     private _repoManager: RepoManager,
     private _dialogRef: MatDialogRef<AddPrServiceDialogComponent>,
@@ -65,7 +64,7 @@ export class AddPrServiceDialogComponent {
   ) {
     this._dialogRef
       .afterOpened()
-      .pipe(takeUntilDestroyed(this._destroyRef))
+      .pipe(takeUntilDestroyed())
       .subscribe(() => {
         this.clearFields();
 

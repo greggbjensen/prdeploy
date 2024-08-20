@@ -1,4 +1,4 @@
-import { Component, DestroyRef, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -41,13 +41,12 @@ export class DeployRollbackDialogComponent {
     private _deployEnvironmentDeployGQL: DeployEnvironmentRollbackGQL,
     private _notificationManager: NotificationManager,
     private _loggingService: LoggingService,
-    private _destroyRef: DestroyRef,
     private _dialogRef: MatDialogRef<DeployRollbackDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DeployRollbackDialogData
   ) {
     this._dialogRef
       .afterOpened()
-      .pipe(takeUntilDestroyed(this._destroyRef))
+      .pipe(takeUntilDestroyed())
       .subscribe(() => {
         this.clearFields();
       });
