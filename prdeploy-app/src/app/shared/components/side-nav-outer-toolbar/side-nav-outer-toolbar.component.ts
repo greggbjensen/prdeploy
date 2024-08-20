@@ -43,10 +43,6 @@ export class SideNavOuterToolbarComponent implements OnInit {
     this._authService.isAuthenticated$
       .pipe(takeUntilDestroyed())
       .subscribe((isAuthenticated: boolean) => (this.isAuthenticated = isAuthenticated));
-  }
-
-  ngOnInit() {
-    this.menuOpened = this._screen.sizes['screen-large'];
 
     this._router.events.pipe(takeUntilDestroyed()).subscribe(val => {
       if (val instanceof NavigationEnd) {
@@ -55,6 +51,10 @@ export class SideNavOuterToolbarComponent implements OnInit {
     });
 
     this._screen.changed.pipe(takeUntilDestroyed()).subscribe(() => this.updateDrawer());
+  }
+
+  ngOnInit() {
+    this.menuOpened = this._screen.sizes['screen-large'];
 
     this.updateDrawer();
   }

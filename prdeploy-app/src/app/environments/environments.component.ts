@@ -28,7 +28,9 @@ export class EnvironmentsComponent implements OnInit {
     private _environmentsGQL: EnvironmentsGQL,
     private _repoManager: RepoManager,
     private _route: ActivatedRoute
-  ) {}
+  ) {
+    this._repoManager.valueChanged$.pipe(takeUntilDestroyed()).subscribe(() => this.loadEnvironments());
+  }
 
   environments: Environment[];
   sourceEnvironment: Environment;
@@ -40,7 +42,6 @@ export class EnvironmentsComponent implements OnInit {
     firstValueFrom(this._route.queryParamMap).then(param => {
       this._initialSourceEnvironment = param.get('sourceEnvironment');
     });
-    this._repoManager.valueChanged$.pipe(takeUntilDestroyed()).subscribe(() => this.loadEnvironments());
   }
 
   sourceEnvironmentChanged(event: SelectionChangedEvent): void {

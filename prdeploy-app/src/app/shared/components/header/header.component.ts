@@ -35,19 +35,19 @@ export class HeaderComponent implements OnInit {
   constructor(
     public repoManager: RepoManager,
     private _route: ActivatedRoute
-  ) {}
-
-  ngOnInit(): void {
+  ) {
     firstValueFrom(this._route.queryParamMap).then(param => {
       this.repoManager.owner = param.get('owner');
       this.repoManager.repo = param.get('repo');
     });
 
-    this.fetchOwnerRepos();
-
     this.repoManager.ownerReposChanged$
       .pipe(takeUntilDestroyed())
       .subscribe(ownerRepos => this.updateOwnerRepos(ownerRepos));
+  }
+
+  ngOnInit(): void {
+    this.fetchOwnerRepos();
   }
 
   async fetchOwnerRepos() {

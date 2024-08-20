@@ -45,11 +45,7 @@ export class SideNavInnerToolbarComponent implements OnInit {
     private screen: ScreenService,
     private router: Router,
     @Inject(DOCUMENT) private _document: Document
-  ) {}
-
-  ngOnInit() {
-    this.menuOpened = this.screen.sizes['screen-large'];
-
+  ) {
     // Prevent memory leaks with takeUntilDestroyed, so you don't need to unsubscribe.
     this.router.events.pipe(takeUntilDestroyed()).subscribe(val => {
       if (val instanceof NavigationEnd) {
@@ -58,6 +54,10 @@ export class SideNavInnerToolbarComponent implements OnInit {
     });
 
     this.screen.changed.pipe(takeUntilDestroyed()).subscribe(() => this.updateDrawer());
+  }
+
+  ngOnInit() {
+    this.menuOpened = this.screen.sizes['screen-large'];
 
     this.updateDrawer();
   }

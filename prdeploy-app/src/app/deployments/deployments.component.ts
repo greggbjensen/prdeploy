@@ -52,14 +52,14 @@ export class DeploymentsComponent implements OnInit {
     private _dialog: MatDialog,
     private _activatedRoute: ActivatedRoute,
     private _changeDetectorRef: ChangeDetectorRef
-  ) {}
+  ) {
+    this.repoManager.valueChanged$.pipe(takeUntilDestroyed()).subscribe(() => this.update());
+  }
 
   ngOnInit(): void {
     firstValueFrom(this._activatedRoute.queryParamMap).then(param => {
       this.selectedEnvironment = param.get('environment');
     });
-
-    this.repoManager.valueChanged$.pipe(takeUntilDestroyed()).subscribe(() => this.update());
   }
 
   async triggerDeployments(queue: DeployQueue): Promise<void> {
