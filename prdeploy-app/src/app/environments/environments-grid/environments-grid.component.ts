@@ -1,13 +1,22 @@
-import { Component, Input } from '@angular/core';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { DxDataGridModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
-import { DeployStateComparison, DeployStateComparisonGQL, Environment } from 'src/app/shared/graphql';
+import {
+  DeployStateComparison,
+  DeployStateComparisonGQL,
+  Environment,
+  ServiceComparison
+} from 'src/app/shared/graphql';
 import { RepoManager } from 'src/app/shared/managers';
 
 @Component({
   selector: 'app-environments-grid',
   standalone: true,
-  imports: [DxDataGridModule],
+  imports: [DxDataGridModule, MatTableModule, MatSortModule, MatProgressSpinnerModule],
   templateUrl: './environments-grid.component.html',
   styleUrl: './environments-grid.component.scss'
 })
@@ -16,6 +25,10 @@ export class EnvironmentsGridComponent {
   private _targetEnvironment: Environment;
 
   stateComparison: DeployStateComparison;
+  serviceComparisons: MatTableDataSource<ServiceComparison>;
+  displayedColumns: string[] = ['service', 'source-run-id', 'source-version', 'target-run-id', 'target-version'];
+
+  @ViewChild(MatSort) sort: MatSort;
 
   @Input() set sourceEnvironment(value: Environment) {
     if (value != this._sourceEnvironment) {
@@ -41,6 +54,7 @@ export class EnvironmentsGridComponent {
 
   constructor(
     private _deployStateComparisonGQL: DeployStateComparisonGQL,
+    private _liveAnnouncer: LiveAnnouncer,
     private _repoManager: RepoManager
   ) {}
 
@@ -60,6 +74,17 @@ export class EnvironmentsGridComponent {
       })
     );
 
+    this.serviceComparisons = new MatTableDataSource(stateResponse.data.deployStateComparison.serviceComparisons);
+    this.serviceComparisons.sort = this.sort;
     this.stateComparison = stateResponse.data.deployStateComparison;
+  }
+
+  announceSortChange(sortState: Sort) {
+    // TODO: Finalize sorting.
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
   }
 }

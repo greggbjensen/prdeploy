@@ -87,14 +87,12 @@ export class DeploymentsComponent implements OnInit {
   }
 
   async update(): Promise<void> {
-    if (!this.repoManager.isValid) {
-      return;
-    }
-
-    this.loading = true;
-    this._changeDetectorRef.detectChanges();
-
     try {
+      this.loading = true;
+      if (!this.repoManager.isValid) {
+        return;
+      }
+
       const response = await firstValueFrom(
         this._deployEnvironmentsAndQueuesGQL.fetch({
           input: {

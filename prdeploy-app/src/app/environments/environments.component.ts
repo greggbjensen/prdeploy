@@ -63,17 +63,19 @@ export class EnvironmentsComponent implements OnInit {
   }
 
   private async loadEnvironments(): Promise<void> {
-    const environmentsResponse = await firstValueFrom(
-      this._environmentsGQL.fetch({
-        input: {
-          owner: this._repoManager.owner,
-          repo: this._repoManager.repo
-        }
-      })
-    );
+    if (this._repoManager.isValid) {
+      const environmentsResponse = await firstValueFrom(
+        this._environmentsGQL.fetch({
+          input: {
+            owner: this._repoManager.owner,
+            repo: this._repoManager.repo
+          }
+        })
+      );
 
-    this.environments = [...(environmentsResponse.data.environments || []), EnvironmentsComponent.StableEnvironment];
-    this.updateCompareEnvironments(true);
+      this.environments = [...(environmentsResponse.data.environments || []), EnvironmentsComponent.StableEnvironment];
+      this.updateCompareEnvironments(true);
+    }
   }
 
   updateCompareEnvironments(sourceChanged: boolean): void {

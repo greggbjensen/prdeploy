@@ -146,6 +146,10 @@ export class SettingsFormComponent {
   }
 
   async fetchSettings() {
+    if (!this._repoManager.isValid) {
+      return;
+    }
+
     this.loading = true;
     const response = await firstValueFrom(
       this._deploySettingsCompareGQL.fetch({

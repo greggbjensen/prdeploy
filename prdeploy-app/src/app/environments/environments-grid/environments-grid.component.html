@@ -1,38 +1,58 @@
 @if (stateComparison) {
-  <dx-data-grid
-    class="environment-table"
-    [dataSource]="stateComparison.serviceComparisons"
-    keyExpr="name"
-    [showBorders]="true"
-    [rowAlternationEnabled]="true">
-    <dxi-column dataField="name" caption="Service" alignment="center" [width]="200" sortOrder="asc"></dxi-column>
-    <dxi-column [caption]="sourceEnvironment.name">
-      <dxi-column
-        dataField="sourceRunId"
-        caption="Run ID"
-        [width]="150"
-        alignment="left"
-        cellTemplate="runIdTemplate"></dxi-column>
-      <dxi-column dataField="sourceVersion" caption="Version" [width]="250" cellTemplate="versionTemplate"></dxi-column>
-    </dxi-column>
-    <dxi-column [caption]="targetEnvironment.name">
-      <dxi-column
-        dataField="targetRunId"
-        caption="Run ID"
-        [width]="150"
-        alignment="left"
-        cellTemplate="runIdTemplate"></dxi-column>
-      <dxi-column dataField="targetVersion" caption="Version" [width]="250" cellTemplate="versionTemplate"></dxi-column>
-    </dxi-column>
-    <div
-      *dxTemplate="let d of 'runIdTemplate'"
-      [class]="{ 'value-different': d.data.sourceRunId !== d.data.targetRunId }">
-      {{ d.value ? d.value : '' }}
-    </div>
-    <div
-      *dxTemplate="let d of 'versionTemplate'"
-      [class]="{ 'value-different': d.data.sourceVersion !== d.data.targetVersion }">
-      {{ d.value }}
-    </div>
-  </dx-data-grid>
+  <table
+    mat-table
+    matSort
+    [dataSource]="serviceComparisons"
+    class="mat-elevation-z3 environment-table"
+    (matSortChange)="announceSortChange($event)">
+    <ng-container matColumnDef="service">
+      <th mat-header-cell mat-sort-header *matHeaderCellDef>Service</th>
+      <td mat-cell *matCellDef="let service">
+        {{ service.name }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="source-run-id">
+      <th mat-header-cell *matHeaderCellDef>{{ sourceEnvironment.name }} Run ID</th>
+      <td
+        mat-cell
+        *matCellDef="let service"
+        [class]="{ 'value-different': service.sourceRunId !== service.targetRunId }">
+        {{ service.sourceRunId ? service.sourceRunId : '' }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="source-version">
+      <th mat-header-cell *matHeaderCellDef>{{ sourceEnvironment.name }} Version</th>
+      <td
+        mat-cell
+        *matCellDef="let service"
+        [class]="{ 'value-different': service.sourceVersion !== service.targetVersion }">
+        {{ service.sourceVersion ? service.sourceVersion : '' }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="target-run-id">
+      <th mat-header-cell *matHeaderCellDef>{{ targetEnvironment.name }} Run ID</th>
+      <td
+        mat-cell
+        *matCellDef="let service"
+        [class]="{ 'value-different': service.sourceRunId !== service.targetRunId }">
+        {{ service.targetRunId ? service.targetRunId : '' }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="target-version">
+      <th mat-header-cell *matHeaderCellDef>{{ targetEnvironment.name }} Version</th>
+      <td
+        mat-cell
+        *matCellDef="let service"
+        [class]="{ 'value-different': service.sourceVersion !== service.targetVersion }">
+        {{ service.targetVersion ? service.targetVersion : '' }}
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
 }
