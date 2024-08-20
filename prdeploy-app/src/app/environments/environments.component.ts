@@ -3,17 +3,26 @@ import { DxFormModule, DxSelectBoxModule } from 'devextreme-angular';
 import { Environment, EnvironmentsGQL } from '../shared/graphql';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
-import { SelectionChangedEvent } from 'devextreme/ui/select_box';
 import { ActivatedRoute } from '@angular/router';
 import { RepoManager } from '../shared/managers';
 import { EnvironmentsGridComponent } from './environments-grid/environments-grid.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-environments',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, DxFormModule, DxSelectBoxModule, EnvironmentsGridComponent],
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+    DxFormModule,
+    DxSelectBoxModule,
+    EnvironmentsGridComponent,
+    MatSelectModule,
+    MatFormFieldModule
+  ],
   templateUrl: './environments.component.html',
   styleUrl: './environments.component.scss'
 })
@@ -44,16 +53,16 @@ export class EnvironmentsComponent implements OnInit {
     });
   }
 
-  sourceEnvironmentChanged(event: SelectionChangedEvent): void {
-    if (event.selectedItem.name !== this.sourceEnvironment.name) {
-      this.sourceEnvironment = event.selectedItem;
+  sourceEnvironmentChanged(event: MatSelectChange): void {
+    if (event.value.name !== this.sourceEnvironment.name) {
+      this.sourceEnvironment = event.value;
       this.updateCompareEnvironments(true);
     }
   }
 
-  targetEnvironmentChanged(event: SelectionChangedEvent): void {
-    if (event.selectedItem.name !== this.targetEnvironment.name) {
-      this.targetEnvironment = event.selectedItem;
+  targetEnvironmentChanged(event: MatSelectChange): void {
+    if (event.value.name !== this.targetEnvironment.name) {
+      this.targetEnvironment = event.value;
       this.updateCompareEnvironments(false);
     }
   }

@@ -29,11 +29,28 @@ body { margin: 0; }
   }
 }
 
+.form-horizontal {
+
+  .mat-mdc-form-field {
+    margin-left: 20px;
+
+     &:first-child {
+      margin-left: 0;
+     }
+  }
+}
+
 .fill-width {
   width: 100%;
 }
 
+// Control styles.
+
 .mat-mdc-form-field-icon-suffix > .clear-field-btn {
   margin-right: -18px;
   color: $danger;
+}
+
+.mat-mdc-progress-spinner {
+  margin: 20px auto 0 auto;
 }

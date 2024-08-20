@@ -5,30 +5,36 @@
   </button>
 </h3>
 
-<form class="environments-form">
-  <div class="dx-field">
-    <div class="dx-field-label">Source Environment</div>
-    <dx-select-box
-      class="dx-field-value"
+<form class="form-horizontal environments-form">
+  <mat-form-field>
+    <mat-label>Source Environment</mat-label>
+    <mat-select
       placeholder="Loading..."
-      [dataSource]="environments"
       [value]="sourceEnvironment"
-      [displayExpr]="environmentDisplayExpr"
-      (onSelectionChanged)="sourceEnvironmentChanged($event)">
-    </dx-select-box>
-  </div>
+      (selectionChange)="sourceEnvironmentChanged($event)">
+      <mat-select-trigger>
+        {{ sourceEnvironment?.name }}
+      </mat-select-trigger>
+      @for (environment of environments; track environment) {
+        <mat-option [value]="environment">{{ environment.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
 
-  <div class="dx-field">
-    <div class="dx-field-label">Target Environment</div>
-    <dx-select-box
-      class="dx-field-value"
+  <mat-form-field>
+    <mat-label>Target Environment</mat-label>
+    <mat-select
       placeholder="Loading..."
-      [dataSource]="environments"
       [value]="targetEnvironment"
-      [displayExpr]="environmentDisplayExpr"
-      (onSelectionChanged)="targetEnvironmentChanged($event)">
-    </dx-select-box>
-  </div>
+      (selectionChange)="targetEnvironmentChanged($event)">
+      <mat-select-trigger>
+        {{ targetEnvironment?.name }}
+      </mat-select-trigger>
+      @for (environment of environments; track environment) {
+        <mat-option [value]="environment">{{ environment.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
 </form>
 
 <app-environments-grid
