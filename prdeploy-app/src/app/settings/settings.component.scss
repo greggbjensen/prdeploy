@@ -1,6 +1,9 @@
 @import '../../sass/variables';
 
-$max-settings-width: 820px;
+:host {
+ max-width: 1500px;
+ display: block;
+}
 
 .settings-actions {
   margin-left: auto;

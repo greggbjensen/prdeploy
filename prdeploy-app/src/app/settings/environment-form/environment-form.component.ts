@@ -13,6 +13,7 @@ import { firstValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'app-environment-form',
@@ -24,6 +25,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatButtonModule,
     MatIconModule,
     MatInputModule,
+    MatTableModule,
     FormsModule,
     MatCheckboxModule,
     AddAutomationInputDialogComponent,
@@ -40,6 +42,8 @@ export class EnvironmentFormComponent {
 
   showOwner = true;
 
+  automationInputColumns = ['name', 'value', 'remove'];
+
   private _level: SettingsLevel;
   @Input() set level(value: SettingsLevel) {
     this._level = value;
@@ -51,6 +55,11 @@ export class EnvironmentFormComponent {
   }
 
   constructor(private _dialog: MatDialog) {}
+
+  automationInputChange(event: Event, inputName: string) {
+    const input = event.target as HTMLInputElement;
+    this.environment.automationTest.inputs[inputName] = input.value;
+  }
 
   async showAddExcludeRollbackService() {
     const dialogRef = this._dialog.open<AddExcludeRollbackServiceDialogComponent, void, string>(

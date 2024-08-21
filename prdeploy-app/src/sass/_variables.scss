@@ -931,6 +931,12 @@ $input-transition:                      border-color .15s ease-in-out, box-shado
 $form-color-width:                      3rem !default;
 // scss-docs-end form-input-variables
 
+// scss-docs-start form-field-variables
+$form-field-width-base:                 212px;
+$form-field-width-2x:                   440px;
+
+// scss-docs-end form-field-variables
+
 // scss-docs-start form-check-variables
 $form-check-input-width:                  1em !default;
 $form-check-min-height:                   $font-size-base * $line-height-base !default;
