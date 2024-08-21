@@ -261,6 +261,10 @@ export class SettingsFormComponent implements AfterViewInit {
     } else {
       this.bindingEnvironments = this.settingsCompare.environments[this._level];
     }
+
+    if (!this.selectedEnvironment && this.bindingEnvironments.length > 0) {
+      this.selectedEnvironment = this.bindingEnvironments[0].name;
+    }
   }
 
   private gatherSettings(compareValue: SetCompareValue<DeploySettingsCompare>): DeploySettingsInput {
