@@ -1,64 +1,68 @@
-<div class="field-group">
+<form>
   <h3 class="form-title">Deployment</h3>
-  <div class="field">
-    <label>GitHub workflow</label>
-    <div class="field-value">
-      <dx-text-box
-        class="field-value"
-        [(value)]="settingsCompare.deployWorkflow[level]"
-        [placeholder]="showOwner ? settingsCompare.deployWorkflow['owner'] : ''"></dx-text-box>
-    </div>
-  </div>
-  <div class="field">
-    <label>prdeploy portal URL</label>
-    <div class="field-value">
-      <dx-text-box
-        class="field-value"
-        [(value)]="settingsCompare.prdeployPortalUrl[level]"
-        [placeholder]="showOwner ? settingsCompare.prdeployPortalUrl['owner'] : ''"></dx-text-box>
-    </div>
-  </div>
-  <div class="field">
-    <label>Default Environment</label>
-    <div class="field-value">
-      <dx-select-box
+
+  <div class="field-section">
+    <mat-form-field>
+      <mat-label>GitHub workflow</mat-label>
+      <input
+        matInput
+        type="text"
+        [(ngModel)]="settingsCompare.deployWorkflow[level]"
+        [placeholder]="showOwner ? settingsCompare.deployWorkflow['owner'] : ''"
+        name="githubWorkflow" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>prdeploy portal URL</mat-label>
+      <input
+        matInput
+        type="text"
+        [(ngModel)]="settingsCompare.prdeployPortalUrl[level]"
+        [placeholder]="showOwner ? settingsCompare.prdeployPortalUrl['owner'] : ''"
+        name="prdeployPortalUrl" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Default Environment</mat-label>
+      <mat-select
         [placeholder]="showOwner ? settingsCompare.defaultEnvironment['owner'] : ''"
-        [dataSource]="environments"
-        [searchEnabled]="true"
-        [contentEditable]="true"
-        [(value)]="settingsCompare.defaultEnvironment[level]">
-      </dx-select-box>
-    </div>
-  </div>
-  <div class="field">
-    <label>Release Environment</label>
-    <div class="field-value">
-      <dx-select-box
+        [(ngModel)]="settingsCompare.defaultEnvironment[level]">
+        @for (environment of environments; track environment) {
+          <mat-option [value]="environment">{{ environment }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Release Environment</mat-label>
+      <mat-select
         [placeholder]="showOwner ? settingsCompare.releaseEnvironment['owner'] : ''"
-        [dataSource]="environments"
-        [searchEnabled]="true"
-        [contentEditable]="true"
-        [(value)]="settingsCompare.releaseEnvironment[level]">
-      </dx-select-box>
-    </div>
+        [(ngModel)]="settingsCompare.releaseEnvironment[level]">
+        @for (environment of environments; track environment) {
+          <mat-option [value]="environment">{{ environment }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Builds check pattern</mat-label>
+      <input
+        matInput
+        type="text"
+        [(ngModel)]="settingsCompare.builds.checkPattern[level]"
+        [placeholder]="showOwner ? settingsCompare.builds.checkPattern['owner'] : ''"
+        name="buildsCheckPattern" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Builds workflow pattern</mat-label>
+      <input
+        matInput
+        type="text"
+        [(ngModel)]="settingsCompare.builds.workflowPattern[level]"
+        [placeholder]="showOwner ? settingsCompare.builds.workflowPattern['owner'] : ''"
+        name="buildsWorkflowPattern" />
+    </mat-form-field>
   </div>
-  <div class="field">
-    <label>Builds check pattern</label>
-    <div class="field-value">
-      <dx-text-box
-        class="field-value"
-        [(value)]="settingsCompare.builds.checkPattern[level]"
-        [placeholder]="showOwner ? settingsCompare.builds.checkPattern['owner'] : ''"></dx-text-box>
-    </div>
-  </div>
-  <div class="field">
-    <label>Builds workflow pattern</label>
-    <div class="field-value">
-      <dx-text-box
-        class="field-value"
-        [(value)]="settingsCompare.builds.workflowPattern[level]"
-        [placeholder]="showOwner ? settingsCompare.builds.workflowPattern['owner'] : ''"></dx-text-box>
-    </div>
-  </div>
-</div>
+</form>
 <app-badge-form [badge]="settingsCompare.badge" [level]="level"></app-badge-form>
