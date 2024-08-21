@@ -7,6 +7,7 @@
 
 .settings-form {
   width: 100%;
+  padding-bottom: 10px;
 }
 
 .environments-disabled {
@@ -23,10 +24,18 @@
   }
 }
 
+.environments-accordion {
+  margin-bottom: 10px;
+}
+
 .accordion-header {
   display: flex;
   align-items: center;
   width: 100%;
+
+  span {
+    text-transform: capitalize;
+  }
 }
 
 ::ng-deep .settings-form .form-title {
@@ -52,8 +61,7 @@
   background-color: $white;
   color: $gray-600;
   border-radius: 5px;
-  margin: 10px 0;
-  margin-top: -10px;
+  margin-bottom: 10px;
   padding: 0 15px;
 }
 

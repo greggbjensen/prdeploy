@@ -41,31 +41,34 @@
                 <p>No environment overrides added for this repository yet.</p>
               </div>
             }
-            <dx-accordion
-              [dataSource]="bindingEnvironments"
-              [collapsible]="false"
-              [multiple]="false"
-              id="accordion-container">
-              <div *dxTemplate="let environment of 'title'">
-                <div class="accordion-header {{ hasEnvironments ? '' : 'environments-disabled' }}">
-                  <span>{{ environment.name }}</span>
-                  <button
-                    mat-icon-button
-                    color="warn"
-                    class="remove-environment"
-                    title="Remove environment"
-                    (click)="removeEnvironment(environment.name)">
-                    <mat-icon>close</mat-icon>
-                  </button>
-                </div>
-              </div>
-              <div *dxTemplate="let environment of 'item'">
-                <app-environment-form
-                  [environment]="environment"
-                  [hasEnvironments]="hasEnvironments"
-                  [level]="level"></app-environment-form>
-              </div>
-            </dx-accordion>
+
+            <mat-accordion class="environments-accordion">
+              @for (environment of bindingEnvironments; track environment.name) {
+                <mat-expansion-panel
+                  expanded="{{ environment.name === selectedEnvironment }}"
+                  (opened)="selectedEnvironmentChange(environment)">
+                  <mat-expansion-panel-header>
+                    <div class="accordion-header {{ hasEnvironments ? '' : 'environments-disabled' }}">
+                      <span>{{ environment.name }}</span>
+                      <button
+                        mat-icon-button
+                        color="warn"
+                        class="remove-environment"
+                        title="Remove environment"
+                        (click)="removeEnvironment(environment.name)"
+                        [disabled]="!hasEnvironments">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+                  </mat-expansion-panel-header>
+
+                  <app-environment-form
+                    [environment]="environment"
+                    [hasEnvironments]="hasEnvironments"
+                    [level]="level"></app-environment-form>
+                </mat-expansion-panel>
+              }
+            </mat-accordion>
           </div>
         }
       }

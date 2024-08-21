@@ -18,9 +18,14 @@
       </mat-form-field>
 
       <div class="field-section">
-        <mat-checkbox [(ngModel)]="environment.requireApproval" name="requireApproval">Require approval</mat-checkbox>
+        <mat-checkbox [(ngModel)]="environment.requireApproval" name="requireApproval" [disabled]="!hasEnvironments">
+          Require approval
+        </mat-checkbox>
 
-        <mat-checkbox [(ngModel)]="environment.requireBranchUpToDate" name="requireBranchUpToDate">
+        <mat-checkbox
+          [(ngModel)]="environment.requireBranchUpToDate"
+          name="requireBranchUpToDate"
+          [disabled]="!hasEnvironments">
           Require branch up to date
         </mat-checkbox>
       </div>
@@ -54,7 +59,12 @@
 
     <h4 class="field-group-title">Automation Test</h4>
     <div class="field-section">
-      <mat-checkbox [(ngModel)]="environment.automationTest.enabled" name="automationTestEnabled">Enabled</mat-checkbox>
+      <mat-checkbox
+        [(ngModel)]="environment.automationTest.enabled"
+        name="automationTestEnabled"
+        [disabled]="!hasEnvironments"
+        >Enabled</mat-checkbox
+      >
 
       <mat-form-field class="form-field-2x">
         <mat-label>GitHub workfow</mat-label>

@@ -33,6 +33,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatListModule, MatSelectionList, MatSelectionListChange } from '@angular/material/list';
 import { Tab } from 'src/app/shared/models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 class SetCompareValue<T> {
   hasValues: boolean = false;
@@ -53,6 +54,7 @@ class SetCompareValue<T> {
     SlackFormComponent,
     AddEnvironmentDialogComponent,
     MatProgressSpinnerModule,
+    MatExpansionModule,
     DxAccordionModule,
     DxTabsModule,
     MatButtonModule,
@@ -95,6 +97,7 @@ export class SettingsFormComponent implements AfterViewInit {
   ];
 
   activeTabId: string = 'environments';
+  selectedEnvironment: string;
 
   private _level: SettingsLevel;
   @Input() set level(value: SettingsLevel) {
@@ -122,6 +125,10 @@ export class SettingsFormComponent implements AfterViewInit {
     if (selectOption) {
       this.settingsNav.selectedOptions.select(selectOption);
     }
+  }
+
+  selectedEnvironmentChange(environment: EnvironmentSettings) {
+    this.selectedEnvironment = environment.name;
   }
 
   settingsNavChange(event: MatSelectionListChange) {
