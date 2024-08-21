@@ -1,14 +1,28 @@
 import { Component, Input } from '@angular/core';
-import { DxCheckBoxModule, DxTextBoxModule } from 'devextreme-angular';
 import { JiraSettingsCompare } from 'src/app/shared/graphql';
 import { SettingsLevel } from '../models';
 import { DxTextBoxTypes } from 'devextreme-angular/ui/text-box';
 import { DxButtonTypes } from 'devextreme-angular/ui/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { RevealPasswordDirective } from 'src/app/shared/directives';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-jira-form',
   standalone: true,
-  imports: [DxTextBoxModule, DxCheckBoxModule],
+  imports: [
+    MatCheckboxModule,
+    MatIconModule,
+    MatInputModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    RevealPasswordDirective,
+    FormsModule
+  ],
   templateUrl: './jira-form.component.html',
   styleUrl: './jira-form.component.scss'
 })

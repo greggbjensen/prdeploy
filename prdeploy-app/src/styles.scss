@@ -60,21 +60,25 @@ body { margin: 0; }
   z-index: $zindex-modal + 1;
 }
 
+form .mat-mdc-form-field {
+  min-width: $form-field-width-base;
+}
+
 .mat-mdc-form-field.form-field-2x {
   min-width: $form-field-width-2x;
 }
 
+form .mat-mdc-checkbox {
+  min-width: $form-field-width-base;
+  margin-bottom: 10px;
+}
+
 .field-section {
   padding: 0 10px;
-  margin-left: -15px;
+  margin-left: $form-field-gap * -1;
 
   .mat-mdc-form-field, .mat-mdc-checkbox {
-    margin-left: 15px;
-  }
-
-  .mat-mdc-checkbox {
-    min-width: $form-field-width-base;
-    margin-bottom: 10px;
+    margin-left: $form-field-gap;
   }
 }
 

@@ -932,8 +932,9 @@ $form-color-width:                      3rem !default;
 // scss-docs-end form-input-variables
 
 // scss-docs-start form-field-variables
-$form-field-width-base:                 212px;
-$form-field-width-2x:                   440px;
+$form-field-gap:                        15px;
+$form-field-width-base:                 240px;
+$form-field-width-2x:                   ($form-field-width-base * 2) + $form-field-gap;
 
 // scss-docs-end form-field-variables
 
