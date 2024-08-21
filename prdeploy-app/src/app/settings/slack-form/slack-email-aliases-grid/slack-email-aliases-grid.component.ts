@@ -1,5 +1,4 @@
-import { Component, Input } from '@angular/core';
-import { DxDataGridModule, DxTextBoxModule } from 'devextreme-angular';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { SlackSettingsCompare } from 'src/app/shared/graphql';
 import { SettingsLevel } from '../../models';
 import { AddSlackEmailAliasDialogComponent } from './add-slack-email-alias-dialog/add-slack-email-alias-dialog.component';
@@ -8,11 +7,23 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { firstValueFrom } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { MatTableModule } from '@angular/material/table';
+import { KeyValuePipe } from '@angular/common';
 
 @Component({
   selector: 'app-slack-email-aliases-grid',
   standalone: true,
-  imports: [AddSlackEmailAliasDialogComponent, DxDataGridModule, MatButtonModule, MatIconModule, DxTextBoxModule],
+  imports: [
+    AddSlackEmailAliasDialogComponent,
+    MatButtonModule,
+    MatIconModule,
+    MatTableModule,
+    MatInputModule,
+    FormsModule,
+    KeyValuePipe
+  ],
   templateUrl: './slack-email-aliases-grid.component.html',
   styleUrl: './slack-email-aliases-grid.component.scss'
 })
@@ -20,8 +31,12 @@ export class SlackEmailAliasesGridComponent {
   emails: { email: string }[] = [];
   bindingLevel: SettingsLevel;
   hasAliases = false;
+  displayColumns = ['email', 'alias', 'remove'];
 
-  constructor(private _dialog: MatDialog) {}
+  constructor(
+    private _dialog: MatDialog,
+    private _changeDectectorRef: ChangeDetectorRef
+  ) {}
 
   async showAddDialog() {
     const dialogRef = this._dialog.open<AddSlackEmailAliasDialogComponent, void, string>(
@@ -58,6 +73,11 @@ export class SlackEmailAliasesGridComponent {
     return this._level;
   }
 
+  aliasEntryChange(event: Event, email: string) {
+    const input = event.target as HTMLInputElement;
+    this.slack.emailAliases[this.level][email] = input.value;
+  }
+
   add(email: string) {
     // Must use level and not binding level here to all override on repo.
     if (!this.slack.emailAliases[this._level]) {
@@ -89,6 +109,8 @@ export class SlackEmailAliasesGridComponent {
     } else {
       this.emails = [];
     }
+
+    this._changeDectectorRef.detectChanges();
   }
 
   private getValidEmails(level: SettingsLevel) {

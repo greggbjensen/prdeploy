@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { DxFormModule, DxSelectBoxModule } from 'devextreme-angular';
 import { Environment, EnvironmentsGQL } from '../shared/graphql';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
@@ -14,15 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 @Component({
   selector: 'app-environments',
   standalone: true,
-  imports: [
-    MatButtonModule,
-    MatIconModule,
-    DxFormModule,
-    DxSelectBoxModule,
-    EnvironmentsGridComponent,
-    MatSelectModule,
-    MatFormFieldModule
-  ],
+  imports: [MatButtonModule, MatIconModule, EnvironmentsGridComponent, MatSelectModule, MatFormFieldModule],
   templateUrl: './environments.component.html',
   styleUrl: './environments.component.scss'
 })
