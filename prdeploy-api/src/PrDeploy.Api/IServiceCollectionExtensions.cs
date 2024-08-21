@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
@@ -52,7 +53,7 @@ public static class IServiceCollectionExtensions
                 var userToken = s.GetRequiredService<ISecurityContext>().UserToken;
                 if (string.IsNullOrEmpty(userToken))
                 {
-                    throw new BadHttpRequestException("No token in security context.");
+                    throw new HttpRequestException("No token in security context.", null, HttpStatusCode.Unauthorized);
                 }
 
                 var credentials = new Credentials(userToken);

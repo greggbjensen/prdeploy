@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { DxAccordionModule, DxCheckBoxModule, DxTextBoxModule } from 'devextreme-angular';
 import { EnvironmentSettings } from 'src/app/shared/graphql';
 import { KeyValuePipe } from '@angular/common';
 import { ValueChangedEvent } from 'devextreme/ui/text_box';
@@ -14,18 +13,17 @@ import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
+import { MatChipsModule } from '@angular/material/chips';
 
 @Component({
   selector: 'app-environment-form',
   standalone: true,
   imports: [
-    DxAccordionModule,
-    DxTextBoxModule,
-    DxCheckBoxModule,
     MatButtonModule,
     MatIconModule,
     MatInputModule,
     MatTableModule,
+    MatChipsModule,
     FormsModule,
     MatCheckboxModule,
     AddAutomationInputDialogComponent,
@@ -41,6 +39,7 @@ export class EnvironmentFormComponent {
   @Input() hasEnvironments: boolean;
 
   showOwner = true;
+  Object = Object;
 
   automationInputColumns = ['name', 'value', 'remove'];
 
@@ -111,7 +110,7 @@ export class EnvironmentFormComponent {
       this.environment.automationTest.inputs = {};
     }
 
-    this.environment.automationTest.inputs[name] = '';
+    this.environment.automationTest.inputs[name] = `\${${name}}`;
   }
 
   updateAutomationInput(e: ValueChangedEvent, name: any) {
