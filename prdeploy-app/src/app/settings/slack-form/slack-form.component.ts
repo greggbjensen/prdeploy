@@ -1,30 +1,34 @@
 import { Component, Input } from '@angular/core';
-import { DxButtonModule, DxCheckBoxModule, DxTextBoxModule } from 'devextreme-angular';
 import { SlackSettingsCompare } from 'src/app/shared/graphql';
 import { SettingsLevel } from '../models';
 import { KeyValuePipe } from '@angular/common';
 import { SlackEmailAliasesGridComponent } from './slack-email-aliases-grid/slack-email-aliases-grid.component';
-import { DxButtonTypes } from 'devextreme-angular/ui/button';
-import { DxTextBoxTypes } from 'devextreme-angular/ui/text-box';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { RevealPasswordDirective } from 'src/app/shared/directives';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-slack-form',
   standalone: true,
-  imports: [SlackEmailAliasesGridComponent, DxTextBoxModule, DxCheckBoxModule, KeyValuePipe, DxButtonModule],
+  imports: [
+    SlackEmailAliasesGridComponent,
+    MatInputModule,
+    MatCheckboxModule,
+    MatIconModule,
+    MatButtonModule,
+    RevealPasswordDirective,
+    FormsModule,
+    KeyValuePipe
+  ],
   templateUrl: './slack-form.component.html',
   styleUrl: './slack-form.component.scss'
 })
 export class SlackFormComponent {
   @Input() slack: SlackSettingsCompare;
 
-  tokenPasswordMode: DxTextBoxTypes.TextBoxType = 'password';
-  tokenButton: DxButtonTypes.Properties = {
-    icon: 'eyeopen',
-    stylingMode: 'text',
-    onClick: () => {
-      this.tokenPasswordMode = this.tokenPasswordMode === 'text' ? 'password' : 'text';
-    }
-  };
   showOwner = true;
 
   private _level: SettingsLevel;
