@@ -103,6 +103,10 @@ export class DeploymentsComponent implements OnInit {
         })
       );
       this.deployEnvironments = response.data.deployEnvironments;
+      if (!this.selectedEnvironment && this.deployEnvironments.length > 0) {
+        this.selectedEnvironment = this.deployEnvironments[0].name;
+      }
+
       this.deployQueues = response.data.deployQueues;
       this._routeManager.updateQueryParams();
     } catch (error) {
