@@ -14,12 +14,12 @@
     <app-alert-panel type="info" class="tab-alert">
       Default settings to be used for all repositories within owner&nbsp;<strong>{{ this.repoManager.owner }}</strong>
     </app-alert-panel>
-    <app-settings-form level="owner"></app-settings-form>
   </mat-tab>
   <mat-tab label="Repository Override" class="settings-tab">
     <app-alert-panel type="success" class="tab-alert">
       Override settings for the repository&nbsp;<strong>{{ this.repoManager.repo }}</strong>
     </app-alert-panel>
-    <app-settings-form level="repo"></app-settings-form>
   </mat-tab>
 </mat-tab-group>
+
+<app-settings-form [level]="level"></app-settings-form>

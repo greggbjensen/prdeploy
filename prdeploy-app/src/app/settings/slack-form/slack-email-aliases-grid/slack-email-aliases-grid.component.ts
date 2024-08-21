@@ -73,11 +73,6 @@ export class SlackEmailAliasesGridComponent {
     return this._level;
   }
 
-  aliasEntryChange(event: Event, email: string) {
-    const input = event.target as HTMLInputElement;
-    this.slack.emailAliases[this.level][email] = input.value;
-  }
-
   add(email: string) {
     // Must use level and not binding level here to all override on repo.
     if (!this.slack.emailAliases[this._level]) {

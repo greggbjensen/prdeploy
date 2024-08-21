@@ -23,8 +23,8 @@
         <input
           matInput
           type="text"
-          [value]="slack.emailAliases[bindingLevel][input.email]"
-          (change)="aliasEntryChange($event, input.email)"
+          [disabled]="!hasAliases"
+          [(ngModel)]="slack.emailAliases[bindingLevel][input.email]"
           required
           name="aliasInputValue" />
       </mat-form-field>

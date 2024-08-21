@@ -23,7 +23,7 @@ export class SettingsComponent {
   constructor(public repoManager: RepoManager) {}
 
   selectedLevelChanged(event: MatTabChangeEvent): void {
-    this.level = event.tab.position === 1 ? 'owner' : 'repo';
+    this.level = event.index === 0 ? 'owner' : 'repo';
   }
 
   updateSettings() {

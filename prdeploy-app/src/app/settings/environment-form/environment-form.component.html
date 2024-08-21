@@ -107,6 +107,7 @@
                   matInput
                   type="text"
                   [value]="input.value"
+                  [disabled]="!hasEnvironments"
                   (change)="automationInputChange($event, input.key)"
                   required
                   name="automationInputValue" />
