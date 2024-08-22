@@ -61,11 +61,10 @@ namespace PrDeploy.Api.Business.Security
 
             try
             {
-                var repository = await _client.Repository.Get(owner, repo);
-                hasAccess = repository != null;
+                hasAccess = await _client.Repository.Collaborator.IsCollaborator(owner, repo, _securityContext.Login);
                 if (hasAccess)
                 {
-                    _cache.Set(authKey, true, AccessRefreshTimeSpan);
+                    _cache.Set(authKey, hasAccess, AccessRefreshTimeSpan);
                 }
             }
             catch (Exception ex)
@@ -94,8 +93,9 @@ namespace PrDeploy.Api.Business.Security
 
             try
             {
-                var organization = await _client.Organization.Get(owner);
-                hasAccess = organization != null;
+                var membership =
+                    await _client.Organization.Member.GetOrganizationMembership(owner, _securityContext.Login);
+                hasAccess = membership.State.Value == MembershipState.Active;
             }
             catch (Exception ex)
             {
@@ -106,8 +106,7 @@ namespace PrDeploy.Api.Business.Security
             {
                 try
                 {
-                    var user = await _client.User.Current();
-                    hasAccess = string.Equals(owner, user.Login, StringComparison.OrdinalIgnoreCase);
+                    hasAccess = string.Equals(owner, _securityContext.Login, StringComparison.OrdinalIgnoreCase);
                 }
                 catch (Exception ex)
                 {

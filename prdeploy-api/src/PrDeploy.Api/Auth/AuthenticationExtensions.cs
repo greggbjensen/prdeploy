@@ -1,10 +1,9 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using PrDeploy.Api.Business.Options;
+using JwtRegisteredClaimNames = System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames;
 
 namespace PrDeploy.Api.Auth
 {
@@ -19,6 +18,8 @@ namespace PrDeploy.Api.Auth
             var jwtOptions = new JwtOptions();
             configureJwt(jwtOptions);
 
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
             services
                 .AddAuthentication(options =>
                 {
@@ -28,20 +29,19 @@ namespace PrDeploy.Api.Auth
                 }).AddScheme<JwtBearerOptions, GitHubAuthenticationHandler>(
                     JwtBearerDefaults.AuthenticationScheme, 
                     o =>
-                {
-                    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key));
-                    o.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidIssuer = jwtOptions.Issuer,
-                        ValidAudience = jwtOptions.Audience,
-                        IssuerSigningKey = securityKey,
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        NameClaimType = JwtRegisteredClaimNames.Sub
-                    };
-                });
+                        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key));
+                        o.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidIssuer = jwtOptions.Issuer,
+                            ValidAudience = jwtOptions.Audience,
+                            IssuerSigningKey = securityKey,
+                            ValidateIssuer = true,
+                            ValidateAudience = true,
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true
+                        };
+                    });
 
             return services;
         }

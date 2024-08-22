@@ -1,4 +1,5 @@
-﻿using PrDeploy.Api.Business.Auth;
+﻿using System.IdentityModel.Tokens.Jwt;
+using PrDeploy.Api.Business.Auth;
 using PrDeploy.Api.Business.Auth.Interfaces;
 
 namespace PrDeploy.Api.Auth
@@ -22,6 +23,20 @@ namespace PrDeploy.Api.Auth
 
                 var tokenClaim = _httpContextAccessor.HttpContext.User.FindFirst(PrDeployClaimNames.GitHubToken);
                 return tokenClaim != null ? tokenClaim.Value : string.Empty;
+            }
+        }
+
+        public string Login
+        {
+            get
+            {
+                if (_httpContextAccessor?.HttpContext?.User == null)
+                {
+                    return string.Empty;
+                }
+
+                var loginClaim = _httpContextAccessor.HttpContext.User.FindFirst(JwtRegisteredClaimNames.Name);
+                return loginClaim != null ? loginClaim.Value : string.Empty;
             }
         }
     }
