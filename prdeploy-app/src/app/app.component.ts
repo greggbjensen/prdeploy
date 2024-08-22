@@ -1,10 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { AppInfoService } from './shared/services';
 import { RouterOutlet } from '@angular/router';
 import { FooterComponent, SideNavigationMenuComponent, HeaderComponent } from './shared/components';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSidenavModule, MatDrawerMode } from '@angular/material/sidenav';
 import { SideNavMode } from './shared/components/side-navigation-menu/side-nav-mode';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -17,15 +20,42 @@ import { SideNavMode } from './shared/components/side-navigation-menu/side-nav-m
     MatSnackBarModule,
     MatSidenavModule,
     SideNavigationMenuComponent,
-    HeaderComponent
+    HeaderComponent,
+    NgClass
   ]
 })
 export class AppComponent {
-  sideNavMode: SideNavMode = 'full';
+  @HostListener('window:resize')
+  onResize() {
+    this.updateBackdrop();
+  }
 
-  constructor(public appInfo: AppInfoService) {}
+  drawerMode: MatDrawerMode = 'side';
+  sideNavMode: SideNavMode = 'full';
+  hasBackdrop = false;
+  isMobile = false;
+
+  constructor(
+    public appInfo: AppInfoService,
+    private _breakpointObserver: BreakpointObserver
+  ) {
+    this.updateBackdrop();
+
+    this._breakpointObserver
+      .observe('(max-width: 768px)')
+      .pipe(takeUntilDestroyed())
+      .subscribe(state => {
+        this.isMobile = state.matches;
+      });
+  }
+
+  updateBackdrop() {
+    this.hasBackdrop = this.isMobile && this.sideNavMode === 'full';
+    this.drawerMode = this.hasBackdrop ? 'over' : 'side';
+  }
 
   toggleMenu() {
     this.sideNavMode = this.sideNavMode == 'full' ? 'icons' : 'full';
+    this.updateBackdrop();
   }
 }

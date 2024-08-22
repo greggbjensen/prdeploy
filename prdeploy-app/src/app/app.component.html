@@ -1,6 +1,9 @@
 <app-header (menuToggle)="toggleMenu()"></app-header>
-<mat-drawer-container class="app-container sidenav-{{ sideNavMode }}">
-  <mat-drawer #drawer class="app-sidenav" mode="side" opened>
+<mat-drawer-container
+  class="app-container sidenav-{{ sideNavMode }}"
+  [ngClass]="{ 'sidenav-mobile': isMobile }"
+  [hasBackdrop]="hasBackdrop">
+  <mat-drawer #drawer class="app-sidenav" [mode]="drawerMode" opened>
     <app-side-navigation-menu></app-side-navigation-menu>
   </mat-drawer>
 

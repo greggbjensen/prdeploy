@@ -1,5 +1,6 @@
+@import '../sass/variables';
+
 :host {
-  @import '../sass/variables';
   background-color: $gray-100;
   display: flex;
   flex-direction: column;
@@ -11,7 +12,7 @@
   padding-left: 30px;
 }
 
-$side-nav-animation-speed: 0.25s;
+$side-nav-animation-speed: 0.3s;
 $side-nav-large: 190px;
 $side-nav-small: 60px;
 
@@ -40,6 +41,14 @@ $side-nav-small: 60px;
   }
 }
 
-.app-container {
+::ng-deep .app-container {
   flex: 1 1 auto;
+
+  &.sidenav-mobile.sidenav-icons .app-sidenav {
+    width: 0;
+  }
+
+  &.sidenav-mobile .mat-drawer-content {
+    margin-left: 0 !important;
+  }
 }
