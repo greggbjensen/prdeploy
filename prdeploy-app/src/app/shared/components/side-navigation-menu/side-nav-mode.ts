@@ -1,1 +1,1 @@
-export type SideNavMode = 'full' | 'icons';
+export type SideNavMode = 'full' | 'icons' | 'hidden';

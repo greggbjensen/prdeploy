@@ -8,10 +8,6 @@
   width: 100%;
 }
 
-.page-content {
-  padding: 0 25px;
-}
-
 $side-nav-animation-speed: 0.3s;
 $side-nav-large: 190px;
 $side-nav-small: 60px;
@@ -38,6 +34,16 @@ $side-nav-small: 60px;
   .mat-drawer-content {
     margin-left: $side-nav-small !important;
     transition: all $side-nav-animation-speed;
+  }
+}
+
+::ng-deep .sidenav-hidden {
+  .app-sidenav {
+    width: 0;
+  }
+
+  .mat-drawer-content {
+    margin-left: 0 !important;
   }
 }
 

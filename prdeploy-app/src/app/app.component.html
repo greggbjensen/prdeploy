@@ -1,11 +1,17 @@
-<app-header (menuToggle)="toggleMenu()"></app-header>
+@if (isAuthenticated) {
+  <app-header (menuToggle)="toggleMenu()"></app-header>
+}
 <mat-drawer-container
   class="app-container sidenav-{{ sideNavMode }}"
-  [ngClass]="{ 'sidenav-mobile': isMobile }"
+  [ngClass]="{ 'sidenav-mobile': isMobile, 'sidenav-hidden': sideNavHidden }"
   [hasBackdrop]="hasBackdrop">
-  <mat-drawer #drawer class="app-sidenav" [mode]="drawerMode" opened>
-    <app-side-navigation-menu></app-side-navigation-menu>
-  </mat-drawer>
+  @if (isAuthenticated) {
+    <mat-drawer #drawer class="app-sidenav" [mode]="drawerMode" opened>
+      <app-side-navigation-menu></app-side-navigation-menu>
+    </mat-drawer>
+  } @else {
+    <mat-drawer #drawer></mat-drawer>
+  }
 
   <div class="page-content">
     <router-outlet></router-outlet>

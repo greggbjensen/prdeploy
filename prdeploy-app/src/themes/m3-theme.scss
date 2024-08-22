@@ -141,7 +141,7 @@ $_rest: (
 $_primary: map.merge(map.get($_palettes, primary), $_rest);
 $_tertiary: map.merge(map.get($_palettes, tertiary), $_rest);
 
-$theme-font-family: 'Helvetica Neue,Segoe UI,helvetica,verdana,sans-serif';
+$theme-font-family: 'Nunito, Arial, Helvetica, sans-serif';
 
 $config: (
   color: (

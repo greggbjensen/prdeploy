@@ -1,5 +1,5 @@
 import { Component, HostListener } from '@angular/core';
-import { AppInfoService } from './shared/services';
+import { AppInfoService, AuthService } from './shared/services';
 import { RouterOutlet } from '@angular/router';
 import { FooterComponent, SideNavigationMenuComponent, HeaderComponent } from './shared/components';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -32,12 +32,15 @@ export class AppComponent {
 
   drawerMode: MatDrawerMode = 'side';
   sideNavMode: SideNavMode = 'full';
+  sideNavHidden = true;
   hasBackdrop = false;
   isMobile = false;
+  isAuthenticated = false;
 
   constructor(
     public appInfo: AppInfoService,
-    private _breakpointObserver: BreakpointObserver
+    private _breakpointObserver: BreakpointObserver,
+    private _authService: AuthService
   ) {
     this.updateBackdrop();
 
@@ -47,11 +50,23 @@ export class AppComponent {
       .subscribe(state => {
         this.isMobile = state.matches;
       });
+
+    this._authService.isAuthenticated$.pipe(takeUntilDestroyed()).subscribe((isAuthenticated: boolean) => {
+      this.isAuthenticated = isAuthenticated;
+      this.updateBackdrop();
+    });
   }
 
   updateBackdrop() {
-    this.hasBackdrop = this.isMobile && this.sideNavMode === 'full';
-    this.drawerMode = this.hasBackdrop ? 'over' : 'side';
+    if (this.isAuthenticated) {
+      this.sideNavHidden = false;
+      this.hasBackdrop = this.isMobile && this.sideNavMode === 'full';
+      this.drawerMode = this.hasBackdrop ? 'over' : 'side';
+    } else {
+      this.sideNavHidden = true;
+      this.hasBackdrop = false;
+      this.drawerMode = 'side';
+    }
   }
 
   toggleMenu() {

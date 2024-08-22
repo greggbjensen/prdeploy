@@ -1,9 +1,38 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import './sass/variables';
+@import './sass/reboot';
 
 html, body { height: 100%; }
-body { margin: 0; }
+body {
+  font-family: $font-family-sans-serif;
+  color: $body-color;
+  background-color: $body-bg;
+  margin: 0;
+}
+
+h2 {
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+}
+
+.form-group-title {
+  margin: 16px 0 20px 0;
+}
+
+.field-group-title {
+  font-weight: normal;
+  margin: 16px 0 20px 0;
+  padding-bottom: 10px;
+}
+
+.app-container {
+
+  .mat-mdc-header-cell {
+    font-weight: $font-weight-medium;
+  }
+}
 
 .text-right {
   text-align: right;
@@ -15,6 +44,11 @@ body { margin: 0; }
 
 .text-center {
   text-align: center;
+}
+
+.page-content {
+  display: flex;
+  padding: 0 25px;
 }
 
 .page-actions {

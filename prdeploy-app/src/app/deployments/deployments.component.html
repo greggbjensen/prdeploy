@@ -1,19 +1,19 @@
-<h3>
+<h2>
   Deployments
   <button mat-icon-button title="Refresh" color="accent" (click)="update()">
     <mat-icon>sync</mat-icon>
   </button>
-</h3>
+</h2>
 @if (repoManager.repo) {
   <app-environment-list [data]="deployEnvironments" [loading]="loading"></app-environment-list>
 }
 
-<h3>
+<h2>
   Queues
   <button mat-icon-button title="Refresh" color="accent" (click)="update()">
     <mat-icon>sync</mat-icon>
   </button>
-</h3>
+</h2>
 @if (deployQueues.length > 0) {
   <mat-accordion>
     @for (queue of deployQueues; track queue.environment) {
