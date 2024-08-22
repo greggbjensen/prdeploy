@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Location } from '@angular/common';
 import { RepoManager } from './repo.manager';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { OwnerRepos } from '../graphql';
@@ -11,7 +10,6 @@ import { firstValueFrom } from 'rxjs';
 })
 export class RouteManager {
   constructor(
-    private _location: Location,
     private _router: Router,
     private _activatedRoute: ActivatedRoute,
     private _repoManager: RepoManager
@@ -40,29 +38,40 @@ export class RouteManager {
 
   async updateQueryParams(additionalParams: Params = {}): Promise<void> {
     // Do not update while login is in process.
-    if (this._location.path().startsWith('/login') || this._location.path().startsWith('/repositories')) {
+    const path = this._router.url.split('?')[0];
+    if (!path || path.startsWith('/login') || path.startsWith('/repositories')) {
       return;
     }
 
-    await this._router.navigate([this._location.path()], {
-      queryParams: {
+    const currentParams = await firstValueFrom(this._activatedRoute.queryParams);
+    const queryParams = Object.assign(
+      {},
+      currentParams,
+      {
         owner: this._repoManager.owner,
-        repo: this._repoManager.repo,
-        ...additionalParams
+        repo: this._repoManager.repo
       },
-      queryParamsHandling: 'merge',
+      additionalParams
+    );
+    await this._router.navigate([path], {
+      queryParams,
       replaceUrl: true
     });
   }
 
-  private checkHasRepos(ownerRepos: OwnerRepos[]) {
+  private async checkHasRepos(ownerRepos: OwnerRepos[]) {
     // If there are no repos yet, send to that page.
+    const path = this._router.url.split('?')[0];
+    if (!path) {
+      return;
+    }
+
     if (
       this._repoManager.isValid &&
       ownerRepos &&
       ownerRepos.length === 0 &&
-      !this._location.path().startsWith('/repositories') &&
-      !this._location.path().startsWith('/login')
+      !path.startsWith('/repositories') &&
+      !path.startsWith('/login')
     ) {
       this._router.navigate(['/repositories'], { queryParams: { addrepos: true } });
     }

@@ -8,6 +8,7 @@
 .settings-form {
   width: 100%;
   padding-bottom: 10px;
+  position: relative;
 }
 
 .environments-disabled {
@@ -95,8 +96,8 @@
   }
 }
 
-.mat-mdc-spinner {
+.settings-spinner {
   position: absolute;
-  top: 0;
-  left: auto;
+  top: 350px;
+  margin-left: 500px;
 }
