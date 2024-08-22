@@ -1,81 +1,25 @@
-import { Component, Output, Input, EventEmitter, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
-import { DxTreeViewModule, DxTreeViewComponent, DxTreeViewTypes } from 'devextreme-angular/ui/tree-view';
-import { navigation } from '../../../app-navigation';
-import * as events from 'devextreme/events';
+import { Component } from '@angular/core';
+import { navigation, NavItem } from '../../../app-navigation';
+import { MatTreeModule, MatTreeNestedDataSource } from '@angular/material/tree';
+import { KeyValuePipe } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-side-navigation-menu',
   templateUrl: './side-navigation-menu.component.html',
   styleUrls: ['./side-navigation-menu.component.scss'],
   standalone: true,
-  imports: [DxTreeViewModule]
+  imports: [MatTreeModule, KeyValuePipe, RouterModule, MatIconModule]
 })
-export class SideNavigationMenuComponent implements AfterViewInit, OnDestroy {
-  @ViewChild(DxTreeViewComponent, { static: true })
-  menu!: DxTreeViewComponent;
+export class SideNavigationMenuComponent {
+  navItems = new MatTreeNestedDataSource<NavItem>();
 
-  @Output()
-  selectedItemChanged = new EventEmitter<DxTreeViewTypes.ItemClickEvent>();
-
-  @Output()
-  openMenu = new EventEmitter<boolean>();
-
-  hidden = false;
-
-  private _selectedItem!: string;
-  @Input()
-  set selectedItem(value: string) {
-    this._selectedItem = value;
-    if (!this.menu.instance) {
-      return;
-    }
-
-    this.menu.instance.selectItem(value);
+  constructor() {
+    this.navItems.data = navigation();
   }
 
-  private _items!: Record<string, unknown>[];
-  get items() {
-    if (!this._items) {
-      this._items = navigation().map(item => {
-        return { ...item, expanded: !this._compactMode };
-      });
-    }
-
-    return this._items;
-  }
-
-  private _compactMode = false;
-  @Input()
-  get compactMode() {
-    return this._compactMode;
-  }
-  set compactMode(val) {
-    this._compactMode = val;
-
-    if (!this.menu.instance) {
-      return;
-    }
-
-    if (val) {
-      this.menu.instance.collapseAll();
-    } else {
-      this.menu.instance.expandItem(this._selectedItem);
-    }
-  }
-
-  constructor(private elementRef: ElementRef) {}
-
-  onItemClick(event: DxTreeViewTypes.ItemClickEvent) {
-    this.selectedItemChanged.emit(event);
-  }
-
-  ngAfterViewInit() {
-    events.on(this.elementRef.nativeElement, 'dxclick', () => {
-      this.openMenu.next(true);
-    });
-  }
-
-  ngOnDestroy() {
-    events.off(this.elementRef.nativeElement, 'dxclick');
+  childrenAccessor(navItem: NavItem) {
+    return navItem.children;
   }
 }

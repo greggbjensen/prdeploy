@@ -1,11 +1,10 @@
 <div class="menu-container">
-  <dx-tree-view
-    [items]="items"
-    keyExpr="path"
-    selectionMode="single"
-    [focusStateEnabled]="false"
-    expandEvent="click"
-    (onItemClick)="onItemClick($event)"
-    width="100%">
-  </dx-tree-view>
+  <mat-tree [dataSource]="navItems" [childrenAccessor]="childrenAccessor">
+    <mat-tree-node *matTreeNodeDef="let navItem">
+      <a class="nav-item" [routerLink]="navItem.path" routerLinkActive="router-link-active">
+        <mat-icon>{{ navItem.icon }}</mat-icon>
+        <span>{{ navItem.text }}</span>
+      </a>
+    </mat-tree-node>
+  </mat-tree>
 </div>

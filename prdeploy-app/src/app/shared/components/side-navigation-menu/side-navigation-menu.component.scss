@@ -1,108 +1,38 @@
 @import '../../../../dx-styles.scss';
 @import '../../../../sass/variables';
 
+.mat-tree {
+  padding-top: 14px;
+  background-color: $gray-400;
+  width: 100%;
+}
+
+.nav-item {
+  display: flex;
+  padding: 0 15px;
+  text-decoration: none;
+  color: $gray-600;
+  flex: 1 1 auto;
+
+  &.router-link-active {
+    background-color: $body-bg;
+    border-right: 1px solid $gray-400;
+  }
+
+  .mat-icon {
+    margin-right: 15px;
+  }
+}
+
 :host {
   display: flex;
   flex-direction: column;
   min-height: 100%;
   height: 100%;
-  background-color: $gray-400;
 
   .menu-container {
     min-height: 100%;
     display: flex;
     flex: 1;
-    padding-top: 14px;
-
-    ::ng-deep .dx-treeview {
-      // ## Long text positioning
-      white-space: nowrap;
-      // ##
-
-      // ## Icon width customization
-      .dx-treeview-item {
-
-        .dx-treeview-item-content {
-          display: flex;
-          align-items: center;
-        }
-
-        .dx-icon {
-          width: $side-panel-min-width !important;
-          margin-right: 0;
-          color: $gray-600;
-          background-color: transparent !important; // TODO GBJ: Find the right overrides to avoid important.
-        }
-      }
-      // ##
-
-      // ## Arrow customization
-      .dx-treeview-node {
-        color: $gray-600;
-        line-height: 50px;
-      }
-
-      .dx-treeview-toggle-item-visibility {
-        right: 10px;
-        left: auto;
-      }
-
-      .dx-rtl .dx-treeview-toggle-item-visibility {
-        left: 10px;
-        right: auto;
-      }
-      // ##
-
-      // ## Item levels customization
-      .dx-treeview-node {
-        &[aria-level='1'] {
-          font-size: 16px;
-          font-weight: $font-weight-normal;
-        }
-
-        &[aria-level='2'] .dx-treeview-item-content {
-          font-size: 14px;
-          padding: 0 $side-panel-min-width;
-        }
-      }
-      // ##
-    }
-
-    // ## Selected & Focuced items customization
-    ::ng-deep .dx-treeview {
-      .dx-treeview-node-container {
-        .dx-treeview-node {
-          &.dx-state-selected:not(.dx-state-focused) > .dx-treeview-item {
-            background: transparent;
-          }
-
-          &.dx-state-selected > .dx-treeview-item * {
-            background-color: $gray-100;
-            .dx-icon {
-              color: $blue-400;
-            }
-          }
-
-          &:not(.dx-state-focused) > .dx-treeview-item.dx-state-hover {
-            background-color: $gray-200;
-          }
-        }
-      }
-
-      .dx-treeview-expander-icon-stub {
-        display: none;
-      }
-
-      .dx-treeview-item {
-        padding: 0;
-      }
-    }
-
-    :host-context(.dx-theme-generic) ::ng-deep.dx-treeview {
-      .dx-treeview-node-container .dx-treeview-node.dx-state-selected.dx-state-focused > .dx-treeview-item * {
-        color: inherit;
-      }
-    }
-    // ##
   }
 }
