@@ -10,6 +10,13 @@
         [placeholder]="showOwner ? badge.statusColors.error['owner'] : ''"
         format="hex"
         name="error" />
+      <span
+        matSuffix
+        class="color-preview"
+        [ngStyle]="{
+          'background-color': getColor(badge.statusColors.error)
+        }">
+      </span>
       <mtx-colorpicker-toggle matSuffix [for]="picker"></mtx-colorpicker-toggle>
       <mtx-colorpicker #picker></mtx-colorpicker>
     </mat-form-field>
@@ -23,6 +30,13 @@
         [placeholder]="showOwner ? badge.statusColors.warn['owner'] : ''"
         [format]="'hex'"
         name="warn" />
+      <span
+        matSuffix
+        class="color-preview"
+        [ngStyle]="{
+          'background-color': getColor(badge.statusColors.warn)
+        }">
+      </span>
       <mtx-colorpicker-toggle matSuffix [for]="warnPicker"></mtx-colorpicker-toggle>
       <mtx-colorpicker #warnPicker></mtx-colorpicker>
     </mat-form-field>
@@ -36,6 +50,13 @@
         [placeholder]="showOwner ? badge.statusColors.success['owner'] : ''"
         [format]="'hex'"
         name="success" />
+      <span
+        matSuffix
+        class="color-preview"
+        [ngStyle]="{
+          'background-color': getColor(badge.statusColors.success)
+        }">
+      </span>
       <mtx-colorpicker-toggle matSuffix [for]="successPicker"></mtx-colorpicker-toggle>
       <mtx-colorpicker #successPicker></mtx-colorpicker>
     </mat-form-field>
@@ -49,6 +70,13 @@
         [placeholder]="showOwner ? badge.statusColors.info['owner'] : ''"
         [format]="'hex'"
         name="info" />
+      <span
+        matSuffix
+        class="color-preview"
+        [ngStyle]="{
+          'background-color': getColor(badge.statusColors.info)
+        }">
+      </span>
       <mtx-colorpicker-toggle matSuffix [for]="infoPicker"></mtx-colorpicker-toggle>
       <mtx-colorpicker #infoPicker></mtx-colorpicker>
     </mat-form-field>
