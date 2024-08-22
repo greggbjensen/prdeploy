@@ -1,11 +1,9 @@
 <header>
   <mat-toolbar class="header-toolbar">
     <div class="header-left">
-      @if (menuToggleEnabled) {
-        <button mat-icon-button class="menu-button" (click)="toggleMenu()">
-          <mat-icon>menu</mat-icon>
-        </button>
-      }
+      <button mat-icon-button class="menu-button" (click)="toggleMenu()">
+        <mat-icon>menu</mat-icon>
+      </button>
       <img class="header-logo" src="/assets/images/logo.svg" alt="Logo" />
     </div>
     <div class="header-right">

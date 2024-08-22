@@ -1,6 +1,9 @@
-<ng-container>
-  <app-side-nav-outer-toolbar title="{{ appInfo.title }}">
-    <router-outlet></router-outlet>
-    <app-footer></app-footer>
-  </app-side-nav-outer-toolbar>
-</ng-container>
+<app-header (menuToggle)="toggleMenu()"></app-header>
+<mat-drawer-container class="app-container">
+  <mat-drawer #drawer class="app-sidenav" mode="side" opened>
+    <app-side-navigation-menu [mode]=""></app-side-navigation-menu>
+  </mat-drawer>
+
+  <router-outlet></router-outlet>
+  <app-footer></app-footer>
+</mat-drawer-container>

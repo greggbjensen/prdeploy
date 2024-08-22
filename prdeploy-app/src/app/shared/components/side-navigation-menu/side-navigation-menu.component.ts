@@ -2,6 +2,7 @@ import { Component, Output, Input, EventEmitter, ViewChild, ElementRef, AfterVie
 import { DxTreeViewModule, DxTreeViewComponent, DxTreeViewTypes } from 'devextreme-angular/ui/tree-view';
 import { navigation } from '../../../app-navigation';
 import * as events from 'devextreme/events';
+import { SideNavMode } from './side-nav-mode';
 
 @Component({
   selector: 'app-side-navigation-menu',
@@ -19,6 +20,11 @@ export class SideNavigationMenuComponent implements AfterViewInit, OnDestroy {
 
   @Output()
   openMenu = new EventEmitter<any>();
+
+  @Input()
+  mode: SideNavMode = 'full';
+
+  hidden = false;
 
   private _selectedItem!: string;
   @Input()
@@ -61,9 +67,7 @@ export class SideNavigationMenuComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  constructor(
-    private elementRef: ElementRef
-  ) {}
+  constructor(private elementRef: ElementRef) {}
 
   onItemClick(event: DxTreeViewTypes.ItemClickEvent) {
     this.selectedItemChanged.emit(event);
