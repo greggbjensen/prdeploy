@@ -161,7 +161,7 @@ export class SettingsFormComponent implements AfterViewInit {
 
       this._notificationManager.show('Settings save complete.');
     } catch (error) {
-      this._notificationManager.show('Error saving settings', 'error');
+      this._notificationManager.show('Error saving settings', 'danger');
       this._loggingService.error(error, `Error saving settings.`);
     }
 

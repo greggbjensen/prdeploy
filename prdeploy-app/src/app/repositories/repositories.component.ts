@@ -89,7 +89,7 @@ export class RepositoriesComponent implements OnInit {
               this.updateOwnerRepos();
             } catch (error) {
               this._loggingService.error(error, `Error removing repository.`);
-              this._notificationManager.show('Error removing repository.', 'error');
+              this._notificationManager.show('Error removing repository.', 'danger');
             }
           }
         },

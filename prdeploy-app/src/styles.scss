@@ -46,6 +46,29 @@ body { margin: 0; }
 
 // Control styles.
 
+.mat-mdc-snack-bar-container {
+
+  .notification-container {
+    font-size: $font-size-base;
+  }
+
+  &.snackbar-info .mat-mdc-snackbar-surface {
+    background-color: $blue-400;
+  }
+
+  &.snackbar-success .mat-mdc-snackbar-surface {
+    background-color: $green-400;
+  }
+
+  &.snackbar-warning .mat-mdc-snackbar-surface {
+    background-color: $yellow-600;
+  }
+
+  &.snackbar-danger .mat-mdc-snackbar-surface {
+    background-color: $red-400;
+  }
+}
+
 .mat-mdc-form-field-icon-suffix > .clear-field-btn {
   margin-right: -18px;
   color: $danger;

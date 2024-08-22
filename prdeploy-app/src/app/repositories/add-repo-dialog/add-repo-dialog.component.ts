@@ -91,7 +91,7 @@ export class AddRepoDialogComponent {
       this._dialogRef.close(repository);
     } catch (error) {
       this._loggingService.error(error, `Error adding repository.`);
-      this._notificationManager.show('Error adding repository.', 'error');
+      this._notificationManager.show('Error adding repository.', 'danger');
     }
 
     this.processing = false;

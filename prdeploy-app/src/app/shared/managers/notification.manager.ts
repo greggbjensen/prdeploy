@@ -1,22 +1,23 @@
 import { Injectable } from '@angular/core';
 import { NotificationData } from './models/notification-data';
-import { ToastType } from 'devextreme/ui/toast';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { NotificationType } from './models/notification-type';
+import { NotificationBarComponent } from '../components/notification-bar/notification-bar.component';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationManager {
-  notification: NotificationData = {
-    visible: false,
-    message: '',
-    type: 'success'
-  };
+  constructor(private _snackBar: MatSnackBar) {}
 
-  show(message: string, type: ToastType = 'success'): void {
-    Object.assign(this.notification, {
-      message,
-      type,
-      visible: true
+  show(message: string, type: NotificationType = 'success'): void {
+    this._snackBar.openFromComponent(NotificationBarComponent, {
+      duration: 3000,
+      panelClass: [`snackbar-${type}`],
+      data: {
+        message,
+        type
+      } as NotificationData
     });
   }
 }
