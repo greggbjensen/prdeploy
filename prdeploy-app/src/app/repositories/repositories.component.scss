@@ -1,24 +1,6 @@
 @import '../../sass/variables';
 
 :host {
+  max-width: 800px;
   flex: 1 1 auto;
-}
-
-// TODO GBJ: Separate into component.
-.add-repos-banner {
-  display: flex;
-  align-items: center;
-  background-color: $orange-100;
-  border-radius: 5px;
-  margin: 20px 0;
-  padding: 0 15px;
-  max-width: 500px;
-
-  .bi-exclamation-triangle {
-    font-size: 20px;
-    margin-right: 15px;
-    color: $orange-500;
-    font-weight: $font-weight-bold;
-    line-height: 20px;
-  }
 }

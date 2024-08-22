@@ -29,7 +29,6 @@
     "@ng-matero/extensions": "^18.2.0",
     "angular-oauth2-oidc": "^17.0.2",
     "apollo-angular": "^7.1.1",
-    "bootstrap-icons": "^1.11.3",
     "emoji-toolkit": "^9.0.1",
     "graphql": "^16.9.0",
     "lodash": "^4.17.21",

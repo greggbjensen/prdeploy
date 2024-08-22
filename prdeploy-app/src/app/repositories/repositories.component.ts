@@ -6,17 +6,17 @@ import { AddRepoDialogComponent } from './add-repo-dialog/add-repo-dialog.compon
 import { Repository } from '../shared/models';
 import { NotificationManager, RepoManager } from '../shared/managers';
 import { LoggingService } from '../shared/services';
-import { ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { AddRepoDialogData } from './add-repo-dialog/add-repo-dialog-data';
 import { MtxDialog } from '@ng-matero/extensions/dialog';
+import { AlertPanelComponent } from '../shared/components';
 
 @Component({
   selector: 'app-repositories',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, RepositoriesGridComponent, AddRepoDialogComponent],
+  imports: [MatButtonModule, MatIconModule, RepositoriesGridComponent, AddRepoDialogComponent, AlertPanelComponent],
   templateUrl: './repositories.component.html',
   styleUrl: './repositories.component.scss'
 })
@@ -28,21 +28,15 @@ export class RepositoriesComponent implements OnInit {
     private _repoManager: RepoManager,
     private _dialog: MatDialog,
     private _mtxDialog: MtxDialog,
-    private _activatedRoute: ActivatedRoute,
     private _loggingService: LoggingService
   ) {}
 
   ownerRepos: OwnerRepos[];
-  displayAddRepos = false;
+  loading = true;
+  hasRepos = false;
 
   ngOnInit(): void {
     this.updateOwnerRepos();
-    firstValueFrom(this._activatedRoute.queryParamMap).then(p => {
-      const addRepos = p.get('addrepos');
-      if (addRepos && addRepos.toLowerCase() === 'true') {
-        this.displayAddRepos = true;
-      }
-    });
   }
 
   async updateOwnerRepos(): Promise<void> {
@@ -50,9 +44,8 @@ export class RepositoriesComponent implements OnInit {
     this.ownerRepos = response.data.enabledOwnerRepos;
     this._repoManager.updateOwnerRepos(this.ownerRepos);
     this.ownerRepos = response.data.enabledOwnerRepos;
-    if (this.ownerRepos.length > 0) {
-      this.displayAddRepos = false;
-    }
+    this.hasRepos = this.ownerRepos.length > 0;
+    this.loading = false;
   }
 
   async showAddRepo(owner: string = '') {
