@@ -1,33 +1,25 @@
-<h3>
+<h2>
   Settings
   <button mat-icon-button title="Refresh" color="accent" (click)="updateSettings()">
     <mat-icon>sync</mat-icon>
   </button>
-</h3>
-
-<div class="settings-header">
-  <dx-tabs
-    class="settings-tabs"
-    [selectedIndex]="0"
-    [dataSource]="ownerRepoTabs"
-    [width]="300"
-    (onSelectionChanged)="selectedLevelChanged($event)"
-    stylingMode="primary"></dx-tabs>
   <div class="settings-actions">
-    <button mat-stroked-button color="primary" (onClick)="cancel()">Cancel</button>
-    <button mat-flat-button color="primary" (onClick)="save()">Save</button>
+    <button mat-stroked-button color="primary" (click)="cancel()">Cancel</button>
+    <button mat-flat-button color="primary" (click)="save()">Save</button>
   </div>
-</div>
-<div class="tab-description {{ level }}">
-  <i class="bi bi-info-circle"></i>
-  <p>
-    @if (level === 'owner') {
-      Default settings to be used for all repositories within owner <strong>{{ this.repoManager.owner }}</strong
-      >.
-    } @else {
-      Override settings for the repository <strong>{{ this.repoManager.repo }}</strong
-      >.
-    }
-  </p>
-</div>
+</h2>
+
+<mat-tab-group (selectedTabChange)="selectedLevelChanged($event)">
+  <mat-tab label="Owner Defaults" class="settings-tab">
+    <app-alert-panel type="info" class="tab-alert">
+      Default settings to be used for all repositories within owner&nbsp;<strong>{{ this.repoManager.owner }}</strong>
+    </app-alert-panel>
+  </mat-tab>
+  <mat-tab label="Repository Override" class="settings-tab">
+    <app-alert-panel type="success" class="tab-alert">
+      Override settings for the repository&nbsp;<strong>{{ this.repoManager.repo }}</strong>
+    </app-alert-panel>
+  </mat-tab>
+</mat-tab-group>
+
 <app-settings-form [level]="level"></app-settings-form>

@@ -1,28 +1,6 @@
 @import '../../sass/variables';
 
-h3 {
-  margin: 20px 0;
-  display: flex;
-  align-items: center;
-}
-
 .environments-form {
   display: flex;
-  margin-bottom: 20px;
-
-  .dx-field {
-    margin-left: 20px;
-
-    &:first-child {
-      margin-left: 0;
-    }
-  }
-
-  .dx-field-label {
-    width: 150px;
-  }
-
-  .dx-field-value {
-    width: 200px;
-  }
+  margin-bottom: 15px;
 }

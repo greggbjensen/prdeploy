@@ -1,4 +1,4 @@
-import { Component, DestroyRef, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -8,7 +8,6 @@ import {
   MatDialogRef,
   MatDialogTitle
 } from '@angular/material/dialog';
-import { DxNumberBoxModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
 import { DeployEnvironmentRollbackGQL } from 'src/app/shared/graphql';
 import { NotificationManager } from 'src/app/shared/managers';
@@ -16,29 +15,41 @@ import { LoggingService } from 'src/app/shared/services';
 import { DeployRollbackDialogData } from './deploy-rollback-dialog-data';
 import { DialogResult } from 'src/app/shared/models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatInputModule } from '@angular/material/input';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-deploy-rollback-dialog',
   standalone: true,
-  imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatButtonModule, DxNumberBoxModule],
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
+    MatButtonModule,
+    MatInputModule,
+    ReactiveFormsModule
+  ],
   templateUrl: './deploy-rollback-dialog.component.html',
   styleUrl: './deploy-rollback-dialog.component.scss'
 })
 export class DeployRollbackDialogComponent {
+  form = new FormGroup({
+    rollbackCount: new FormControl(1)
+  });
+
   processing = false;
-  rollbackCount = 1;
 
   constructor(
     private _deployEnvironmentDeployGQL: DeployEnvironmentRollbackGQL,
     private _notificationManager: NotificationManager,
     private _loggingService: LoggingService,
-    private _destroyRef: DestroyRef,
     private _dialogRef: MatDialogRef<DeployRollbackDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DeployRollbackDialogData
   ) {
     this._dialogRef
       .afterOpened()
-      .pipe(takeUntilDestroyed(this._destroyRef))
+      .pipe(takeUntilDestroyed())
       .subscribe(() => {
         this.clearFields();
       });
@@ -48,6 +59,7 @@ export class DeployRollbackDialogComponent {
     this.processing = true;
 
     try {
+      const rollbackCount = this.form.value.rollbackCount;
       await firstValueFrom(
         this._deployEnvironmentDeployGQL.mutate({
           input: {
@@ -55,7 +67,7 @@ export class DeployRollbackDialogComponent {
             repo: this.data.repository.repo,
             environment: this.data.environment,
             pullNumber: this.data.pullNumber,
-            count: this.rollbackCount > 1 ? this.rollbackCount : undefined
+            count: rollbackCount
           }
         })
       );
@@ -76,7 +88,9 @@ export class DeployRollbackDialogComponent {
   }
 
   private clearFields() {
-    this.rollbackCount = 1;
+    this.form.reset({
+      rollbackCount: 1
+    });
     this.processing = false;
   }
 }

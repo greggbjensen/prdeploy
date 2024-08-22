@@ -1,9 +1,7 @@
 @import '../../sass/variables';
 
-h3 {
-  margin: 20px 0;
-  display: flex;
-  align-items: center;
+:host {
+  flex: 1 1 auto;
 }
 
 // TODO GBJ: Separate into component.

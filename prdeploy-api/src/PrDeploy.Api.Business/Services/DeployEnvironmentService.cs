@@ -131,10 +131,10 @@ public class DeployEnvironmentService : IDeployEnvironmentService
         var sourceState = await GetOrCreateDeployState(input.Owner, input.Repo, sourceStateName);
         var targetState = await GetOrCreateDeployState(input.Owner, input.Repo, targetStateName);
 
-        var targetServiceLookUp = targetState.Services.ToDictionary(s => s.Name, s => s, 
+        var targetServiceLookUp = targetState.Services!.ToDictionary(s => s.Name, s => s, 
             StringComparer.OrdinalIgnoreCase);
-        var remainingServices = new List<DeployedService>(targetState.Services);
-        var serviceComparisons = new List<ServiceComparison>(sourceState.Services.Count);
+        var remainingServices = new List<DeployedService>(targetState.Services!);
+        var serviceComparisons = new List<ServiceComparison>(sourceState.Services!.Count);
         foreach (var sourceService in sourceState.Services)
         {
             var serviceComparison = new ServiceComparison
@@ -189,6 +189,11 @@ public class DeployEnvironmentService : IDeployEnvironmentService
                 Services = new List<DeployedService>()
             };
             await _parameterStore.SetAsync(owner, repo, name, state);
+        }
+
+        if (state.Services == null)
+        {
+            state.Services = new List<DeployedService>();
         }
 
         return state;

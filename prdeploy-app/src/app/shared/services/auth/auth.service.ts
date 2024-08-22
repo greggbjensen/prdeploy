@@ -7,7 +7,6 @@ import { User } from '../../models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private static readonly DefaultUrl = '/deployments';
   private static readonly LoginUrl = '/login';
 
   private userSubject$ = new BehaviorSubject<User>(null);
@@ -49,8 +48,6 @@ export class AuthService {
       }
       console.log(`There was state of ${this._oauthService.state}, so we are sending you to: ${stateUrl}`);
       this._router.navigateByUrl(stateUrl);
-    } else {
-      this._router.navigate([AuthService.DefaultUrl]);
     }
 
     this.isDoneLoadingSubject$.next(true);
@@ -79,13 +76,6 @@ export class AuthService {
       }
     });
 
-    // The following cross-tab communication of fresh access tokens works usually in practice,
-    // but if you need more robust handling the community has come up with ways to extend logic
-    // in the library which may give you better mileage.
-    //
-    // See: https://github.com/jeroenheijmans/sample-angular-oauth2-oidc-with-auth-guards/issues/2
-    //
-    // Until then we'll stick to this:
     window.addEventListener('storage', event => {
       // The `key` is `null` if the event was caused by `.clear()`
       if (event.key !== 'access_token' && event.key !== null) {

@@ -1,30 +1,26 @@
-import { Component, DestroyRef, Input } from '@angular/core';
-import { DxListModule } from 'devextreme-angular/ui/list';
-import { DxContextMenuModule } from 'devextreme-angular/ui/context-menu';
+import { Component } from '@angular/core';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../services';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { User } from '../../models';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-user-panel',
   templateUrl: 'user-panel.component.html',
   styleUrls: ['./user-panel.component.scss'],
   standalone: true,
-  imports: [DxContextMenuModule, DxListModule]
+  imports: [MatMenuModule, MatButtonModule, MatIconModule]
 })
 export class UserPanelComponent {
-  @Input()
-  menuItems: any;
-
-  @Input()
-  menuMode!: string;
-
   user: User = null;
 
-  constructor(
-    private _authService: AuthService,
-    private _destroyRef: DestroyRef
-  ) {
-    this._authService.user$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(user => (this.user = user));
+  constructor(private _authService: AuthService) {
+    this._authService.user$.pipe(takeUntilDestroyed()).subscribe(user => (this.user = user));
+  }
+
+  async logout() {
+    this._authService.logout();
   }
 }

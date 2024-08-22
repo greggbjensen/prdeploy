@@ -1,9 +1,38 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import './sass/variables';
+@import './sass/reboot';
 
 html, body { height: 100%; }
-body { margin: 0; }
+body {
+  font-family: $font-family-sans-serif;
+  color: $body-color;
+  background-color: $body-bg;
+  margin: 0;
+}
+
+h2 {
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+}
+
+.form-group-title {
+  margin: 16px 0 20px 0;
+}
+
+.field-group-title {
+  font-weight: normal;
+  margin: 16px 0 20px 0;
+  padding-bottom: 10px;
+}
+
+.app-container {
+
+  .mat-mdc-header-cell {
+    font-weight: $font-weight-medium;
+  }
+}
 
 .text-right {
   text-align: right;
@@ -17,24 +46,9 @@ body { margin: 0; }
   text-align: center;
 }
 
-.dx-toast-message {
-  white-space: pre-line;
-}
-
-.danger-icon-btn .dx-icon {
-  color: $red-400;
-}
-
-.success-icon-btn .dx-icon {
-  color: $green-400;
-}
-
-.primary-icon-btn .dx-icon {
-  color: $blue-300;
-}
-
-.secondary-icon-btn .dx-icon {
-  color: $orange-100;
+.page-content {
+  display: flex;
+  padding: 0 25px;
 }
 
 .page-actions {
@@ -42,74 +56,94 @@ body { margin: 0; }
   display: flex;
 }
 
-.form {
-  display: flex;
-  width: 100%;
-  max-width: 600px;
+.fields-fill-width {
 
-  .form-title {
-    margin-top: 0;
-  }
-
-  .field-group {
+  .mat-mdc-form-field {
     width: 100%;
-  }
-
-  label {
-    margin: 20px 0 10px 0;
-    display: block;
-  }
-
-  .field {
-    margin: 20px 20px 0 0;
-
-    .dx-colorbox {
-      margin-left: 13px;
-      width: 88%;
-    }
-  }
-
-  .field-row {
-    display: flex;
-    flex: 1 0;
-
-    .field-group {
-      width: 50%
-    }
-
-    .field-group-sm {
-      width: 30%
-    }
-
-    .field-group-lg {
-      width: 70%
-    }
-  }
-
-  .field-group-horizontal .field, .field-checkbox {
-    display: flex;
-    align-items: center;
-
-    label {
-      margin: 0 20px 0 10px;
-      width: 120px;
-    }
-
-    .field-value {
-      flex: 1 0;
-    }
-  }
-
-  .field-checkbox {
-    flex-direction: row-reverse;
-
-    label {
-      width: 100%;
-    }
-
-    .field-value {
-      margin: 0 4px 0 0;
-    }
   }
 }
 
+.form-horizontal {
+
+  .mat-mdc-form-field {
+    margin-left: 20px;
+
+     &:first-child {
+      margin-left: 0;
+     }
+  }
+}
+
+.fill-width {
+  width: 100%;
+}
+
+// Control styles.
+
+.app-container .mat-drawer {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.mat-mdc-snack-bar-container {
+
+  .notification-container {
+    font-size: $font-size-base;
+  }
+
+  &.snackbar-info .mat-mdc-snackbar-surface {
+    background-color: $blue-400;
+  }
+
+  &.snackbar-success .mat-mdc-snackbar-surface {
+    background-color: $green-400;
+  }
+
+  &.snackbar-warning .mat-mdc-snackbar-surface {
+    background-color: $yellow-600;
+  }
+
+  &.snackbar-danger .mat-mdc-snackbar-surface {
+    background-color: $red-400;
+  }
+}
+
+.mat-mdc-form-field-icon-suffix > .clear-field-btn {
+  margin-right: -18px;
+  color: $danger;
+}
+
+.mat-mdc-form-field.no-wrapper .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+.mat-mdc-progress-spinner {
+  margin: 20px auto 0 auto;
+  z-index: $zindex-modal + 1;
+}
+
+form .mat-mdc-form-field {
+  min-width: $form-field-width-base;
+}
+
+.mat-mdc-form-field.form-field-2x {
+  min-width: $form-field-width-2x;
+}
+
+form .mat-mdc-checkbox {
+  min-width: $form-field-width-base;
+  margin-bottom: 10px;
+}
+
+.field-section {
+  padding: 0 10px;
+  margin-left: $form-field-gap * -1;
+
+  .mat-mdc-form-field, .mat-mdc-checkbox {
+    margin-left: $form-field-gap;
+  }
+}
+
+.mat-mdc-chip-remove .mat-icon {
+  color: $danger;
+}

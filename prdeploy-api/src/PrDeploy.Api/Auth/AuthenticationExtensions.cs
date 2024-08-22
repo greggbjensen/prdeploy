@@ -37,7 +37,7 @@ namespace PrDeploy.Api.Auth
                         IssuerSigningKey = securityKey,
                         ValidateIssuer = true,
                         ValidateAudience = true,
-                        ValidateLifetime = false,
+                        ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
                         NameClaimType = JwtRegisteredClaimNames.Sub
                     };

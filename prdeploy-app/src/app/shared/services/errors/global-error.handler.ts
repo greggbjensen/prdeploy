@@ -13,6 +13,6 @@ export class GlobalErrorHandler implements ErrorHandler {
 
   handleError(error: any): void {
     this._loggingService.error(error);
-    this._notificationManager.show(error.message, 'error');
+    this._notificationManager.show(error.message, 'danger');
   }
 }

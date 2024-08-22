@@ -1,40 +1,45 @@
 <h2 mat-dialog-title>Add Services to Pull Request</h2>
 <mat-dialog-content>
-  <div class="form">
-    <label class="pull-request-lbl">Pull Request</label>
-    <dx-select-box
-      #selectPullRequest
-      placeholder="Select pull request"
-      class="add-pull-select"
-      [dataSource]="openPullRequests"
-      [displayExpr]="pullRequestDisplayExpr"
-      valueExpr="number"
-      [searchEnabled]="true"
-      [minSearchLength]="2"
-      [showDataBeforeSearch]="true"
-      [(selectedItem)]="selectedPullRequest">
-    </dx-select-box>
-    <label>Services</label>
-    <dx-drop-down-box
-      [(value)]="selectedServices"
-      [inputAttr]="{ 'aria-label': 'Services' }"
-      placeholder="Select services..."
-      [showClearButton]="true"
-      [dataSource]="repositoryServices"
-      (onValueChanged)="onDropDownBoxValueChanged()">
-      <div *dxTemplate="let data of 'content'">
-        <dx-list
-          #list
-          [dataSource]="repositoryServices"
-          selectionMode="multiple"
-          selectAllMode="allPages"
-          [showSelectionControls]="true"
-          [selectedItemKeys]="[]"
-          [selectByClick]="true"
-          (selectedItemsChange)="onSelectedServicesChange()"></dx-list>
+  <form [formGroup]="form">
+    <mat-form-field class="fill-width">
+      <mat-label>Pull Request</mat-label>
+      <input
+        #input
+        type="text"
+        formControlName="pullRequest"
+        placeholder="Select pull request"
+        matInput
+        [matAutocomplete]="auto" />
+      @if (selectedPullRequest) {
+        <button mat-icon-button matSuffix class="clear-field-btn" (click)="clearPullRequest($event)">
+          <mat-icon matSuffix>close</mat-icon>
+        </button>
+      }
+      <mat-icon matSuffix>arrow_drop_down</mat-icon>
+      <mat-autocomplete
+        #auto="matAutocomplete"
+        [displayWith]="formatPullRequest"
+        (optionSelected)="selectPullRequest($event)">
+        @for (pullRequest of openPullRequests; track pullRequest.number) {
+          <mat-option [value]="pullRequest">
+            {{ formatPullRequest(pullRequest) }}
+          </mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+    @if (loadingServices || repositoryServices?.length > 0) {
+      <div class="services-container">
+        <label>Services*</label>
+        <mat-selection-list class="services-list" (selectionChange)="onSelectedServicesChange()">
+          @for (service of repositoryServices; track service) {
+            <mat-list-option [value]="service">{{ service }}</mat-list-option>
+          }
+        </mat-selection-list>
       </div>
-    </dx-drop-down-box>
-  </div>
+    } @else {
+      <app-alert-panel type="danger"> You must first configure services in settings.</app-alert-panel>
+    }
+  </form>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-stroked-button color="primary" (click)="cancel()">Cancel</button>
@@ -42,6 +47,7 @@
     mat-flat-button
     color="primary"
     (click)="addServicesToPr()"
+    [loading]="processing"
     [disabled]="!selectedPullRequest || processing || !selectedServices?.length">
     Add Services
   </button>

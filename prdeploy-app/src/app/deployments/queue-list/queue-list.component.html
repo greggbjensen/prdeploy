@@ -1,53 +1,82 @@
 @if (queue) {
-  <dx-list
-    id="{{ queue.environment.toLowerCase() }}-queue-list"
-    [dataSource]="queue.pullRequests"
-    height="100%"
-    [indicateLoading]="true"
-    selectionMode="none"
-    [activeStateEnabled]="false"
-    [focusStateEnabled]="false"
-    (onItemReordered)="onItemReordered($event)">
-    <dxo-item-dragging [allowReordering]="true"></dxo-item-dragging>
-    <dxo-load-panel [enabled]="true"></dxo-load-panel>
-    <div *dxTemplate="let pullRequest of 'item'; let queueIndex = index" class="queue-pull">
-      <div class="queue-pull-title">
-        <span class="queue-order">{{ queueIndex + 1 }}</span>
-        <a id="pr-queue-{{ pullRequest.number }}" [href]="pullRequest.url" target="_blank">#{{ pullRequest.number }}</a>
-        &nbsp;&nbsp;<span>{{ pullRequest.title }}</span>
+  <mat-list role="list" cdkDropList cdkDropListLockAxis="y" (cdkDropListDropped)="drop($event)">
+    @for (pullRequest of pullData; track pullRequest.number) {
+      <mat-list-item role="listitem" cdkDrag cdkDragPreviewClass="pull-dragging">
+        <div class="queue-pull">
+          <div class="queue-pull-title">
+            <span class="queue-order">{{ $index + 1 }}</span>
+            <a
+              id="pr-queue-{{ pullRequest.number }}"
+              #popoverTrigger="mtxPopoverTrigger"
+              [mtxPopoverTriggerFor]="popover"
+              [mtxPopoverTriggerData]="{ pullRequest }"
+              [href]="pullRequest.url"
+              target="_blank"
+              >#{{ pullRequest.number }}</a
+            >
+            &nbsp;&nbsp;<span>{{ pullRequest.title }}</span>
+          </div>
+          <span class="queue-pull-updated">{{ pullRequest.updatedAt | date: 'short' }}</span>
+          <button mat-icon-button color="warn" title="Remove from queue" (click)="remove(pullRequest)">
+            <mat-icon>close</mat-icon>
+          </button>
+          <button mat-icon-button title="Reorder">
+            <mat-icon>drag_indicator</mat-icon>
+          </button>
+        </div>
+      </mat-list-item>
+    }
+  </mat-list>
+
+  <mtx-popover #popover="mtxPopover">
+    <ng-template mtxPopoverContent let-pullRequest="pullRequest">
+      <div style="max-width: 300px">
+        <div class="pull-head">
+          <span class="pull-user">{{ pullRequest.user?.name }}</span>
+          <span>{{ pullRequest.updatedAt | date: 'short' }}</span>
+        </div>
+        <markdown [data]="pullRequest.body | cleanMarkdown" [disableSanitizer]="true"> </markdown>
       </div>
-      <span class="queue-pull-updated">{{ pullRequest.updatedAt | date: 'short' }}</span>
-      <button mat-icon-button color="warn" title="Remove from queue" (click)="remove(pullRequest)">
-        <mat-icon>close</mat-icon>
-      </button>
-      <app-pull-request-popover
-        [pullRequest]="pullRequest"
-        target="#pr-queue-{{ pullRequest.number }}"></app-pull-request-popover>
-    </div>
-  </dx-list>
+    </ng-template>
+  </mtx-popover>
 }
 
 <div class="add-pull-row">
-  <dx-select-box
-    #pullSelectBox
-    placeholder="Add pull request"
-    class="add-pull-select"
-    [dataSource]="openPullRequests"
-    [displayExpr]="pullRequestDisplayExpr"
-    valueExpr="number"
-    [searchEnabled]="true"
-    [minSearchLength]="2"
-    [showDataBeforeSearch]="true">
-  </dx-select-box>
+  <mat-form-field class="add-pull-field">
+    <input
+      #input
+      type="text"
+      [formControl]="pullRequestControl"
+      placeholder="Add pull request"
+      matInput
+      [matAutocomplete]="auto" />
+    @if (pullRequestToAdd) {
+      <button mat-icon-button matSuffix class="clear-field-btn" (click)="clearPullRequest($event)">
+        <mat-icon matSuffix>close</mat-icon>
+      </button>
+    }
+    <mat-icon matSuffix>arrow_drop_down</mat-icon>
+    <mat-autocomplete
+      #auto="matAutocomplete"
+      [displayWith]="formatPullRequest"
+      (optionSelected)="selectPullRequest($event)">
+      @for (pullRequest of openPullRequests; track pullRequest.number) {
+        <mat-option [value]="pullRequest">
+          {{ formatPullRequest(pullRequest) }}
+        </mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
   <button
     mat-icon-button
     color="success"
     title="Add to queue"
-    (click)="add(pullSelectBox.selectedItem)"
-    [disabled]="!pullSelectBox.selectedItem">
+    (click)="add(pullRequestToAdd)"
+    [disabled]="!pullRequestToAdd">
     <mat-icon>add</mat-icon>
   </button>
 
-  <dx-load-panel [visible]="loading" [position]="{ of: queue?.environment + '-queue-list', offset: { y: 230 } }">
-  </dx-load-panel>
+  @if (loading) {
+    <mat-spinner class="queue-spinner"></mat-spinner>
+  }
 </div>

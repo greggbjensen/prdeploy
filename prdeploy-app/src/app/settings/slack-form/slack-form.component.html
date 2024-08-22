@@ -1,50 +1,60 @@
-<div class="field-group">
-  <h3 class="form-title">Slack</h3>
-  <div class="field field-checkbox">
-    <label>Notifications enabled</label>
-    <div class="field-value">
-      <dx-check-box [(value)]="slack.notificationsEnabled[level]"></dx-check-box>
-    </div>
-  </div>
-  <div class="field">
-    <label>Token</label>
-    <div class="field-value">
-      <dx-text-box
-        [(value)]="slack.token[level]"
+<form>
+  <h2 class="form-title">Slack</h2>
+  <mat-checkbox [(ngModel)]="slack.notificationsEnabled[level]" name="notificationsEnabled">
+    Notifications enabled
+  </mat-checkbox>
+
+  <div class="field-section">
+    <mat-form-field class="form-field-2x">
+      <mat-label>Token</mat-label>
+      <input
+        matInput
+        appRevealPassword
+        type="password"
+        [(ngModel)]="slack.token[level]"
         [placeholder]="showOwner ? (slack.token['owner'] ? '********' : '') : ''"
-        [(mode)]="tokenPasswordMode">
-        <dxi-button name="today" location="after" [options]="tokenButton"></dxi-button>
-      </dx-text-box>
+        name="token" />
+      <button mat-icon-button matSuffix>
+        <mat-icon>visibility</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Email domain</mat-label>
+      <input
+        matInput
+        type="password"
+        [(ngModel)]="slack.emailDomain[level]"
+        [placeholder]="showOwner ? slack.emailDomain['owner'] : ''"
+        name="emailDomain" />
+    </mat-form-field>
+    <div class="field-group">
+      <h2 class="form-group-title">Webhooks</h2>
+      <div class="field-section">
+        <mat-form-field class="form-field-2x">
+          <mat-label>Deploy URL</mat-label>
+          <input
+            matInput
+            type="text"
+            [(ngModel)]="slack.webhooks.deployUrl[level]"
+            [placeholder]="showOwner ? slack.webhooks.deployUrl['owner'] : ''"
+            name="webhooksDeployUrl" />
+        </mat-form-field>
+
+        <mat-form-field class="form-field-2x">
+          <mat-label>Release URL</mat-label>
+          <input
+            matInput
+            type="text"
+            [(ngModel)]="slack.webhooks.releaseUrl[level]"
+            [placeholder]="showOwner ? slack.webhooks.releaseUrl['owner'] : ''"
+            name="webhooksReleaseUrl" />
+        </mat-form-field>
+      </div>
     </div>
   </div>
-  <div class="field">
-    <label>Email domain</label>
-    <div class="field-value">
-      <dx-text-box
-        [(value)]="slack.emailDomain[level]"
-        [placeholder]="showOwner ? slack.emailDomain['owner'] : ''"></dx-text-box>
-    </div>
-  </div>
-</div>
-<div class="field-group">
-  <h3 class="form-group-title">Webhooks</h3>
-  <div class="field">
-    <label>Deploy URL</label>
-    <div class="field-value">
-      <dx-text-box
-        [(value)]="slack.webhooks.deployUrl[level]"
-        [placeholder]="showOwner ? slack.webhooks.deployUrl['owner'] : ''"></dx-text-box>
-    </div>
-  </div>
-  <div class="field">
-    <label>Release URL</label>
-    <div class="field-value">
-      <dx-text-box
-        [(value)]="slack.webhooks.releaseUrl[level]"
-        [placeholder]="showOwner ? slack.webhooks.releaseUrl['owner'] : ''"></dx-text-box>
-    </div>
-  </div>
-</div>
+</form>
+
 <div class="slack-email-aliases">
   <app-slack-email-aliases-grid [slack]="slack" [level]="level"></app-slack-email-aliases-grid>
 </div>

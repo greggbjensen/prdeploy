@@ -1,36 +1,40 @@
-<div>
-  <div class="field-group">
-    <h3 class="form-title">JIRA</h3>
-    <div class="field field-checkbox">
-      <label>Add issues enabled</label>
-      <div class="field-value">
-        <dx-check-box [(value)]="jira.addIssuesEnabled[level]"></dx-check-box>
-      </div>
-    </div>
-    <div class="field">
-      <label>Host</label>
-      <div class="field-value">
-        <dx-text-box [(value)]="jira.host[level]" [placeholder]="showOwner ? jira.host['owner'] : ''"></dx-text-box>
-      </div>
-    </div>
-    <div class="field">
-      <label>Username</label>
-      <div class="field-value">
-        <dx-text-box
-          [(value)]="jira.username[level]"
-          [placeholder]="showOwner ? jira.username['owner'] : ''"></dx-text-box>
-      </div>
-    </div>
-    <div class="field">
-      <label>Password (Token)</label>
-      <div class="field-value">
-        <dx-text-box
-          [(value)]="jira.password[level]"
-          [placeholder]="showOwner ? (jira.password['owner'] ? '********' : '') : ''"
-          [(mode)]="passwordMode">
-          <dxi-button name="today" location="after" [options]="passwordButton"></dxi-button>
-        </dx-text-box>
-      </div>
-    </div>
+<form>
+  <h2 class="form-title">JIRA</h2>
+  <mat-checkbox [(ngModel)]="jira.addIssuesEnabled[level]" name="addIssuesEnabled"> Add issues enabled </mat-checkbox>
+
+  <div class="field-section">
+    <mat-form-field>
+      <mat-label>Host</mat-label>
+      <input
+        matInput
+        type="text"
+        [(ngModel)]="jira.host[level]"
+        [placeholder]="showOwner ? jira.host['owner'] : ''"
+        name="host" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Username</mat-label>
+      <input
+        matInput
+        type="text"
+        [(ngModel)]="jira.username[level]"
+        [placeholder]="showOwner ? jira.username['owner'] : ''"
+        name="username" />
+    </mat-form-field>
+
+    <mat-form-field class="form-field-2x">
+      <mat-label>Token</mat-label>
+      <input
+        matInput
+        appRevealPassword
+        type="password"
+        [(ngModel)]="jira.password[level]"
+        [placeholder]="showOwner ? (jira.password['owner'] ? '********' : '') : ''"
+        name="password" />
+      <button mat-icon-button matSuffix>
+        <mat-icon>visibility</mat-icon>
+      </button>
+    </mat-form-field>
   </div>
-</div>
+</form>

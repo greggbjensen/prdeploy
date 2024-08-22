@@ -1,15 +1,13 @@
 <h2 mat-dialog-title>Add Automation Input</h2>
 <mat-dialog-content>
-  <div class="form">
-    <div class="dx-field">
-      <div class="dx-field-label">Name</div>
-      <div class="dx-field-value">
-        <dx-text-box [(value)]="name"></dx-text-box>
-      </div>
-    </div>
-  </div>
+  <form [formGroup]="form">
+    <mat-form-field class="fill-width">
+      <mat-label>Name</mat-label>
+      <input matInput type="text" formControlName="name" />
+    </mat-form-field>
+  </form>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-stroked-button color="primary" (click)="cancel()">Cancel</button>
-  <button mat-flat-button color="primary" (click)="add()">Add Input</button>
+  <button mat-flat-button color="primary" (click)="add()" [disabled]="!form.valid">Add Input</button>
 </mat-dialog-actions>

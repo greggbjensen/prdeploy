@@ -1,7 +1,60 @@
+@import '../sass/variables';
+
 :host {
-  @import '../sass/variables';
   background-color: $gray-100;
   display: flex;
+  flex-direction: column;
   height: 100%;
   width: 100%;
+}
+
+$side-nav-animation-speed: 0.3s;
+$side-nav-large: 190px;
+$side-nav-small: 60px;
+
+::ng-deep .sidenav-full {
+
+  .app-sidenav {
+    width: $side-nav-large;
+    transition: all $side-nav-animation-speed;
+  }
+
+  .mat-drawer-content {
+    margin-left: $side-nav-large !important;
+    transition: all $side-nav-animation-speed;
+  }
+}
+
+::ng-deep .sidenav-icons {
+  .app-sidenav {
+    width: $side-nav-small;
+    transition: all $side-nav-animation-speed;
+  }
+
+  .mat-drawer-content {
+    margin-left: $side-nav-small !important;
+    transition: all $side-nav-animation-speed;
+  }
+}
+
+::ng-deep .sidenav-hidden {
+  .app-sidenav {
+    width: 0;
+  }
+
+  .mat-drawer-content {
+    margin-left: 0 !important;
+  }
+}
+
+::ng-deep .app-container {
+  flex: 1 1 auto;
+
+  &.sidenav-mobile.sidenav-icons .app-sidenav {
+    width: 0;
+  }
+
+  &.sidenav-mobile .mat-drawer-content {
+    margin-left: 0 !important;
+  }
 }

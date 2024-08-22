@@ -1,8 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { DxAccordionModule, DxCheckBoxModule, DxTextBoxModule } from 'devextreme-angular';
 import { EnvironmentSettings } from 'src/app/shared/graphql';
 import { KeyValuePipe } from '@angular/common';
-import { ValueChangedEvent } from 'devextreme/ui/text_box';
 import { SettingsLevel } from '../models';
 import { AddAutomationInputDialogComponent } from './add-automation-input-dialog/add-automation-input-dialog.component';
 import { AddExcludeRollbackServiceDialogComponent } from './add-exclude-rollback-service-dialog/add-exclude-rollback-service-dialog.component';
@@ -10,16 +8,23 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTableModule } from '@angular/material/table';
+import { MatChipsModule } from '@angular/material/chips';
 
 @Component({
   selector: 'app-environment-form',
   standalone: true,
   imports: [
-    DxAccordionModule,
-    DxTextBoxModule,
-    DxCheckBoxModule,
     MatButtonModule,
     MatIconModule,
+    MatInputModule,
+    MatTableModule,
+    MatChipsModule,
+    FormsModule,
+    MatCheckboxModule,
     AddAutomationInputDialogComponent,
     AddExcludeRollbackServiceDialogComponent,
     KeyValuePipe
@@ -33,6 +38,9 @@ export class EnvironmentFormComponent {
   @Input() hasEnvironments: boolean;
 
   showOwner = true;
+  Object = Object;
+
+  automationInputColumns = ['name', 'value', 'remove'];
 
   private _level: SettingsLevel;
   @Input() set level(value: SettingsLevel) {
@@ -45,6 +53,11 @@ export class EnvironmentFormComponent {
   }
 
   constructor(private _dialog: MatDialog) {}
+
+  automationInputChange(event: Event, inputName: string) {
+    const input = event.target as HTMLInputElement;
+    this.environment.automationTest.inputs[inputName] = input.value;
+  }
 
   async showAddExcludeRollbackService() {
     const dialogRef = this._dialog.open<AddExcludeRollbackServiceDialogComponent, void, string>(
@@ -96,11 +109,7 @@ export class EnvironmentFormComponent {
       this.environment.automationTest.inputs = {};
     }
 
-    this.environment.automationTest.inputs[name] = '';
-  }
-
-  updateAutomationInput(e: ValueChangedEvent, name: any) {
-    this.environment.automationTest.inputs[name] = e.value;
+    this.environment.automationTest.inputs[name] = `\${${name}}`;
   }
 
   removeAutomationInput(name: any) {

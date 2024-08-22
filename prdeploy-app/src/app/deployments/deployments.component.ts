@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnIn
 import { ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatExpansionModule, MatExpansionPanel } from '@angular/material/expansion';
 import { firstValueFrom } from 'rxjs';
 import {
   DeployEnvironment,
@@ -11,14 +12,12 @@ import {
 } from 'src/app/shared/graphql';
 import { LoggingService } from 'src/app/shared/services';
 import { QueueListComponent } from './queue-list/queue-list.component';
-import { DxTemplateModule } from 'devextreme-angular/core';
-import { DxAccordionModule, DxSelectBoxModule } from 'devextreme-angular';
-
 import { EnvironmentListComponent } from './environment-list/environment-list.component';
 import { AddPrServiceDialogComponent } from './add-pr-service-dialog/add-pr-service-dialog.component';
 import { NotificationManager, RepoManager, RouteManager } from '../shared/managers';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-deployments',
@@ -28,22 +27,20 @@ import { MatDialog } from '@angular/material/dialog';
   imports: [
     MatButtonModule,
     MatIconModule,
-    DxSelectBoxModule,
+    MatExpansionModule,
+    MatProgressSpinnerModule,
     EnvironmentListComponent,
-    DxAccordionModule,
-    DxTemplateModule,
     QueueListComponent,
     AddPrServiceDialogComponent
   ],
+  viewProviders: [MatExpansionPanel],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DeploymentsComponent implements OnInit {
   deployEnvironments: DeployEnvironment[] = [];
   deployQueues: DeployQueue[] = [];
   loading = true;
-  selectedQueueIndex = 0;
-
-  private _selectedEnvironment: string;
+  selectedEnvironment: string;
 
   constructor(
     public repoManager: RepoManager,
@@ -59,14 +56,16 @@ export class DeploymentsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    firstValueFrom(this._activatedRoute.queryParamMap).then(param => {
-      this._selectedEnvironment = param.get('environment');
-    });
-
     this.repoManager.valueChanged$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => this.update());
+
+    firstValueFrom(this._activatedRoute.queryParamMap).then(param => {
+      this.selectedEnvironment = param.get('environment');
+    });
   }
 
-  async triggerDeployments(queue: DeployQueue): Promise<void> {
+  async triggerDeployments(event: MouseEvent, queue: DeployQueue): Promise<void> {
+    event.stopPropagation();
+
     try {
       // Re-trigger first item in queue.
       const pullRequest = queue.pullRequests[0];
@@ -88,14 +87,13 @@ export class DeploymentsComponent implements OnInit {
   }
 
   async update(): Promise<void> {
-    if (!this.repoManager.isValid) {
-      return;
-    }
-
-    this.loading = true;
-    this._changeDetectorRef.detectChanges();
-
     try {
+      if (!this.repoManager.owner || !this.repoManager.repo) {
+        return;
+      }
+
+      this.loading = true;
+
       const response = await firstValueFrom(
         this._deployEnvironmentsAndQueuesGQL.fetch({
           input: {
@@ -105,8 +103,11 @@ export class DeploymentsComponent implements OnInit {
         })
       );
       this.deployEnvironments = response.data.deployEnvironments;
+      if (!this.selectedEnvironment && this.deployEnvironments.length > 0) {
+        this.selectedEnvironment = this.deployEnvironments[0].name;
+      }
+
       this.deployQueues = response.data.deployQueues;
-      this.updateSelectedQueue();
       this._routeManager.updateQueryParams();
     } catch (error) {
       this._loggingService.error(error);
@@ -114,12 +115,6 @@ export class DeploymentsComponent implements OnInit {
 
     this.loading = false;
     this._changeDetectorRef.detectChanges();
-  }
-
-  updateSelectedQueue(): void {
-    if (this._selectedEnvironment) {
-      this.selectedQueueIndex = this.deployQueues.findIndex(q => q.environment == this._selectedEnvironment);
-    }
   }
 
   async queueUpdateStarted(): Promise<void> {
@@ -132,14 +127,16 @@ export class DeploymentsComponent implements OnInit {
 
   async selectedQueueChange(queue?: DeployQueue): Promise<void> {
     const environment = queue?.environment;
-    this._selectedEnvironment = environment;
-    this._routeManager.updateQueryParams({ environment: this._selectedEnvironment });
+    this.selectedEnvironment = environment;
+    if (environment) {
+      this._routeManager.updateQueryParams({ environment: this.selectedEnvironment });
+    }
   }
 
   showAddServiceToPr(): void {
     this._dialog.open<AddPrServiceDialogComponent>(AddPrServiceDialogComponent, {
       width: '500px',
-      height: '320px'
+      height: '480px'
     });
   }
 }

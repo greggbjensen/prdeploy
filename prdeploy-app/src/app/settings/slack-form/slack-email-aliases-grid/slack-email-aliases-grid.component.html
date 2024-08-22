@@ -1,30 +1,51 @@
-<h3 class="form-group-title">
+<h2 class="form-group-title">
   <span>Email Aliases</span>
   <button mat-stroked-button color="primary" (click)="showAddDialog()">Add Email Alias</button>
-</h3>
+</h2>
 @if (!hasAliases && level === 'repo') {
   <div class="email-alias-info">
     <p>No email alias overrides added for this repository yet.</p>
   </div>
 }
-<dx-data-grid
-  class="slack-email-aliases-grid"
-  [dataSource]="emails"
-  keyExpr="email"
-  [showBorders]="true"
-  [rowAlternationEnabled]="true"
-  [width]="600">
-  <dxi-column dataField="email" dataType="string"></dxi-column>
-  <dxi-column caption="Alias" dataType="object" cellTemplate="aliasCellTemplate"></dxi-column>
-  <div *dxTemplate="let d of 'aliasCellTemplate'">
-    @if (emails && emails.length > 0) {
-      <dx-text-box [(value)]="slack.emailAliases[bindingLevel][d.data?.email]" [disabled]="!hasAliases"></dx-text-box>
-    }
-  </div>
-  <dxi-column caption="Actions" dataType="object" [width]="70" cellTemplate="actionsCellTemplate"></dxi-column>
-  <div *dxTemplate="let d of 'actionsCellTemplate'">
-    <button mat-icon-button color="warn" title="Remove alias" (click)="remove(d.data?.email)" [disabled]="!hasAliases">
-      <mat-icon>close</mat-icon>
-    </button>
-  </div>
-</dx-data-grid>
+
+<table mat-table [dataSource]="emails" class="mat-elevation-z2">
+  <ng-container matColumnDef="email">
+    <th mat-header-cell *matHeaderCellDef>Email</th>
+    <td mat-cell *matCellDef="let input">
+      <label>{{ input.email }}</label>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="alias">
+    <th mat-header-cell *matHeaderCellDef>Alias</th>
+    <td mat-cell *matCellDef="let input">
+      <mat-form-field class="small-form-field no-wrapper add-item-input-field">
+        <input
+          matInput
+          type="text"
+          [disabled]="!hasAliases"
+          [(ngModel)]="slack.emailAliases[bindingLevel][input.email]"
+          required
+          name="aliasInputValue" />
+      </mat-form-field>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="remove">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let input">
+      <button
+        mat-icon-button
+        color="warn"
+        class="add-item-input-btn"
+        title="Remove email aliase"
+        (click)="remove(input.email)"
+        [disabled]="!hasAliases">
+        <mat-icon>close</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayColumns"></tr>
+</table>

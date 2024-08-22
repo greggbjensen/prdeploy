@@ -1,11 +1,5 @@
 @import '../../sass/variables';
 
-h3 {
-  margin: 20px 0;
-  display: flex;
-  align-items: center;
-}
-
 .queue-title {
   display: flex;
   align-items: center;
@@ -26,6 +20,10 @@ h3 {
   height: 20px;
   text-align: center;
   border-radius: 10px;
+}
+
+.loading-spinner {
+  margin: 0 auto;
 }
 
 .trigger-deployments {

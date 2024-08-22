@@ -1,4 +1,3 @@
-@import '../themes/generated/variables.prdeploy.scss';
 @import './functions';
 
 // Variables
@@ -438,7 +437,7 @@ $position-values: (
 // Settings for the `<body>` element.
 
 $body-text-align:           null !default;
-$body-color:                $gray-900 !default;
+$body-color:                $gray-800 !default;
 $body-bg:                   $white !default;
 
 $body-secondary-color:      rgba($body-color, .75) !default;
@@ -599,7 +598,7 @@ $aspect-ratios: (
 
 // scss-docs-start font-variables
 // stylelint-disable value-keyword-case
-$font-family-sans-serif:      system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
+$font-family-sans-serif:      Nunito, Arial, Helvetica, sans-serif !default;
 $font-family-monospace:       SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
 // stylelint-enable value-keyword-case
 $font-family-base:            var(--#{$prefix}font-sans-serif) !default;
@@ -610,6 +609,7 @@ $font-family-code:            var(--#{$prefix}font-monospace) !default;
 $font-size-root:              null !default;
 $font-size-base:              1rem !default; // Assumes the browser default, typically `16px`
 $font-size-sm:                $font-size-base * .875 !default;
+$font-size-md:                $font-size-base * 1.125 !default;
 $font-size-lg:                $font-size-base * 1.25 !default;
 
 $font-weight-lighter:         lighter !default;
@@ -626,11 +626,11 @@ $line-height-base:            1.5 !default;
 $line-height-sm:              1.25 !default;
 $line-height-lg:              2 !default;
 
-$h1-font-size:                $font-size-base * 2.5 !default;
-$h2-font-size:                $font-size-base * 2 !default;
-$h3-font-size:                $font-size-base * 1.75 !default;
-$h4-font-size:                $font-size-base * 1.5 !default;
-$h5-font-size:                $font-size-base * 1.25 !default;
+$h1-font-size:                $font-size-base * 1.5 !default;
+$h2-font-size:                $font-size-base * 1.375 !default;
+$h3-font-size:                $font-size-base * 1.25 !default;
+$h4-font-size:                $font-size-base * 1.125 !default;
+$h5-font-size:                $font-size-base * 1.125 !default;
 $h6-font-size:                $font-size-base !default;
 // scss-docs-end font-variables
 
@@ -930,6 +930,13 @@ $input-transition:                      border-color .15s ease-in-out, box-shado
 
 $form-color-width:                      3rem !default;
 // scss-docs-end form-input-variables
+
+// scss-docs-start form-field-variables
+$form-field-gap:                        15px;
+$form-field-width-base:                 240px;
+$form-field-width-2x:                   ($form-field-width-base * 2) + $form-field-gap;
+
+// scss-docs-end form-field-variables
 
 // scss-docs-start form-check-variables
 $form-check-input-width:                  1em !default;

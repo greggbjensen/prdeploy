@@ -1,0 +1,47 @@
+@import '../../../../sass/variables';
+
+.alert-panel-container {
+  display: flex;
+  align-items: center;
+  background-color: $blue-100;
+  border-radius: 5px;
+  margin: 20px 0;
+  padding: 15px;
+
+  .mat-icon {
+    margin-right: 15px;
+    line-height: 20px;
+  }
+
+  &.info {
+    background-color: $blue-100;
+
+    .mat-icon {
+      color: $blue-400;
+    }
+  }
+
+  &.success {
+    background-color: $green-100;
+
+    .mat-icon {
+      color: $green-400;
+    }
+  }
+
+  &.warning {
+    background-color: $yellow-100;
+
+    .mat-icon {
+      color: $yellow-400;
+    }
+  }
+
+  &.danger {
+    background-color: $red-100;
+
+    .mat-icon {
+      color: $red-400;
+    }
+  }
+}

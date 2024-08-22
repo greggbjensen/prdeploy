@@ -1,5 +1,6 @@
-import { Component, DestroyRef } from '@angular/core';
+import { Component } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MatDialogActions,
@@ -8,40 +9,47 @@ import {
   MatDialogRef,
   MatDialogTitle
 } from '@angular/material/dialog';
-import { DxTextBoxModule } from 'devextreme-angular';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MtxButtonModule } from '@ng-matero/extensions/button';
 
 @Component({
   selector: 'app-add-exclude-rollback-service-dialog',
   standalone: true,
-  imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatButtonModule, DxTextBoxModule],
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
+    MatButtonModule,
+    MtxButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule
+  ],
   templateUrl: './add-exclude-rollback-service-dialog.component.html',
   styleUrl: './add-exclude-rollback-service-dialog.component.scss'
 })
 export class AddExcludeRollbackServiceDialogComponent {
-  name = '';
+  form = new FormGroup({
+    name: new FormControl('', Validators.required)
+  });
 
-  constructor(
-    private _destroyRef: DestroyRef,
-    private _dialogRef: MatDialogRef<AddExcludeRollbackServiceDialogComponent>
-  ) {
+  constructor(private _dialogRef: MatDialogRef<AddExcludeRollbackServiceDialogComponent>) {
     this._dialogRef
       .afterOpened()
-      .pipe(takeUntilDestroyed(this._destroyRef))
+      .pipe(takeUntilDestroyed())
       .subscribe(() => {
         this.clearFields();
       });
   }
 
   clearFields() {
-    this.name = '';
+    this.form.reset();
   }
 
   add(): void {
-    if (!this.name) {
-      return;
-    }
-
-    this._dialogRef.close(this.name);
+    this._dialogRef.close(this.form.value.name);
   }
 
   cancel(): void {

@@ -1,13 +1,8 @@
-import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
-import { DxDataGridComponent, DxDataGridModule } from 'devextreme-angular';
+import { AfterViewInit, Component, Input } from '@angular/core';
 import { DeployEnvironment, DeployEnvironmentDeployGQL, DeployEnvironmentFreeGQL } from 'src/app/shared/graphql';
 import { firstValueFrom } from 'rxjs';
 import { LoggingService } from 'src/app/shared/services';
-import { PullRequestPopoverComponent } from '../pull-request-popover/pull-request-popover.component';
-import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DatePipe } from '@angular/common';
-import { DxTemplateModule } from 'devextreme-angular/core';
-import { DxiColumnModule, DxoLoadPanelModule } from 'devextreme-angular/ui/nested';
 import { DeployRollbackDialogComponent } from './deploy-rollback-dialog/deploy-rollback-dialog.component';
 import { DeployForceDialogComponent } from './deploy-force-dialog/deploy-force-dialog.component';
 import { NotificationManager, RepoManager } from 'src/app/shared/managers';
@@ -15,8 +10,12 @@ import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
 import { DeployForceDialogData } from './deploy-force-dialog/deploy-force-dialog-data';
 import { DeployRollbackDialogData } from './deploy-rollback-dialog/deploy-rollback-dialog-data';
+import { MtxPopoverModule } from '@ng-matero/extensions/popover';
+import { MarkdownComponent } from 'ngx-markdown';
+import { CleanMarkdownPipe } from 'src/app/shared/pipes';
 
 @Component({
   selector: 'app-environment-list',
@@ -24,17 +23,15 @@ import { DeployRollbackDialogData } from './deploy-rollback-dialog/deploy-rollba
   styleUrls: ['./environment-list.component.scss'],
   standalone: true,
   imports: [
-    DxDataGridModule,
-    DxiColumnModule,
-    DxoLoadPanelModule,
-    DxTemplateModule,
-    DxButtonModule,
     MatButtonModule,
     MatIconModule,
-    PullRequestPopoverComponent,
+    MatTableModule,
     DeployForceDialogComponent,
     DeployRollbackDialogComponent,
+    MtxPopoverModule,
+    MarkdownComponent,
     DatePipe,
+    CleanMarkdownPipe,
     RouterModule
   ]
 })
@@ -43,20 +40,13 @@ export class EnvironmentListComponent implements AfterViewInit {
 
   @Input() set loading(value: boolean) {
     this._loading = value;
-    if (this.environmentDataGrid) {
-      if (value) {
-        this.environmentDataGrid.instance.beginCustomLoading('Loading...');
-      } else {
-        this.environmentDataGrid.instance.endCustomLoading();
-      }
-    }
   }
 
   get loading(): boolean {
     return this._loading;
   }
 
-  @ViewChild('environmentDataGrid') environmentDataGrid: DxDataGridComponent | undefined;
+  displayedColumns: string[] = ['environment', 'locked', 'pull-request', 'updated-at', 'user', 'url', 'actions'];
 
   private _loading = false;
 
@@ -98,7 +88,7 @@ export class EnvironmentListComponent implements AfterViewInit {
         repository: this.repoManager,
         environment
       },
-      width: '450px',
+      width: '550px',
       height: '350px'
     });
   }

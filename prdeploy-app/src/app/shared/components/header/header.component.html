@@ -1,49 +1,30 @@
 <header>
-  <dx-toolbar class="header-toolbar">
-    @if (menuToggleEnabled) {
-      <dxi-item
-        location="before"
-        widget="dxButton"
-        cssClass="menu-button"
-        [options]="{
-          icon: 'menu',
-          stylingMode: 'text',
-          onClick: toggleMenu
-        }">
-      </dxi-item>
-    }
-    <dxi-item location="before" cssClass="header-logo" template="logoTemplate"></dxi-item>
-    <div *dxTemplate="let item of 'logoTemplate'">
-      <img src="/assets/images/logo.svg" alt="Logo" />
+  <mat-toolbar class="header-toolbar">
+    <div class="header-left">
+      <button mat-icon-button class="menu-button" (click)="toggleMenu()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <img class="header-logo" src="/assets/images/logo.svg" alt="Logo" />
     </div>
-    <dxi-item location="after" cssClass="repository-select" template="repoSelectTemplate"></dxi-item>
-    <div *dxTemplate="let item of 'repoSelectTemplate'">
-      <dx-select-box
-        class="owner-select"
-        placeholder="Loading..."
-        [dataSource]="owners"
-        [value]="repoManager.owner"
-        (onSelectionChanged)="selectedOwnerChanged($event)">
-      </dx-select-box>
-      <dx-select-box
-        class="repo-select"
-        placeholder="Loading..."
-        [dataSource]="repos"
-        [value]="repoManager.repo"
-        (onSelectionChanged)="selectedRepoChanged($event)">
-      </dx-select-box>
+    <div class="header-right">
+      <mat-form-field class="small-form-field owner-select">
+        <mat-select
+          placeholder="Loading..."
+          [value]="repoManager.owner"
+          (selectionChange)="selectedOwnerChanged($event)">
+          @for (owner of owners; track owner) {
+            <mat-option [value]="owner">{{ owner }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="small-form-field repo-select">
+        <mat-select placeholder="Loading..." [value]="repoManager.repo" (selectionChange)="selectedRepoChanged($event)">
+          @for (repo of repos; track repo) {
+            <mat-option [value]="repo">{{ repo }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <app-user-panel></app-user-panel>
     </div>
-    <dxi-item location="after" locateInMenu="auto" menuItemTemplate="menuItem">
-      <div *dxTemplate="let data of 'item'">
-        <dx-button class="user-button authorization" width="60px" height="100%" stylingMode="text">
-          <div *dxTemplate="let data of 'content'">
-            <app-user-panel [menuItems]="userMenuItems" menuMode="context"></app-user-panel>
-          </div>
-        </dx-button>
-      </div>
-    </dxi-item>
-    <div *dxTemplate="let data of 'menuItem'">
-      <app-user-panel [menuItems]="userMenuItems" menuMode="list"></app-user-panel>
-    </div>
-  </dx-toolbar>
+  </mat-toolbar>
 </header>

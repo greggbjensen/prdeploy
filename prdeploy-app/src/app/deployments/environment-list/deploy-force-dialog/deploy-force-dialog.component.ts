@@ -1,8 +1,7 @@
-import { Component, DestroyRef, Inject, ViewChild } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { AfterViewInit, Component, DestroyRef, Inject, OnInit } from '@angular/core';
+import { debounceTime, firstValueFrom } from 'rxjs';
 import { DeployEnvironmentDeployGQL, OpenPullRequestsGQL, PullRequest } from 'src/app/shared/graphql';
 import { LoggingService } from 'src/app/shared/services';
-import { DxCheckBoxModule, DxSelectBoxComponent, DxSelectBoxModule } from 'devextreme-angular';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -11,12 +10,18 @@ import {
   MatDialogRef,
   MatDialogTitle
 } from '@angular/material/dialog';
-import CustomStore from 'devextreme/data/custom_store';
 import { NotificationManager } from 'src/app/shared/managers';
 import { DialogResult } from 'src/app/shared/models';
 import { MatButtonModule } from '@angular/material/button';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DeployForceDialogData } from './deploy-force-dialog-data';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import _ from 'lodash';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-deploy-force-dialog',
@@ -28,55 +33,83 @@ import { DeployForceDialogData } from './deploy-force-dialog-data';
     MatDialogContent,
     MatDialogActions,
     MatDialogClose,
-    DxSelectBoxModule,
+    MatAutocompleteModule,
+    MatInputModule,
+    MatIconModule,
+    MatCheckboxModule,
     MatButtonModule,
-    DxCheckBoxModule
+    MatFormFieldModule,
+    ReactiveFormsModule
   ]
 })
-export class DeployForceDialogComponent {
-  @ViewChild('selectPullRequest') selectPullRequestComponent: DxSelectBoxComponent;
-
+export class DeployForceDialogComponent implements OnInit, AfterViewInit {
   processing = false;
-  retainLocks = false;
+
+  form = new FormGroup({
+    pullRequest: new FormControl('', [Validators.required]),
+    retainLocks: new FormControl(false)
+  });
 
   selectedPullRequest: PullRequest;
-  openPullRequests: CustomStore<PullRequest, number>;
+  openPullRequests: PullRequest[];
 
   constructor(
     private _openPullRequestsGQL: OpenPullRequestsGQL,
     private _deployEnvironmentDeployGQL: DeployEnvironmentDeployGQL,
     private _notificationManager: NotificationManager,
     private _loggingService: LoggingService,
-    private _destroyRef: DestroyRef,
     private _dialogRef: MatDialogRef<DeployForceDialogComponent>,
+    private _destroyRef: DestroyRef,
     @Inject(MAT_DIALOG_DATA) public data: DeployForceDialogData
   ) {
     this._dialogRef
       .afterOpened()
-      .pipe(takeUntilDestroyed(this._destroyRef))
+      .pipe(takeUntilDestroyed())
       .subscribe(() => {
         this.clearFields();
       });
-
-    this.openPullRequests = new CustomStore<PullRequest, number>({
-      key: 'number',
-      load: async options => {
-        const result = await firstValueFrom(
-          this._openPullRequestsGQL.fetch({
-            input: {
-              owner: this.data.repository.owner,
-              repo: this.data.repository.repo,
-              search: options.searchValue
-            }
-          })
-        );
-        return result.data.openPullRequests;
-      }
-    });
   }
 
-  pullRequestDisplayExpr(item: PullRequest) {
-    return item ? `#${item.number}  ${item.title}  (${item.user?.name})` : '';
+  ngAfterViewInit(): void {
+    this.form.controls.pullRequest.valueChanges
+      .pipe(takeUntilDestroyed(this._destroyRef), debounceTime(300))
+      .subscribe(value => {
+        if (!_.isObject(value)) {
+          this.filterPullRequests(value);
+        }
+      });
+  }
+
+  ngOnInit(): void {
+    this.filterPullRequests();
+  }
+
+  clearPullRequest(event: MouseEvent) {
+    event.stopPropagation();
+    this.selectedPullRequest = null;
+    this.form.controls.pullRequest.reset();
+  }
+
+  async filterPullRequests(search: string = '') {
+    const result = await firstValueFrom(
+      this._openPullRequestsGQL.fetch({
+        input: {
+          owner: this.data.repository.owner,
+          repo: this.data.repository.repo,
+          search
+        }
+      })
+    );
+
+    this.openPullRequests = result.data.openPullRequests;
+  }
+
+  formatPullRequest(item: PullRequest) {
+    return item && item.number ? `#${item.number}  ${item.title}  (${item.user?.name})` : '';
+  }
+
+  selectPullRequest(event: MatAutocompleteSelectedEvent) {
+    this.selectedPullRequest = event.option.value;
   }
 
   async forceDeploy(): Promise<void> {
@@ -91,7 +124,7 @@ export class DeployForceDialogComponent {
             environment: this.data.environment,
             pullNumber: this.selectedPullRequest.number,
             force: true,
-            retain: this.retainLocks
+            retain: this.form.value.retainLocks
           }
         })
       );
@@ -114,9 +147,6 @@ export class DeployForceDialogComponent {
   private clearFields() {
     this.selectedPullRequest = null;
     this.processing = false;
-    this.retainLocks = false;
-    if (this.selectPullRequestComponent) {
-      this.selectPullRequestComponent.value = null;
-    }
+    this.form.reset();
   }
 }

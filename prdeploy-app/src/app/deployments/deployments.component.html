@@ -1,48 +1,52 @@
-<h3>
+<h2>
   Deployments
   <button mat-icon-button title="Refresh" color="accent" (click)="update()">
     <mat-icon>sync</mat-icon>
   </button>
-</h3>
+</h2>
 @if (repoManager.repo) {
   <app-environment-list [data]="deployEnvironments" [loading]="loading"></app-environment-list>
 }
 
-<h3>
+<h2>
   Queues
   <button mat-icon-button title="Refresh" color="accent" (click)="update()">
     <mat-icon>sync</mat-icon>
   </button>
-</h3>
+</h2>
 @if (deployQueues.length > 0) {
-  <dx-accordion
-    [dataSource]="deployQueues"
-    [selectedIndex]="selectedQueueIndex"
-    (selectedItemChange)="selectedQueueChange($event)"
-    id="accordion-container">
-    <div *dxTemplate="let queue of 'title'">
-      <div class="queue-title">
-        <span class="queue-environment">{{ queue.environment }}</span>
-        <span class="queue-count">{{ queue.pullRequests.length }}</span>
-        @if (queue.pullRequests.length) {
-          <button mat-icon-button color="accent" title="Refresh" (click)="triggerDeployments(queue)">
-            <mat-icon>refresh</mat-icon>
-          </button>
+  <mat-accordion>
+    @for (queue of deployQueues; track queue.environment) {
+      <mat-expansion-panel
+        expanded="{{ queue.environment === selectedEnvironment }}"
+        (opened)="selectedQueueChange(queue)">
+        <mat-expansion-panel-header>
+          <div class="queue-title">
+            <span class="queue-environment">{{ queue.environment }}</span>
+            <span class="queue-count">{{ queue.pullRequests.length }}</span>
+            @if (queue.pullRequests.length) {
+              <button
+                mat-icon-button
+                color="accent"
+                title="Trigger deployments"
+                (click)="triggerDeployments($event, queue)">
+                <mat-icon>refresh</mat-icon>
+              </button>
+            }
+          </div>
+        </mat-expansion-panel-header>
+        @if (repoManager.repo) {
+          <app-queue-list
+            [queue]="queue"
+            [loading]="loading"
+            (queueUpdateStarted)="queueUpdateStarted()"
+            (queueUpdateComplete)="queueUpdateComplete()"></app-queue-list>
         }
-      </div>
-    </div>
-    <div *dxTemplate="let queue of 'item'">
-      @if (repoManager.repo) {
-        <app-queue-list
-          [queue]="queue"
-          [loading]="loading"
-          (queueUpdateStarted)="queueUpdateStarted()"
-          (queueUpdateComplete)="queueUpdateComplete()"></app-queue-list>
-      }
-    </div>
-  </dx-accordion>
+      </mat-expansion-panel>
+    }
+  </mat-accordion>
 } @else {
-  Loading...
+  <mat-spinner class="loading-spinner"></mat-spinner>
 }
 
 <div class="page-actions">

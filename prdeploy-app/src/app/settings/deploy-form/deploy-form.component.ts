@@ -1,13 +1,16 @@
 import { Component, Input } from '@angular/core';
-import { DxSelectBoxModule, DxTextBoxModule } from 'devextreme-angular';
 import { DeploySettingsCompare } from 'src/app/shared/graphql';
 import { SettingsLevel } from '../models';
 import { BadgeFormComponent } from './badge-form/badge-form.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { FormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-deploy-form',
   standalone: true,
-  imports: [BadgeFormComponent, DxTextBoxModule, DxSelectBoxModule],
+  imports: [BadgeFormComponent, MatInputModule, MatButtonModule, FormsModule, MatSelectModule],
   templateUrl: './deploy-form.component.html',
   styleUrl: './deploy-form.component.scss'
 })

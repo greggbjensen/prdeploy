@@ -1,9 +1,9 @@
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
-import { DxAccordionModule, DxLoadIndicatorModule, DxTabsModule } from 'devextreme-angular';
+import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import {
   BadgeSettingsCompare,
   BadgeSettingsInput,
+  BadgeStatusColorsSettingsCompare,
   BuildsSettingsCompare,
   BuildsSettingsInput,
   DeploySettingsCompare,
@@ -14,6 +14,7 @@ import {
   EnvironmentSettingsInput,
   JiraSettingsCompare,
   JiraSettingsInput,
+  ServiceSettings,
   SlackSettingsCompare,
   SlackSettingsInput
 } from 'src/app/shared/graphql';
@@ -23,13 +24,18 @@ import { JiraFormComponent } from '../jira-form/jira-form.component';
 import { SettingsLevel } from '../models';
 import { SlackFormComponent } from '../slack-form/slack-form.component';
 import { DeployFormComponent } from '../deploy-form/deploy-form.component';
-import { Tab } from 'src/app/shared/models';
 import { AddEnvironmentDialogComponent } from './add-environment-dialog/add-environment-dialog.component';
 import _ from 'lodash';
 import { LoggingService } from 'src/app/shared/services';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatListModule, MatSelectionList, MatSelectionListChange } from '@angular/material/list';
+import { Tab } from 'src/app/shared/models';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { ServicesFormComponent } from '../services-form/services-form.component';
 
 class SetCompareValue<T> {
   hasValues: boolean = false;
@@ -46,19 +52,23 @@ class SetCompareValue<T> {
   imports: [
     DeployFormComponent,
     EnvironmentFormComponent,
+    ServicesFormComponent,
     JiraFormComponent,
     SlackFormComponent,
     AddEnvironmentDialogComponent,
-    DxLoadIndicatorModule,
-    DxAccordionModule,
-    DxTabsModule,
+    MatProgressSpinnerModule,
+    MatExpansionModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatListModule,
+    ServicesFormComponent
   ],
   templateUrl: './settings-form.component.html',
   styleUrl: './settings-form.component.scss'
 })
-export class SettingsFormComponent {
+export class SettingsFormComponent implements AfterViewInit {
+  @ViewChild(MatSelectionList) settingsNav: MatSelectionList;
+
   settingsCompare: DeploySettingsCompare;
   hasEnvironments = false;
   bindingEnvironments: EnvironmentSettings[];
@@ -68,30 +78,38 @@ export class SettingsFormComponent {
     {
       id: 'environments',
       text: 'Environments',
-      icon: 'bi bi-card-list'
+      icon: 'list_alt',
+      selected: true
+    },
+    {
+      id: 'services',
+      text: 'Services',
+      icon: 'language'
     },
     {
       id: 'slack',
       text: 'Slack',
-      icon: 'bi bi-slack'
+      icon: 'webhook'
     },
     {
       id: 'jira',
       text: 'JIRA',
-      icon: 'bi bi-ticket-detailed'
+      icon: 'workspaces'
     },
     {
       id: 'deployment',
       text: 'Deployment',
-      icon: 'bi bi-cloud-upload'
+      icon: 'cloud'
     }
   ];
+
+  activeTabId: string = 'environments';
+  selectedEnvironment: string;
 
   private _level: SettingsLevel;
   @Input() set level(value: SettingsLevel) {
     this._level = value;
     this.updateBindingEnvironments();
-    this._changeDetectorRef.detectChanges();
   }
 
   get level() {
@@ -104,10 +122,28 @@ export class SettingsFormComponent {
     private _repoManager: RepoManager,
     private _notificationManager: NotificationManager,
     private _dialog: MatDialog,
-    private _changeDetectorRef: ChangeDetectorRef,
     private _loggingService: LoggingService
   ) {
-    this.fetchSettings();
+    this._repoManager.valueChanged$.pipe(takeUntilDestroyed()).subscribe(() => this.fetchSettings());
+  }
+
+  ngAfterViewInit(): void {
+    const selectOption = this.settingsNav.options.find(o => o.value === this.activeTabId);
+    if (selectOption) {
+      this.settingsNav.selectedOptions.select(selectOption);
+    }
+  }
+
+  selectedEnvironmentChange(environment: EnvironmentSettings) {
+    this.selectedEnvironment = environment.name;
+  }
+
+  settingsNavChange(event: MatSelectionListChange) {
+    this.activeTabId = event.options[0].value;
+  }
+
+  isSettingsNavSelected(tab: Tab) {
+    return tab.id == this.activeTabId;
   }
 
   async save() {
@@ -131,7 +167,7 @@ export class SettingsFormComponent {
 
       this._notificationManager.show('Settings save complete.');
     } catch (error) {
-      this._notificationManager.show('Error saving settings', 'error');
+      this._notificationManager.show('Error saving settings', 'danger');
       this._loggingService.error(error, `Error saving settings.`);
     }
 
@@ -141,11 +177,14 @@ export class SettingsFormComponent {
   async resetForm() {
     // Replace current state with that from the server.
     await this.fetchSettings();
-    this._changeDetectorRef.detectChanges();
     this._notificationManager.show(`Settings changes reverted.`);
   }
 
   async fetchSettings() {
+    if (!this._repoManager.isValid) {
+      return;
+    }
+
     this.loading = true;
     const response = await firstValueFrom(
       this._deploySettingsCompareGQL.fetch({
@@ -160,11 +199,29 @@ export class SettingsFormComponent {
     this.settingsCompare = _.cloneDeep(response.data.deploySettingsCompare);
 
     this.settingsCompare.environments['owner'].forEach(e => {
-      e.automationTest = e.automationTest || { enabled: false };
+      e.automationTest = e.automationTest || { enabled: null };
     });
     this.settingsCompare.environments['repo'].forEach(e => {
-      e.automationTest = e.automationTest || { enabled: false };
+      e.automationTest = e.automationTest || { enabled: null };
     });
+
+    const colors = Object.keys(this.settingsCompare.badge.statusColors) as Array<
+      keyof Omit<BadgeStatusColorsSettingsCompare, '__typename'>
+    >;
+    for (const name of colors) {
+      const color = this.settingsCompare.badge.statusColors[name];
+      if ((name as any) === '__typename') {
+        continue;
+      }
+
+      if (_.isNil(color.owner)) {
+        color.owner = '';
+      }
+
+      if (_.isNil(color.repo)) {
+        color.repo = '';
+      }
+    }
 
     this.loading = false;
     this.updateBindingEnvironments();
@@ -202,7 +259,6 @@ export class SettingsFormComponent {
       }
     } as EnvironmentSettings);
 
-    this._changeDetectorRef.detectChanges();
     this.updateBindingEnvironments();
     this._notificationManager.show(`Environment ${name} added.`);
   }
@@ -230,6 +286,10 @@ export class SettingsFormComponent {
     } else {
       this.bindingEnvironments = this.settingsCompare.environments[this._level];
     }
+
+    if (!this.selectedEnvironment && this.bindingEnvironments.length > 0) {
+      this.selectedEnvironment = this.bindingEnvironments[0].name;
+    }
   }
 
   private gatherSettings(compareValue: SetCompareValue<DeploySettingsCompare>): DeploySettingsInput {
@@ -251,6 +311,11 @@ export class SettingsFormComponent {
     if (compare.environments && compare.environments[level].length > 0) {
       input.environments = [];
       compare.environments[level].forEach(e => input.environments.push(this.mapEnvironment(e)));
+    }
+
+    if (compare.services && compare.services[level].length > 0) {
+      input.services = [];
+      compare.services[level].forEach(s => input.services.push(this.mapService(s)));
     }
 
     input.jira = {};
@@ -303,6 +368,15 @@ export class SettingsFormComponent {
         this.setObjectValue(input.automationTest, 'inputs', compare.automationTest);
       }
     }
+
+    return input;
+  }
+
+  private mapService(compare: ServiceSettings) {
+    const input = {} as ServiceSettings;
+
+    this.setObjectValue(input, 'name', compare);
+    this.setObjectValue(input, 'path', compare);
 
     return input;
   }

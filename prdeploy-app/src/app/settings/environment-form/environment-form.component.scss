@@ -6,21 +6,36 @@
 }
 
 .environment-settings .add-items {
-  margin-top: 20px;
-  display: block;
-  margin-left: 10px;
+  max-width: 500px;
+  margin-left: 12px;
+}
 
-  label {
-    margin-left: 15px;
+.add-items-label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  width: 220px;
+
+  span {
+    flex: 1 1 auto;
   }
 }
 
-.add-item-input-btn {
-  margin-left: 22px;
+.exclude-rollback-list {
+  max-width: 235px;
+  margin-left: 12px;
+}
 
-  &.exclude-rollback {
-    margin-left: 0;
-  }
+.mat-column-value {
+  padding-right: 0;
+}
+
+.mat-column-remove {
+  width: 30px;
+}
+
+.add-item-input-field {
+  width: 100%;
 }
 
 .field-removable {
@@ -37,7 +52,5 @@
 }
 
 .field-group-title {
-  font-weight: normal;
   border-bottom: solid 1px $border-color;
-  padding-bottom: 10px;
 }

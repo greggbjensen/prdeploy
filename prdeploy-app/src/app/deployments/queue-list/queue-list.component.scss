@@ -1,6 +1,6 @@
 @import '../../../sass/variables';
 
-h4 {
+h2 {
   margin: 10px;
 }
 
@@ -12,9 +12,23 @@ a {
   font-weight: $font-weight-bold;
 }
 
+.pull-dragging {
+  background-color: $white;
+  box-shadow: var(--mat-app-elevation-shadow-level-3, none);
+  border-radius: 5px;
+}
+
 .queue-pull {
   display: flex;
   align-items: center;
+}
+
+.queue-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -50px 0 0 -50px;
+  width: 100px;
 }
 
 .queue-pull-title {
@@ -29,8 +43,11 @@ a {
 .queue-order {
   background-color: $blue-500;
   color: $white;
+  font-size: 14px;
   font-weight: $font-weight-bold;
-  display: block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 20px;
   height: 20px;
   text-align: center;
@@ -46,10 +63,15 @@ a {
   flex: 1;
 }
 
-::ng-deep .queue-pull-delete .dx-icon.dx-icon-remove::before {
-  color: $red-400;
+.add-pull-field {
+  flex: 1 1 auto;
 }
 
-::ng-deep .add-pull-row .dx-icon.dx-icon-add::before {
-  color: $green-400;
+.pull-head {
+  display: flex;
+}
+
+.pull-user {
+  font-weight: $font-weight-bold;
+  flex: 1;
 }

@@ -1,6 +1,20 @@
-<ng-container>
-  <app-side-nav-outer-toolbar title="{{ appInfo.title }}">
+@if (isAuthenticated) {
+  <app-header (menuToggle)="toggleMenu()"></app-header>
+}
+<mat-drawer-container
+  class="app-container sidenav-{{ sideNavMode }}"
+  [ngClass]="{ 'sidenav-mobile': isMobile, 'sidenav-hidden': sideNavHidden }"
+  [hasBackdrop]="hasBackdrop">
+  @if (isAuthenticated) {
+    <mat-drawer #drawer class="app-sidenav" [mode]="drawerMode" opened>
+      <app-side-navigation-menu></app-side-navigation-menu>
+    </mat-drawer>
+  } @else {
+    <mat-drawer #drawer></mat-drawer>
+  }
+
+  <div class="page-content">
     <router-outlet></router-outlet>
-    <app-footer></app-footer>
-  </app-side-nav-outer-toolbar>
-</ng-container>
+  </div>
+  <app-footer></app-footer>
+</mat-drawer-container>

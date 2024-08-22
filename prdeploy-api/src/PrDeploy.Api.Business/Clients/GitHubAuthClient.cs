@@ -84,7 +84,7 @@ namespace PrDeploy.Api.Business.Clients
                     new Claim(JwtRegisteredClaimNames.Jti,
                         Guid.NewGuid().ToString())
                 }),
-                Expires = DateTime.UtcNow.AddMinutes(5),
+                Expires = DateTime.UtcNow.AddHours(8), // Same time as GitHub token expiration.
                 Issuer = _jwtOptions.Issuer,
                 Audience = _jwtOptions.Audience,
                 SigningCredentials = new SigningCredentials(
