@@ -25,3 +25,15 @@
   margin-top: -10px;
   padding: 0 15px;
 }
+
+.mat-column-path {
+  padding-right: 0;
+
+  .mat-mdc-form-field {
+    width: 100%;
+  }
+}
+
+.mat-column-remove {
+  width: 30px;
+}

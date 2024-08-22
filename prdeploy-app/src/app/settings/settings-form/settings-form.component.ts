@@ -15,6 +15,8 @@ import {
   EnvironmentSettingsInput,
   JiraSettingsCompare,
   JiraSettingsInput,
+  OwnerRepoValueOfListOfServiceSettings,
+  ServiceSettings,
   SlackSettingsCompare,
   SlackSettingsInput
 } from 'src/app/shared/graphql';
@@ -315,6 +317,11 @@ export class SettingsFormComponent implements AfterViewInit {
       compare.environments[level].forEach(e => input.environments.push(this.mapEnvironment(e)));
     }
 
+    if (compare.services && compare.services[level].length > 0) {
+      input.services = [];
+      compare.services[level].forEach(s => input.services.push(this.mapService(s)));
+    }
+
     input.jira = {};
     const jiraCompare = new SetCompareValue(compare.jira, level);
     this.setJira(input.jira, jiraCompare);
@@ -365,6 +372,15 @@ export class SettingsFormComponent implements AfterViewInit {
         this.setObjectValue(input.automationTest, 'inputs', compare.automationTest);
       }
     }
+
+    return input;
+  }
+
+  private mapService(compare: ServiceSettings) {
+    const input = {} as ServiceSettings;
+
+    this.setObjectValue(input, 'name', compare);
+    this.setObjectValue(input, 'path', compare);
 
     return input;
   }

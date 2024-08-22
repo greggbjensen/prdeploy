@@ -4,7 +4,7 @@ import { SettingsLevel } from '../models';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { AddServiceDialogComponent } from './add-service-dialog/add-service-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -23,12 +23,15 @@ export class ServicesFormComponent {
   displayColumns = ['name', 'path', 'remove'];
   hasServices = false;
   showOwner = false;
-  serviceList: ServiceSettings[] = [];
+  serviceList = new MatTableDataSource<ServiceSettings>();
 
   private _services: OwnerRepoValueOfListOfServiceSettings;
   @Input() set services(value: OwnerRepoValueOfListOfServiceSettings) {
     this._services = value;
-    this.updateServicesList(true);
+    if (this._level && this.services) {
+      this.serviceList.data = [...this.services[this._level]];
+    }
+    this.updateServicesList();
   }
 
   get services() {
@@ -39,7 +42,11 @@ export class ServicesFormComponent {
   @Input() set level(value: SettingsLevel) {
     this._level = value;
     this.showOwner = this.level == 'repo';
-    this.updateServicesList(true);
+
+    if (this._level && this.services) {
+      this.serviceList.data = [...this.services[this._level]];
+    }
+    this.updateServicesList();
   }
 
   get level() {
@@ -64,38 +71,29 @@ export class ServicesFormComponent {
 
   add(serviceName: string) {
     // Do not add multiple of the same.
-    if (this.serviceList.find(s => s.name === serviceName)) {
+    if (this.serviceList.data.find(s => s.name === serviceName)) {
       return;
     }
 
-    this.serviceList.push({
-      name: serviceName,
-      path: serviceName
-    });
+    this.serviceList.data = [{ name: serviceName, path: serviceName }, ...this.serviceList.data];
 
     this.updateServicesList();
   }
 
   remove(serviceName: any) {
-    const index = this.serviceList.findIndex(s => s.name === serviceName);
-    if (index != -1) {
-      this.serviceList.splice(index, 1);
-    }
+    this.serviceList.data = this.serviceList.data.filter(s => s.name !== serviceName);
+    this.updateServicesList();
   }
 
-  private updateServicesList(updateList = false) {
-    if (!this.services || !this._level) {
+  private updateServicesList() {
+    if (!this.serviceList || !this._level) {
       return;
     }
 
+    // Copy over results.
+    this._services[this._level] = this.serviceList.data;
+    this.hasServices = this.serviceList.data.length > 0;
     this.bindingLevel = this.hasServices ? this._level : 'owner';
-    if (updateList) {
-      this.serviceList = [...this.services[this.bindingLevel]];
-    } else {
-      this.services[this.bindingLevel] = this.serviceList;
-    }
-
-    this.hasServices = this.services[this._level].length > 0;
     this._changeDectectorRef.detectChanges();
   }
 }
