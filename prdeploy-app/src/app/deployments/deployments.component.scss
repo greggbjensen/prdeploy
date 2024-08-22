@@ -1,5 +1,9 @@
 @import '../../sass/variables';
 
+:host {
+  flex: 1 1 auto;
+}
+
 .queue-title {
   display: flex;
   align-items: center;

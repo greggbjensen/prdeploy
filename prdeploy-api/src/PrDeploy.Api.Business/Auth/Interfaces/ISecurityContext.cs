@@ -3,4 +3,5 @@
 public interface ISecurityContext
 {
     string UserToken { get; }
+    string Login { get; }
 }

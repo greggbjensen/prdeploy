@@ -1,5 +1,9 @@
 @import '../../sass/variables';
 
+:host {
+  flex: 1 1 auto;
+}
+
 .environments-form {
   display: flex;
   margin-bottom: 15px;

@@ -34,5 +34,11 @@
     "files.exclude": {
         "**/.angular": true
     },
-    "prettier.singleQuote": true
+    "prettier.singleQuote": true,
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#222F3E",
+        "titleBar.activeBackground": "#304157",
+        "titleBar.activeForeground": "#F9FAFC"
+    },
+    "aws.telemetry": false
 }

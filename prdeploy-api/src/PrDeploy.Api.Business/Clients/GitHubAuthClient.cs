@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Octokit;
-using PrDeploy.Api.Business.Auth;
+using Octokit.Internal;
 using PrDeploy.Api.Business.Auth.Interfaces;
 using PrDeploy.Api.Business.Clients.Interfaces;
 using PrDeploy.Api.Business.Mapping;
@@ -24,7 +24,7 @@ namespace PrDeploy.Api.Business.Clients
         private readonly IValidator<AccessTokenRequest> _validator;
         private readonly IRestClient _client;
         private readonly GitHubAuthOptions _gitHubOptions;
-        private readonly JwtOptions _jwtOptions;
+        private readonly JwtOptions _jwtOptions;    
 
         public GitHubAuthClient(IRestClientInstance<GitHubAuthOptions> restClientInstance,
             IOptions<JwtOptions> jwtOptions,
@@ -56,23 +56,35 @@ namespace PrDeploy.Api.Business.Clients
             request.AddQueryParameter("redirect_uri", accessTokenRequest.RedirectUrl);
 
             var response = await _client.PostAsync<AccessTokenResponse>(request);
+            var userInfo = await GetUserInfoAsync(response!.AccessToken);
 
             // Swap GitHub access token for full signed JWT.
-            response!.AccessToken = CreateJwt(response!.AccessToken);
+            response!.AccessToken = CreateJwt(response!.AccessToken, userInfo);
 
             return response!;
         }
 
-        public async Task<UserInfo> GetUserInfoAsync()
+        public async Task<UserInfo> GetUserInfoAsync(string? accessToken = null)
         {
             // We have to resolve this here to make sure there is a token.
-            var gitHubClient = _serviceProvider.GetRequiredService<IGitHubClient>();
+            IGitHubClient gitHubClient;
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                gitHubClient = _serviceProvider.GetRequiredService<IGitHubClient>();
+            }
+            else
+            {
+                var credentials = new Credentials(accessToken);
+                gitHubClient = new GitHubClient(
+                    new ProductHeaderValue("prdeploy"), new InMemoryCredentialStore(credentials));
+            }
+
             var user = await gitHubClient.User.Current();
             var userInfo = Map.UserInfo(user);
             return userInfo ?? new UserInfo();
         }
 
-        private string CreateJwt(string gitHubToken)
+        private string CreateJwt(string gitHubToken, UserInfo userInfo)
         {
             var encryptedToken = _cipherService.Encrypt(gitHubToken);
             var key = Encoding.ASCII.GetBytes(_jwtOptions.Key);
@@ -81,6 +93,7 @@ namespace PrDeploy.Api.Business.Clients
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, encryptedToken),
+                    new Claim(JwtRegisteredClaimNames.Name, userInfo.Login),
                     new Claim(JwtRegisteredClaimNames.Jti,
                         Guid.NewGuid().ToString())
                 }),

@@ -5,17 +5,16 @@
   </button>
 </h2>
 
-@if (displayAddRepos) {
-  <div class="add-repos-banner">
-    <i class="bi bi-exclamation-triangle"></i>
-    <p>Add at least one GitHub repository to get started.</p>
-  </div>
+@if (!hasRepos && !loading) {
+  <app-alert-panel type="warning"> Add at least one GitHub repository to get started. </app-alert-panel>
 }
 
-<app-repositories-grid
-  [ownerRepos]="ownerRepos"
-  (showAddRepo)="showAddRepo($event)"
-  (onRemoveRepo)="removeRepo($event)"></app-repositories-grid>
+@if (hasRepos) {
+  <app-repositories-grid
+    [ownerRepos]="ownerRepos"
+    (showAddRepo)="showAddRepo($event)"
+    (onRemoveRepo)="removeRepo($event)"></app-repositories-grid>
+}
 
 <div class="page-actions">
   <button mat-stroked-button color="primary" class="add-service-pr-btn" (click)="showAddRepo()">Add Repository</button>

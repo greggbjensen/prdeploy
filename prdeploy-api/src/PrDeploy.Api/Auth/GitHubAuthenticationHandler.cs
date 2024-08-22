@@ -32,18 +32,26 @@ namespace PrDeploy.Api.Auth
                 return result;
             }
 
-            var claim = result.Principal.FindFirst(ClaimTypes.NameIdentifier);
-            if (claim == null)
+            var subClaim = result.Principal.FindFirst(JwtRegisteredClaimNames.Sub);
+            if (subClaim == null)
             {
-                return AuthenticateResult.Fail($"Required {JwtRegisteredClaimNames.Sub} not present.");
+                return AuthenticateResult.Fail($"Required claim {JwtRegisteredClaimNames.Sub} not present.");
             }
 
-            var encryptedToken = claim.Value;
+            var nameClaim = result.Principal.FindFirst(JwtRegisteredClaimNames.Name);
+            if (nameClaim == null)
+            {
+                return AuthenticateResult.Fail($"Required claim {JwtRegisteredClaimNames.Name} not present.");
+            }
+
+            var encryptedToken = subClaim.Value;
             var gitHubToken = _cipherService.Decrypt(encryptedToken);
             var claims = new List<Claim>
             {
                 // This claim is only present locally.
-                new (PrDeployClaimNames.GitHubToken, gitHubToken)
+                new (PrDeployClaimNames.GitHubToken, gitHubToken),
+                new (JwtRegisteredClaimNames.Sub, gitHubToken),
+                new (JwtRegisteredClaimNames.Name, nameClaim.Value)
             };
             var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
