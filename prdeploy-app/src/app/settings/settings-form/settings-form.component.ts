@@ -35,6 +35,7 @@ import { MatListModule, MatSelectionList, MatSelectionListChange } from '@angula
 import { Tab } from 'src/app/shared/models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { ServicesFormComponent } from '../services-form/services-form.component';
 
 class SetCompareValue<T> {
   hasValues: boolean = false;
@@ -51,6 +52,7 @@ class SetCompareValue<T> {
   imports: [
     DeployFormComponent,
     EnvironmentFormComponent,
+    ServicesFormComponent,
     JiraFormComponent,
     SlackFormComponent,
     AddEnvironmentDialogComponent,
@@ -60,7 +62,8 @@ class SetCompareValue<T> {
     DxTabsModule,
     MatButtonModule,
     MatIconModule,
-    MatListModule
+    MatListModule,
+    ServicesFormComponent
   ],
   templateUrl: './settings-form.component.html',
   styleUrl: './settings-form.component.scss'
@@ -81,9 +84,14 @@ export class SettingsFormComponent implements AfterViewInit {
       selected: true
     },
     {
+      id: 'services',
+      text: 'Services',
+      icon: 'language'
+    },
+    {
       id: 'slack',
       text: 'Slack',
-      icon: 'chat_bubble_outlined'
+      icon: 'webhook'
     },
     {
       id: 'jira',

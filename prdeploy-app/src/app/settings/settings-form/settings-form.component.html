@@ -17,6 +17,9 @@
   <div class="settings-form">
     @if (settingsCompare) {
       @switch (settingsNav.selectedOptions.selected[0].value) {
+        @case ('services') {
+          <app-services-form [services]="settingsCompare.services" [level]="level"></app-services-form>
+        }
         @case ('slack') {
           <app-slack-form [slack]="settingsCompare.slack" [level]="level"></app-slack-form>
         }

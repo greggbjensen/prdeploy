@@ -11,9 +11,10 @@ import {
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MtxButtonModule } from '@ng-matero/extensions/button';
 
 @Component({
-  selector: 'app-add-slack-email-alias-dialog',
+  selector: 'app-add-service-dialog',
   standalone: true,
   imports: [
     MatDialogTitle,
@@ -21,19 +22,20 @@ import { MatInputModule } from '@angular/material/input';
     MatDialogActions,
     MatDialogClose,
     MatButtonModule,
+    MtxButtonModule,
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule
   ],
-  templateUrl: './add-slack-email-alias-dialog.component.html',
-  styleUrl: './add-slack-email-alias-dialog.component.scss'
+  templateUrl: './add-service-dialog.component.html',
+  styleUrl: './add-service-dialog.component.scss'
 })
-export class AddSlackEmailAliasDialogComponent {
+export class AddServiceDialogComponent {
   form = new FormGroup({
-    email: new FormControl('', Validators.required)
+    name: new FormControl('', Validators.required)
   });
 
-  constructor(private _dialogRef: MatDialogRef<AddSlackEmailAliasDialogComponent>) {
+  constructor(private _dialogRef: MatDialogRef<AddServiceDialogComponent>) {
     this._dialogRef
       .afterOpened()
       .pipe(takeUntilDestroyed())
@@ -47,7 +49,7 @@ export class AddSlackEmailAliasDialogComponent {
   }
 
   add(): void {
-    this._dialogRef.close(this.form.value.email);
+    this._dialogRef.close(this.form.value.name);
   }
 
   cancel(): void {

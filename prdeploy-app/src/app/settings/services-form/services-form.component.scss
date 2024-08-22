@@ -1,4 +1,4 @@
-@import '../../../../sass/variables';
+@import '../../../sass/variables';
 
 :host {
   width: 100%;
@@ -14,8 +14,7 @@
   }
 }
 
-.email-alias-info {
-  // TODO GBJ: Add to component.
+.services-info {
   display: flex;
   align-items: center;
   background-color: $white;
@@ -25,17 +24,4 @@
   margin: 10px 0;
   margin-top: -10px;
   padding: 0 15px;
-}
-
-
-.mat-column-alias {
-  padding-right: 0;
-
-  .mat-mdc-form-field {
-    width: 100%;
-  }
-}
-
-.mat-column-remove {
-  width: 30px;
 }
