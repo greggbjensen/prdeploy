@@ -7,16 +7,30 @@
   width: 100%;
 }
 
+.mat-tree-node {
+  min-height: auto;
+}
+
 .nav-item {
   display: flex;
   padding: 0 15px;
   text-decoration: none;
   color: $gray-600;
   flex: 1 1 auto;
+  height: 50px;
+  align-items: center;;
+
+  &:hover {
+    background-color: $gray-300;
+  }
 
   &.router-link-active {
     background-color: $body-bg;
     border-right: 1px solid $gray-400;
+
+    .mat-icon {
+      color: $blue-300;
+    }
   }
 
   .mat-icon {
