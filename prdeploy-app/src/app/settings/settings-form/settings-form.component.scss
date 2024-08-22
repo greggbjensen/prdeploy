@@ -75,6 +75,7 @@
 
 .settings-left-nav {
   margin: 2px 25px 10px 10px;
+  min-width: 185px;
 
   .mdc-list-item.mdc-list-item--selected {
     background-color: $gray-200;
