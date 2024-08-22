@@ -1,10 +1,10 @@
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { OwnerRepoValueOfListOfServiceSettings, ServiceSettings } from 'src/app/shared/graphql';
 import { SettingsLevel } from '../models';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { AddServiceDialogComponent } from './add-service-dialog/add-service-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -19,19 +19,18 @@ import { JsonPipe } from '@angular/common';
   styleUrl: './services-form.component.scss'
 })
 export class ServicesFormComponent {
-  bindingLevel: SettingsLevel;
   displayColumns = ['name', 'path', 'remove'];
   hasServices = false;
   showOwner = false;
-  serviceList = new MatTableDataSource<ServiceSettings>();
+  bindingServiceList: ServiceSettings[] = [];
+  actingServiceList: ServiceSettings[] = [];
+
+  private _bindingLevel: SettingsLevel;
 
   private _services: OwnerRepoValueOfListOfServiceSettings;
   @Input() set services(value: OwnerRepoValueOfListOfServiceSettings) {
     this._services = value;
-    if (this._level && this.services) {
-      this.serviceList.data = [...this.services[this._level]];
-    }
-    this.updateServicesList();
+    this.fillServicesList();
   }
 
   get services() {
@@ -42,21 +41,14 @@ export class ServicesFormComponent {
   @Input() set level(value: SettingsLevel) {
     this._level = value;
     this.showOwner = this.level == 'repo';
-
-    if (this._level && this.services) {
-      this.serviceList.data = [...this.services[this._level]];
-    }
-    this.updateServicesList();
+    this.fillServicesList();
   }
 
   get level() {
     return this._level;
   }
 
-  constructor(
-    private _dialog: MatDialog,
-    private _changeDectectorRef: ChangeDetectorRef
-  ) {}
+  constructor(private _dialog: MatDialog) {}
 
   async showAddDialog() {
     const dialogRef = this._dialog.open<AddServiceDialogComponent, void, string>(AddServiceDialogComponent, {
@@ -71,29 +63,45 @@ export class ServicesFormComponent {
 
   add(serviceName: string) {
     // Do not add multiple of the same.
-    if (this.serviceList.data.find(s => s.name === serviceName)) {
+    if (this.actingServiceList.find(s => s.name === serviceName)) {
       return;
     }
 
-    this.serviceList.data = [{ name: serviceName, path: serviceName }, ...this.serviceList.data];
+    this.actingServiceList = [{ name: serviceName, path: serviceName }, ...this.actingServiceList];
 
-    this.updateServicesList();
+    this.saveServicesList();
   }
 
   remove(serviceName: any) {
-    this.serviceList.data = this.serviceList.data.filter(s => s.name !== serviceName);
-    this.updateServicesList();
+    this.actingServiceList = this.actingServiceList.filter(s => s.name !== serviceName);
+    this.saveServicesList();
   }
 
-  private updateServicesList() {
-    if (!this.serviceList || !this._level) {
+  private fillServicesList() {
+    if (!this.services || !this._level) {
+      return;
+    }
+
+    // Copy over values.
+    this.hasServices = this.services[this.level].length > 0;
+    this._bindingLevel = this.hasServices ? this._level : 'owner';
+    this.actingServiceList = [...this.services[this._level]];
+    this.bindingServiceList = [...this.services[this._bindingLevel]];
+  }
+
+  private saveServicesList() {
+    if (!this.services || !this._level) {
       return;
     }
 
     // Copy over results.
-    this._services[this._level] = this.serviceList.data;
-    this.hasServices = this.serviceList.data.length > 0;
-    this.bindingLevel = this.hasServices ? this._level : 'owner';
-    this._changeDectectorRef.detectChanges();
+    this._services[this._level] = this.actingServiceList;
+    this.hasServices = this.actingServiceList.length > 0;
+    this._bindingLevel = this.hasServices ? this._level : 'owner';
+    if (this.hasServices) {
+      this.bindingServiceList = [...this.actingServiceList];
+    } else {
+      this.bindingServiceList = [...this.services[this._bindingLevel]];
+    }
   }
 }
