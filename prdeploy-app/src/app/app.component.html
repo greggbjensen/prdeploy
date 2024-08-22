@@ -1,9 +1,11 @@
 <app-header (menuToggle)="toggleMenu()"></app-header>
-<mat-drawer-container class="app-container">
+<mat-drawer-container class="app-container sidenav-{{ sideNavMode }}">
   <mat-drawer #drawer class="app-sidenav" mode="side" opened>
-    <app-side-navigation-menu [mode]=""></app-side-navigation-menu>
+    <app-side-navigation-menu></app-side-navigation-menu>
   </mat-drawer>
 
-  <router-outlet></router-outlet>
+  <div class="page-content">
+    <router-outlet></router-outlet>
+  </div>
   <app-footer></app-footer>
 </mat-drawer-container>

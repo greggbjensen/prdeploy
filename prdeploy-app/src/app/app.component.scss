@@ -7,10 +7,39 @@
   width: 100%;
 }
 
-.app-container {
-  flex: 1 1 auto;
+.page-content {
+  padding-left: 30px;
 }
 
-.app-sidenav {
-  width: 200px;
+$side-nav-animation-speed: 0.25s;
+$side-nav-large: 190px;
+$side-nav-small: 60px;
+
+::ng-deep .sidenav-full {
+
+  .app-sidenav {
+    width: $side-nav-large;
+    transition: all $side-nav-animation-speed;
+  }
+
+  .mat-drawer-content {
+    margin-left: $side-nav-large !important;
+    transition: all $side-nav-animation-speed;
+  }
+}
+
+::ng-deep .sidenav-icons {
+  .app-sidenav {
+    width: $side-nav-small;
+    transition: all $side-nav-animation-speed;
+  }
+
+  .mat-drawer-content {
+    margin-left: $side-nav-small !important;
+    transition: all $side-nav-animation-speed;
+  }
+}
+
+.app-container {
+  flex: 1 1 auto;
 }

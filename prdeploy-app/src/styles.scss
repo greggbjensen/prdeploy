@@ -46,6 +46,11 @@ body { margin: 0; }
 
 // Control styles.
 
+.app-container .mat-drawer {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
 .mat-mdc-snack-bar-container {
 
   .notification-container {
