@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { EnvironmentSettings } from 'src/app/shared/graphql';
 import { KeyValuePipe } from '@angular/common';
-import { ValueChangedEvent } from 'devextreme/ui/text_box';
 import { SettingsLevel } from '../models';
 import { AddAutomationInputDialogComponent } from './add-automation-input-dialog/add-automation-input-dialog.component';
 import { AddExcludeRollbackServiceDialogComponent } from './add-exclude-rollback-service-dialog/add-exclude-rollback-service-dialog.component';
@@ -111,10 +110,6 @@ export class EnvironmentFormComponent {
     }
 
     this.environment.automationTest.inputs[name] = `\${${name}}`;
-  }
-
-  updateAutomationInput(e: ValueChangedEvent, name: any) {
-    this.environment.automationTest.inputs[name] = e.value;
   }
 
   removeAutomationInput(name: any) {

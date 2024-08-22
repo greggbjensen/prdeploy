@@ -1,8 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { JiraSettingsCompare } from 'src/app/shared/graphql';
 import { SettingsLevel } from '../models';
-import { DxTextBoxTypes } from 'devextreme-angular/ui/text-box';
-import { DxButtonTypes } from 'devextreme-angular/ui/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -40,13 +38,4 @@ export class JiraFormComponent {
   get level() {
     return this._level;
   }
-
-  passwordMode: DxTextBoxTypes.TextBoxType = 'password';
-  passwordButton: DxButtonTypes.Properties = {
-    icon: 'eyeopen',
-    stylingMode: 'text',
-    onClick: () => {
-      this.passwordMode = this.passwordMode === 'text' ? 'password' : 'text';
-    }
-  };
 }

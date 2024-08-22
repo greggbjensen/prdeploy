@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, DestroyRef, EventEmitter, Input, Output } from '@angular/core';
-import { ItemReorderedEvent } from 'devextreme/ui/list';
 import { debounceTime, firstValueFrom } from 'rxjs';
 import {
   DeployQueue,
@@ -128,7 +127,7 @@ export class QueueListComponent implements AfterViewInit {
     return item ? `#${item.number}  ${item.title}  (${item.user?.name})` : '';
   }
 
-  async onItemReordered(e: ItemReorderedEvent) {
+  async onItemReordered(e: any) {
     // The syntax above retains this scope.
     const items = e.component.getDataSource().items() as PullRequest[];
     const swapItem = items[e.toIndex];

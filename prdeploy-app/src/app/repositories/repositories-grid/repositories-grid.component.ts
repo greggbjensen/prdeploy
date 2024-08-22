@@ -3,7 +3,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { DxDataGridModule } from 'devextreme-angular';
 import _ from 'lodash';
 import { OwnerRepos } from 'src/app/shared/graphql';
 import { Repository } from 'src/app/shared/models';
@@ -11,7 +10,7 @@ import { Repository } from 'src/app/shared/models';
 @Component({
   selector: 'app-repositories-grid',
   standalone: true,
-  imports: [DxDataGridModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatListModule],
+  imports: [MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatListModule],
   templateUrl: './repositories-grid.component.html',
   styleUrl: './repositories-grid.component.scss'
 })

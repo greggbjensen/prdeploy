@@ -1,13 +1,11 @@
 import { Component } from '@angular/core';
-import { DxButtonModule } from 'devextreme-angular';
 import { AuthService } from 'src/app/shared/services';
 
 @Component({
   selector: 'login-error',
   templateUrl: './login-error.component.html',
   styleUrls: ['./login-error.component.scss'],
-  standalone: true,
-  imports: [DxButtonModule]
+  standalone: true
 })
 export class LoginErrorComponent {
   loggingOut = false;

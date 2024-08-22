@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
-import { DxAccordionModule, DxTabsModule } from 'devextreme-angular';
 import { firstValueFrom } from 'rxjs';
 import {
   BadgeSettingsCompare,
@@ -15,7 +14,6 @@ import {
   EnvironmentSettingsInput,
   JiraSettingsCompare,
   JiraSettingsInput,
-  OwnerRepoValueOfListOfServiceSettings,
   ServiceSettings,
   SlackSettingsCompare,
   SlackSettingsInput
@@ -60,8 +58,6 @@ class SetCompareValue<T> {
     AddEnvironmentDialogComponent,
     MatProgressSpinnerModule,
     MatExpansionModule,
-    DxAccordionModule,
-    DxTabsModule,
     MatButtonModule,
     MatIconModule,
     MatListModule,

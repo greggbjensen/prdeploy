@@ -1,5 +1,4 @@
 import { Component, ViewChild } from '@angular/core';
-import { DxTabsModule } from 'devextreme-angular';
 import { SettingsFormComponent } from './settings-form/settings-form.component';
 import { RepoManager } from '../shared/managers';
 import { SettingsLevel } from './models';
@@ -11,7 +10,7 @@ import { AlertPanelComponent } from '../shared/components';
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [SettingsFormComponent, MatButtonModule, MatIconModule, DxTabsModule, MatTabsModule, AlertPanelComponent],
+  imports: [SettingsFormComponent, MatButtonModule, MatIconModule, MatTabsModule, AlertPanelComponent],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'
 })
