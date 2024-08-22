@@ -1,5 +1,9 @@
 @import '_variables';
 
+:host {
+  flex: 1 1 auto;
+}
+
 .loading {
   display: flex;
   flex-direction: column;
