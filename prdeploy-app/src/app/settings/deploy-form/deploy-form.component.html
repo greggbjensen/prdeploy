@@ -2,6 +2,16 @@
   <h3 class="form-title">Deployment</h3>
 
   <div class="field-section">
+    <mat-form-field class="form-field-2x">
+      <mat-label>prdeploy portal URL</mat-label>
+      <input
+        matInput
+        type="text"
+        [(ngModel)]="settingsCompare.prdeployPortalUrl[level]"
+        [placeholder]="showOwner ? settingsCompare.prdeployPortalUrl['owner'] : ''"
+        name="prdeployPortalUrl" />
+    </mat-form-field>
+
     <mat-form-field>
       <mat-label>GitHub workflow</mat-label>
       <input
@@ -13,20 +23,11 @@
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>prdeploy portal URL</mat-label>
-      <input
-        matInput
-        type="text"
-        [(ngModel)]="settingsCompare.prdeployPortalUrl[level]"
-        [placeholder]="showOwner ? settingsCompare.prdeployPortalUrl['owner'] : ''"
-        name="prdeployPortalUrl" />
-    </mat-form-field>
-
-    <mat-form-field>
       <mat-label>Default Environment</mat-label>
       <mat-select
         [placeholder]="showOwner ? settingsCompare.defaultEnvironment['owner'] : ''"
-        [(ngModel)]="settingsCompare.defaultEnvironment[level]">
+        [(ngModel)]="settingsCompare.defaultEnvironment[level]"
+        name="defaultEnvironment">
         @for (environment of environments; track environment) {
           <mat-option [value]="environment">{{ environment }}</mat-option>
         }
@@ -37,7 +38,8 @@
       <mat-label>Release Environment</mat-label>
       <mat-select
         [placeholder]="showOwner ? settingsCompare.releaseEnvironment['owner'] : ''"
-        [(ngModel)]="settingsCompare.releaseEnvironment[level]">
+        [(ngModel)]="settingsCompare.releaseEnvironment[level]"
+        name="releaseEnvironment">
         @for (environment of environments; track environment) {
           <mat-option [value]="environment">{{ environment }}</mat-option>
         }

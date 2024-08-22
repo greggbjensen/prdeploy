@@ -1,12 +1,15 @@
 import { Component, Input } from '@angular/core';
 import { BadgeSettingsCompare } from 'src/app/shared/graphql';
-import { DxColorBoxModule } from 'devextreme-angular';
 import { SettingsLevel } from '../../models';
+import { MtxColorpickerModule } from '@ng-matero/extensions/colorpicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-badge-form',
   standalone: true,
-  imports: [DxColorBoxModule],
+  imports: [MtxColorpickerModule, MatFormFieldModule, FormsModule, MatInputModule],
   templateUrl: './badge-form.component.html',
   styleUrl: './badge-form.component.scss'
 })

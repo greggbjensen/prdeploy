@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import {
   BadgeSettingsCompare,
   BadgeSettingsInput,
+  BadgeStatusColorsSettingsCompare,
   BuildsSettingsCompare,
   BuildsSettingsInput,
   DeploySettingsCompare,
@@ -192,11 +193,29 @@ export class SettingsFormComponent implements AfterViewInit {
     this.settingsCompare = _.cloneDeep(response.data.deploySettingsCompare);
 
     this.settingsCompare.environments['owner'].forEach(e => {
-      e.automationTest = e.automationTest || { enabled: false };
+      e.automationTest = e.automationTest || { enabled: null };
     });
     this.settingsCompare.environments['repo'].forEach(e => {
-      e.automationTest = e.automationTest || { enabled: false };
+      e.automationTest = e.automationTest || { enabled: null };
     });
+
+    const colors = Object.keys(this.settingsCompare.badge.statusColors) as Array<
+      keyof Omit<BadgeStatusColorsSettingsCompare, '__typename'>
+    >;
+    for (const name of colors) {
+      const color = this.settingsCompare.badge.statusColors[name];
+      if ((name as any) === '__typename') {
+        continue;
+      }
+
+      if (_.isNil(color.owner)) {
+        color.owner = '';
+      }
+
+      if (_.isNil(color.repo)) {
+        color.repo = '';
+      }
+    }
 
     this.loading = false;
     this.updateBindingEnvironments();
