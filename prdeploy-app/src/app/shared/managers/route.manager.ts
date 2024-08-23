@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { RepoManager } from './repo.manager';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { OwnerRepos } from '../graphql';
 import { firstValueFrom } from 'rxjs';
 import _ from 'lodash';
 
@@ -10,34 +9,39 @@ import _ from 'lodash';
   providedIn: 'root'
 })
 export class RouteManager {
+  private static readonly StartingSlackRegex = /^\//;
+
   constructor(
     private _router: Router,
     private _activatedRoute: ActivatedRoute,
     private _repoManager: RepoManager
   ) {
-    firstValueFrom(this._activatedRoute.queryParamMap).then(param => {
-      this._repoManager.repo = param.get('repo');
-      this._repoManager.owner = param.get('owner');
+    firstValueFrom(this._activatedRoute.params).then(params => {
+      this._repoManager.repo = params['repo'] || '';
+      this._repoManager.owner = params['owner'] || '';
     });
-    this._repoManager.valueChanged$.pipe(takeUntilDestroyed()).subscribe(() => this.updateQueryParams());
-    this._repoManager.ownerReposChanged$
-      .pipe(takeUntilDestroyed())
-      .subscribe(ownerRepos => this.checkHasRepos(ownerRepos));
+    this._repoManager.valueChanged$.pipe(takeUntilDestroyed()).subscribe(repository => {
+      if (
+        repository &&
+        repository.owner &&
+        repository.repo &&
+        repository.owner.length > 0 &&
+        repository.repo.length > 0
+      ) {
+        this.updateOwnerRepo(repository.owner, repository.repo);
+      }
+    });
   }
 
-  async navigate(commands: any[], additionalParams: Params = {}): Promise<void> {
+  async navigate(commands: any[], queryParams: Params = {}): Promise<void> {
     await this._router.navigate(commands, {
-      queryParams: {
-        owner: this._repoManager.owner,
-        repo: this._repoManager.repo,
-        ...additionalParams
-      },
+      queryParams,
       queryParamsHandling: 'merge',
       replaceUrl: true
     });
   }
 
-  async updateQueryParams(additionalParams: Params = {}): Promise<void> {
+  async updateQueryParams(queryParams: Params = {}): Promise<void> {
     // Do not update while login is in process.
     const path = this._router.url.split('?')[0];
     if (!path || path.startsWith('/login') || path.startsWith('/repositories')) {
@@ -45,31 +49,23 @@ export class RouteManager {
     }
 
     await this._router.navigate([path], {
-      queryParams: {
-        owner: this._repoManager.owner,
-        repo: this._repoManager.repo,
-        ...additionalParams
-      },
+      queryParams,
       queryParamsHandling: 'merge',
       replaceUrl: true
     });
   }
 
-  private async checkHasRepos(ownerRepos: OwnerRepos[]) {
-    // If there are no repos yet, send to that page.
+  private async updateOwnerRepo(owner: string, repo: string) {
+    // Do not update paths that down have owner and repo at the start.
     const path = this._router.url.split('?')[0];
-    if (!path) {
+    if (!path || !owner || !repo || path.startsWith('/login') || path.startsWith('/repositories')) {
       return;
     }
 
-    if (
-      this._repoManager.isValid &&
-      ownerRepos &&
-      ownerRepos.length === 0 &&
-      !path.startsWith('/repositories') &&
-      !path.startsWith('/login')
-    ) {
-      this._router.navigate(['/repositories'], { queryParams: { addrepos: true } });
+    const parts = path.replace(RouteManager.StartingSlackRegex, '').split('/');
+    if (parts.length > 2) {
+      parts.splice(0, 2);
+      this.navigate([owner, repo, ...parts]);
     }
   }
 }

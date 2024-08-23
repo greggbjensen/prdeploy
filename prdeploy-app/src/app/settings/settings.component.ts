@@ -34,11 +34,13 @@ export class SettingsComponent {
         this.selectedTabIndex = level === 'owner' ? 0 : 1;
       }
     });
+
+    this.repoManager.valueChanged$.pipe(takeUntilDestroyed()).subscribe(() => this.updateSettings());
   }
 
   selectedLevelChanged(event: MatTabChangeEvent): void {
-    this.level = event.index === 0 ? 'owner' : 'repo';
-    this._routeManager.navigate(['/settings', this.level]);
+    const level = event.index === 0 ? 'owner' : 'repo';
+    this._routeManager.navigate(['/', this.repoManager.owner, this.repoManager.repo, 'settings', level]);
   }
 
   updateSettings() {

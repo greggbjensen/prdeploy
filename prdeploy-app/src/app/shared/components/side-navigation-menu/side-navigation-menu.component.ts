@@ -4,6 +4,8 @@ import { MatTreeModule, MatTreeNestedDataSource } from '@angular/material/tree';
 import { KeyValuePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { RepoManager } from '../../managers';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-side-navigation-menu',
@@ -15,8 +17,10 @@ import { MatIconModule } from '@angular/material/icon';
 export class SideNavigationMenuComponent {
   navItems = new MatTreeNestedDataSource<NavItem>();
 
-  constructor() {
-    this.navItems.data = navigation();
+  constructor(private _repoManager: RepoManager) {
+    this._repoManager.valueChanged$.pipe(takeUntilDestroyed()).subscribe(() => {
+      this.navItems.data = navigation(this._repoManager.owner, this._repoManager.repo);
+    });
   }
 
   childrenAccessor(navItem: NavItem) {

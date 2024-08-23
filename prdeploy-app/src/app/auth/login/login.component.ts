@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit {
   ) {
     const path = this._location.path();
     if (authService.hasValidToken() && path.startsWith('/login')) {
-      this._router.navigate(['/deployments']);
+      this._router.navigate(['/auth/secure-redirect']);
     } else {
       this.visible = true;
     }
