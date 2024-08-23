@@ -27,5 +27,10 @@
       "**/package-lock.json": true
     },
     "files.eol": "\n",
-    "editor.tabSize": 2
+    "editor.tabSize": 2,
+    "workbench.colorCustomizations": {
+      "activityBar.background": "#5A073E",
+      "titleBar.activeBackground": "#7E0957",
+      "titleBar.activeForeground": "#FFFBFE"
+    }
   }

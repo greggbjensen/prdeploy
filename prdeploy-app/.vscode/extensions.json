@@ -1,7 +1,14 @@
 {
     "recommendations": [
+      "eamodio.gitlens",
       "editorconfig.editorconfig",
       "dbaeumer.vscode-eslint",
       "esbenp.prettier-vscode",
+      "github.vscode-pull-request-github",
+      "pkief.material-icon-theme",
+      "pflannery.vscode-versionlens",
+      "stylelint.vscode-stylelint",
+      "mrmlnc.vscode-scss",
+      "shardulm94.trailing-spaces"
     ]
   }

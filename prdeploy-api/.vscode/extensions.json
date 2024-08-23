@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "ms-vscode.powershell",
+    "editorconfig.editorconfig",
+    "ms-dotnettools.csharp",
+    "eamodio.gitlens",
+    "github.vscode-pull-request-github",
+    "dbaeumer.vscode-eslint",
+    "pkief.material-icon-theme",
+    "pflannery.vscode-versionlens",
+    "shardulm94.trailing-spaces",
+    "ms-dotnettools.csdevkit"
+  ]
+}

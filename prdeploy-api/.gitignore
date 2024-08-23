@@ -246,8 +246,5 @@ _Pvt_Extensions
 .idea/
 *.sln.iml
 
-# VS Code
-**/.vscode
-
 # build job output
 /build/output/
