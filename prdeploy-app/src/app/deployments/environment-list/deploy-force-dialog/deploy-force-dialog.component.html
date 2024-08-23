@@ -37,6 +37,7 @@
     mat-flat-button
     class="mat-primary"
     (click)="forceDeploy()"
+    [loading]="processing"
     [disabled]="!form.valid || !selectedPullRequest || processing">
     Deploy
   </button>

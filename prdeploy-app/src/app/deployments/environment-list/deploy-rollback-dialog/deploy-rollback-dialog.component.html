@@ -9,5 +9,7 @@
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-stroked-button class="mat-primary" (click)="cancel()">Cancel</button>
-  <button mat-flat-button class="mat-primary" (click)="rollback()" [disabled]="processing">Rollback</button>
+  <button mat-flat-button class="mat-primary" (click)="rollback()" [loading]="processing" [disabled]="processing">
+    Rollback
+  </button>
 </mat-dialog-actions>

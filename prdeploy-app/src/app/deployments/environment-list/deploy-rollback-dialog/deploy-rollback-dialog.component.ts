@@ -16,7 +16,9 @@ import { DeployRollbackDialogData } from './deploy-rollback-dialog-data';
 import { DialogResult } from 'src/app/shared/models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatInputModule } from '@angular/material/input';
+
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MtxButtonModule } from '@ng-matero/extensions/button';
 
 @Component({
   selector: 'app-deploy-rollback-dialog',
@@ -28,6 +30,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
     MatDialogClose,
     MatButtonModule,
     MatInputModule,
+    MtxButtonModule,
     ReactiveFormsModule
   ],
   templateUrl: './deploy-rollback-dialog.component.html',
