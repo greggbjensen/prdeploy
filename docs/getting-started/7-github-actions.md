@@ -71,3 +71,20 @@ Actions that apply and retrieve the information needed for builds and deployment
 | [build-details](/.github/actions/build-details/README.md#build-details-action)    | Creates a summary of your build with version and pull request info.              |
 | [date-version](/.github/actions/date-version/README.md#date-version-action)       | Creates a version for a build using the current date and run ID of the workflow. |
 | [get-build-info](/.github/actions/get-build-info/README.md#get-build-info-action) | Gets build data and a matrix for a set of deploy and sync run IDs.               |
+
+
+## Notes
+
+1. Labels will be automatically created for each environment in your repository.
+   1. Environment labels should be the badge color you want for the environment icon.
+3. In order for a completed or failed deploy status message to show the version, you must provide a `build-details` artifact to your builds that includes a `build-details.json` file with at least the following:
+   1. The [build-details](/.github/actions/build-details/README.md#build-details-action) action can provide this.
+
+```json
+{
+  "version": "2023.11.30-r7040754105"
+}
+```
+
+3. Go to **Settings** and **General** for your repository and check `Always suggest updating pull request branches` to get the pull request **Update** button.
+   1. This makes it much easier to update your pull requests to latest before deploying.
