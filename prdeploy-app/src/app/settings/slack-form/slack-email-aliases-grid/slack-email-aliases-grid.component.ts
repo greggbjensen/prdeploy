@@ -43,7 +43,7 @@ export class SlackEmailAliasesGridComponent {
       AddSlackEmailAliasDialogComponent,
       {
         width: '450px',
-        height: '210px'
+        height: '220px'
       }
     );
 

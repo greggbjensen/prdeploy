@@ -64,7 +64,7 @@ export class EnvironmentFormComponent {
       AddExcludeRollbackServiceDialogComponent,
       {
         width: '450px',
-        height: '210px'
+        height: '220px'
       }
     );
 
@@ -94,7 +94,7 @@ export class EnvironmentFormComponent {
       AddAutomationInputDialogComponent,
       {
         width: '450px',
-        height: '210px'
+        height: '220px'
       }
     );
 

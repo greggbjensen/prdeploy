@@ -53,7 +53,7 @@ export class ServicesFormComponent {
   async showAddDialog() {
     const dialogRef = this._dialog.open<AddServiceDialogComponent, void, string>(AddServiceDialogComponent, {
       width: '450px',
-      height: '210px'
+      height: '220px'
     });
     const service = await firstValueFrom(dialogRef.afterClosed());
     if (service) {

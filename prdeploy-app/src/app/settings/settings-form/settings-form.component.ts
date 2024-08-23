@@ -230,7 +230,7 @@ export class SettingsFormComponent implements AfterViewInit {
   async showAddEnvironmentDialog() {
     const dialogRef = this._dialog.open<AddEnvironmentDialogComponent, void, string>(AddEnvironmentDialogComponent, {
       width: '450px',
-      height: '210px'
+      height: '220px'
     });
 
     const environmentName = await firstValueFrom(dialogRef.afterClosed());
