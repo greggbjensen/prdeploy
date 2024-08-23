@@ -3,6 +3,7 @@ import { firstValueFrom } from 'rxjs';
 import {
   BadgeSettingsCompare,
   BadgeSettingsInput,
+  BadgeStatusColorsSettings,
   BadgeStatusColorsSettingsCompare,
   BuildsSettingsCompare,
   BuildsSettingsInput,
@@ -412,13 +413,18 @@ export class SettingsFormComponent implements AfterViewInit {
   }
 
   private setBadge(input: BadgeSettingsInput, compareValue: SetCompareValue<BadgeSettingsCompare>) {
-    if (this.hasValues(compareValue, 'statusColors')) {
+    compareValue.hasValues = this.hasValues(compareValue, 'statusColors');
+    if (compareValue.hasValues) {
       input.statusColors = {};
-      this.setObjectValue(input.statusColors, 'error', compareValue.compare.statusColors);
-      this.setObjectValue(input.statusColors, 'warn', compareValue.compare.statusColors);
-      this.setObjectValue(input.statusColors, 'info', compareValue.compare.statusColors);
-      this.setObjectValue(input.statusColors, 'success', compareValue.compare.statusColors);
+      this.setColors(input.statusColors, new SetCompareValue(compareValue.compare.statusColors, compareValue.level));
     }
+  }
+
+  private setColors(input: BadgeStatusColorsSettings, compareValue: SetCompareValue<BadgeStatusColorsSettingsCompare>) {
+    this.set(input, 'error', compareValue);
+    this.set(input, 'warn', compareValue);
+    this.set(input, 'info', compareValue);
+    this.set(input, 'success', compareValue);
   }
 
   private hasObjectValues<T>(compare: T, key: keyof T) {
