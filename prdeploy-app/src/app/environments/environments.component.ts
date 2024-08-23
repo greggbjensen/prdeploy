@@ -2,18 +2,27 @@ import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { Environment, EnvironmentsGQL } from '../shared/graphql';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { RepoManager, RouteManager } from '../shared/managers';
 import { EnvironmentsGridComponent } from './environments-grid/environments-grid.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { AlertPanelComponent } from '../shared/components';
 
 @Component({
   selector: 'app-environments',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, EnvironmentsGridComponent, MatSelectModule, MatFormFieldModule],
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+    EnvironmentsGridComponent,
+    MatSelectModule,
+    MatFormFieldModule,
+    AlertPanelComponent,
+    RouterModule
+  ],
   templateUrl: './environments.component.html',
   styleUrl: './environments.component.scss'
 })
@@ -25,13 +34,13 @@ export class EnvironmentsComponent implements OnInit {
   @ViewChild(EnvironmentsGridComponent) environtmentsGrid: EnvironmentsGridComponent;
 
   constructor(
+    public repoManager: RepoManager,
     private _environmentsGQL: EnvironmentsGQL,
-    private _repoManager: RepoManager,
     private _routeManager: RouteManager,
     private _route: ActivatedRoute,
     private _changeDetectorRef: ChangeDetectorRef
   ) {
-    this._repoManager.valueChanged$.pipe(takeUntilDestroyed()).subscribe(() => this.loadEnvironments());
+    this.repoManager.valueChanged$.pipe(takeUntilDestroyed()).subscribe(() => this.loadEnvironments());
   }
 
   environments: Environment[];
@@ -65,7 +74,7 @@ export class EnvironmentsComponent implements OnInit {
   }
 
   private async loadEnvironments(): Promise<void> {
-    if (!this._repoManager.isValid) {
+    if (!this.repoManager.isValid) {
       return;
     }
 
@@ -73,8 +82,8 @@ export class EnvironmentsComponent implements OnInit {
     this.sourceEnvironment = null;
     this.targetEnvironment = null;
 
-    const owner = this._repoManager.owner;
-    const repo = this._repoManager.repo;
+    const owner = this.repoManager.owner;
+    const repo = this.repoManager.repo;
     const environmentsResponse = await firstValueFrom(
       this._environmentsGQL.fetch({
         input: {

@@ -37,7 +37,10 @@
         </mat-selection-list>
       </div>
     } @else {
-      <app-alert-panel type="danger"> You must first configure services in settings.</app-alert-panel>
+      <app-alert-panel class="services-info" type="danger">
+        You must first configure services in&nbsp;
+        <a [routerLink]="['/', repoManager.owner, repoManager.repo, 'settings', 'repo']">Settings</a>.
+      </app-alert-panel>
     }
   </form>
 </mat-dialog-content>

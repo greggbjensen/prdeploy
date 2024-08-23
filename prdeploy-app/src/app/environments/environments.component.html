@@ -40,3 +40,8 @@
 <app-environments-grid
   [sourceEnvironment]="sourceEnvironment"
   [targetEnvironment]="targetEnvironment"></app-environments-grid>
+
+<app-alert-panel class="settings-info" type="info">
+  To configure environments visit&nbsp;
+  <a [routerLink]="['/', repoManager.owner, repoManager.repo, 'settings', 'repo']">Settings</a>.
+</app-alert-panel>
