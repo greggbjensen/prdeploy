@@ -43,7 +43,7 @@ users:read.email
     * Get your App approved by your Slack administrator if necessary.
 5. Select a channel to post all Dev, Stage, and Prod deployment notifications to.
 6. Click on **Allow**.
-7. Copy the **Bot User OAuth Token** to your notes for AWS Parameter Store.
+7. Copy the **Bot User OAuth Token** to your notes for the portal Slack settings.
 
 ## 4. Webhook configuration
 
