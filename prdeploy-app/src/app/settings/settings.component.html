@@ -9,7 +9,7 @@
   </div>
 </h2>
 
-<mat-tab-group (selectedTabChange)="selectedLevelChanged($event)">
+<mat-tab-group [selectedIndex]="selectedTabIndex" (selectedTabChange)="selectedLevelChanged($event)">
   <mat-tab label="Owner Defaults" class="settings-tab">
     <app-alert-panel type="info" class="tab-alert">
       Default settings to be used for all repositories within owner&nbsp;<strong>{{ this.repoManager.owner }}</strong>

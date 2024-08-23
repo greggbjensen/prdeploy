@@ -4,6 +4,7 @@ import { RepoManager } from './repo.manager';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { OwnerRepos } from '../graphql';
 import { firstValueFrom } from 'rxjs';
+import _ from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,7 @@ export class RouteManager {
   }
 
   async navigate(commands: any[], additionalParams: Params = {}): Promise<void> {
-    await this._router.navigate([commands], {
+    await this._router.navigate(commands, {
       queryParams: {
         owner: this._repoManager.owner,
         repo: this._repoManager.repo,
@@ -43,18 +44,13 @@ export class RouteManager {
       return;
     }
 
-    const currentParams = await firstValueFrom(this._activatedRoute.queryParams);
-    const queryParams = Object.assign(
-      {},
-      currentParams,
-      {
-        owner: this._repoManager.owner,
-        repo: this._repoManager.repo
-      },
-      additionalParams
-    );
     await this._router.navigate([path], {
-      queryParams,
+      queryParams: {
+        owner: this._repoManager.owner,
+        repo: this._repoManager.repo,
+        ...additionalParams
+      },
+      queryParamsHandling: 'merge',
       replaceUrl: true
     });
   }
