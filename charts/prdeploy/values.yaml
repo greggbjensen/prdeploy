@@ -35,13 +35,17 @@ ingress:
       pathType: Prefix
       service: prdeploy-app
       port: 80
+    - path: /webhooks
+      pathType: Prefix
+      service: prdeploy-webhooks
+      port: 80
     - path: /api
       pathType: Prefix
       service: prdeploy-api
       port: 80
-    - path: /webhooks
+    - path: /graphql
       pathType: Prefix
-      service: prdeploy-webhooks
+      service: prdeploy-api
       port: 80
 
 prdeploy-api:
