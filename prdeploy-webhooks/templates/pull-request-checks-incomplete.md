@@ -1,4 +1,4 @@
-[![{{environment.name}}](https://badgen.net/badge/{{environment.name}}/Checks%20Incomplete/{{badge.statusColors.warn}}?labelColor={{environment.color}}&icon=github&scale=1.2)]({{prdeployPortalUrl}}?environment={{environment.name}}&owner={{owner}}&repo={{repo}} 'Open the queue')
+[![{{environment.name}}](https://badgen.net/badge/{{environment.name}}/Checks%20Incomplete/{{badge.statusColors.warn}}?labelColor={{environment.color}}&icon=github&scale=1.2)]({{prdeployPortalUrl}}/{{owner}}/{{repo}}?environment={{environment.name}} 'Open the queue')
 The following checks are incomplete:
 {{#each incompleteChecks}}
 

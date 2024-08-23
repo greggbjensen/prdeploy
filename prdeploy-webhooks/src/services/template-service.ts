@@ -56,7 +56,7 @@ export class TemplateService {
     let p = 0;
     let positions = '| Position |';
     let columns = '|----------|';
-    let pulls = `| [${normalizedEnvironment} queue](${prdeployPortalUrl}?environment=${normalizedEnvironment}&owner=${owner}&repo=${repo}) |`;
+    let pulls = `| [${normalizedEnvironment} queue](${prdeployPortalUrl}/{{owner}}/{{repo}}?environment=${normalizedEnvironment}) |`;
     for (const pr of queuePullNumbers) {
       p++;
       positions += ` ${p}       |`;
