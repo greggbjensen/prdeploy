@@ -50,13 +50,13 @@ export class TemplateService {
     normalizedEnvironment: string,
     queuePullNumbers: number[],
     repositoryUrl: string,
-    deployManagerSiteUrl: string
+    prdeployPortalUrl: string
   ): string {
     // This is dynamic horizontally, so cannot be handled by normal template engine.
     let p = 0;
     let positions = '| Position |';
     let columns = '|----------|';
-    let pulls = `| [${normalizedEnvironment} queue](${deployManagerSiteUrl}?environment=${normalizedEnvironment}&owner=${owner}&repo=${repo}) |`;
+    let pulls = `| [${normalizedEnvironment} queue](${prdeployPortalUrl}?environment=${normalizedEnvironment}&owner=${owner}&repo=${repo}) |`;
     for (const pr of queuePullNumbers) {
       p++;
       positions += ` ${p}       |`;
