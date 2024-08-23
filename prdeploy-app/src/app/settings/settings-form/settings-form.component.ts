@@ -252,6 +252,7 @@ export class SettingsFormComponent implements AfterViewInit {
 
     environments.push({
       name,
+      queue: `${name.toUpperCase()}_PR_QUEUE`,
       requireApproval: false,
       requireBranchUpToDate: false,
       automationTest: {
