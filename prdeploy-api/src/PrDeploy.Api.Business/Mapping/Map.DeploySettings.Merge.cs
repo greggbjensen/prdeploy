@@ -18,6 +18,11 @@ public static partial class Map
             target.Environments = source.Environments;
         }
 
+        if (target.Services?.Count == 0)
+        {
+            target.Services = source.Services;
+        }
+
         target.DefaultEnvironment ??= source.DefaultEnvironment;
         target.ReleaseEnvironment ??= source.ReleaseEnvironment;
 

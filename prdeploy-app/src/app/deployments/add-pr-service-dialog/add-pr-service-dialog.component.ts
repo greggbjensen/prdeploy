@@ -28,6 +28,7 @@ import { DialogResult } from 'src/app/shared/models';
 import { LoggingService } from 'src/app/shared/services';
 import { AlertPanelComponent } from 'src/app/shared/components';
 import { MatListModule, MatSelectionList } from '@angular/material/list';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-add-pr-service-dialog',
@@ -47,6 +48,7 @@ import { MatListModule, MatSelectionList } from '@angular/material/list';
     MtxButtonModule,
     ReactiveFormsModule,
     AlertPanelComponent,
+    RouterModule,
     KeyValuePipe
   ],
   templateUrl: './add-pr-service-dialog.component.html',
@@ -68,11 +70,11 @@ export class AddPrServiceDialogComponent {
   loadingServices = true;
 
   constructor(
+    public repoManager: RepoManager,
     private _openPullRequestsGQL: OpenPullRequestsGQL,
     private _pullRequestAddServicesGQL: PullRequestAddServicesGQL,
     private _repositoryServicesGQL: RepositoryServicesGQL,
     private _notificationManager: NotificationManager,
-    private _repoManager: RepoManager,
     private _dialogRef: MatDialogRef<AddPrServiceDialogComponent>,
     private _loggingService: LoggingService
   ) {
@@ -84,7 +86,7 @@ export class AddPrServiceDialogComponent {
 
         this.loadingServices = true;
         const response = await firstValueFrom(
-          this._repositoryServicesGQL.fetch({ input: { owner: this._repoManager.owner, repo: this._repoManager.repo } })
+          this._repositoryServicesGQL.fetch({ input: { owner: this.repoManager.owner, repo: this.repoManager.repo } })
         );
         this.repositoryServices = response.data.repositoryServices;
         this.loadingServices = false;
@@ -97,8 +99,8 @@ export class AddPrServiceDialogComponent {
     const result = await firstValueFrom(
       this._openPullRequestsGQL.fetch({
         input: {
-          owner: this._repoManager.owner,
-          repo: this._repoManager.repo,
+          owner: this.repoManager.owner,
+          repo: this.repoManager.repo,
           search
         }
       })
@@ -137,8 +139,8 @@ export class AddPrServiceDialogComponent {
       await firstValueFrom(
         this._pullRequestAddServicesGQL.mutate({
           input: {
-            owner: this._repoManager.owner,
-            repo: this._repoManager.repo,
+            owner: this.repoManager.owner,
+            repo: this.repoManager.repo,
             pullNumber: this.selectedPullRequest.number,
             services: this.selectedServices
           }
