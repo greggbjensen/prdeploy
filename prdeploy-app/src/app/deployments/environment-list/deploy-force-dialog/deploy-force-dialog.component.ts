@@ -20,6 +20,7 @@ import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/ma
 import { MatInputModule } from '@angular/material/input';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MtxButtonModule } from '@ng-matero/extensions/button';
 import _ from 'lodash';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -39,6 +40,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatCheckboxModule,
     MatButtonModule,
     MatFormFieldModule,
+    MtxButtonModule,
     ReactiveFormsModule
   ]
 })

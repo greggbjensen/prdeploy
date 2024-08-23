@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { EnabledOwnerReposGQL, OwnerRepos } from '../graphql';
 import _ from 'lodash';
+import { Router } from '@angular/router';
+import { Repository } from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -9,15 +11,30 @@ import _ from 'lodash';
 export class RepoManager {
   private _repo = '';
   private _owner = '';
+  private _isLoaded = false;
 
   private _ownerReposChangedSubject = new BehaviorSubject<OwnerRepos[]>([]);
   ownerReposChanged$ = this._ownerReposChangedSubject.asObservable();
 
-  private _valueChangedSubject$ = new BehaviorSubject(false);
-  valueChanged$ = this._valueChangedSubject$.asObservable();
+  private _valueChangedSubject = new BehaviorSubject<Repository>(null);
+  valueChanged$ = this._valueChangedSubject.asObservable();
 
   get isValid(): boolean {
-    return this._valueChangedSubject$.value;
+    return (
+      this._valueChangedSubject.value &&
+      this._valueChangedSubject.value.owner &&
+      this._valueChangedSubject.value.owner.length > 0 &&
+      this._valueChangedSubject.value.repo &&
+      this._valueChangedSubject.value.repo.length > 0
+    );
+  }
+
+  get hasOwnerRepos(): boolean {
+    return (
+      this._ownerReposChangedSubject.value &&
+      this._ownerReposChangedSubject.value.length > 0 &&
+      this._ownerReposChangedSubject.value[0].repos.length > 0
+    );
   }
 
   get repo(): string {
@@ -42,10 +59,14 @@ export class RepoManager {
     }
   }
 
-  constructor(private _enabledOwnerReposGQL: EnabledOwnerReposGQL) {}
+  constructor(
+    private _enabledOwnerReposGQL: EnabledOwnerReposGQL,
+    private _router: Router
+  ) {}
 
   async fetchOwnerRepos() {
     const result = await firstValueFrom(this._enabledOwnerReposGQL.fetch());
+    this._isLoaded = true;
     this.updateOwnerRepos(result.data.enabledOwnerRepos);
   }
 
@@ -58,16 +79,38 @@ export class RepoManager {
     }
 
     if (!_.isNil(ownerRepos) && ownerRepos.length === 0) {
-      this._valueChangedSubject$.next(true);
+      this.updateValueChanged();
     }
 
     this._ownerReposChangedSubject.next(ownerRepos);
+    return this.guardHasRepos(ownerRepos);
   }
 
   private updateValueChanged() {
-    const isValid = !!this.repo && !!this.owner;
+    const isValid = this.repo && this.owner && this.repo.length > 0 && this.owner.length > 0;
+    const ownerRepos = this._ownerReposChangedSubject.value;
     if (isValid) {
-      this._valueChangedSubject$.next(true);
+      this._valueChangedSubject.next({ owner: this.owner, repo: this.repo });
+    } else if (this.guardHasRepos(ownerRepos) && this.hasOwnerRepos) {
+      const owner = ownerRepos[0].owner;
+      const repo = ownerRepos[0].repos[0];
+      this._valueChangedSubject.next({ owner, repo });
     }
+  }
+
+  private async guardHasRepos(ownerRepos: OwnerRepos[]) {
+    // If there are no repos yet, send to that page.
+    const path = this._router.url.split('?')[0];
+    if (!path || !this._isLoaded) {
+      return false;
+    }
+
+    let hasRepos = true;
+    if ((!ownerRepos || ownerRepos.length === 0) && !path.startsWith('/repositories') && !path.startsWith('/login')) {
+      this._router.navigate(['/repositories'], { queryParams: { addrepos: true } });
+      hasRepos = false;
+    }
+
+    return hasRepos;
   }
 }

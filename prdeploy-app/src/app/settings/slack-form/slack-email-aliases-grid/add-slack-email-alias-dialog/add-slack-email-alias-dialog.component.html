@@ -3,11 +3,11 @@
   <form [formGroup]="form">
     <mat-form-field class="fill-width">
       <mat-label>Email</mat-label>
-      <input matInput type="text" formControlName="email" />
+      <input matInput type="text" formControlName="email" email />
     </mat-form-field>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-stroked-button color="primary" (click)="cancel()">Cancel</button>
-  <button mat-flat-button color="primary" (click)="add()" [disabled]="!form.valid">Add Alias</button>
+  <button mat-stroked-button class="mat-primary" (click)="cancel()">Cancel</button>
+  <button mat-flat-button class="mat-primary" (click)="add()" [disabled]="!form.valid">Add Alias</button>
 </mat-dialog-actions>

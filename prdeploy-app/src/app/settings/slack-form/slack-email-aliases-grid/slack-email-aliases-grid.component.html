@@ -1,6 +1,6 @@
 <h2 class="form-group-title">
   <span>Email Aliases</span>
-  <button mat-stroked-button color="primary" (click)="showAddDialog()">Add Email Alias</button>
+  <button mat-stroked-button class="mat-primary" (click)="showAddDialog()">Add Email Alias</button>
 </h2>
 @if (!hasAliases && level === 'repo') {
   <div class="email-alias-info">
@@ -26,6 +26,7 @@
           [disabled]="!hasAliases"
           [(ngModel)]="slack.emailAliases[bindingLevel][input.email]"
           required
+          email
           name="aliasInputValue" />
       </mat-form-field>
     </td>
@@ -36,7 +37,7 @@
     <td mat-cell *matCellDef="let input">
       <button
         mat-icon-button
-        color="warn"
+        class="mat-warn"
         class="add-item-input-btn"
         title="Remove email aliase"
         (click)="remove(input.email)"

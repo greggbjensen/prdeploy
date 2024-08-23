@@ -1,6 +1,12 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from '../shared/services';
 
 export const authRoutes: Routes = [
+  {
+    path: 'auth/secure-redirect',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./secure-redirect/secure-redirect.component').then(m => m.SecureRedirectComponent)
+  },
   {
     path: 'login/callback',
     loadComponent: () => import('./login-callback/login-callback.component').then(m => m.LoginCallbackComponent)

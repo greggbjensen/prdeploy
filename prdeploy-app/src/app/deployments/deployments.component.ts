@@ -108,7 +108,7 @@ export class DeploymentsComponent implements OnInit {
       }
 
       this.deployQueues = response.data.deployQueues;
-      this._routeManager.updateQueryParams();
+      this._routeManager.updateQueryParams({ environment: this.selectedEnvironment });
     } catch (error) {
       this._loggingService.error(error);
     }

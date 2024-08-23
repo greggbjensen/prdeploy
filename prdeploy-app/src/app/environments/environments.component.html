@@ -1,6 +1,6 @@
 <h2>
   Environment States
-  <button mat-icon-button title="Refresh" color="accent" (click)="environtmentsGrid.updateStateComparison()">
+  <button mat-icon-button title="Refresh" class="mat-accent" (click)="environtmentsGrid.updateStateComparison()">
     <mat-icon>sync</mat-icon>
   </button>
 </h2>
@@ -16,7 +16,7 @@
         {{ sourceEnvironment?.name }}
       </mat-select-trigger>
       @for (environment of environments; track environment) {
-        <mat-option [value]="environment">{{ environment.name }}</mat-option>
+        <mat-option [value]="environment">{{ environment?.name }}</mat-option>
       }
     </mat-select>
   </mat-form-field>
@@ -31,7 +31,7 @@
         {{ targetEnvironment?.name }}
       </mat-select-trigger>
       @for (environment of environments; track environment) {
-        <mat-option [value]="environment">{{ environment.name }}</mat-option>
+        <mat-option [value]="environment">{{ environment?.name }}</mat-option>
       }
     </mat-select>
   </mat-form-field>

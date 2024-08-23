@@ -74,7 +74,7 @@
         @if (environment.locked) {
           <button
             mat-icon-button
-            color="warn"
+            class="mat-warn"
             title="/free {{ environment.name }}"
             (click)="free(environment.name, environment.pullRequest.number)">
             <mat-icon>close</mat-icon>
@@ -82,7 +82,7 @@
         }
         <button
           mat-icon-button
-          color="success"
+          class="mat-success"
           title="/deploy {{ environment.name.toLowerCase() }} --force"
           (click)="showDeployForce(environment.name)">
           <mat-icon>add</mat-icon>
@@ -90,14 +90,14 @@
         @if (environment.pullRequest) {
           <button
             mat-icon-button
-            color="accent"
+            class="mat-accent"
             title="/deploy {{ environment.name.toLowerCase() }}"
             (click)="redeploy(environment.name, environment.pullRequest.number)">
             <mat-icon>rotate_right</mat-icon>
           </button>
           <button
             mat-icon-button
-            color="alternate"
+            class="mat-alternate"
             title="/rollback {{ environment.name.toLowerCase() }}"
             (click)="showDeployRollback(environment.name, environment.pullRequest.number)">
             <mat-icon>rotate_left</mat-icon>

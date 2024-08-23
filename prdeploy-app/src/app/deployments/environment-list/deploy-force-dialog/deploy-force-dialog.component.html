@@ -32,11 +32,12 @@
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-stroked-button color="primary" (click)="cancel()">Cancel</button>
+  <button mat-stroked-button class="mat-primary" (click)="cancel()">Cancel</button>
   <button
     mat-flat-button
-    color="primary"
+    class="mat-primary"
     (click)="forceDeploy()"
+    [loading]="processing"
     [disabled]="!form.valid || !selectedPullRequest || processing">
     Deploy
   </button>

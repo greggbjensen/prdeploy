@@ -168,7 +168,7 @@ export class CheckService {
         repo: this._settings.repo,
         environment: environmentSettings,
         badge: this._settings.badge,
-        deployManagerSiteUrl: this._settings.prdeployPortalUrl,
+        prdeployPortalUrl: this._settings.prdeployPortalUrl,
         incompleteChecks
       });
 
@@ -217,7 +217,7 @@ export class CheckService {
           repo: this._settings.repo,
           environment: environmentSettings,
           badge: this._settings.badge,
-          deployManagerSiteUrl: this._settings.prdeployPortalUrl
+          prdeployPortalUrl: this._settings.prdeployPortalUrl
         });
 
         await this._octokit.rest.issues.createComment({
@@ -268,7 +268,7 @@ export class CheckService {
       repo: this._settings.repo,
       environment: environmentSettings,
       badge: this._settings.badge,
-      deployManagerSiteUrl: this._settings.prdeployPortalUrl,
+      prdeployPortalUrl: this._settings.prdeployPortalUrl,
       updateMessage
     });
 

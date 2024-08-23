@@ -1,9 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { Environment, EnvironmentsGQL } from '../shared/graphql';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
-import { RepoManager } from '../shared/managers';
+import { RepoManager, RouteManager } from '../shared/managers';
 import { EnvironmentsGridComponent } from './environments-grid/environments-grid.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -27,7 +27,9 @@ export class EnvironmentsComponent implements OnInit {
   constructor(
     private _environmentsGQL: EnvironmentsGQL,
     private _repoManager: RepoManager,
-    private _route: ActivatedRoute
+    private _routeManager: RouteManager,
+    private _route: ActivatedRoute,
+    private _changeDetectorRef: ChangeDetectorRef
   ) {
     this._repoManager.valueChanged$.pipe(takeUntilDestroyed()).subscribe(() => this.loadEnvironments());
   }
@@ -63,19 +65,32 @@ export class EnvironmentsComponent implements OnInit {
   }
 
   private async loadEnvironments(): Promise<void> {
-    if (this._repoManager.isValid) {
-      const environmentsResponse = await firstValueFrom(
-        this._environmentsGQL.fetch({
-          input: {
-            owner: this._repoManager.owner,
-            repo: this._repoManager.repo
-          }
-        })
-      );
-
-      this.environments = [...(environmentsResponse.data.environments || []), EnvironmentsComponent.StableEnvironment];
-      this.updateCompareEnvironments(true);
+    if (!this._repoManager.isValid) {
+      return;
     }
+
+    // Make sure to reset for route changes.
+    this.sourceEnvironment = null;
+    this.targetEnvironment = null;
+
+    const owner = this._repoManager.owner;
+    const repo = this._repoManager.repo;
+    const environmentsResponse = await firstValueFrom(
+      this._environmentsGQL.fetch({
+        input: {
+          owner,
+          repo
+        }
+      })
+    );
+
+    if (!environmentsResponse.data.environments || environmentsResponse.data.environments.length === 0) {
+      await this._routeManager.navigate(['/', owner, repo, 'settings']);
+      return;
+    }
+
+    this.environments = [...environmentsResponse.data.environments, EnvironmentsComponent.StableEnvironment];
+    this.updateCompareEnvironments(true);
   }
 
   updateCompareEnvironments(sourceChanged: boolean): void {
@@ -102,6 +117,7 @@ export class EnvironmentsComponent implements OnInit {
     }
 
     if (this.sourceEnvironment?.name !== this.targetEnvironment?.name) {
+      this._changeDetectorRef.detectChanges();
       return;
     }
 
@@ -113,5 +129,7 @@ export class EnvironmentsComponent implements OnInit {
       // Find first item, less stable, because target should be more stable if possible.
       this.sourceEnvironment = this.environments.find(e => e.name !== this.targetEnvironment.name);
     }
+
+    this._changeDetectorRef.detectChanges();
   }
 }

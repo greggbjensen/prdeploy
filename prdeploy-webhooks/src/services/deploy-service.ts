@@ -43,7 +43,7 @@ export class DeployService {
           repo: this._settings.repo,
           environment: environmentSettings,
           badge: this._settings.badge,
-          deployManagerSiteUrl: this._settings.prdeployPortalUrl
+          prdeployPortalUrl: this._settings.prdeployPortalUrl
         });
 
         await this._octokit.rest.issues.createComment({
@@ -307,7 +307,7 @@ export class DeployService {
       owner: this._settings.owner,
       repo: this._settings.repo,
       environment: environmentSettings,
-      deployManagerSiteUrl: this._settings.prdeployPortalUrl,
+      prdeployPortalUrl: this._settings.prdeployPortalUrl,
       queuePosition,
       queueTable,
       alreadyInQueue

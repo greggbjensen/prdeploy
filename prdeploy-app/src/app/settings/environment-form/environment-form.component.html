@@ -36,7 +36,7 @@
         <span>Exclude from rollback</span>
         <button
           mat-icon-button
-          color="success"
+          class="mat-success"
           class="add-item-input-btn"
           title="Add service to exclude"
           (click)="showAddExcludeRollbackService()"
@@ -82,7 +82,7 @@
         <span>Workflow inputs</span>
         <button
           mat-icon-button
-          color="success"
+          class="mat-success"
           class="add-item-input-btn exclude-rollback"
           title="Add workflow input"
           (click)="showAddAutomationInput()"
@@ -120,8 +120,7 @@
             <td mat-cell *matCellDef="let input">
               <button
                 mat-icon-button
-                color="warn"
-                class="add-workflow-input-btn exclude-rollback"
+                class="mat-warn add-workflow-input-btn exclude-rollback"
                 title="Remove workflow input"
                 (click)="removeAutomationInput(input.key)"
                 [disabled]="!hasEnvironments">

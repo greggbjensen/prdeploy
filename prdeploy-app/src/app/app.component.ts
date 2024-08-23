@@ -1,5 +1,5 @@
 import { Component, HostListener } from '@angular/core';
-import { AppInfoService, AuthService } from './shared/services';
+import { AuthService } from './shared/services';
 import { RouterOutlet } from '@angular/router';
 import { FooterComponent, SideNavigationMenuComponent, HeaderComponent } from './shared/components';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -38,7 +38,6 @@ export class AppComponent {
   isAuthenticated = false;
 
   constructor(
-    public appInfo: AppInfoService,
     private _breakpointObserver: BreakpointObserver,
     private _authService: AuthService
   ) {

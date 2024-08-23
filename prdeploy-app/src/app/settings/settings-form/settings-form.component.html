@@ -34,7 +34,11 @@
             <div class="environments-header">
               <h2 class="form-title">Environments</h2>
               <div class="environments-actions">
-                <button mat-stroked-button color="primary" title="Add environment" (click)="showAddEnvironmentDialog()">
+                <button
+                  mat-stroked-button
+                  class="mat-primary"
+                  title="Add environment"
+                  (click)="showAddEnvironmentDialog()">
                   Add Environment
                 </button>
               </div>
@@ -55,8 +59,7 @@
                       <span>{{ environment.name }}</span>
                       <button
                         mat-icon-button
-                        color="warn"
-                        class="remove-environment"
+                        class="mat-warn remove-environment"
                         title="Remove environment"
                         (click)="removeEnvironment(environment.name)"
                         [disabled]="!hasEnvironments">
