@@ -1,6 +1,6 @@
 <h2 class="form-group-title">
   <span>Services</span>
-  <button mat-stroked-button color="primary" (click)="showAddDialog()">Add Service</button>
+  <button mat-stroked-button class="mat-primary" (click)="showAddDialog()">Add Service</button>
 </h2>
 @if (!hasServices && level === 'repo') {
   <div class="services-info">
@@ -30,7 +30,7 @@
     <td mat-cell *matCellDef="let service">
       <button
         mat-icon-button
-        color="warn"
+        class="mat-warn"
         title="Remove service"
         (click)="remove(service.name)"
         [disabled]="!hasServices">

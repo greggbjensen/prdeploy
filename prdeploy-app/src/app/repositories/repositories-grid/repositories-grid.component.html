@@ -2,7 +2,7 @@
   @for (owner of owners; track owners) {
     <div mat-subheader class="repositories-list-item">
       <span>{{ owner }}</span>
-      <button mat-icon-button color="success" title="Add repository" (click)="addRepo(owner)">
+      <button mat-icon-button class="mat-success" title="Add repository" (click)="addRepo(owner)">
         <mat-icon>add</mat-icon>
       </button>
     </div>
@@ -12,7 +12,7 @@
         <mat-icon matListItemIcon>folder</mat-icon>
         <div matListItemTitle class="repositories-list-item">
           <span>{{ repository.repo }}</span>
-          <button mat-icon-button color="warn" title="Remove repository" (click)="removeRepo(repository)">
+          <button mat-icon-button class="mat-warn" title="Remove repository" (click)="removeRepo(repository)">
             <mat-icon>close</mat-icon>
           </button>
         </div>

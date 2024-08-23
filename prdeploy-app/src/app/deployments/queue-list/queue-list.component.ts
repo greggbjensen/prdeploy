@@ -22,6 +22,7 @@ import _ from 'lodash';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MtxButtonModule } from '@ng-matero/extensions/button';
 import { CdkDragDrop, CdkDropList, CdkDrag, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
@@ -41,6 +42,7 @@ import { CdkDragDrop, CdkDropList, CdkDrag, moveItemInArray } from '@angular/cdk
     MarkdownComponent,
     ReactiveFormsModule,
     MatProgressSpinnerModule,
+    MtxButtonModule,
     CdkDropList,
     CdkDrag,
     DatePipe,
@@ -73,6 +75,7 @@ export class QueueListComponent implements AfterViewInit {
   @Output() queueUpdateComplete: EventEmitter<number[]> = new EventEmitter<number[]>();
   openPullRequests: PullRequest[];
   pullRequestToAdd: PullRequest;
+  processing = false;
 
   constructor(
     private _openPullRequestsGQL: OpenPullRequestsGQL,
@@ -147,11 +150,16 @@ export class QueueListComponent implements AfterViewInit {
   }
 
   async add(pullRequest: PullRequest) {
-    const pullNumbers = this.queue?.pullRequests.map(p => p.number);
-    pullNumbers?.push(pullRequest.number);
-    await this.updatePullNumbers(pullNumbers);
-    this.pullRequestControl.reset();
-    this.pullRequestToAdd = null;
+    this.processing = true;
+    try {
+      const pullNumbers = this.queue?.pullRequests.map(p => p.number);
+      pullNumbers?.push(pullRequest.number);
+      await this.updatePullNumbers(pullNumbers);
+      this.pullRequestControl.reset();
+      this.pullRequestToAdd = null;
+    } finally {
+      this.processing = false;
+    }
   }
 
   private async updatePullNumbers(

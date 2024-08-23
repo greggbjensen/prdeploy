@@ -12,8 +12,13 @@
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-stroked-button color="primary" (click)="cancel()">Cancel</button>
-  <button mat-flat-button color="primary" (click)="add()" [loading]="processing" [disabled]="processing || !form.valid">
+  <button mat-stroked-button class="mat-primary" (click)="cancel()">Cancel</button>
+  <button
+    mat-flat-button
+    class="mat-primary"
+    (click)="add()"
+    [loading]="processing"
+    [disabled]="processing || !form.valid">
     Add Repository
   </button>
 </mat-dialog-actions>

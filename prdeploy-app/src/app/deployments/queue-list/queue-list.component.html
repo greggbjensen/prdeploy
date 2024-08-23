@@ -17,7 +17,7 @@
             &nbsp;&nbsp;<span>{{ pullRequest.title }}</span>
           </div>
           <span class="queue-pull-updated">{{ pullRequest.updatedAt | date: 'short' }}</span>
-          <button mat-icon-button color="warn" title="Remove from queue" (click)="remove(pullRequest)">
+          <button mat-icon-button class="mat-warn" title="Remove from queue" (click)="remove(pullRequest)">
             <mat-icon>close</mat-icon>
           </button>
           <button mat-icon-button title="Reorder">
@@ -69,9 +69,10 @@
   </mat-form-field>
   <button
     mat-icon-button
-    color="success"
+    class="mat-success"
     title="Add to queue"
     (click)="add(pullRequestToAdd)"
+    [loading]="processing"
     [disabled]="!pullRequestToAdd">
     <mat-icon>add</mat-icon>
   </button>
