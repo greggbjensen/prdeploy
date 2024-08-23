@@ -18,8 +18,8 @@ namespace PrDeploy.Api.Filters
             var result = error;
             switch (error.Exception)
             {
+                // GitHub not found is a forbidden.
                 case Octokit.NotFoundException:
-                    // GitHub not found is a forbidden.
                     result = ErrorBuilder.FromError(error)
                         .SetCode("FORBIDDEN")
                         .SetMessage("Access denied.")
@@ -28,6 +28,20 @@ namespace PrDeploy.Api.Filters
                                 null, HttpStatusCode.Forbidden))
                         .Build();
                     break;
+
+                case HttpRequestException requestException:
+                    if (requestException.StatusCode == HttpStatusCode.Forbidden)
+                    {
+                        result = ErrorBuilder.FromError(error)
+                            .SetCode("FORBIDDEN")
+                            .SetMessage("Access denied.")
+                            .SetException(
+                                new HttpRequestException("Access denied.",
+                                    null, HttpStatusCode.Forbidden))
+                            .Build();
+                    }
+                    break;
+
             }
 
             _logger.LogError(error.Exception, error.Message, error);
