@@ -6,6 +6,8 @@ import { Injectable } from '@angular/core';
 export class AppInfoService {
   constructor() {}
 
+  version = '0.0.1';
+
   public get title() {
     return 'prdeloy';
   }
