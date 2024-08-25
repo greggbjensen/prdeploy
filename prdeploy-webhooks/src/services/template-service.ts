@@ -6,6 +6,8 @@ Handlebars.registerHelper('jsonEncode', (text: string) => {
   return JSON.stringify(text);
 });
 
+Handlebars.registerHelper('color', hexValue => (hexValue ? hexValue.replace(/^#/, '') : ''));
+
 export type TemplateNames =
   | 'deploy-started.md'
   | 'deploy-completed.json'
@@ -26,8 +28,6 @@ export type TemplateNames =
   | 'rollback-completed.md'
   | 'rollback-started.md'
   | 'services-not-found.md';
-
-Handlebars.registerHelper('color', hexValue => (hexValue ? hexValue.replace(/^#/, '') : ''));
 
 @scoped(Lifecycle.ContainerScoped)
 export class TemplateService {
