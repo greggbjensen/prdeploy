@@ -2,6 +2,7 @@
 
 @import './sass/variables';
 @import './sass/reboot';
+@import './sass/root';
 
 html, body { height: 100%; }
 body {
@@ -17,6 +18,14 @@ h2 {
   align-items: center;
 }
 
+a {
+  color: $link-color;
+
+  &:hover {
+    color: $link-color;
+  }
+}
+
 .form-group-title {
   margin: 16px 0 20px 0;
 }
@@ -25,6 +34,11 @@ h2 {
   font-weight: normal;
   margin: 16px 0 20px 0;
   padding-bottom: 10px;
+}
+
+div.mtx-popover-panel {
+  padding: 15px;
+  background-color: $white;
 }
 
 .app-container {
