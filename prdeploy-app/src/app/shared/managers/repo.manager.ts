@@ -67,7 +67,10 @@ export class RepoManager {
   async fetchOwnerRepos() {
     const result = await firstValueFrom(this._enabledOwnerReposGQL.fetch());
     this._isLoaded = true;
-    this.updateOwnerRepos(result.data.enabledOwnerRepos);
+
+    if (result && result.data) {
+      this.updateOwnerRepos(result.data.enabledOwnerRepos);
+    }
   }
 
   updateOwnerRepos(ownerRepos: OwnerRepos[]) {

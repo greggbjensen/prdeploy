@@ -24,5 +24,10 @@
       "**/package-lock.json": true
     },
     "files.eol": "\n",
-    "git.openRepositoryInParentFolders": "always"
+    "git.openRepositoryInParentFolders": "always",
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#2B2D3B",
+        "titleBar.activeBackground": "#3C3E53",
+        "titleBar.activeForeground": "#FAFAFB"
+    }
   }

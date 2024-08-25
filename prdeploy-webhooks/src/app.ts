@@ -91,7 +91,7 @@ app.webhooks.onError(error => {
 // Launch a web server to listen for GitHub webhooks
 console.log('Binding server.');
 const port = process.env.PORT || 3000;
-const path = '/api/webhook';
+const path = '/webhooks';
 const localWebhookUrl = `http://localhost:${port}${path}`;
 
 const middleware = createNodeMiddleware(app.webhooks, { path });
