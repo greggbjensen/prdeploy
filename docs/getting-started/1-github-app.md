@@ -31,9 +31,10 @@ Make sure to copy the **Secret** set above into your notes for use with AWS Para
 
 | Scope          | Permission     |
 | -------------- | -------------- |
-| Actions        | Read-only      |
+| Actions        | Read and write |
 | Administration | Read-only      |
 | Checks         | Read-only      |
+| Contents       | Read and write |
 | Issues         | Read-only      |
 | Metadata       | Read-only      |
 | Pull requests  | Read and write |
