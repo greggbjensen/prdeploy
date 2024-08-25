@@ -44,8 +44,18 @@ namespace PrDeploy.Api.Auth
                 return AuthenticateResult.Fail($"Required claim {JwtRegisteredClaimNames.Name} not present.");
             }
 
-            var encryptedToken = subClaim.Value;
-            var gitHubToken = _cipherService.Decrypt(encryptedToken);
+            string gitHubToken;
+            try
+            {
+                var encryptedToken = subClaim.Value;
+                gitHubToken = _cipherService.Decrypt(encryptedToken);
+            }
+            catch
+            {
+                // If we are unable to decrypt than it is unauthorized.
+                return AuthenticateResult.Fail($"Unable to process claim {JwtRegisteredClaimNames.Sub}.");
+            }
+
             var claims = new List<Claim>
             {
                 // This claim is only present locally.

@@ -40,7 +40,7 @@ try
         .CreateBootstrapLogger();
 
     builder.Services
-        .AddPrDeployApi()
+        .AddPrDeployApi(configuration)
         .AddPrDeployApiBusiness(configuration)
         .AddPrDeployApiModelValidation()
         .AddGitHubAuthentication(

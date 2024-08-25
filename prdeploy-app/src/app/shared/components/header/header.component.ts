@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { UserPanelComponent } from '../user-panel/user-panel.component';
 import { RepoManager } from '../../managers';
@@ -17,7 +17,7 @@ import { MatSelectChange, MatSelectModule } from '@angular/material/select';
   standalone: true,
   imports: [MatToolbarModule, MatButtonModule, MatIconModule, MatSelectModule, UserPanelComponent]
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
   @Output()
   menuToggle = new EventEmitter<boolean>();
 
@@ -44,9 +44,7 @@ export class HeaderComponent implements OnInit {
     this.repoManager.ownerReposChanged$
       .pipe(takeUntilDestroyed())
       .subscribe(ownerRepos => this.updateOwnerRepos(ownerRepos));
-  }
 
-  ngOnInit(): void {
     this.fetchOwnerRepos();
   }
 

@@ -27,6 +27,8 @@ export type TemplateNames =
   | 'rollback-started.md'
   | 'services-not-found.md';
 
+Handlebars.registerHelper('color', hexValue => (hexValue ? hexValue.replace(/^#/, '') : ''));
+
 @scoped(Lifecycle.ContainerScoped)
 export class TemplateService {
   private static readonly templates = new Map<string, TemplateDelegate<any>>();
@@ -56,7 +58,7 @@ export class TemplateService {
     let p = 0;
     let positions = '| Position |';
     let columns = '|----------|';
-    let pulls = `| [${normalizedEnvironment} queue](${prdeployPortalUrl}/{{owner}}/{{repo}}?environment=${normalizedEnvironment}) |`;
+    let pulls = `| [${normalizedEnvironment} queue](${prdeployPortalUrl}/${owner}/${repo}?environment=${normalizedEnvironment}) |`;
     for (const pr of queuePullNumbers) {
       p++;
       positions += ` ${p}       |`;

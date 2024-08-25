@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using FluentValidation;
 
 namespace PrDeploy.Api.Filters
 {
@@ -40,6 +41,17 @@ namespace PrDeploy.Api.Filters
                                     null, HttpStatusCode.Forbidden))
                             .Build();
                     }
+                    break;
+
+                case ValidationException validationException:
+                    var validationMessages = string.Join(", ", validationException.Errors.Select(e => e.ErrorMessage));
+                    result = ErrorBuilder.FromError(error)
+                        .SetCode("BAD_REQUEST")
+                        .SetMessage(validationMessages)
+                        .SetException(
+                            new HttpRequestException("Bad request.",
+                                null, HttpStatusCode.BadRequest))
+                        .Build();
                     break;
 
             }

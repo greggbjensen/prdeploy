@@ -8,6 +8,7 @@ using PrDeploy.Api.Auth;
 using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Filters;
 using PrDeploy.Api.Business.Auth.Interfaces;
+using PrDeploy.Api.Business.Options;
 using PrDeploy.Api.Schema.Mutations;
 using PrDeploy.Api.Schema.Queries;
 
@@ -15,7 +16,7 @@ namespace PrDeploy.Api;
 
 public static class IServiceCollectionExtensions
 {
-    public static IServiceCollection AddPrDeployApi(this IServiceCollection services)
+    public static IServiceCollection AddPrDeployApi(this IServiceCollection services, IConfiguration configuration)
     {
         services
             .AddGraphQLServer()
@@ -62,8 +63,10 @@ public static class IServiceCollectionExtensions
             })
             .AddScoped<IAuthorizationHandler, GitHubRepoAuthorizationHandler>();
 
-
-            services.AddDataProtection()
+        var awsOptions = new AwsExtendedOptions();
+        configuration.Bind("AWS", awsOptions);
+        services.AddDataProtection()
+                .PersistKeysToAWSSystemsManager($"{awsOptions.SecretPathPrefix}/DATA_PROTECTION")
                 .UseCryptographicAlgorithms(new()
                 {
                     EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
