@@ -144,8 +144,8 @@ export class ParameterService {
 
   private getPath(level: ParameterLevel): string {
     return level === 'Repo'
-      ? `/${process.env.AWS_SECRET_PATH_PREFIX}/${this._repository.owner.login}/${this._repository.name}`
-      : `/${process.env.AWS_SECRET_PATH_PREFIX}/${this._repository.owner.login}`;
+      ? `${process.env.AWS_SECRET_PATH_PREFIX}/${this._repository.owner.login}/${this._repository.name}`
+      : `${process.env.AWS_SECRET_PATH_PREFIX}/${this._repository.owner.login}`;
   }
 
   private async populateAllParameters(level: ParameterLevel, parameters: Map<string, string>): Promise<void> {
