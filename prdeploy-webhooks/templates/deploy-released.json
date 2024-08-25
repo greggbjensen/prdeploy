@@ -5,7 +5,7 @@
             "elements": [
                 {
                     "type": "image",
-                    "image_url": "https://via.placeholder.com/32/{{environment.color}}/ffffff?text={{environment.name}}",
+                    "image_url": "https://via.placeholder.com/32/{{color environment.color}}/ffffff?text={{environment.name}}",
                     "alt_text": "{{environment.name}}"
                 },
                 {

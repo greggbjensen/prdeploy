@@ -27,6 +27,8 @@ export type TemplateNames =
   | 'rollback-started.md'
   | 'services-not-found.md';
 
+Handlebars.registerHelper('color', hexValue => (hexValue ? hexValue.replace(/^#/, '') : ''));
+
 @scoped(Lifecycle.ContainerScoped)
 export class TemplateService {
   private static readonly templates = new Map<string, TemplateDelegate<any>>();
