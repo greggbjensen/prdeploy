@@ -1,3 +1,4 @@
+using System.Net;
 using PrDeploy.Api.Business.Security.Interfaces;
 using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Business.Stores.Interfaces;
@@ -83,6 +84,45 @@ public class OwnerRepoService : IOwnerRepoService
             await _parameterStore.SetAsync(OwnerReposKey, ownerRepos);
         }
 
-        return ownerRepos;
+
+        // If there are no repositories configured yet, then allow them to be set up.
+        if (ownerRepos.Count == 0)
+        {
+            return ownerRepos;
+        }
+
+        // Filter out all repositories without access,
+        // if there are none left, than access is forbidden.
+        var hasAuthorizedRepos = false;
+        var ownerReposList = new List<OwnerRepos>();
+        foreach (var ownerRepo in ownerRepos)
+        {
+            var authorizedOwnerRepos = new OwnerRepos
+            {
+                Owner = ownerRepo.Owner,
+                Repos = new List<string>()
+            };
+            foreach (var repo in ownerRepo.Repos)
+            {
+                if (await _gitHubSecurity.HasRepoAccessAsync(ownerRepo.Owner, repo))
+                {
+                    authorizedOwnerRepos.Repos.Add(repo);
+                }
+            }
+
+            if (authorizedOwnerRepos.Repos.Count > 0)
+            {
+                ownerReposList.Add(authorizedOwnerRepos);
+                hasAuthorizedRepos = true;
+            }
+        }
+
+        // If no repositories are authorized than access is denied.
+        if (!hasAuthorizedRepos)
+        {
+            throw new HttpRequestException("Access denied.", null, HttpStatusCode.Forbidden);
+        }
+            
+        return ownerReposList;
     }
 }

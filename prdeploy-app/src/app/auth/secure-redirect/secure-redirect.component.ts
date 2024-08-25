@@ -22,6 +22,10 @@ export class SecureRedirectComponent {
 
   async redirectToOwnerRepo() {
     const response = await firstValueFrom(this._enabledOwnerReposGQL.fetch());
+    if (!response) {
+      return;
+    }
+
     const ownerRepos = response.data.enabledOwnerRepos;
     const hasRepos = await this._repoManager.updateOwnerRepos(ownerRepos);
     if (hasRepos && ownerRepos && ownerRepos.length > 0) {
