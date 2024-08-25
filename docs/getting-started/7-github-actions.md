@@ -76,7 +76,7 @@ Actions that apply and retrieve the information needed for builds and deployment
 ## Notes
 
 1. Labels will be automatically created for each environment in your repository.
-   1. Environment labels should be the badge color you want for the environment icon.
+   1. Environment label color will be the badge color for the environment icon in comments.
 3. In order for a completed or failed deploy status message to show the version, you must provide a `build-details` artifact to your builds that includes a `build-details.json` file with at least the following:
    1. The [build-details](/.github/actions/build-details/README.md#build-details-action) action can provide this.
 
