@@ -39,6 +39,8 @@ a {
 div.mtx-popover-panel {
   padding: 15px;
   background-color: $white;
+  max-width: 700px;
+  min-width: 300px;
 }
 
 .color-preview {

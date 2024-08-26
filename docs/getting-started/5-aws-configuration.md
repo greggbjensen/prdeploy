@@ -2,7 +2,12 @@ The **prdeploy** app loads external secrets, saves settings, and tracks deployme
 
 ## 1. AWS role and permissions
 
-1. Create a new role of `prdeloy-backend` with the following assume policy.
+![Setup AWS Role](/assets/images/screenshots/getting-started/aws-role.png)
+{: style="margin: 30px 0 60px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
+
+1. Navigate to [https://aws.amazon.com](https://aws.amazon.com).
+2. Go to **IAM**, then **Roles**.
+3. Create a new role of `prdeloy-backend` with the following assume policy.
 
 ```json
 {
@@ -24,7 +29,11 @@ The **prdeploy** app loads external secrets, saves settings, and tracks deployme
 }
 ```
 
-2. Create the following IAM policy as `prdeploy-backend` and associate it to the role:
+4. Go to **Policies**.
+5. Create the following IAM policy as `prdeploy-backend` and associate it to the role:
+
+![Setup AWS Policy](/assets/images/screenshots/getting-started/aws-policy.png)
+{: style="margin: 30px 0 60px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
 
 ```json
 {
@@ -47,7 +56,10 @@ The **prdeploy** app loads external secrets, saves settings, and tracks deployme
 
 ## 2. Parameter store configuration.
 
-1. Navigate to...
+![Setup AWS Parameter Store](/assets/images/screenshots/getting-started/aws-parameter-store.png)
+{: style="margin: 30px 0 60px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
+
+1. Navigate to **AWS Systems Manager**, then **Parameter Store**.
 2. Add the following entries as `SecureString` to AWS Parameter Store:
 
 | Name                                 | Value                                                                   |

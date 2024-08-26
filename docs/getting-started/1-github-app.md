@@ -2,6 +2,9 @@ In order to be able to listen and respond to pull request events, we need to cre
 
 ## 1. Create GitHub App
 
+![Setup GitHub App](/assets/images/screenshots/getting-started/github-app.png)
+{: style="margin: 30px 0 60px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
+
 1. Navigate to https://github.com and sign in.
 2. Click on your profile photo in the top right and choose **Your Organizations**.
 3. Click on the organization you want to add **prdeploy** to.
@@ -9,23 +12,28 @@ In order to be able to listen and respond to pull request events, we need to cre
 5. Click **New GitHub App** in the top right.
 6. Fill in at least the following information:
 
-| Field           | Value                                                                       |
-| --------------- | --------------------------------------------------------------------------- |
-| GitHub App Name | prdeploy                                                                    |
-| Description     | Allows the entire build-deploy lifecycle to happen within a feature branch. |
-| Homepage URL    | https://prdeploy.myorg.com                                                  |
-| Webhook URL     | https://prdeploy.myorg.com/webhooks                                         |
-| Secret          | _Any secure set of characters (see below)._                                 |
+    | Field           | Value                                                                       |
+    | --------------- | --------------------------------------------------------------------------- |
+    | GitHub App Name | prdeploy                                                                    |
+    | Description     | Allows the entire build-deploy lifecycle to happen within a feature branch. |
+    | Homepage URL    | https://prdeploy.myorg.com                                                  |
+    | Webhook URL     | https://prdeploy.myorg.com/webhooks                                         |
+    | Secret          | _Any secure set of characters (see below)._                                 |
 
-Generating a secret with Node:
+    Generating a secret with Node:
 
-```bash
-node -e "console.log(require('crypto').randomBytes(64).toString('base64'));"
-```
+    ```bash
+    node -e "console.log(require('crypto').randomBytes(64).toString('base64'));"
+    ```
 
-Make sure to copy the **Secret** set above into your notes for use with AWS Parameter Store.
+    Make sure to copy the **Secret** set above into your notes for use with AWS Parameter Store.
 
-7. Set each of the **Permissions** as follows:
+## 1. Configure permissions and events
+
+1. Set each of the **Permissions** as follows:
+
+![Setup GitHub App Permissions](/assets/images/screenshots/getting-started/github-app-permissions.png)
+{: style="margin: 30px 0 60px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
 
 **Repository Permissions**
 
@@ -39,7 +47,7 @@ Make sure to copy the **Secret** set above into your notes for use with AWS Para
 | Metadata       | Read-only      |
 | Pull requests  | Read and write |
 
-**Organization Permissions**
+  **Organization Permissions**
 
 | Scope   | Permission |
 | ------- | ---------- |
@@ -51,15 +59,15 @@ Make sure to copy the **Secret** set above into your notes for use with AWS Para
 | --------------- | ---------- |
 | Email addresses | Read-only  |
 
-8. Subscribe to the following events:
+2. Subscribe to the following events:
 
 ```
 Issue comment
 Pull request
 Workflow run
 ```
-9. **Where can this GitHub App be installed?** should be set to **Only on this account**.
-10. Click **Create GitHub App**.
+3. **Where can this GitHub App be installed?** should be set to **Only on this account**.
+4. Click **Create GitHub App**.
 
 ## 2. Display information
 
@@ -67,7 +75,7 @@ Workflow run
 2. Under **Display information** click on **Upload a logo...**.
 3. Download and select the file from `https://github.com/greggbjensen/prdeploy/blob/main/docs/assets/images/logo-128x128.png`.
 
-## 3. Credentials and Private key
+## 3. Credentials and private key
 
 1. From the top of the page add the following to your notes for use with AWS Parameter Store:
     * App ID
