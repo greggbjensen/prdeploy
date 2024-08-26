@@ -4,7 +4,7 @@ A big challenge of deploying microservices is making sure which services should 
 
 In the case of the **monorepo** for microservices, you will have multiple services in the root of the project as a folder.  As you can see here with the **deploy-api-test** and **deploy-app-test** services .
 
-![GitHub Actions Workflows](/assets/images/screenshots/getting-started/github-actions-workflows.png)
+![GitHub Actions Workflows](./assets/images/screenshots/getting-started/github-actions-workflows.png)
 {: style="margin: 30px 0 30px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
 
 ## Microservice builds

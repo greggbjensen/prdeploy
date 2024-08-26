@@ -2,7 +2,7 @@ In order to be able to listen and respond to pull request events, we need to cre
 
 ## 1. Create GitHub App
 
-![Setup GitHub App](/assets/images/screenshots/getting-started/github-app.png)
+![Setup GitHub App](../assets/images/screenshots/getting-started/github-app.png)
 {: style="margin: 30px 0 60px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
 
 1. Navigate to https://github.com and sign in.
@@ -32,7 +32,7 @@ In order to be able to listen and respond to pull request events, we need to cre
 
 1. Set each of the **Permissions** as follows:
 
-![Setup GitHub App Permissions](/assets/images/screenshots/getting-started/github-app-permissions.png)
+![Setup GitHub App Permissions](../assets/images/screenshots/getting-started/github-app-permissions.png)
 {: style="margin: 30px 0 60px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
 
 **Repository Permissions**

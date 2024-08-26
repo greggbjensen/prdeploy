@@ -2,7 +2,7 @@ When a pull request is create the prdeploy app will check the branch name for an
 
 ## 1. Create JIRA API token
 
-![Setup JiRA API Token](/assets/images/screenshots/getting-started/jira-token.png)
+![Setup JiRA API Token](../assets/images/screenshots/getting-started/jira-token.png)
 {: style="margin: 30px 0 60px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
 
 1. Navigate to your JIRA instance https://myorg.atlassian.net/jira.
