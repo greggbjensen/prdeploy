@@ -2,7 +2,7 @@
 
 Creates a summary of your build with version and pull request information.
 
-![Screenshot](/.github/actions/build-details/images/build-details.png)
+![Screenshot](/docs/assets/images/screenshots/getting-started/github-actions-build-details.png)
 
 ## Inputs
 
