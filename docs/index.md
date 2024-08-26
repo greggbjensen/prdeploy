@@ -26,6 +26,13 @@ The [prdeploy portal](prdeploy-portal.md) dashboard to overview releases and dep
 ![prdeploy deployments](./assets/images/screenshots/prdeploy-portal.png)
 {: style="margin: 30px 0 60px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
 
+### Microservice deploy
+
+Using a **monorepo**, the [Microservice deploy](microservice-deploy.md) determines which services to deploy within a pull requests, and keeps each environment in sync with a stable release to production.
+
+![Combined deploy workflow](./assets/images/screenshots/getting-started/combined-deploy-workflow.png)
+{: style="margin: 30px 0 30px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
+
 
 ### Slack notifications
 
