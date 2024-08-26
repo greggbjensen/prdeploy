@@ -113,12 +113,10 @@
 
 <mtx-popover #popover="mtxPopover">
   <ng-template mtxPopoverContent let-pullRequest="pullRequest">
-    <div style="max-width: 300px">
-      <div class="pull-head">
-        <span class="pull-user">{{ pullRequest.user?.name }}</span>
-        <span>{{ pullRequest.updatedAt | date: 'short' }}</span>
-      </div>
-      <markdown [data]="pullRequest.body | cleanMarkdown" [disableSanitizer]="true"> </markdown>
+    <div class="pull-head">
+      <span class="pull-user">{{ pullRequest.user?.name }}</span>
+      <span>{{ pullRequest.updatedAt | date: 'short' }}</span>
     </div>
+    <markdown class="pull-description" [data]="pullRequest.body | cleanMarkdown" [disableSanitizer]="true"> </markdown>
   </ng-template>
 </mtx-popover>
