@@ -11,31 +11,42 @@ Release multiple times per day with less issues.
 
 The **prdeploy** application supplies the following features:
 
-1. [Comment commands](comment-commands.md) to manage your deployments without leaving your pull request.
+### Commend commands
 
-    ![Deploy comment command](./assets/images/screenshots/prcomment-deploy.png)
-    {: style="margin: 30px 0;"}
+Post [comment commands](comment-commands.md) to manage your deployments without leaving your pull request.
 
-2. [prdeploy portal](prdeploy-portal.md) dashboard to overview releases and deployment queues and act on them.
-
-    ![prdeploy deployments](./assets/images/screenshots/prdeploy-portal.png)
-    {: style="margin: 30px 0 60px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
+![Deploy comment command](./assets/images/screenshots/prcomment-deploy.png)
+{: style="margin: 30px 0;"}
 
 
-3. [Slack notifications](slack-notifications.md) for posting events to keep your process moving.
+### prdeploy portal
 
-    ![Slack deploy notification](./assets/images/screenshots/slack-deploy-notification.png)
-    {: style="margin: 30px 0;"}
+The [prdeploy portal](prdeploy-portal.md) dashboard to overview releases and deployment queues and act on them.
 
-4. [JIRA links](jira-links.md) update your pull request with a link to each issue in the branch name.
+![prdeploy deployments](./assets/images/screenshots/prdeploy-portal.png)
+{: style="margin: 30px 0 60px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
 
-    ![JIRA issue link](./assets/images/screenshots/jira-links.png)
-    {: style="margin: 30px 0 0 0;"}
 
-5. [Deployment queues](deployment-queues.md) organize environment use by putting a pull request in waiting.
+### Slack notifications
 
-    ![Deployment queue comment](./assets/images/screenshots/deployment-queues.png)
-    {: style="margin: 30px 0 0 0;"}
+Automated [Slack notifications](slack-notifications.md) for posting events to keep your process moving.
+
+![Slack deploy notification](./assets/images/screenshots/slack-deploy-notification.png)
+{: style="margin: 30px 0;"}
+
+### JIRA links
+
+Associate [JIRA links](jira-links.md) update your pull request with a link to each issue in the branch name.
+
+![JIRA issue link](./assets/images/screenshots/jira-links.png)
+{: style="margin: 30px 0 0 0;"}
+
+### Deployment queues
+
+The [deployment queues](deployment-queues.md) organize environment use by putting a pull request in waiting.
+
+![Deployment queue comment](./assets/images/screenshots/deployment-queues.png)
+{: style="margin: 30px 0 0 0;"}
 
 ## Getting started
 

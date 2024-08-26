@@ -6,6 +6,9 @@ The deployment process keeps all environments in sync with production except wha
 
 ## Combined Deploy Workflow
 
+![GitHub Actions Workflows](/assets/images/screenshots/getting-started/github-actions-workflows.png)
+{: style="margin: 30px 0 30px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
+
 In order for a repository to handle deployments, it must contain and workflow of `combined-deploy.yaml` with the following inputs:
 
 ```yaml
@@ -79,6 +82,9 @@ Actions that apply and retrieve the information needed for builds and deployment
    1. Environment label color will be the badge color for the environment icon in comments.
 3. In order for a completed or failed deploy status message to show the version, you must provide a `build-details` artifact to your builds that includes a `build-details.json` file with at least the following:
    1. The [build-details](/.github/actions/build-details/README.md#build-details-action) action can provide this.
+
+    ![GitHub Actions Build Details](/assets/images/screenshots/getting-started/github-actions-build-details.png)
+    {: style="margin: 30px 0 30px 0;"}
 
 ```json
 {
