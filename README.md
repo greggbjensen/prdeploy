@@ -17,7 +17,7 @@ Use the prdeploy portal dashboard to overview releases and deployment queues and
 
 Post comment commands to manage your deployments without leaving your pull request.
 
-![prdeploy deployments](/docs/assets/images/screenshots/prdeploy-portal.png)
+![Deploy comment command](/docs/assets/images/screenshots/prcomment-deploy.png)
 
 | Command                                              | Description                                                                                                                         |
 | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
