@@ -12,8 +12,27 @@ Release multiple times per day with less issues.
 The **prdeploy** application supplies the following features:
 
 1. [Comment commands](comment-commands.md) to manage your deployments without leaving your pull request.
-2. [Slack notifications](slack-notifications.md) for posting events to keep your process moving.
-3. [prdeploy portal](prdeploy-portal.md) dashboard to overview releases and deployment queues and act on them.
+
+    ![Deploy comment command](./assets/images/screenshots/prcomment-deploy.png)
+    {: style="margin: 30px 0;"}
+
+2. [prdeploy portal](prdeploy-portal.md) dashboard to overview releases and deployment queues and act on them.
+
+
+3. [Slack notifications](slack-notifications.md) for posting events to keep your process moving.
+
+    ![Slack deploy notification](./assets/images/screenshots/slack-deploy-notification.png)
+    {: style="margin: 30px 0;"}
+
+4. [JIRA links](jira-links.md) update your pull request with a link to each issue in the branch name.
+
+    ![JIRA issue link](./assets/images/screenshots/jira-links.png)
+    {: style="margin: 30px 0 0 0;"}
+
+5. [Deployment queues](deployment-queues.md) organize environment use by putting a pull request in waiting.
+
+    ![Deployment queue comment](./assets/images/screenshots/deployment-queues.png)
+    {: style="margin: 30px 0 0 0;"}
 
 ## Getting started
 

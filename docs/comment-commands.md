@@ -1,5 +1,8 @@
 Within the pull request, engineers, QA, and the product owner can work together using **prdeploy** comments as commands to progress the feature to production.  The intent is for the full lifecycle of development to take place within the pull request, cleaning up all bugs before merging to the `main` branch.  This makes sure each pull request is clean of bugs and the testing scope is small.
 
+![Deploy comment command](./assets/images/screenshots/prcomment-deploy.png)
+{: style="margin: 40px 0 10px 0;"}
+
 ## Comment Commands
 
 | Command                                              | Description                                                                                                                         |
