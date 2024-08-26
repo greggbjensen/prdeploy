@@ -21,7 +21,7 @@ Post [comment commands](comment-commands.md) to manage your deployments without 
 
 ### prdeploy portal
 
-The [prdeploy portal](prdeploy-portal.md) dashboard to overview releases and deployment queues and act on them.
+Use the [prdeploy portal](prdeploy-portal.md) dashboard to overview releases and deployment queues and act on them.
 
 ![prdeploy deployments](./assets/images/screenshots/prdeploy-portal.png)
 {: style="margin: 30px 0 60px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
