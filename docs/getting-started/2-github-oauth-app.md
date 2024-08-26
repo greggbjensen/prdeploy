@@ -11,7 +11,7 @@ For authorization of the portal to view deployments, we need to create an GitHub
 
 | Field                      | Value                                                                       |
 | -------------------------- | --------------------------------------------------------------------------- |
-| Aopplication name          | prdeploy                                                                    |
+| Aopplication name          | prdeploy myorg                                                              |
 | Homepage URL               | https://prdeploy.myorg.com                                                  |
 | Description                | Allows the entire build-deploy lifecycle to happen within a feature branch. |
 | Authorization callback URL | https://prdeploy.myorg.com/login/callback                                   |
