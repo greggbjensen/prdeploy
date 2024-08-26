@@ -68,6 +68,13 @@ class SetCompareValue<T> {
   styleUrl: './settings-form.component.scss'
 })
 export class SettingsFormComponent implements AfterViewInit {
+  private static readonly DefaultEnvironmentColors = {
+    default: '#fd7e14',
+    dev: '#d4ac0d',
+    stage: '#2e86c1',
+    prod: '#1d8348'
+  };
+
   @ViewChild(MatSelectionList) settingsNav: MatSelectionList;
 
   settingsCompare: DeploySettingsCompare;
@@ -251,9 +258,11 @@ export class SettingsFormComponent implements AfterViewInit {
       return;
     }
 
+    const color = this.getDefaultColor(name.toLowerCase());
     environments.push({
       name,
       queue: `${name.toUpperCase()}_PR_QUEUE`,
+      color,
       requireApproval: false,
       requireBranchUpToDate: false,
       automationTest: {
@@ -448,5 +457,21 @@ export class SettingsFormComponent implements AfterViewInit {
       compareValue.hasValues = true;
       input[key] = compare[key][level];
     }
+  }
+
+  private getDefaultColor(environmentName: string): string {
+    let color: string;
+    const lowerEnvironment = environmentName.toLowerCase();
+    if (lowerEnvironment.startsWith('dev')) {
+      color = SettingsFormComponent.DefaultEnvironmentColors.dev;
+    } else if (lowerEnvironment.startsWith('stag')) {
+      color = SettingsFormComponent.DefaultEnvironmentColors.stage;
+    } else if (lowerEnvironment.startsWith('prod')) {
+      color = SettingsFormComponent.DefaultEnvironmentColors.prod;
+    } else {
+      color = SettingsFormComponent.DefaultEnvironmentColors.default;
+    }
+
+    return color;
   }
 }
