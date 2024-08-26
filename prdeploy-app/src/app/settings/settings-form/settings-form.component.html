@@ -56,7 +56,9 @@
                   (opened)="selectedEnvironmentChange(environment)">
                   <mat-expansion-panel-header>
                     <div class="accordion-header {{ hasEnvironments ? '' : 'environments-disabled' }}">
-                      <span>{{ environment.name }}</span>
+                      <span class="deploy-environment" [style]="{ backgroundColor: environment.color }">
+                        {{ environment.name }}
+                      </span>
                       <button
                         mat-icon-button
                         class="mat-warn remove-environment"

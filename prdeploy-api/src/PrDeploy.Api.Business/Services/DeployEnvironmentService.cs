@@ -43,18 +43,19 @@ public class DeployEnvironmentService : IDeployEnvironmentService
         var deployEnvironments = new List<DeployEnvironment>();
 
         var repoSettings = await _deploySettingsService.GetMergedAsync(input.Owner, input.Repo);
-        var labels = await _gitHubClient.Issue.Labels.GetAllForRepository(input.Owner, input.Repo);
-        var environmentColors = labels.ToDictionary(l => l.Name, l => $"#{l.Color}", StringComparer.OrdinalIgnoreCase);
         foreach (var environment in repoSettings.Environments!)
         {
             var deployEnvironment = new DeployEnvironment
             {
                 Name = environment.Name,
-                Url = environment.Url
+                Url = environment.Url,
+                Color = environment.Color
             };
 
-            deployEnvironment.Color = environmentColors!.
-                GetValueOrDefault(environment.Name, DefaultEnvironmentColor);
+            if (string.IsNullOrEmpty(deployEnvironment.Color))
+            {
+                deployEnvironment.Color = DefaultEnvironmentColor;
+            }
 
             var issues = await _gitHubClient.Issue.GetAllForRepository(
                 input.Owner,

@@ -41,6 +41,19 @@ div.mtx-popover-panel {
   background-color: $white;
 }
 
+.color-preview {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  margin-top: -15px;
+  z-index: 2;
+  pointer-events: none;
+  cursor: pointer;
+}
+
 .app-container {
 
   .mat-mdc-header-cell {

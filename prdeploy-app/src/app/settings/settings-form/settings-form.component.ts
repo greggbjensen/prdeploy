@@ -353,6 +353,7 @@ export class SettingsFormComponent implements AfterViewInit {
 
     this.setObjectValue(input, 'name', compare);
     this.setObjectValue(input, 'queue', compare);
+    this.setObjectValue(input, 'color', compare);
     this.setObjectValue(input, 'url', compare);
     this.setObjectValue(input, 'requireApproval', compare);
     this.setObjectValue(input, 'requireBranchUpToDate', compare);

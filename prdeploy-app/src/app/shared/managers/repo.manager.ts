@@ -9,8 +9,6 @@ import { Repository } from '../models';
   providedIn: 'root'
 })
 export class RepoManager {
-  private _repo = '';
-  private _owner = '';
   private _isLoaded = false;
 
   private _ownerReposChangedSubject = new BehaviorSubject<OwnerRepos[]>([]);
@@ -38,23 +36,21 @@ export class RepoManager {
   }
 
   get repo(): string {
-    return this._repo;
+    return this._valueChangedSubject.value ? this._valueChangedSubject.value.repo : '';
   }
 
   set repo(value: string) {
     if (value !== this.repo) {
-      this._repo = value;
       this.updateValueChanged();
     }
   }
 
   get owner(): string {
-    return this._owner;
+    return this._valueChangedSubject.value ? this._valueChangedSubject.value.owner : '';
   }
 
   set owner(value: string) {
     if (value !== this.owner) {
-      this._owner = value;
       this.updateValueChanged();
     }
   }

@@ -153,13 +153,27 @@ export class DeploySettingsService {
 
     for (const environment of repoSettings.environments) {
       const lowerEnviroment = environment.name.toLowerCase();
+      if (!environment.color) {
+        environment.color = this.getDefaultColor(environment.name);
+      }
+
       const environmentLabel = labels.find(l => l.name.toLowerCase() === lowerEnviroment);
       if (environmentLabel) {
-        environment.color = environmentLabel.color;
+        // Keep label and environment color in sync.
+        if (environment.color && environmentLabel.color !== environment.color) {
+          // Label colors do not include the hash for hex values.
+          const color = environment.color.replace(/^#/, '');
+          await this._octokit.rest.issues.updateLabel({
+            owner: repoSettings.owner,
+            repo: repoSettings.repo,
+            name: lowerEnviroment,
+            color,
+            description: `Pull request deployed to ${lowerEnviroment} environment.`
+          });
+        }
       } else {
         this._log.warn(`Label does not exist yet for ${lowerEnviroment}, creating it.`);
-        environment.color = this.getDefaultColor(lowerEnviroment);
-        const color = environment.color.replace(/^#/, ''); // Label colors do not include the hash for hex values.
+        const color = environment.color.replace(/^#/, '');
         await this._octokit.rest.issues.createLabel({
           owner: repoSettings.owner,
           repo: repoSettings.repo,
@@ -174,7 +188,7 @@ export class DeploySettingsService {
       if (!hasLockLabel) {
         this._log.warn(`Label does not exist yet for ${environmentLock}, creating it.`);
         let color = this.getDefaultColor(environmentLock);
-        color = environment.color.replace(/^#/, ''); // Label colors do not include the hash for hex values.
+        color = color.replace(/^#/, '');
         await this._octokit.rest.issues.createLabel({
           owner: repoSettings.owner,
           repo: repoSettings.repo,
