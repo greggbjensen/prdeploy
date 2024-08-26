@@ -33,11 +33,23 @@
   display: flex;
   align-items: center;
   width: 100%;
-
-  span {
-    text-transform: capitalize;
-  }
 }
+
+.deploy-environment {
+  text-transform: capitalize;
+  color: $white;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  text-decoration: none;
+  line-height: 20px;
+  border-radius: 3px;
+  padding: 5px;
+  text-align: center;
+  display: block;
+  min-width: 120px;
+  text-transform: capitalize;
+}
+
 
 ::ng-deep .settings-form .form-title {
     margin-top: 0;

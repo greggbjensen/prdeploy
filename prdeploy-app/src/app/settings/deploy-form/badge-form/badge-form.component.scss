@@ -5,16 +5,3 @@
 .field-group-horizontal label {
   width: 60px;
 }
-
-.color-preview {
-  position: absolute;
-  top: 50%;
-  right: 5px;
-  width: 30px;
-  height: 30px;
-  border-radius: 15px;
-  margin-top: -15px;
-  z-index: 2;
-  pointer-events: none;
-  cursor: pointer;
-}

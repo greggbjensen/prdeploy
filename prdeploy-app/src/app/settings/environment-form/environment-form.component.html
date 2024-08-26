@@ -12,6 +12,26 @@
         <input matInput type="text" [(ngModel)]="environment.queue" name="queue" [disabled]="!hasEnvironments" />
       </mat-form-field>
 
+      <mat-form-field>
+        <mat-label>Color</mat-label>
+        <input
+          matInput
+          [(ngModel)]="environment.color"
+          [mtxColorpicker]="picker"
+          [disabled]="!hasEnvironments"
+          format="hex"
+          name="error" />
+        <span
+          matSuffix
+          class="color-preview"
+          [ngStyle]="{
+            'background-color': environment.color
+          }">
+        </span>
+        <mtx-colorpicker-toggle matSuffix [for]="picker"></mtx-colorpicker-toggle>
+        <mtx-colorpicker #picker></mtx-colorpicker>
+      </mat-form-field>
+
       <mat-form-field class="form-field-2x">
         <mat-label>URL</mat-label>
         <input matInput type="text" [(ngModel)]="environment.url" name="url" [disabled]="!hasEnvironments" />

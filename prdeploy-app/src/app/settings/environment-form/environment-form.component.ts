@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { EnvironmentSettings } from 'src/app/shared/graphql';
-import { KeyValuePipe } from '@angular/common';
+import { KeyValuePipe, NgStyle } from '@angular/common';
 import { SettingsLevel } from '../models';
 import { AddAutomationInputDialogComponent } from './add-automation-input-dialog/add-automation-input-dialog.component';
 import { AddExcludeRollbackServiceDialogComponent } from './add-exclude-rollback-service-dialog/add-exclude-rollback-service-dialog.component';
@@ -13,6 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
+import { MtxColorpickerModule } from '@ng-matero/extensions/colorpicker';
 
 @Component({
   selector: 'app-environment-form',
@@ -25,8 +26,10 @@ import { MatChipsModule } from '@angular/material/chips';
     MatChipsModule,
     FormsModule,
     MatCheckboxModule,
+    MtxColorpickerModule,
     AddAutomationInputDialogComponent,
     AddExcludeRollbackServiceDialogComponent,
+    NgStyle,
     KeyValuePipe
   ],
   templateUrl: './environment-form.component.html',

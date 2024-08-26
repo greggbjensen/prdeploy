@@ -2,13 +2,16 @@ deployWorkflow: combined-deploy.yaml
 environments:
   - name: dev
     queue: 'DEV_PR_QUEUE'
+    color: '#d4ac0d'
     url: 'https://dev.myorg.com'
   - name: stage
     queue: 'STAGE_PR_QUEUE'
+    color: '#2e86c1'
     url: 'https://stage.myorg.com'
     requireBranchUpToDate: true
   - name: prod
     queue: 'PROD_PR_QUEUE'
+    color: '#1d8348'
     url: 'https://www.myorg.com'
     requireBranchUpToDate: true
     requireApproval: true

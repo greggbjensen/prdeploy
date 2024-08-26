@@ -3,6 +3,7 @@ public class EnvironmentSettings
 {
     public string Name { get; set; } = string.Empty;
     public string Queue { get; set; } = string.Empty;
+    public string Color { get; set; } = string.Empty;
     public string? Url { get; set; }
     public bool RequireApproval { get; set; }
     public bool RequireBranchUpToDate { get; set; }

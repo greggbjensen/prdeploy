@@ -1,33 +1,39 @@
 {
+    "jestrunner.disableCodeLens": true,
+    "prettier.configPath": ".prettierrc.json",
+    "eslint.workingDirectories": [{ "mode": "auto" }],
+    "[html]": {
+      "editor.formatOnSave": false,
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      // runs Prettier, then ESLint
+      "editor.codeActionsOnSave": [
+          "source.formatDocument",
+          "source.fixAll.eslint"
+      ]
+    },
     "[typescript]": {
-      "editor.tabSize": 2,
-      "editor.formatOnSave": true,
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.formatOnSave": false,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        // runs Prettier, then ESLint
+        "editor.codeActionsOnSave": [
+            "source.formatDocument",
+            "source.fixAll.eslint"
+        ]
     },
     "[json]": {
-      "editor.tabSize": 2,
-      "editor.formatOnSave": true,
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[yaml]": {
-        "editor.tabSize": 2
-    },
-    "[yml]": {
-        "editor.tabSize": 2
+      "editor.formatOnSave": false,
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      // runs Prettier, then ESLint
+      "editor.codeActionsOnSave": [
+          "source.formatDocument",
+          "source.fixAll.eslint"
+      ]
     },
     "editor.detectIndentation": false,
     "editor.indentSize": "tabSize",
-    "jest.runMode": "deferred",
-    "prettier.singleQuote": true,
-    "search.exclude": {
-      "**/dist": true,
-      "**/package-lock.json": true
+    "files.exclude": {
+        "**/.angular": true
     },
-    "files.eol": "\n",
-    "git.openRepositoryInParentFolders": "always",
-    "workbench.colorCustomizations": {
-        "activityBar.background": "#2B2D3B",
-        "titleBar.activeBackground": "#3C3E53",
-        "titleBar.activeForeground": "#FAFAFB"
-    }
-  }
+    "prettier.singleQuote": true,
+    "aws.telemetry": false
+}
