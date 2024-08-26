@@ -5,7 +5,7 @@ The prdeploy app is able to post deployment and release notifications to Slack a
 
 ## 1. Create Slack App
 
-![Setup Slack App](/assets/images/screenshots/getting-started/slack-app.png)
+![Setup Slack App](../assets/images/screenshots/getting-started/slack-app.png)
 {: style="margin: 30px 0 60px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
 
 1. Navigate to [https://api.slack.com/apps](https://api.slack.com/apps).
@@ -50,7 +50,7 @@ users:read.email
 
 ## 4. Webhook configuration
 
-![Setup Slack App Webhooks](/assets/images/screenshots/getting-started/slack-app-webhooks.png)
+![Setup Slack App Webhooks](../assets/images/screenshots/getting-started/slack-app-webhooks.png)
 {: style="margin: 30px 0 50px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
 
 1. Click on **Incoming Webhooks** on the left nav.

@@ -1,6 +1,6 @@
 The web portal for **prdeploy** allows you to view and manage settings and deployments. These are the installation instructions for Kubernetes.
 
-![prdeploy settings](/assets/images/screenshots/prdeploy-portal-settings.png)
+![prdeploy settings](../assets/images/screenshots/prdeploy-portal-settings.png)
 {: style="margin: 30px 0 40px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
 
 ## 1. Helm chart install
@@ -40,7 +40,7 @@ helm upgrade prdeploy oci://registry-1.docker.io/greggbjensen/prdeploy \
 
 ## 2. Repositories
 
-![prdeploy repositories](/assets/images/screenshots/prdeploy-portal-repositories.png)
+![prdeploy repositories](../assets/images/screenshots/prdeploy-portal-repositories.png)
 {: style="margin: 30px 0 40px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
 
 _NOTE: For each of the following sections, you can enter the settings either in **Owner Defaults** for all repositories or **Repository Override** for a specific repository.  Any repository can override the **Owner Defaults**._
@@ -59,7 +59,7 @@ _NOTE: You must click **Save** in the top right before leaving the **Settings** 
 
 ## 3. Environments
 
-![prdeploy settings Environments](/assets/images/screenshots/prdeploy-portal-settings-environments.png)
+![prdeploy settings Environments](../assets/images/screenshots/prdeploy-portal-settings-environments.png)
 {: style="margin: 30px 0 40px 0;"}
 
 1. In the portal, click **Settings** on the left nav.
@@ -75,7 +75,7 @@ _NOTE: You must click **Save** in the top right before leaving the **Settings** 
 
 ## 4. Services
 
-![prdeploy settings Services](/assets/images/screenshots/prdeploy-portal-settings-services.png)
+![prdeploy settings Services](../assets/images/screenshots/prdeploy-portal-settings-services.png)
 {: style="margin: 30px 0 40px 0;"}
 
 1. Go to the **Services** link on the left panel.
@@ -87,7 +87,7 @@ _NOTE: You must click **Save** in the top right before leaving the **Settings** 
 
 ## 5. Slack
 
-![prdeploy settings Slack](/assets/images/screenshots/prdeploy-portal-settings-slack.png)
+![prdeploy settings Slack](../assets/images/screenshots/prdeploy-portal-settings-slack.png)
 {: style="margin: 30px 0 60px 0;"}
 
 1. Check the **Notifications enabled** box.
@@ -104,7 +104,7 @@ _NOTE: As necessary, you can fill in email aliases if **prdeploy** finds the inc
 
 ## 6. JIRA
 
-![prdeploy settings JIRA](/assets/images/screenshots/prdeploy-portal-settings-jira.png)
+![prdeploy settings JIRA](../assets/images/screenshots/prdeploy-portal-settings-jira.png)
 {: style="margin: 30px 0 40px 0;"}
 
 1. Check the **Add issues enabled** box.
@@ -118,7 +118,7 @@ _NOTE: As necessary, you can fill in email aliases if **prdeploy** finds the inc
 
 ## 7. Deployment
 
-![prdeploy settings Deployment](/assets/images/screenshots/prdeploy-portal-settings-deployment.png)
+![prdeploy settings Deployment](../assets/images/screenshots/prdeploy-portal-settings-deployment.png)
 {: style="margin: 30px 0 40px 0;"}
 
 1. The defaults here will generall be correct, verify the **Release Environment** and the **Default Environment**.
