@@ -5,7 +5,7 @@ In order to be able to listen and respond to pull request events, we need to cre
 ![Setup GitHub App](../assets/images/screenshots/getting-started/github-app.png)
 {: style="margin: 30px 0 60px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
 
-1. Navigate to https://github.com and sign in.
+1. Navigate to [https://github.com](https://github.com) and sign in.
 2. Click on your profile photo in the top right and choose **Your Organizations**.
 3. Click on the organization you want to add **prdeploy** to.
 4. Select the **Settings** tab, expand **Developer settings** on the left nav and choose **GitHub Apps**.
@@ -14,7 +14,7 @@ In order to be able to listen and respond to pull request events, we need to cre
 
     | Field           | Value                                                                       |
     | --------------- | --------------------------------------------------------------------------- |
-    | GitHub App Name | prdeploy                                                                    |
+    | GitHub App Name | prdeploy myorg                                                              |
     | Description     | Allows the entire build-deploy lifecycle to happen within a feature branch. |
     | Homepage URL    | https://prdeploy.myorg.com                                                  |
     | Webhook URL     | https://prdeploy.myorg.com/webhooks                                         |
@@ -66,6 +66,7 @@ Issue comment
 Pull request
 Workflow run
 ```
+
 3. **Where can this GitHub App be installed?** should be set to **Only on this account**.
 4. Click **Create GitHub App**.
 

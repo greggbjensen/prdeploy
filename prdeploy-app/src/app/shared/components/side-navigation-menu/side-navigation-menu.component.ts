@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { navigation, NavItem } from '../../../app-navigation';
 import { MatTreeModule, MatTreeNestedDataSource } from '@angular/material/tree';
-import { KeyValuePipe } from '@angular/common';
+import { DOCUMENT, KeyValuePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { RepoManager } from '../../managers';
@@ -16,8 +16,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class SideNavigationMenuComponent {
   navItems = new MatTreeNestedDataSource<NavItem>();
+  lastSelectedItem: NavItem;
 
-  constructor(private _repoManager: RepoManager) {
+  constructor(
+    private _repoManager: RepoManager,
+    @Inject(DOCUMENT) private _document: Document
+  ) {
     this._repoManager.valueChanged$.pipe(takeUntilDestroyed()).subscribe(() => {
       this.navItems.data = navigation(this._repoManager.owner, this._repoManager.repo);
     });

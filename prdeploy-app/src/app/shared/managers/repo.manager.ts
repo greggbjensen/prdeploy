@@ -41,7 +41,7 @@ export class RepoManager {
 
   set repo(value: string) {
     if (value !== this.repo) {
-      this.updateValueChanged();
+      this.updateValueChanged(this.owner, value);
     }
   }
 
@@ -51,7 +51,7 @@ export class RepoManager {
 
   set owner(value: string) {
     if (value !== this.owner) {
-      this.updateValueChanged();
+      this.updateValueChanged(value, this.repo);
     }
   }
 
@@ -78,18 +78,18 @@ export class RepoManager {
     }
 
     if (!_.isNil(ownerRepos) && ownerRepos.length === 0) {
-      this.updateValueChanged();
+      this.updateValueChanged('', '');
     }
 
     this._ownerReposChangedSubject.next(ownerRepos);
     return this.guardHasRepos(ownerRepos);
   }
 
-  private updateValueChanged() {
-    const isValid = this.repo && this.owner && this.repo.length > 0 && this.owner.length > 0;
+  private updateValueChanged(owner: string, repo: string) {
+    const isValid = repo && owner && repo.length > 0 && owner.length > 0;
     const ownerRepos = this._ownerReposChangedSubject.value;
     if (isValid) {
-      this._valueChangedSubject.next({ owner: this.owner, repo: this.repo });
+      this._valueChangedSubject.next({ owner, repo });
     } else if (this.guardHasRepos(ownerRepos) && this.hasOwnerRepos) {
       const owner = ownerRepos[0].owner;
       const repo = ownerRepos[0].repos[0];

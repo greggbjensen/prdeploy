@@ -22,9 +22,6 @@ export class HeaderComponent {
   menuToggle = new EventEmitter<boolean>();
 
   @Input()
-  menuToggleEnabled = false;
-
-  @Input()
   title!: string;
 
   owners: string[];
