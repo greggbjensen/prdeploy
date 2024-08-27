@@ -13,7 +13,7 @@
     <mat-drawer #drawer></mat-drawer>
   }
 
-  <div class="page-content">
+  <div class="page-content{{ isAuthenticated ? ' page-authenticated' : '' }}">
     <router-outlet></router-outlet>
   </div>
   <app-footer></app-footer>
