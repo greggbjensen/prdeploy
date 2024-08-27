@@ -1,10 +1,17 @@
 <div class="menu-container">
   <mat-tree [dataSource]="navItems" [childrenAccessor]="childrenAccessor">
     <mat-tree-node *matTreeNodeDef="let navItem">
-      <a class="nav-item" [routerLink]="navItem.path" routerLinkActive="router-link-active">
-        <mat-icon>{{ navItem.icon }}</mat-icon>
-        <span>{{ navItem.text }}</span>
-      </a>
+      @if (!navItem.external) {
+        <a class="nav-item" [routerLink]="navItem.path" routerLinkActive="router-link-active">
+          <mat-icon>{{ navItem.icon }}</mat-icon>
+          <span>{{ navItem.text }}</span>
+        </a>
+      } @else {
+        <a class="nav-item" href="{{ navItem.path }}" target="_blank">
+          <mat-icon>{{ navItem.icon }}</mat-icon>
+          <span>{{ navItem.text }}</span>
+        </a>
+      }
     </mat-tree-node>
   </mat-tree>
 </div>

@@ -2,6 +2,7 @@ export interface NavItem {
   text: string;
   path: string;
   icon: string;
+  external?: boolean;
   expanded?: boolean;
   children?: NavItem[];
 }
@@ -36,6 +37,12 @@ export const navigation = (owner: string, repo: string) => {
         text: 'Settings',
         path: `${owner}/${repo}/settings`,
         icon: 'settings'
+      },
+      {
+        text: 'Help',
+        path: 'https://prdeploy.readthedocs.io/en/latest/prdeploy-portal/',
+        external: true,
+        icon: 'help_outlined'
       }
     ] as NavItem[];
   }
