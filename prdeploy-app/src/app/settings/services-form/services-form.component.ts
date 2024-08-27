@@ -10,6 +10,7 @@ import { AddServiceDialogComponent } from './add-service-dialog/add-service-dial
 import { MatDialog } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
 import { JsonPipe } from '@angular/common';
+import _ from 'lodash';
 
 @Component({
   selector: 'app-services-form',
@@ -67,7 +68,10 @@ export class ServicesFormComponent {
       return;
     }
 
-    this.actingServiceList = [{ name: serviceName, path: serviceName }, ...this.actingServiceList];
+    this.actingServiceList = _.sortBy(
+      [{ name: serviceName, path: serviceName }, ...this.actingServiceList],
+      s => s.name
+    );
 
     this.saveServicesList();
   }
@@ -85,8 +89,8 @@ export class ServicesFormComponent {
     // Copy over values.
     this.hasServices = this.services[this.level].length > 0;
     this._bindingLevel = this.hasServices ? this._level : 'owner';
-    this.actingServiceList = [...this.services[this._level]];
-    this.bindingServiceList = [...this.services[this._bindingLevel]];
+    this.actingServiceList = _.sortBy([...this.services[this._level]], s => s.name);
+    this.bindingServiceList = _.sortBy([...this.services[this._bindingLevel]], s => s.name);
   }
 
   private saveServicesList() {
