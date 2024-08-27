@@ -7,11 +7,17 @@ export interface NavItem {
   children?: NavItem[];
 }
 
-let currentNav = [
+let currentNav: NavItem[] = [
   {
     text: 'Repositories',
     path: '/repositories',
     icon: 'folder_open'
+  },
+  {
+    text: 'Help',
+    path: 'https://prdeploy.readthedocs.io/en/latest/prdeploy-portal/',
+    external: true,
+    icon: 'help_outlined'
   }
 ];
 

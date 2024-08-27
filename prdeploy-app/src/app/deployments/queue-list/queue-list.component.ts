@@ -105,7 +105,7 @@ export class QueueListComponent implements AfterViewInit {
       .pipe(takeUntilDestroyed(this._destroyRef), debounceTime(300))
       .subscribe((value: any) => {
         // Handle object selection.
-        this.filterPullRequests(value.title ? value.title : value);
+        this.filterPullRequests(value && value.title ? value.title : value);
       });
   }
 

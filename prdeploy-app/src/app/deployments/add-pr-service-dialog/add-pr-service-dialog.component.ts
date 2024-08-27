@@ -96,7 +96,7 @@ export class AddPrServiceDialogComponent {
 
     this.form.controls.pullRequest.valueChanges
       .pipe(takeUntilDestroyed())
-      .subscribe(value => this.filterPullRequests(value));
+      .subscribe((value: any) => this.filterPullRequests(value && value.title ? value.title : value));
   }
 
   async filterPullRequests(search: string = '') {

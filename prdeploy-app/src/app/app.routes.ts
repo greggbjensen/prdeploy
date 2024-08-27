@@ -18,8 +18,8 @@ export const routes: Routes = [
     path: ':owner/:repo',
     children: [
       {
-        path: 'deployments',
-        redirectTo: 'login',
+        path: '',
+        redirectTo: 'deployments',
         pathMatch: 'full'
       },
       {

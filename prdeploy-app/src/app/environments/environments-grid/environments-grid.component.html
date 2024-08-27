@@ -14,11 +14,12 @@
 
     <ng-container matColumnDef="source-run-id">
       <th mat-header-cell *matHeaderCellDef>{{ sourceEnvironment.name }} Run ID</th>
-      <td
-        mat-cell
-        *matCellDef="let service"
-        [class]="{ 'value-different': service.sourceRunId !== service.targetRunId }">
-        {{ service.sourceRunId ? service.sourceRunId : '' }}
+      <td mat-cell *matCellDef="let service">
+        @if (service.sourceRunId) {
+          <a class="service-run" href="{{ getRunUrl(service.sourceRunId) }}" target="_blank">
+            {{ service.sourceRunId }}
+          </a>
+        }
       </td>
     </ng-container>
 
@@ -34,11 +35,12 @@
 
     <ng-container matColumnDef="target-run-id">
       <th mat-header-cell *matHeaderCellDef>{{ targetEnvironment.name }} Run ID</th>
-      <td
-        mat-cell
-        *matCellDef="let service"
-        [class]="{ 'value-different': service.sourceRunId !== service.targetRunId }">
-        {{ service.targetRunId ? service.targetRunId : '' }}
+      <td mat-cell *matCellDef="let service">
+        @if (service.targetRunId) {
+          <a class="service-run" href="{{ getRunUrl(service.targetRunId) }}" target="_blank">
+            {{ service.targetRunId }}
+          </a>
+        }
       </td>
     </ng-container>
 

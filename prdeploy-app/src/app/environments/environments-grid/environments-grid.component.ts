@@ -57,6 +57,10 @@ export class EnvironmentsGridComponent {
     private _repoManager: RepoManager
   ) {}
 
+  getRunUrl(runId: string) {
+    return `https://github.com/${this._repoManager.owner}/${this._repoManager.repo}/actions/runs/${runId}`;
+  }
+
   async updateStateComparison(): Promise<void> {
     if (!this.sourceEnvironment || !this.targetEnvironment) {
       return;
