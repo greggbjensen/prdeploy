@@ -93,6 +93,10 @@ export class AddPrServiceDialogComponent {
       });
 
     this.filterPullRequests();
+
+    this.form.controls.pullRequest.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe(value => this.filterPullRequests(value));
   }
 
   async filterPullRequests(search: string = '') {

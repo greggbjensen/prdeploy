@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, DestroyRef, EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, DestroyRef, EventEmitter, Input, Output } from '@angular/core';
 import { debounceTime, firstValueFrom } from 'rxjs';
 import {
   DeployQueue,
@@ -76,12 +76,14 @@ export class QueueListComponent implements AfterViewInit {
   openPullRequests: PullRequest[];
   pullRequestToAdd: PullRequest;
   processing = false;
+  searching = false;
 
   constructor(
     private _openPullRequestsGQL: OpenPullRequestsGQL,
     private _deployQueueUpdateGQL: DeployQueueUpdateGQL,
     private _repoManager: RepoManager,
-    private _destroyRef: DestroyRef
+    private _destroyRef: DestroyRef,
+    private _changeDetectorRef: ChangeDetectorRef
   ) {
     this.filterPullRequests();
   }
@@ -101,10 +103,9 @@ export class QueueListComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.pullRequestControl.valueChanges
       .pipe(takeUntilDestroyed(this._destroyRef), debounceTime(300))
-      .subscribe(value => {
-        if (!_.isObject(value)) {
-          this.filterPullRequests(value);
-        }
+      .subscribe((value: any) => {
+        // Handle object selection.
+        this.filterPullRequests(value.title ? value.title : value);
       });
   }
 
@@ -119,7 +120,8 @@ export class QueueListComponent implements AfterViewInit {
       })
     );
 
-    this.openPullRequests = result.data.openPullRequests;
+    this.openPullRequests = [...result.data.openPullRequests];
+    this._changeDetectorRef.detectChanges();
   }
 
   selectPullRequest(event: MatAutocompleteSelectedEvent) {
