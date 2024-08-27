@@ -75,11 +75,7 @@ export class DeployForceDialogComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.form.controls.pullRequest.valueChanges
       .pipe(takeUntilDestroyed(this._destroyRef), debounceTime(300))
-      .subscribe(value => {
-        if (!_.isObject(value)) {
-          this.filterPullRequests(value);
-        }
-      });
+      .subscribe((value: any) => this.filterPullRequests(value && value.title ? value.title : value));
   }
 
   ngOnInit(): void {
