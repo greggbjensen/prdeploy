@@ -206,11 +206,7 @@ export class DeployService {
         message: `Adding ${service} to pull request build.`,
         content: base64Content,
         branch: pullRequest.head.ref,
-        sha,
-        committer: {
-          name: 'Gregg B. Jensen',
-          email: 'greggbjensen@users.noreply.github.com'
-        }
+        sha
       });
     }
 
