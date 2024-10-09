@@ -6,6 +6,10 @@ Handlebars.registerHelper('jsonEncode', (text: string) => {
   return JSON.stringify(text);
 });
 
+Handlebars.registerHelper('jsonEncodeUnquoted', (text: string) => {
+  return JSON.stringify(text).slice(1, -1);
+});
+
 Handlebars.registerHelper('color', hexValue => (hexValue ? hexValue.replace(/^#/, '') : ''));
 
 export type TemplateNames =

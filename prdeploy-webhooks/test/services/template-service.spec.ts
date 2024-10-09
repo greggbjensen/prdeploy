@@ -17,7 +17,7 @@ describe('renderQueueTable', () => {
     expect(result).not.toBeFalsy();
     expect(result).toMatch(`| Position | 1       | 2       | 3       |
 |----------|---------|---------|---------|
-| [dev queue](https://awssite/deployments/greggbjensen/prdeploy-example-repo?environment=dev) | [2987](https://github.com/greggbjensen/prdeploy-example-repo/pull/2987) | [2549](https://github.com/greggbjensen/prdeploy-example-repo/pull/2549) | [2391](https://github.com/greggbjensen/prdeploy-example-repo/pull/2391) |`);
+| [dev queue](https://awssite/deployments/greggbjensen/prdeploy-example-repo/deployments?environment=dev) | [2987](https://github.com/greggbjensen/prdeploy-example-repo/pull/2987) | [2549](https://github.com/greggbjensen/prdeploy-example-repo/pull/2549) | [2391](https://github.com/greggbjensen/prdeploy-example-repo/pull/2391) |`);
   });
 });
 
@@ -71,6 +71,11 @@ Pull request with fix and feature.
 
   it('renders JSON template with escaping', async () => {
     const service = container.resolve(TemplateService);
+    const pull = {
+      html_url: 'https://github.com/greggbjensen/prdeploy-example-repo/pull/2987',
+      number: 2987,
+      title: 'This pull request title has some "special" characters'
+    };
     const slackPullBody = `
 This pull request body includes multiple
 new lines and " these things...
@@ -78,6 +83,7 @@ Oh and another one"
 `;
 
     const result = await service.render('deploy-released.json', {
+      pull,
       slackPullBody
     });
 
