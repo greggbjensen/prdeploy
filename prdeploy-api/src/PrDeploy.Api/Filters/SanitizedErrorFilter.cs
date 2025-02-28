@@ -41,6 +41,16 @@ namespace PrDeploy.Api.Filters
                                     null, HttpStatusCode.Forbidden))
                             .Build();
                     }
+                    else if (requestException.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        result = ErrorBuilder.FromError(error)
+                            .SetCode("UNAUTHORIZED")
+                            .SetMessage("Authentication required.")
+                            .SetException(
+                                new HttpRequestException("Authentication required.",
+                                    null, HttpStatusCode.Unauthorized))
+                            .Build();
+                    }
                     break;
 
                 case ValidationException validationException:
@@ -53,7 +63,6 @@ namespace PrDeploy.Api.Filters
                                 null, HttpStatusCode.BadRequest))
                         .Build();
                     break;
-
             }
 
             _logger.LogError(error.Exception, error.Message, error);
