@@ -11,9 +11,14 @@ namespace PrDeploy.Api.Filters
             var statusCode = base.OnDetermineStatusCode(result, format, proposedStatusCode);
             if (result.Errors?.Count > 0)
             {
+                if (result.Errors.Any(e => e.Code == "UNAUTHORIZED"))
+                {
+                    return HttpStatusCode.Unauthorized;
+                }
+
                 if (result.Errors.Any(e => e.Code == "FORBIDDEN"))
                 {
-                    statusCode = HttpStatusCode.Forbidden;
+                    return HttpStatusCode.Forbidden;
                 }
             }
 
