@@ -11,7 +11,7 @@ Release multiple times per day with less issues.
 
 The **prdeploy** application supplies the following features:
 
-### Commend commands
+### Comment commands
 
 Post [comment commands](comment-commands.md) to manage your deployments without leaving your pull request.
 
