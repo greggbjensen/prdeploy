@@ -6,6 +6,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG VERSION=1.0.0
 WORKDIR /src
 COPY ["nuget.config", "."]
+COPY ["Directory.Packages.props", "."]
 COPY ["src/PrDeploy.Api/PrDeploy.Api.csproj", "src/PrDeploy.Api/"]
 COPY ["src/PrDeploy.Api.Business/PrDeploy.Api.Business.csproj", "src/PrDeploy.Api.Business/"]
 COPY ["src/PrDeploy.Api.Models/PrDeploy.Api.Models.csproj", "src/PrDeploy.Api.Models/"]
