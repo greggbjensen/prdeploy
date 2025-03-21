@@ -17,9 +17,8 @@ namespace PrDeploy.Api.Auth
             IOptionsMonitor<JwtBearerOptions> options, 
             ILoggerFactory logger, 
             UrlEncoder encoder,
-            ISystemClock clock, 
             ICipherService cipherService)
-            : base(options, logger, encoder, clock)
+            : base(options, logger, encoder)
         {
             _cipherService = cipherService;
         }
