@@ -6,7 +6,7 @@ namespace PrDeploy.Api.Filters
 {
     public class SanitizedHttpResponseFormatter : DefaultHttpResponseFormatter
     {
-        protected override HttpStatusCode OnDetermineStatusCode(IQueryResult result, FormatInfo format, HttpStatusCode? proposedStatusCode)
+        protected override HttpStatusCode OnDetermineStatusCode(IOperationResult result, FormatInfo format, HttpStatusCode? proposedStatusCode)
         {
             var statusCode = base.OnDetermineStatusCode(result, format, proposedStatusCode);
             if (result.Errors?.Count > 0)

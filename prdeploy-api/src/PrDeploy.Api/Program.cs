@@ -1,24 +1,21 @@
-using System.Net;
-using System.Text.Json;
 using HotChocolate.AspNetCore;
-using PrDeploy.Api;
-using PrDeploy.Api.Business;
-using PrDeploy.Api.Options;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
-using Octokit;
+using PrDeploy.Api;
 using PrDeploy.Api.Auth;
 using PrDeploy.Api.Builder;
+using PrDeploy.Api.Business;
 using PrDeploy.Api.Business.Clients.Interfaces;
 using PrDeploy.Api.Configuration;
 using PrDeploy.Api.Models;
 using PrDeploy.Api.Models.Auth;
+using PrDeploy.Api.Options;
 using Serilog;
 using Serilog.Formatting.Json;
-using Path = System.IO.Path;
-using GreenDonut;
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using Path = System.IO.Path;
 
 try
 {
@@ -44,7 +41,7 @@ try
         .AddPrDeployApiBusiness(configuration)
         .AddPrDeployApiModelValidation()
         .AddGitHubAuthentication(
-            options => configuration.Bind("GitHubAuth", options), 
+            options => configuration.Bind("GitHubAuth", options),
             options => configuration.Bind("Jwt", options))
         .AddAuthorization(options =>
         {
@@ -85,50 +82,48 @@ try
     app.UseCors();
     app.UseAuthentication();
     app.UseAuthorization();
-    app.UseEndpoints(endpoints =>
+
+    // Simple GitHub Access Token proxy.
+    var apiJsonSerializerOptions = new JsonSerializerOptions
     {
-        // Simple GitHub Access Token proxy.
-        var apiJsonSerializerOptions = new JsonSerializerOptions
+        Converters = { new JsonStringEnumConverter() },
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
+
+    app.MapPost("/api/oauth/access_token", async (HttpRequest request, IGitHubAuthClient authClient) =>
+    {
+        var form = await request.ReadFormAsync();
+        var accessTokenRequest = new AccessTokenRequest
         {
-            Converters = { new JsonStringEnumConverter() },
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            GrantType = GetValue(form, "grant_type"),
+            Code = GetValue(form, "code"),
+            RedirectUrl = GetValue(form, "redirect_uri"),
+            CodeVerifier = GetValue(form, "code_verifier"),
+            ClientId = GetValue(form, "client_id"),
         };
 
-        endpoints.MapPost("/api/oauth/access_token", async (HttpRequest request, IGitHubAuthClient authClient) =>
+        IResult result;
+        try
         {
-            var form = await request.ReadFormAsync();
-            var accessTokenRequest = new AccessTokenRequest
-            {
-                GrantType = GetValue(form, "grant_type"),
-                Code = GetValue(form, "code"),
-                RedirectUrl = GetValue(form, "redirect_uri"),
-                CodeVerifier = GetValue(form, "code_verifier"),
-                ClientId = GetValue(form, "client_id"),
-            };
+            var accessTokenResponse = await authClient.GetAccessTokenAsync(accessTokenRequest);
+            result = Results.Ok(accessTokenResponse);
+        }
+        catch (HttpRequestException e)
+        {
+            Log.Logger.Error(e, $"Error getting access token ({e.StatusCode}).");
+            result = Results.StatusCode((int)e.StatusCode!);
+        }
+        catch (Exception e)
+        {
+            Log.Logger.Error(e, $"Internal Server error getting access token.");
+            result = Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
 
-            IResult result;
-            try
-            {
-                var accessTokenResponse = await authClient.GetAccessTokenAsync(accessTokenRequest);
-                result = Results.Ok(accessTokenResponse);
-            }
-            catch (HttpRequestException e)
-            {
-                Log.Logger.Error(e, $"Error getting access token ({e.StatusCode}).");
-                result = Results.StatusCode((int)e.StatusCode!);
-            }
-            catch (Exception e)
-            {
-                Log.Logger.Error(e, $"Internal Server error getting access token.");
-                result = Results.StatusCode(StatusCodes.Status500InternalServerError);
-            }
+        return result;
+    }).AllowAnonymous();
 
-            return result;
-        })
-        .AllowAnonymous();
-
-        // User info endpoint since GitHub does not provide one for OAuth.
-        endpoints.MapGet("/api/oauth/userinfo", async (HttpRequest request, IGitHubAuthClient authClient) =>
+    // User info endpoint since GitHub does not provide one for OAuth.
+    app.MapGet("/api/oauth/userinfo", async (HttpRequest request, IGitHubAuthClient authClient) =>
         {
             IResult result;
             try
@@ -145,18 +140,22 @@ try
             return result;
         });
 
-        endpoints.MapGraphQL().WithOptions(new GraphQLServerOptions {
-            Tool = { Enable = false } // Use Apollo Playground instead of Banana Cake Pop.
-        });
-        endpoints.MapApolloSandboxRedirect();
-        endpoints.MapHealthChecks("/health/ready", new HealthCheckOptions {
-            Predicate = healthCheck => healthCheck.Tags.Contains("ready")
-        }).AllowAnonymous();
-        endpoints.MapHealthChecks("/health/live", new HealthCheckOptions
-        {
-            Predicate = healthCheck => healthCheck.Tags.Contains("live")
-        }).AllowAnonymous();
+    app.MapGraphQL().WithOptions(new GraphQLServerOptions
+    {
+        Tool = { Enable = false } // Use Apollo Playground instead of Banana Cake Pop.
     });
+
+    app.MapApolloSandboxRedirect();
+
+    app.MapHealthChecks("/health/ready", new HealthCheckOptions
+    {
+        Predicate = healthCheck => healthCheck.Tags.Contains("ready")
+    }).AllowAnonymous();
+
+    app.MapHealthChecks("/health/live", new HealthCheckOptions
+    {
+        Predicate = healthCheck => healthCheck.Tags.Contains("live")
+    }).AllowAnonymous();
 
     app.Run();
 }

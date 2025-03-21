@@ -1,6 +1,0 @@
-query PrDeployEnabledRepositories {
-  prDeployEnabledRepositories {
-    owner
-    repo
-  }
-}

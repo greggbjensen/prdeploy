@@ -12,7 +12,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host "Cleaning generated GraphQL classes."
-Remove-Item "$testDirectory/obj/Debug/net6.0/berry" -Recurse -Force
+Remove-Item "$testDirectory/obj/Debug/net9.0/berry" -Recurse -Force
 
 Pop-Location
 
