@@ -21,7 +21,7 @@ runs:
       RELEASE_TAG: ${{ (github.event_name == 'release' && github.event.release.tag_name) && github.event.release.tag_name || 'temp' }}
     run: |
       if [ "$RELEASE_TAG" == "temp" ]; then
-        echo "tags=$REPOSITORY:temp" >> $GITHUB_OUTPUT
+        echo "tags=temp" >> $GITHUB_OUTPUT
         exit 0
       fi
 

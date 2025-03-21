@@ -43,7 +43,7 @@ jobs:
       - name: Docker build and push
         uses: docker/build-push-action@v5
         with:
-          push: true
+          push: ${{ github.event_name == 'release' && github.event.action == 'created' }}
           tags: ${{ steps.deploy_tags.outputs.tags }}
           file: ${{ inputs.service_name }}/Dockerfile
           context: ${{ inputs.service_name }}
