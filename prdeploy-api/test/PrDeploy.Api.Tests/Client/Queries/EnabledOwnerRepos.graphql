@@ -1,0 +1,6 @@
+query EnabledOwnerRepos {
+  enabledOwnerRepos {
+    owner
+    repos
+  }
+}

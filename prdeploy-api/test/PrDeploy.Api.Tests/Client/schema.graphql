@@ -325,6 +325,7 @@ type ServiceSettings {
 type EnvironmentSettings {
   name: String!
   queue: String!
+  color: String!
   url: String
   requireApproval: Boolean!
   requireBranchUpToDate: Boolean!
@@ -431,6 +432,7 @@ input ServiceSettingsInput {
 input EnvironmentSettingsInput {
   name: String!
   queue: String!
+  color: String!
   url: String
   requireApproval: Boolean!
   requireBranchUpToDate: Boolean!

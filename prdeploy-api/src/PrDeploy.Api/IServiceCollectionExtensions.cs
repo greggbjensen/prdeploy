@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Octokit.Internal;
 using Octokit;
 using PrDeploy.Api.Auth;
-using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Filters;
 using PrDeploy.Api.Business.Auth.Interfaces;
 using PrDeploy.Api.Business.Options;
 using PrDeploy.Api.Schema.Mutations;
 using PrDeploy.Api.Schema.Queries;
+using PrDeploy.Api.Business.Services;
 
 namespace PrDeploy.Api;
 
@@ -35,15 +35,16 @@ public static class IServiceCollectionExtensions
             .AddType<OwnerRepoMutation>()
             .AddType<PullRequestMutation>()
 
-            // Register service classes so they can be injected without a [Service] attribute.
-            .RegisterService<IDeployQueueService>()
-            .RegisterService<IDeployEnvironmentService>()
-            .RegisterService<IPullRequestService>()
-            .RegisterService<IOwnerRepoService>()
-            .RegisterService<IDeploySettingsService>()
-
             // Error handling.
             .AddErrorFilter<SanitizedErrorFilter>();
+
+        // Register service classes so they can be injected without a [Service] attribute.
+        services
+            .AddScoped<DeployQueueService>()
+            .AddScoped<DeployEnvironmentService>()
+            .AddScoped<PullRequestService>()
+            .AddScoped<OwnerRepoService>()
+            .AddScoped<DeploySettingsService>();
 
         services
             .AddHttpResponseFormatter<SanitizedHttpResponseFormatter>()

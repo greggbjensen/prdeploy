@@ -1,6 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
-using Octokit;
 using PrDeploy.Api.Tests.Client;
 using PrDeploy.Api.Tests.Framework;
 using PrDeploy.Api.Tests.Framework.Client;
@@ -22,19 +20,19 @@ public class RepositoryQueryTest : DeployApiTest
     [Fact]
     public async Task OpenPullRequests_SearchesOpenPullRequests()
     {
-        var result = await Client.PrDeployEnabledRepositories.ExecuteAsync();
+        var result = await Client.EnabledOwnerRepos.ExecuteAsync();
         result.ValidateNoErrors();
         Assert.NotNull(result.Data);
-        Assert.NotNull(result.Data.PrDeployEnabledRepositories);
+        Assert.NotNull(result.Data.EnabledOwnerRepos);
 
-        var repositories = result.Data.PrDeployEnabledRepositories;
+        var repositories = result.Data.EnabledOwnerRepos;
         Assert.NotNull(repositories);
         Assert.NotEmpty(repositories);
 
         var repository = repositories[0];
         Assert.NotNull(repository);
         Assert.Equal("greggbjensen", repository.Owner);
-        Assert.Equal("prdeploy-example-repo", repository.Repo);
+        Assert.Contains("prdeploy-example-repo", repository.Repos);
     }
 
     [Fact]

@@ -70,8 +70,8 @@ namespace PrDeploy.Api.Filters
             if (!_hostEnvironment.IsDevelopment())
             {
                 // TODO GBJ: Add additional message sanitization for security.
-                result.RemoveException();
-                result.RemoveLocations();
+                result.WithException(null);
+                result.WithLocations([]);
             }
 
             return result;
