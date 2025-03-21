@@ -1,9 +1,7 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using PrDeploy.Api.Business.Options;
-using JwtRegisteredClaimNames = System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames;
+using System.Text;
 
 namespace PrDeploy.Api.Auth
 {
@@ -17,8 +15,6 @@ namespace PrDeploy.Api.Auth
 
             var jwtOptions = new JwtOptions();
             configureJwt(jwtOptions);
-
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             services
                 .AddAuthentication(options =>
@@ -41,6 +37,7 @@ namespace PrDeploy.Api.Auth
                             ValidateLifetime = true,
                             ValidateIssuerSigningKey = true
                         };
+                        o.MapInboundClaims = false;
                     });
 
             return services;
