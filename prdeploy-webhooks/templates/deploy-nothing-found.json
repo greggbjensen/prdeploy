@@ -10,7 +10,7 @@
         },
         {
           "type": "mrkdwn",
-          "text": "Deployment to *<{{environment.url}}|{{environment.name}}>* for {{#if slackUser.id}}<{{slackUser.id}}>{{else}}*{{slackUser.name}}*{{/if}} `FAILED`:"
+          "text": "Deployment to *<{{environment.url}}|{{environment.name}}>* for {{#if slackUser.id}}*{{slackUser.id}}*{{else}}*{{slackUser.name}}*{{/if}} `FAILED`:"
         }
       ]
     },
