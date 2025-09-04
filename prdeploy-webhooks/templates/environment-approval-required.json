@@ -10,7 +10,7 @@
         },
         {
           "type": "mrkdwn",
-          "text": "{{#if isRollback}}*ROLLBACK* {{/if}}<https://github.com/{{owner}}/{{repo}}/actions/runs/{{run.id}}/attempts/{{run.run_attempt}}|Deployment> to *<{{environment.url}}|{{environment.name}}>* requires *<https://github.com/{{owner}}/{{repo}}/actions/runs/{{run.id}}/attempts/{{run.run_attempt}}|approval>* for {{#if slackUser.id}}<@{{slackUser.id}}>{{else}}*{{slackUser.name}}*{{/if}}."
+          "text": "{{#if isRollback}}*ROLLBACK* {{/if}}<https://github.com/{{owner}}/{{repo}}/actions/runs/{{run.id}}/attempts/{{run.run_attempt}}|Deployment> to *<{{environment.url}}|{{environment.name}}>* requires *<https://github.com/{{owner}}/{{repo}}/actions/runs/{{run.id}}/attempts/{{run.run_attempt}}|approval>* for {{#if slackUser.id}}<{{slackUser.id}}>{{else}}*{{slackUser.name}}*{{/if}}."
         }
       ]
     }

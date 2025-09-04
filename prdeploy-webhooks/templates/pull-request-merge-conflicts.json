@@ -10,7 +10,7 @@
         },
         {
           "type": "mrkdwn",
-          "text": "Pull request <{{pull.html_url}}|#{{pull.number}}> to *<{{environment.url}}|{{environment.name}}>* is out-of-date and has `MERGE CONFLICTS` for {{#if slackUser.id}}<@{{slackUser.id}}>{{else}}*{{slackUser.name}}*{{/if}}."
+          "text": "Pull request <{{pull.html_url}}|#{{pull.number}}> to *<{{environment.url}}|{{environment.name}}>* is out-of-date and has `MERGE CONFLICTS` for {{#if slackUser.id}}<{{slackUser.id}}>{{else}}*{{slackUser.name}}*{{/if}}."
         }
       ]
     },
