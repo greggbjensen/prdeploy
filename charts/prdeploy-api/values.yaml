@@ -10,7 +10,7 @@ global:
     secretPathPrefix: /prdeploy
   image:
     registry: greggbjensen
-    pullSecret: "docker-credentials"
+    pullSecret: docker-credentials
   serviceAccounts:
     backend:
       create: true
