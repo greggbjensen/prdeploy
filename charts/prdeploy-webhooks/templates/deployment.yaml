@@ -22,7 +22,9 @@ spec:
         {{- include "prdeploy-webhooks.selectorLabels" . | nindent 8 }}
     spec:
       imagePullSecrets:
-        - name: shared-ecr-docker-credentials
+        {{- if .Values.global.image.pullSecret }}
+        - name: {{ .Values.global.image.pullSecret }}
+        {{- end }}
       serviceAccountName: {{ include "prdeploy-webhooks.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
