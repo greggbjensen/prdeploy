@@ -13,6 +13,7 @@ global:
     region: us-west-2
   image:
     registry: greggbjensen
+    pullSecret: docker-credentials
   serviceAccounts:
     frontend:
       create: true
