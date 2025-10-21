@@ -15,8 +15,7 @@ const jestConfig: JestConfigWithTsJest = {
   testMatch: ['**/*.spec.ts'],
   testTimeout: 15000,
   transform: {
-    '^.+\\.ts$': 'ts-jest',
-    'ts-jest': [
+    '^.+\\.ts$': [
       'ts-jest',
       {
         tsconfig: 'tsconfig.spec.json'
@@ -25,9 +24,12 @@ const jestConfig: JestConfigWithTsJest = {
   },
   verbose: true,
   roots: ['<rootDir>/src', '<rootDir>/test'],
-  modulePaths: [compilerOptions.baseUrl], // <-- This will be set to 'baseUrl' value
+  modulePaths: [compilerOptions.baseUrl],
   moduleDirectories: ['node_modules', '@src'],
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' }),
+  moduleNameMapper: {
+    ...pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' }),
+    '^mime$': '<rootDir>/test/mocks/mime.ts'
+  },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   globals: {}
 };

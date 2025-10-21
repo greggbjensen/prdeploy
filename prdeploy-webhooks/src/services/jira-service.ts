@@ -1,4 +1,4 @@
-import JiraApi from 'jira-client';
+import { Version3Client } from 'jira.js';
 import _ from 'lodash';
 import { JiraIssue } from '@src/models';
 import { LogService } from './log-service';
@@ -10,7 +10,7 @@ export class JiraService {
 
   constructor(
     private _log: LogService,
-    private _jiraApi: JiraApi
+    private _jiraApi: Version3Client
   ) {}
 
   async listAssociatedIssues(branchName: string): Promise<JiraIssue[]> {
@@ -27,7 +27,10 @@ export class JiraService {
 
     let issues: JiraIssue[];
     try {
-      const response = await this._jiraApi.searchJira(jql);
+      const response = await this._jiraApi.issueSearch.searchForIssuesUsingJqlEnhancedSearch({
+        jql,
+        fields: ['key', 'summary', 'issuetype', 'issuetype.iconUrl']
+      });
 
       issues = response.issues.map((i: any) => {
         const baseUrl = i.self.split('/').slice(0, 3).join('/');
