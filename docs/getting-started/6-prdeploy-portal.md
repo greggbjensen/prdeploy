@@ -112,7 +112,7 @@ _NOTE: As necessary, you can fill in email aliases if **prdeploy** finds the inc
 
 | Field    | Value                                                                                                                   |
 | -------- | ----------------------------------------------------------------------------------------------------------------------- |
-| Host     | The host name from the [4. Jira Integration](./4-jira-integration.md) step (myorg.atlassian.net).                       |
+| Host     | The host name from the [4. Jira Integration](./4-jira-integration.md) step (https://myorg.atlassian.net).                       |
 | Username | The email address of the user you created the API token for in the [4. Jira Integration](./4-jira-integration.md) step. |
 | Token    | The **API token** you created under that user in the [4. Jira Integration](./4-jira-integration.md) step.               |
 
