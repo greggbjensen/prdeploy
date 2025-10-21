@@ -4,7 +4,7 @@ import { LogService, DeploySettingsService } from './services';
 import { Repository } from '@octokit/webhooks-types';
 import { REPOSITORY } from './injection-tokens';
 import { PullRequest, DeploySettings } from './models';
-import JiraApi from 'jira-client';
+import { Version3Client } from 'jira.js';
 
 export const webhookFlow = async (
   octokit: Octokit | any,
@@ -23,15 +23,16 @@ export const webhookFlow = async (
   const settingsService = childScope.resolve(DeploySettingsService);
   const settings = await settingsService.get();
   childScope.register(DeploySettings, { useValue: settings });
-  childScope.register(JiraApi, {
+  childScope.register(Version3Client, {
     useFactory: () => {
-      return new JiraApi({
-        protocol: 'https',
+      return new Version3Client({
         host: settings.jira.host,
-        username: settings.jira.username,
-        password: settings.jira.password,
-        apiVersion: '2',
-        strictSSL: true
+        authentication: {
+          basic: {
+            email: settings.jira.username,
+            apiToken: settings.jira.password
+          }
+        }
       });
     }
   });

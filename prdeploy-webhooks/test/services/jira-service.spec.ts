@@ -1,7 +1,7 @@
 import { expect } from '@jest/globals';
 import { JiraService } from '@src/services';
 import { container } from 'tsyringe';
-import JiraApi from 'jira-client';
+import { Version3Client } from 'jira.js';
 import { ContainerHelper } from '@test/helpers';
 
 const useMocks = !(process.env.JIRA_USERNAME && process.env.JIRA_PASSWORD) || process.env.USE_MOCKS === 'true';
@@ -29,21 +29,24 @@ describe('listAssociatedIssues', () => {
     if (useMocks) {
       searchJira.mockClear();
 
-      container.register(JiraApi, {
+      container.register(Version3Client, {
         useValue: {
-          searchJira
+          issueSearch: {
+            searchForIssuesUsingJqlEnhancedSearch: searchJira
+          }
         } as any
       });
     } else {
-      container.register(JiraApi, {
+      container.register(Version3Client, {
         useFactory: () => {
-          return new JiraApi({
-            protocol: 'https',
+          return new Version3Client({
             host: process.env.JIRA_HOST,
-            username: process.env.JIRA_USERNAME,
-            password: process.env.JIRA_PASSWORD,
-            apiVersion: '2',
-            strictSSL: true
+            authentication: {
+              basic: {
+                email: process.env.JIRA_USERNAME,
+                apiToken: process.env.JIRA_PASSWORD
+              }
+            }
           });
         }
       });
@@ -52,7 +55,8 @@ describe('listAssociatedIssues', () => {
 
   it('handles no associated issues', async () => {
     const service = container.resolve(JiraService);
-    await service.listAssociatedIssues('app-k8s-deploy');
+    const result = await service.listAssociatedIssues('app-k8s-deploy');
+    expect(result).toEqual([]);
   });
 
   it('lists associated issues', async () => {
@@ -63,8 +67,8 @@ describe('listAssociatedIssues', () => {
     expect(issues[0].key).toBeTruthy();
 
     if (useMocks) {
-      const search = searchJira.mock.calls[0][0] as string;
-      expect(search).toEqual("key in ('SCRUM-1234', 'SCRUM-1242', 'UX-553')");
+      const search = searchJira.mock.calls[0][0];
+      expect(search.jql).toEqual("key in ('SCRUM-1234', 'SCRUM-1242', 'UX-553')");
     }
   });
 });

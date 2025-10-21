@@ -1,17 +1,22 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "composite": true,
-    "paths": {
-      "@src/*": ["src/*"],
-      "@test/*": ["test/*"]
-    },
+    "module": "CommonJS",
+    "target": "es2022",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
-    "outDir": "./out/test",
-    "types": [
-      "jest",
-      "node"
-    ]
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "moduleResolution": "node"
   },
-  "include": ["./src/**/*", "./test/**/*.ts"]
+  "include": [
+    "src/**/*",
+    "test/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
