@@ -33,14 +33,12 @@ describe('render', () => {
     const issues: JiraIssue[] = [
       {
         type: 'story',
-        iconUrl: 'https://icons.test/story.png',
         key: 'SCRUM-16478',
         url: 'https://greggbjensen.atlassian.net/browse/SCRUM-16478',
         summary: 'Additional Property types dont appear to be cached on a new load of the sku pane'
       },
       {
         type: 'bug',
-        iconUrl: 'https://icons.test/bug.png',
         key: 'SCRUM-16636',
         url: 'https://greggbjensen.atlassian.net/browse/SCRUM-16636',
         summary: 'Images are not getting augmented'
