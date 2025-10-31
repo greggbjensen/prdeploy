@@ -3,5 +3,4 @@ export interface JiraIssue {
   summary: string;
   type: string;
   url: string;
-  iconUrl: string;
 }

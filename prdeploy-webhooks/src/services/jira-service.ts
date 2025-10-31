@@ -29,7 +29,7 @@ export class JiraService {
     try {
       const response = await this._jiraApi.issueSearch.searchForIssuesUsingJqlEnhancedSearch({
         jql,
-        fields: ['key', 'summary', 'issuetype', 'issuetype.iconUrl']
+        fields: ['key', 'summary', 'issuetype']
       });
 
       issues = response.issues.map((i: any) => {
@@ -39,8 +39,7 @@ export class JiraService {
           key: i.key,
           summary: i.fields.summary,
           url,
-          type: i.fields.issuetype.name,
-          iconUrl: i.fields.issuetype.iconUrl
+          type: i.fields.issuetype.name
         } as JiraIssue;
       });
     } catch (err) {
