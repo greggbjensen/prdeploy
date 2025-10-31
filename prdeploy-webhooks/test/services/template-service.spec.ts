@@ -57,8 +57,8 @@ Pull request with fix and feature.
     console.log(result);
     expect(result).toMatch(
       `<!-- ISSUES_START:SCRUM-16478-SCRUM-16636-feature-and-bug -->
-![story](https://icons.test/story.png) [SCRUM-16478](https://greggbjensen.atlassian.net/browse/SCRUM-16478) Additional Property types dont appear to be cached on a new load of the sku pane
-![bug](https://icons.test/bug.png) [SCRUM-16636](https://greggbjensen.atlassian.net/browse/SCRUM-16636) Images are not getting augmented
+story: [SCRUM-16478](https://greggbjensen.atlassian.net/browse/SCRUM-16478) Additional Property types dont appear to be cached on a new load of the sku pane
+bug: [SCRUM-16636](https://greggbjensen.atlassian.net/browse/SCRUM-16636) Images are not getting augmented
 <!-- ISSUES_END -->
 
 

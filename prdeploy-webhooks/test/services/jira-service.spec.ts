@@ -13,9 +13,7 @@ const searchJira = jest.fn().mockResolvedValueOnce({
       fields: {
         summary: 'Containerize www.myorg.com for the dev environment',
         issuetype: {
-          name: 'Story',
-          iconUrl:
-            'https://greggbjensen.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10315?size=medium'
+          name: 'Story'
         }
       }
     }
