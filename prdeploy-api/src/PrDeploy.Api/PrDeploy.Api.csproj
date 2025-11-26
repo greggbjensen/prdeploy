@@ -32,10 +32,4 @@
     <ProjectReference Include="..\PrDeploy.Api.Models\PrDeploy.Api.Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update=".env">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
