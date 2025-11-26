@@ -10,14 +10,22 @@
 
             foreach (var line in File.ReadAllLines(filePath))
             {
-                var parts = line.Split(
-                    '=',
-                    StringSplitOptions.RemoveEmptyEntries);
+                var separator = line.IndexOf("=");
 
-                if (parts.Length != 2)
+                if (separator == -1)
+                {
                     continue;
+                }
 
-                Environment.SetEnvironmentVariable(parts[0], parts[1].Trim('"'));
+                var name = line.Substring(0, separator);
+                var value = line.Substring(separator + 1);
+
+                if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(value))
+                {
+                    continue;
+                }
+
+                Environment.SetEnvironmentVariable(name, value.Trim('"'));
             }
         }
     }

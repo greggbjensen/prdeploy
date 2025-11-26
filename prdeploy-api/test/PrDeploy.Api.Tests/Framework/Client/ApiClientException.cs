@@ -1,6 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using StrawberryShake;
 using System.Text;
-using StrawberryShake;
 
 namespace PrDeploy.Api.Tests.Framework.Client
 {
@@ -15,10 +14,7 @@ namespace PrDeploy.Api.Tests.Framework.Client
 
         public ApiClientException(IClientError error)
         {
-            if (error is null)
-            {
-                throw new ArgumentNullException(nameof(error));
-            }
+            ArgumentNullException.ThrowIfNull(error);
 
             Message = error.Message;
             Errors = new[] { error };
@@ -26,10 +22,7 @@ namespace PrDeploy.Api.Tests.Framework.Client
 
         public ApiClientException(params IClientError[] errors)
         {
-            if (errors is null)
-            {
-                throw new ArgumentNullException(nameof(errors));
-            }
+            ArgumentNullException.ThrowIfNull(errors);
 
             if (errors.Length == 0)
             {
@@ -69,15 +62,6 @@ namespace PrDeploy.Api.Tests.Framework.Client
             // with a proper ArgumentNullException.
             : this(errors?.ToArray()!)
         {
-        }
-
-        protected ApiClientException(
-            SerializationInfo info,
-            StreamingContext context)
-            : base(info, context)
-        {
-            Message = base.Message;
-            Errors ??= Array.Empty<IClientError>();
         }
 
         /// <summary>
