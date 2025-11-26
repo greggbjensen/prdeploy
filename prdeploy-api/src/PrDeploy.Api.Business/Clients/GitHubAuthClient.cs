@@ -54,6 +54,12 @@ namespace PrDeploy.Api.Business.Clients
             request.AddQueryParameter("client_secret", _gitHubOptions.ClientSecret);
             request.AddQueryParameter("code", accessTokenRequest.Code);
             request.AddQueryParameter("redirect_uri", accessTokenRequest.RedirectUrl);
+            
+            // Add code_verifier if provided (required for PKCE flow)
+            if (!string.IsNullOrEmpty(accessTokenRequest.CodeVerifier))
+            {
+                request.AddQueryParameter("code_verifier", accessTokenRequest.CodeVerifier);
+            }
 
             var response = await _client.PostAsync<AccessTokenResponse>(request);
             var userInfo = await GetUserInfoAsync(response!.AccessToken);
