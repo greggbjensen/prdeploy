@@ -50,6 +50,10 @@ export class CheckService {
     pullRequest: PullRequest,
     overrideBuildRunIds: number[] = []
   ): Promise<Build[]> {
+    if (!this._settings.builds?.workflowPattern) {
+      return [];
+    }
+
     const workflowRegex = new RegExp(this._settings.builds.workflowPattern, 'i');
 
     if (overrideBuildRunIds && overrideBuildRunIds.length > 0) {

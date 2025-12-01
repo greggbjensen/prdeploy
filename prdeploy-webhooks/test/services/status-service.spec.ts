@@ -1,3 +1,4 @@
+import { vi, beforeEach, describe, it, expect } from 'vitest';
 import { WorkflowRun } from '@octokit/webhooks-types';
 import slack from 'slack';
 import { CreateCommentParams, PullRequest } from '@src/models';
@@ -8,7 +9,7 @@ import { Octokit } from '@octokit/rest';
 
 const pullNumber = 3097;
 const useMocks = !process.env.GITHUB_TOKEN || process.env.USE_MOCKS === 'true';
-const createComment = jest.fn().mockResolvedValueOnce({});
+const createComment = vi.fn().mockResolvedValue({});
 let octokit: Octokit;
 
 describe('postDeployStarted', () => {
@@ -23,7 +24,7 @@ describe('postDeployStarted', () => {
       });
 
       Object.assign(octokit.rest.users, {
-        getByUsername: jest.fn().mockResolvedValueOnce({
+        getByUsername: vi.fn().mockResolvedValue({
           data: {
             name: 'Gregg Jensen',
             login: 'greggbjensen',
@@ -34,7 +35,7 @@ describe('postDeployStarted', () => {
 
       Object.assign(slack, {
         users: {
-          lookupByEmail: jest.fn().mockResolvedValueOnce({
+          lookupByEmail: vi.fn().mockResolvedValue({
             ok: true,
             user: {
               id: 5467823,
@@ -54,7 +55,7 @@ describe('postDeployStarted', () => {
     } as any;
 
     Object.assign(octokit.rest.actions, {
-      getWorkflowRun: jest.fn().mockResolvedValueOnce({
+      getWorkflowRun: vi.fn().mockResolvedValue({
         data: run
       })
     });
@@ -82,7 +83,7 @@ describe('postDeployStarted', () => {
       const commentParams = createComment.mock.calls[0][0] as CreateCommentParams;
       expect(commentParams).toBeTruthy();
       expect(commentParams.body)
-        .toEqual(`[![dev](https://badgen.net/badge/dev/Deploy%20Started/0080ff?labelColor=yellow&icon=github&scale=1.2)](https://github.com/greggbjensen/prdeploy-example-repo/actions/runs/7065200437/attempts/1 'Open the deploy')
+        .toEqual(`[![dev](https://badgen.net/badge/dev/Deploy%20Started/0080ff?labelColor=d4ac0d&icon=github&scale=1.2)](https://github.com/greggbjensen/prdeploy-example-repo/actions/runs/7065200437/attempts/1 'Open the deploy')
 `);
     }
   });
@@ -95,7 +96,7 @@ describe('postDeployStarted', () => {
     } as any;
 
     Object.assign(octokit.rest.actions, {
-      getWorkflowRun: jest.fn().mockResolvedValueOnce({
+      getWorkflowRun: vi.fn().mockResolvedValue({
         data: run
       })
     });
@@ -123,7 +124,7 @@ describe('postDeployStarted', () => {
       const commentParams = createComment.mock.calls[0][0] as CreateCommentParams;
       expect(commentParams).toBeTruthy();
       expect(commentParams.body)
-        .toEqual(`[![prod](https://badgen.net/badge/prod/Rollback%20Started/cccc00?labelColor=green&icon=github&scale=1.2)](https://github.com/greggbjensen/prdeploy-example-repo/actions/runs/7065200437/attempts/1 'Open the deploy')
+        .toEqual(`[![prod](https://badgen.net/badge/prod/Rollback%20Started/cccc00?labelColor=1d8348&icon=github&scale=1.2)](https://github.com/greggbjensen/prdeploy-example-repo/actions/runs/7065200437/attempts/1 'Open the deploy')
 [Approve deployment](https://github.com/greggbjensen/prdeploy-example-repo/actions/runs/7065200437/attempts/1) to continue
 `);
     }

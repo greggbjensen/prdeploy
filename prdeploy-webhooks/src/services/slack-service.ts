@@ -2,7 +2,8 @@ import { DeploySettings, SlackUser, SlackWebhooksSettings, User } from '@src/mod
 import slack from 'slack';
 import { Lifecycle, scoped } from 'tsyringe';
 import { LogService } from './log-service';
-import slackifyMarkdown from 'slackify-markdown';
+import { slackifyMarkdown } from 'slackify-markdown';
+import { HtmlProcessor } from '@src/utils';
 
 @scoped(Lifecycle.ContainerScoped)
 export class SlackService {
@@ -100,7 +101,9 @@ export class SlackService {
   }
 
   translateGitHubMarkdown(markdown: string): string {
-    const cleaned = slackifyMarkdown(markdown);
+    // Preprocess HTML content (tables, br tags, etc.) before converting markdown
+    const htmlProcessed = HtmlProcessor.processHtmlInMarkdown(markdown);
+    const cleaned = slackifyMarkdown(htmlProcessed);
     return cleaned;
   }
 

@@ -1,11 +1,11 @@
-import { expect } from '@jest/globals';
+import { expect, vi, beforeEach, describe, it } from 'vitest';
 import { JiraService } from '@src/services';
 import { container } from 'tsyringe';
 import { Version3Client } from 'jira.js';
 import { ContainerHelper } from '@test/helpers';
 
 const useMocks = !(process.env.JIRA_USERNAME && process.env.JIRA_PASSWORD) || process.env.USE_MOCKS === 'true';
-const searchJira = jest.fn().mockResolvedValueOnce({
+const searchJira = vi.fn().mockResolvedValueOnce({
   issues: [
     {
       key: 'SCRUM-1234',

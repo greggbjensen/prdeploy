@@ -1,6 +1,5 @@
 {
     "recommendations": [
-        "orta.vscode-jest",
         "eamodio.gitlens",
         "editorconfig.editorconfig",
         "dbaeumer.vscode-eslint",
@@ -11,6 +10,7 @@
         "stylelint.vscode-stylelint",
         "mrmlnc.vscode-scss",
         "shardulm94.trailing-spaces",
-        "andrejunges.handlebars"
+        "andrejunges.handlebars",
+        "vitest.explorer"
     ]
 }

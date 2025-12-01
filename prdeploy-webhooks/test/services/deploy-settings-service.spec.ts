@@ -1,5 +1,5 @@
 import { SSMClient } from '@aws-sdk/client-ssm';
-import { expect } from '@jest/globals';
+import { expect, beforeEach, describe, it } from 'vitest';
 import { SSM_CLIENT } from '@src/injection-tokens';
 import { DeploySettingsService } from '@src/services';
 import { ContainerHelper } from '@test/helpers';

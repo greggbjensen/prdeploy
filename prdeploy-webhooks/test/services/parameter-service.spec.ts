@@ -1,4 +1,4 @@
-import { expect } from '@jest/globals';
+import { expect, beforeEach, describe, it } from 'vitest';
 import { ParameterService } from '@src/services';
 import { container } from 'tsyringe';
 import { SSMClient } from '@aws-sdk/client-ssm';

@@ -1,5 +1,5 @@
 module.exports = {
-    plugins: ["jest", "@typescript-eslint"],
+    plugins: ["@typescript-eslint"],
     extends: ["plugin:github/recommended"],
     parser: "@typescript-eslint/parser",
     parserOptions: {
@@ -53,7 +53,6 @@ module.exports = {
     },
     env: {
       "node": true,
-      "es6": true,
-      "jest/globals": true
+      "es6": true
     }
   }

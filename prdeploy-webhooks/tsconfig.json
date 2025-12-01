@@ -28,6 +28,6 @@
     "strictNullChecks": false,
     "emitDecoratorMetadata": true
   },
-  "include": ["./**/*"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }

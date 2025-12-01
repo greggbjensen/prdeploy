@@ -1,5 +1,5 @@
 import { WorkflowRun } from '@octokit/webhooks-types';
-import { expect } from '@jest/globals';
+import { expect, vi, beforeEach, describe, it } from 'vitest';
 import { PullRequestService } from '@src/services';
 import { ContainerHelper } from '@test/helpers';
 
@@ -16,7 +16,7 @@ describe('getAsync', () => {
 
     if (useMocks) {
       Object.assign(octokit.rest.pulls, {
-        get: jest.fn().mockResolvedValueOnce({
+        get: vi.fn().mockResolvedValueOnce({
           data: {
             number: pullNumber,
             title: 'Some new feature',
@@ -44,7 +44,7 @@ describe('getByCommit', () => {
 
     if (useMocks) {
       Object.assign(octokit.rest.repos, {
-        listPullRequestsAssociatedWithCommit: jest.fn().mockResolvedValueOnce({
+        listPullRequestsAssociatedWithCommit: vi.fn().mockResolvedValueOnce({
           data: [
             {
               number: pullNumber,

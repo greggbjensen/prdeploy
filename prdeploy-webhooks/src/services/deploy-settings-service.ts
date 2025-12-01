@@ -71,6 +71,8 @@ export class DeploySettingsService {
       }
     }
 
+    settings.environments ??= [];
+
     for (const environment of settings.environments) {
       if (_.isNil(environment.requireApproval)) {
         environment.requireApproval = false;
@@ -145,6 +147,10 @@ export class DeploySettingsService {
   }
 
   private async applyEnvironmentColors(repoSettings: DeploySettings): Promise<void> {
+    if (!repoSettings.environments) {
+      return;
+    }
+
     const response = await this._octokit.rest.issues.listLabelsForRepo({
       owner: repoSettings.owner,
       repo: repoSettings.repo
