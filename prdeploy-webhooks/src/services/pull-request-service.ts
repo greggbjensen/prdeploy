@@ -185,12 +185,12 @@ export class PullRequestService {
     }
 
     const lockLabels = this.getAllEnvironments(pullRequest);
-    const lowerRelease = this._settings.releaseEnvironment.toLowerCase();
+    const lowerRelease = this._settings.releaseEnvironment?.toLowerCase();
     if (lockLabels.length > 1) {
       // Give weight to release environment, stage, then dev if there are multiple locks.
       environment = _.sortBy(lockLabels, l => {
         let score: number;
-        if (l === lowerRelease) {
+        if (lowerRelease && l === lowerRelease) {
           score = 1;
         } else if (l.startsWith('stage')) {
           score = 2;

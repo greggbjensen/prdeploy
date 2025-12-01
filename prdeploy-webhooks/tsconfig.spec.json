@@ -1,15 +1,22 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "CommonJS",
+    "module": "ESNext",
     "target": "es2022",
+    "baseUrl": "./",
+    "paths": {
+      "@src/*": ["src/*"],
+      "@test/*": ["test/*"]
+    },
+    "moduleResolution": "node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "useDefineForClassFields": false,
     "skipLibCheck": true,
     "strict": false,
-    "moduleResolution": "node"
+    "types": ["vitest/globals"]
   },
   "include": [
     "src/**/*",

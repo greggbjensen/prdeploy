@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { expect } from '@jest/globals';
+import { expect, vi, beforeEach, describe, it } from 'vitest';
 import { CheckService } from '@src/services';
 import { ContainerHelper } from '@test/helpers';
 import AdmZip from 'adm-zip';
@@ -12,7 +12,7 @@ describe('listBuilds', () => {
     const octokit = await ContainerHelper.registerDefaults();
     if (useMocks) {
       Object.assign(octokit.rest.checks, {
-        listForRef: jest.fn().mockResolvedValueOnce({
+        listForRef: vi.fn().mockResolvedValueOnce({
           data: {
             check_runs: [
               {
@@ -30,14 +30,14 @@ describe('listBuilds', () => {
       const zipData = new AdmZip(zipFilePath).toBuffer();
 
       Object.assign(octokit.rest.actions, {
-        getWorkflowRun: jest.fn().mockResolvedValueOnce({
+        getWorkflowRun: vi.fn().mockResolvedValueOnce({
           data: {
             display_title: 'SCRUM-1234 For certain flows, load variants with parent properties',
             path: 'myorg-app-main-build.yml',
             html_url: 'https://github.com/greggbjensen/prdeploy-example-repo/actions/runs/10014663490'
           }
         }),
-        listWorkflowRunArtifacts: jest.fn().mockResolvedValueOnce({
+        listWorkflowRunArtifacts: vi.fn().mockResolvedValueOnce({
           data: {
             artifacts: [
               {
@@ -47,7 +47,7 @@ describe('listBuilds', () => {
             ]
           }
         }),
-        downloadArtifact: jest.fn().mockResolvedValueOnce({
+        downloadArtifact: vi.fn().mockResolvedValueOnce({
           data: zipData
         })
       });

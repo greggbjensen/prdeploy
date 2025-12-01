@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { SSM_CLIENT } from '@src/injection-tokens';
 import { DeploySettings } from '@src/models';
 import { DeploySettingsService } from '@src/services';
@@ -8,12 +9,12 @@ import { container } from 'tsyringe';
 export class RepoSettingsHelper {
   static async mockCalls(octokit: Octokit): Promise<void> {
     Object.assign(octokit.rest.repos, {
-      get: jest.fn().mockResolvedValueOnce({
+      get: vi.fn().mockResolvedValueOnce({
         data: {
           default_branch: 'main'
         }
       }),
-      getAllEnvironments: jest.fn().mockResolvedValueOnce({
+      getAllEnvironments: vi.fn().mockResolvedValueOnce({
         data: {
           environments: [
             {
@@ -45,7 +46,7 @@ export class RepoSettingsHelper {
     });
 
     Object.assign(octokit.rest.issues, {
-      listLabelsForRepo: jest.fn().mockResolvedValueOnce({
+      listLabelsForRepo: vi.fn().mockResolvedValue({
         data: [
           {
             name: 'dev',
@@ -88,12 +89,88 @@ export class RepoSettingsHelper {
             color: 'gray'
           }
         ]
-      })
+      }),
+      updateLabel: vi.fn().mockResolvedValue({ data: {} }),
+      createLabel: vi.fn().mockResolvedValue({ data: {} })
     });
 
+    const ssmClient = new SSMClientMock();
     container.register(SSM_CLIENT, {
-      useFactory: () => new SSMClientMock()
+      useFactory: () => ssmClient
     });
+
+    // Seed the mock with default settings that include environments
+    const { ParameterService } = await import('@src/services');
+    const parameterService = container.resolve(ParameterService);
+    const defaultSettings: Partial<DeploySettings> = {
+      environments: [
+        {
+          name: 'dev',
+          queue: 'dev',
+          color: '#d4ac0d',
+          url: '',
+          requireApproval: false,
+          requireBranchUpToDate: false,
+          automationTest: { enabled: false },
+          excludeFromRollback: []
+        },
+        {
+          name: 'dev2',
+          queue: 'dev',
+          color: '#d4ac0d',
+          url: '',
+          requireApproval: false,
+          requireBranchUpToDate: false,
+          automationTest: { enabled: false },
+          excludeFromRollback: []
+        },
+        {
+          name: 'dev3',
+          queue: 'dev',
+          color: '#d4ac0d',
+          url: '',
+          requireApproval: false,
+          requireBranchUpToDate: false,
+          automationTest: { enabled: false },
+          excludeFromRollback: []
+        },
+        {
+          name: 'stage',
+          queue: 'stage',
+          color: '#2e86c1',
+          url: '',
+          requireApproval: false,
+          requireBranchUpToDate: false,
+          automationTest: { enabled: false },
+          excludeFromRollback: []
+        },
+        {
+          name: 'prod',
+          queue: 'prod',
+          color: '#1d8348',
+          url: '',
+          requireApproval: true,
+          requireBranchUpToDate: false,
+          automationTest: { enabled: false },
+          excludeFromRollback: []
+        }
+      ],
+      defaultEnvironment: 'dev',
+      releaseEnvironment: 'prod',
+      builds: {
+        checkPattern: '.*',
+        workflowPattern: '.*-build\\.yml$'
+      },
+      badge: {
+        statusColors: {
+          error: 'ff0000',
+          warn: 'cccc00',
+          success: '00ff00',
+          info: '0080ff'
+        }
+      }
+    };
+    await parameterService.setObject('DEPLOY_SETTINGS', defaultSettings, 'Owner');
 
     const settingsService = container.resolve(DeploySettingsService);
     const settings = await settingsService.get();

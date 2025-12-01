@@ -1,4 +1,4 @@
-import { expect } from '@jest/globals';
+import { expect, beforeEach, describe, it } from 'vitest';
 import { TemplateService } from '@src/services';
 import { JiraIssue } from '@src/models';
 import { container } from 'tsyringe';

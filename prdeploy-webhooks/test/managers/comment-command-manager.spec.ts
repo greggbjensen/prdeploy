@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import * as path from 'path';
 import AdmZip from 'adm-zip';
 import { CommentCommandManager } from '@src/managers';
@@ -10,8 +11,8 @@ const commentId = 2015899564;
 const pullNumber = 8;
 const useMocks = !process.env.GITHUB_TOKEN || process.env.USE_MOCKS === 'true';
 
-const createForIssueComment = jest.fn().mockResolvedValueOnce({});
-const createWorkflowDispatch = jest.fn().mockResolvedValueOnce({});
+const createForIssueComment = vi.fn().mockResolvedValueOnce({});
+const createWorkflowDispatch = vi.fn().mockResolvedValueOnce({});
 let pullRequestMock: PullRequest;
 let octokit: Octokit;
 
@@ -32,12 +33,12 @@ describe('processComment', () => {
       } as any;
 
       Object.assign(octokit.rest.repos, {
-        getContent: jest.fn().mockResolvedValue({
+        getContent: vi.fn().mockResolvedValue({
           data: {
             content: ''
           }
         }),
-        createOrUpdateFileContents: jest.fn().mockResolvedValue({
+        createOrUpdateFileContents: vi.fn().mockResolvedValue({
           data: {
             content: ''
           }
@@ -45,13 +46,13 @@ describe('processComment', () => {
       });
 
       Object.assign(octokit.rest.pulls, {
-        get: jest.fn().mockResolvedValue({
+        get: vi.fn().mockResolvedValue({
           data: pullRequestMock
         }),
-        list: jest.fn().mockResolvedValue({
+        list: vi.fn().mockResolvedValue({
           data: []
         }),
-        listCommits: jest.fn().mockResolvedValueOnce({
+        listCommits: vi.fn().mockResolvedValueOnce({
           data: [
             {
               commit: {
@@ -67,14 +68,14 @@ describe('processComment', () => {
 
       Object.assign(octokit.rest.actions, {
         createWorkflowDispatch,
-        getWorkflowRun: jest.fn().mockResolvedValueOnce({
+        getWorkflowRun: vi.fn().mockResolvedValueOnce({
           data: {
             title: 'My new app feature',
             path: 'deploy-app-test-build.yml',
             html_url: 'https://github.com/greggbjensen/prdeploy-example-repo/actions/runs/10014663490'
           }
         }),
-        listWorkflowRunArtifacts: jest.fn().mockResolvedValueOnce({
+        listWorkflowRunArtifacts: vi.fn().mockResolvedValueOnce({
           data: {
             artifacts: [
               {
@@ -84,7 +85,7 @@ describe('processComment', () => {
             ]
           }
         }),
-        downloadArtifact: jest.fn().mockResolvedValueOnce({
+        downloadArtifact: vi.fn().mockResolvedValueOnce({
           data: zipData
         })
       });
@@ -94,12 +95,12 @@ describe('processComment', () => {
       });
 
       Object.assign(octokit.rest.issues, {
-        setLabels: jest.fn().mockResolvedValueOnce({}),
-        createComment: jest.fn().mockResolvedValueOnce({})
+        setLabels: vi.fn().mockResolvedValueOnce({}),
+        createComment: vi.fn().mockResolvedValueOnce({})
       });
 
       Object.assign(octokit.rest.checks, {
-        listForRef: jest.fn().mockResolvedValue({
+        listForRef: vi.fn().mockResolvedValue({
           data: {
             check_runs: [
               {
