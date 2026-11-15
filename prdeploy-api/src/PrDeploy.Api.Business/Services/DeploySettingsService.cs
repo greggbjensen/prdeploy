@@ -161,9 +161,9 @@ public class DeploySettingsService : IDeploySettingsService
 
         await _parameterStore.SetAsync(input.Owner, input.Repo, DeploySettingsKey, input.Settings, true);
 
-        // Clear cache so it can update.
-        var cacheKey = GetSettingsCacheKey(input.Owner, input.Repo);
-        _cache.Remove(cacheKey);
+        // Clear cache so it can update, including the settings used by webhooks.
+        _cache.Remove(GetSettingsCacheKey(input.Owner, input.Repo));
+        _cache.Remove(GetWebhookSettingsCacheKey(input.Owner, input.Repo));
 
         return new StatusResponse
         {
@@ -189,4 +189,6 @@ public class DeploySettingsService : IDeploySettingsService
     }
 
     private static string GetSettingsCacheKey(string owner, string repo) => $"{owner}:{repo}:settings";
+
+    public static string GetWebhookSettingsCacheKey(string owner, string repo) => $"{owner}:{repo}:webhook-settings";
 }

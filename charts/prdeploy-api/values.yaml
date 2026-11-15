@@ -20,11 +20,19 @@ global:
 
 aspnetcore_environment: production
 
+logging:
+  # Serilog level for GitHub App webhook processing, such as Debug, Information or Warning.
+  webhooksLevel: Information
+
 externalSecrets:
   GitHubAuth__ClientId: GitHubAuth__ClientId
   GitHubAuth__ClientSecret: GitHubAuth__ClientSecret
   Jwt__Key: Jwt__Key
   Jwt__TokenEncryptionKey: Jwt__TokenEncryptionKey
+  # GitHub App used for webhooks, these keep the Parameter Store names used by the former prdeploy-webhooks chart.
+  GitHubApp__AppId: APP_ID
+  GitHubApp__WebhookSecret: WEBHOOK_SECRET
+  GitHubApp__PrivateKey: gh_app_key.pem
 
 replicaCount: 1
 
@@ -64,7 +72,8 @@ resources:
     memory: 256Mi
 
 autoscaling:
-  enabled: true
+  # Webhook events are queued, cached and de-duplicated in memory, so keep a single replica.
+  enabled: false
   minReplicas: 1
   maxReplicas: 10
   targetCPUUtilizationPercentage: 80

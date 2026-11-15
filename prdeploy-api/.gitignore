@@ -4,6 +4,9 @@
 # Helm
 *.tgz
 
+# GitHub App private keys
+*.pem
+
 # User-specific files
 *.suo
 *.user

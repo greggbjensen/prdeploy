@@ -11,6 +11,7 @@ namespace PrDeploy.Api.Business.Stores
 {
     public class ParameterStore : IParameterStore
     {
+        private const int MaxHistoryPerPage = 50;
         private static readonly SemaphoreSlim Semaphore = new(1);
         private readonly IAmazonSimpleSystemsManagement _amazonSsm;
         private readonly ILogger<ParameterStore> _logger;
@@ -35,6 +36,55 @@ namespace PrDeploy.Api.Business.Stores
         {
             var value = await GetParameterValueAsync<T>($"{_awsOptions.SecretPathPrefix}/{owner}/{repo}/{name.ToUpperInvariant()}");
             return value;
+        }
+
+        public async Task<T> GetHistoricalAsync<T>(string owner, string repo, string name, int historical)
+        {
+            var path = $"{_awsOptions.SecretPathPrefix}/{owner}/{repo}/{name.ToUpperInvariant()}";
+            if (historical <= 0)
+            {
+                return await GetParameterValueAsync<T>(path);
+            }
+
+            var value = default(T);
+            try
+            {
+                // History is returned oldest first, so all pages are needed to find the latest values.
+                var history = new List<ParameterHistory>();
+                string? nextToken = null;
+                do
+                {
+                    var response = await _amazonSsm.GetParameterHistoryAsync(new GetParameterHistoryRequest
+                    {
+                        Name = path,
+                        WithDecryption = true,
+                        MaxResults = MaxHistoryPerPage,
+                        NextToken = nextToken
+                    });
+
+                    if (response.Parameters != null)
+                    {
+                        history.AddRange(response.Parameters);
+                    }
+
+                    nextToken = response.NextToken;
+                } while (!string.IsNullOrEmpty(nextToken));
+
+                if (history.Count > historical)
+                {
+                    value = Deserialize<T>(history[history.Count - (historical + 1)].Value);
+                }
+            }
+            catch (ParameterNotFoundException)
+            {
+                // Do nothing.
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Unable to get parameter history for {path}.");
+            }
+
+            return value!;
         }
 
         public async Task<T> GetAsync<T>(string owner, string name)
@@ -69,12 +119,7 @@ namespace PrDeploy.Api.Business.Stores
             try
             {
                 var parameterResponse = await _amazonSsm.GetParameterAsync(request);
-                var valueString = parameterResponse.Parameter.Value;
-                var deserializer = new DeserializerBuilder()
-                    .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                    .IgnoreUnmatchedProperties()
-                    .Build();
-                value = deserializer.Deserialize<T>(valueString);
+                value = Deserialize<T>(parameterResponse.Parameter.Value);
             }
             catch (ParameterNotFoundException)
             {
@@ -86,6 +131,15 @@ namespace PrDeploy.Api.Business.Stores
             }
 
             return value!;
+        }
+
+        private static T Deserialize<T>(string valueString)
+        {
+            var deserializer = new DeserializerBuilder()
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .IgnoreUnmatchedProperties()
+                .Build();
+            return deserializer.Deserialize<T>(valueString);
         }
 
         private async Task SetParameterValueAsync<T>(string path, T value, bool isSecure)

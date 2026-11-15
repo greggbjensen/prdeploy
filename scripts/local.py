@@ -114,10 +114,6 @@ if not args.skip_docker:
   os.chdir('../prdeploy-app')
   subprocess.run('docker compose build')
 
-  print('\nBuilding prdeploy-webhooks.')
-  os.chdir('../prdeploy-webhooks')
-  subprocess.run('docker compose build')
-
 if not args.skip_prereq:
   cprint('\n## Installing prerequisite helm charts.\n', 'cyan')
   subprocess.run('helm upgrade external-secrets external-secrets --repo https://charts.external-secrets.io --namespace external-secrets --create-namespace --set installCRDs=true --install')

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.3.11222.16 d18.3
+VisualStudioVersion = 18.3.11222.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4AE5B802-264E-4EAE-8870-8BEE0E035BA5}"
 EndProject
@@ -25,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.props = Directory.Build.props
 		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrDeploy.Api.Webhooks", "src\PrDeploy.Api.Webhooks\PrDeploy.Api.Webhooks.csproj", "{BDFADACE-752A-454F-823B-9F4FFFA6FA2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -84,6 +86,18 @@ Global
 		{4D30B302-5A1B-4050-9393-574965D95A98}.Release|x64.Build.0 = Release|Any CPU
 		{4D30B302-5A1B-4050-9393-574965D95A98}.Release|x86.ActiveCfg = Release|Any CPU
 		{4D30B302-5A1B-4050-9393-574965D95A98}.Release|x86.Build.0 = Release|Any CPU
+		{BDFADACE-752A-454F-823B-9F4FFFA6FA2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDFADACE-752A-454F-823B-9F4FFFA6FA2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDFADACE-752A-454F-823B-9F4FFFA6FA2C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BDFADACE-752A-454F-823B-9F4FFFA6FA2C}.Debug|x64.Build.0 = Debug|Any CPU
+		{BDFADACE-752A-454F-823B-9F4FFFA6FA2C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BDFADACE-752A-454F-823B-9F4FFFA6FA2C}.Debug|x86.Build.0 = Debug|Any CPU
+		{BDFADACE-752A-454F-823B-9F4FFFA6FA2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDFADACE-752A-454F-823B-9F4FFFA6FA2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDFADACE-752A-454F-823B-9F4FFFA6FA2C}.Release|x64.ActiveCfg = Release|Any CPU
+		{BDFADACE-752A-454F-823B-9F4FFFA6FA2C}.Release|x64.Build.0 = Release|Any CPU
+		{BDFADACE-752A-454F-823B-9F4FFFA6FA2C}.Release|x86.ActiveCfg = Release|Any CPU
+		{BDFADACE-752A-454F-823B-9F4FFFA6FA2C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -93,6 +107,7 @@ Global
 		{E9D89BBE-2A57-41B2-B445-6A209B1807B2} = {4AE5B802-264E-4EAE-8870-8BEE0E035BA5}
 		{39E8163B-FE31-4994-BFC4-7A7A714592BC} = {4AE5B802-264E-4EAE-8870-8BEE0E035BA5}
 		{4D30B302-5A1B-4050-9393-574965D95A98} = {F458EF67-51CA-4270-A1C3-D1D89E3E2903}
+		{BDFADACE-752A-454F-823B-9F4FFFA6FA2C} = {4AE5B802-264E-4EAE-8870-8BEE0E035BA5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2CE25253-9132-4D85-9AE7-13861C35A2C1}

@@ -11,6 +11,7 @@ COPY ["Directory.Packages.props", "."]
 COPY ["src/PrDeploy.Api/PrDeploy.Api.csproj", "src/PrDeploy.Api/"]
 COPY ["src/PrDeploy.Api.Business/PrDeploy.Api.Business.csproj", "src/PrDeploy.Api.Business/"]
 COPY ["src/PrDeploy.Api.Models/PrDeploy.Api.Models.csproj", "src/PrDeploy.Api.Models/"]
+COPY ["src/PrDeploy.Api.Webhooks/PrDeploy.Api.Webhooks.csproj", "src/PrDeploy.Api.Webhooks/"]
 
 RUN dotnet restore "src/PrDeploy.Api/PrDeploy.Api.csproj" -r linux-x64 -p:Version=$VERSION -p:PublishReadyToRun=true
 

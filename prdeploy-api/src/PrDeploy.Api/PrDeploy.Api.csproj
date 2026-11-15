@@ -30,6 +30,7 @@
   <ItemGroup>
     <ProjectReference Include="..\PrDeploy.Api.Business\PrDeploy.Api.Business.csproj" />
     <ProjectReference Include="..\PrDeploy.Api.Models\PrDeploy.Api.Models.csproj" />
+    <ProjectReference Include="..\PrDeploy.Api.Webhooks\PrDeploy.Api.Webhooks.csproj" />
   </ItemGroup>
 
 </Project>

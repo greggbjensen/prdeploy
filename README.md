@@ -41,5 +41,5 @@ Post comment commands to manage your deployments without leaving your pull reque
 
 # Contributing
 
-1. For API development and debugging, see [prdeploy-webhooks Development](/prdeploy-webhooks/README.md#development).
+1. For API and webhooks development and debugging, see [prdeploy-api Development](/prdeploy-api/README.md#development).
 2. For Web development and debugging, see [prdeploy-web Development](/prdeploy-web/README.md#development).

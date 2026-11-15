@@ -11,6 +11,7 @@ using PrDeploy.Api.Configuration;
 using PrDeploy.Api.Models;
 using PrDeploy.Api.Models.Auth;
 using PrDeploy.Api.Options;
+using PrDeploy.Api.Webhooks;
 using Serilog;
 using Serilog.Formatting.Json;
 using System.Text.Json;
@@ -33,6 +34,7 @@ try
     //initial logger without env running
     Log.Logger = new LoggerConfiguration()
         .ReadFrom.Configuration(configuration)
+        .Enrich.FromLogContext() // Includes webhook scopes such as Owner, Repo and PullNumber.
         .WriteTo.Console(new JsonFormatter(renderMessage: true))
         .CreateBootstrapLogger();
 
@@ -40,6 +42,7 @@ try
         .AddPrDeployApi(configuration)
         .AddPrDeployApiBusiness(configuration)
         .AddPrDeployApiModelValidation()
+        .AddPrDeployWebhooks(configuration)
         .AddGitHubAuthentication(
             options => configuration.Bind("GitHubAuth", options),
             options => configuration.Bind("Jwt", options))
@@ -139,6 +142,9 @@ try
 
             return result;
         });
+
+    // GitHub App events, authenticated by the webhook signature.
+    app.MapGitHubWebhooks();
 
     app.MapGraphQL().WithOptions(options =>
     {

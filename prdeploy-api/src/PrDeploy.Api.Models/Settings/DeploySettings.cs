@@ -1,7 +1,7 @@
 namespace PrDeploy.Api.Models.Settings;
 public class DeploySettings
 {
-    //// This has to match prdeploy-webhooks/src/models/settings/repo-settings.ts.
+    //// Shared by the GraphQL API and the GitHub App webhooks in PrDeploy.Api.Webhooks.
     public string? DeployWorkflow { get; set; }
     public List<EnvironmentSettings>? Environments { get; set; } = new ();
     public List<ServiceSettings>? Services { get; set; } = new();

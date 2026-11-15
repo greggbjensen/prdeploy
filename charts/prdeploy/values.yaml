@@ -14,7 +14,7 @@ global:
   image:
     registry: greggbjensen
   serviceAccounts:
-    backend:  # Shared by prdeploy-api and prdeploy-webhooks and needs permissions to AWS Parameter Store.
+    backend:  # Used by prdeploy-api, which also handles webhooks, and needs permissions to AWS Parameter Store.
       create: true
       automount: true
       annotations:
@@ -37,7 +37,7 @@ ingress:
       port: 80
     - path: /webhooks
       pathType: Prefix
-      service: prdeploy-webhooks
+      service: prdeploy-api
       port: 80
     - path: /api
       pathType: Prefix
@@ -53,6 +53,3 @@ prdeploy-api:
 
 prdeploy-app:
   fullnameOverride: prdeploy-app
-
-prdeploy-webhooks:
-  fullnameOverride: prdeploy-webhooks
