@@ -1,0 +1,1 @@
+../../.claude/rules/csharp.md

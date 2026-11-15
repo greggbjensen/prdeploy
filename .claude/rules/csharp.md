@@ -4,6 +4,9 @@ paths:
   - "**/*.csproj"
   - "**/Directory.Build.*"
   - "**/Directory.Packages.props"
+applyTo: "**/*.cs, **/*.csproj, **/Directory.Build.*, **/Directory.Packages.props"
+trigger: glob
+globs: "**/*.cs, **/*.csproj, **/Directory.Build.*, **/Directory.Packages.props"
 ---
 
 # C# and .NET
