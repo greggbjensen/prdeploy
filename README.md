@@ -6,6 +6,17 @@ GitHub App that allows the entire build-deploy lifecycle to happen within a feat
 
 Review the prdeploy documentation at https://prdeploy.readthedocs.io.
 
+## Repository Guides
+
+- [prdeploy API](./prdeploy-api/README.md)
+- [prdeploy web application](./prdeploy-app/README.md)
+- [Local development scripts](./scripts/README.md)
+- GitHub Actions:
+  - [build-details](./.github/actions/build-details/README.md)
+  - [date-version](./.github/actions/date-version/README.md)
+  - [deploy-tags](./.github/actions/deploy-tags/README.md)
+  - [get-build-info](./.github/actions/get-build-info/README.md)
+
 # prdeploy portal
 
 Use the prdeploy portal dashboard to overview releases and deployment queues and act on them.
@@ -42,4 +53,4 @@ Post comment commands to manage your deployments without leaving your pull reque
 # Contributing
 
 1. For API and webhooks development and debugging, see [prdeploy-api Development](/prdeploy-api/README.md#development).
-2. For Web development and debugging, see [prdeploy-web Development](/prdeploy-web/README.md#development).
+2. For web application setup and development, see the [prdeploy web application guide](./prdeploy-app/README.md).
