@@ -35,8 +35,12 @@ public static class IServiceCollectionExtensions
             .AddType<OwnerRepoMutation>()
             .AddType<PullRequestMutation>()
 
-            // Error handling.
-            .AddErrorFilter<SanitizedErrorFilter>();
+            // Error handling. HotChocolate 16 resolves the filter from schema services,
+            // so the application services it depends on must be exposed explicitly.
+            .AddApplicationService<ILogger<SanitizedErrorFilter>>()
+            .AddApplicationService<IHostEnvironment>()
+            .AddErrorFilter<SanitizedErrorFilter>()
+            .AddHttpResponseFormatter<SanitizedHttpResponseFormatter>();
 
         // Register service classes so they can be injected without a [Service] attribute.
         services
@@ -47,7 +51,6 @@ public static class IServiceCollectionExtensions
             .AddScoped<DeploySettingsService>();
 
         services
-            .AddHttpResponseFormatter<SanitizedHttpResponseFormatter>()
             .AddHttpContextAccessor()
             .AddScoped<ISecurityContext, SecurityContext>()
             .AddScoped<IGitHubClient>(s =>

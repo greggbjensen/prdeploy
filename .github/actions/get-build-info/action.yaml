@@ -19,5 +19,5 @@ inputs:
     description: 'Regular expression with a single capture group that is the build name.'
     default: '/([^/]+?)-build.ya?ml'
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'dist/index.js'

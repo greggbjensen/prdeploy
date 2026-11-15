@@ -163,7 +163,8 @@ $light-theme: mat.private-deep-merge-all(
   mtx.define-theme($config)
 );
 
-@include mat.core();
+@include mat.elevation-classes();
+@include mat.app-background();
 
 :root {
   @include cdk.overlay();

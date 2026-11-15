@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { SlackSettingsCompare } from 'src/app/shared/graphql';
 import { SettingsLevel } from '../../models';
 import { AddSlackEmailAliasDialogComponent } from './add-slack-email-alias-dialog/add-slack-email-alias-dialog.component';
@@ -14,7 +14,6 @@ import { KeyValuePipe } from '@angular/common';
 
 @Component({
   selector: 'app-slack-email-aliases-grid',
-  standalone: true,
   imports: [
     AddSlackEmailAliasDialogComponent,
     MatButtonModule,
@@ -25,6 +24,7 @@ import { KeyValuePipe } from '@angular/common';
     KeyValuePipe
   ],
   templateUrl: './slack-email-aliases-grid.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './slack-email-aliases-grid.component.scss'
 })
 export class SlackEmailAliasesGridComponent {

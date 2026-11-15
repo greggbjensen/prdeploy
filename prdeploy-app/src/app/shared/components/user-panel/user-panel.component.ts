@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../services';
@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
   selector: 'app-user-panel',
   templateUrl: 'user-panel.component.html',
   styleUrls: ['./user-panel.component.scss'],
-  standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatMenuModule, MatButtonModule, MatIconModule]
 })
 export class UserPanelComponent {

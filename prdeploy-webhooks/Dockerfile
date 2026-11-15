@@ -1,9 +1,9 @@
-FROM node:20 as base
+FROM node:24 as base
 ENV NODE_ENV production
 USER node
 EXPOSE 3000
 
-FROM node:20 as build
+FROM node:24 as build
 WORKDIR /src
 COPY ["package.json", "package-lock.json", "./"]
 RUN npm ci

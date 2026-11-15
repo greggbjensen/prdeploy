@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -9,9 +9,9 @@ import { Repository } from 'src/app/shared/models';
 
 @Component({
   selector: 'app-repositories-grid',
-  standalone: true,
   imports: [MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatListModule],
   templateUrl: './repositories-grid.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './repositories-grid.component.scss'
 })
 export class RepositoriesGridComponent {

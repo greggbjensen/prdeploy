@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { AuthService } from './shared/services';
 import { RouterOutlet } from '@angular/router';
 import { FooterComponent, SideNavigationMenuComponent, HeaderComponent } from './shared/components';
@@ -13,7 +13,7 @@ import { NgClass } from '@angular/common';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     RouterOutlet,
     FooterComponent,

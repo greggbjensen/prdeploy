@@ -1,7 +1,7 @@
 FROM nginx:latest as base
 EXPOSE 80
 
-FROM node:20 as build
+FROM node:24 as build
 WORKDIR /src
 COPY ["package.json", "package-lock.json", ".nvmrc", "./"]
 RUN npm ci

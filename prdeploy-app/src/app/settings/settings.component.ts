@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { SettingsFormComponent } from './settings-form/settings-form.component';
 import { RepoManager, RouteManager } from '../shared/managers';
 import { SettingsLevel } from './models';
@@ -11,9 +11,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-settings',
-  standalone: true,
   imports: [SettingsFormComponent, MatButtonModule, MatIconModule, MatTabsModule, AlertPanelComponent],
   templateUrl: './settings.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './settings.component.scss'
 })
 export class SettingsComponent {

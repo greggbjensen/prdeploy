@@ -1,12 +1,12 @@
 ﻿using System.Net;
-using HotChocolate.AspNetCore.Serialization;
+using HotChocolate.AspNetCore.Formatters;
 using HotChocolate.Execution;
 
 namespace PrDeploy.Api.Filters
 {
     public class SanitizedHttpResponseFormatter : DefaultHttpResponseFormatter
     {
-        protected override HttpStatusCode OnDetermineStatusCode(IOperationResult result, FormatInfo format, HttpStatusCode? proposedStatusCode)
+        protected override HttpStatusCode OnDetermineStatusCode(OperationResult result, FormatInfo format, HttpStatusCode? proposedStatusCode)
         {
             var statusCode = base.OnDetermineStatusCode(result, format, proposedStatusCode);
             if (result.Errors?.Count > 0)

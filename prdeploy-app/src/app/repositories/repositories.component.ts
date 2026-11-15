@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { RepositoriesGridComponent } from './repositories-grid/repositories-grid.component';
 import { EnabledOwnerReposGQL, OwnerRepoRemoveEnabledGQL, OwnerRepos } from '../shared/graphql';
 import { firstValueFrom } from 'rxjs';
@@ -15,9 +15,9 @@ import { AlertPanelComponent } from '../shared/components';
 
 @Component({
   selector: 'app-repositories',
-  standalone: true,
   imports: [MatButtonModule, MatIconModule, RepositoriesGridComponent, AddRepoDialogComponent, AlertPanelComponent],
   templateUrl: './repositories.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './repositories.component.scss'
 })
 export class RepositoriesComponent implements OnInit {
@@ -74,7 +74,9 @@ export class RepositoriesComponent implements OnInit {
             try {
               await firstValueFrom(
                 this._ownerRepoRemoveEnabledGQL.mutate({
-                  input: repository
+                  variables: {
+                    input: repository
+                  }
                 })
               );
 

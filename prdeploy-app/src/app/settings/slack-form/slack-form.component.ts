@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { SlackSettingsCompare } from 'src/app/shared/graphql';
 import { SettingsLevel } from '../models';
 import { KeyValuePipe } from '@angular/common';
@@ -12,7 +12,6 @@ import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-slack-form',
-  standalone: true,
   imports: [
     SlackEmailAliasesGridComponent,
     MatInputModule,
@@ -24,6 +23,7 @@ import { MatButtonModule } from '@angular/material/button';
     KeyValuePipe
   ],
   templateUrl: './slack-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './slack-form.component.scss'
 })
 export class SlackFormComponent {

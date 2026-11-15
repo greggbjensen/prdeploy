@@ -46,7 +46,7 @@
     <th mat-header-cell *matHeaderCellDef>Updated At</th>
     <td mat-cell *matCellDef="let environment">
       @if (environment.pullRequest?.updatedAt) {
-        {{ environment.pullRequest?.updatedAt | date: 'short' }}
+        {{ $safeNavigationMigration(environment.pullRequest?.updatedAt) | date: 'short' }}
       }
     </td>
   </ng-container>

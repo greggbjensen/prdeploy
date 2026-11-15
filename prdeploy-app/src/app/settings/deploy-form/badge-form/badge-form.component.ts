@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { BadgeSettingsCompare, OwnerRepoValueOfString } from 'src/app/shared/graphql';
 import { SettingsLevel } from '../../models';
 import { MtxColorpickerModule } from '@ng-matero/extensions/colorpicker';
@@ -9,9 +9,9 @@ import { NgStyle } from '@angular/common';
 
 @Component({
   selector: 'app-badge-form',
-  standalone: true,
   imports: [MtxColorpickerModule, MatFormFieldModule, FormsModule, MatInputModule, NgStyle],
   templateUrl: './badge-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './badge-form.component.scss'
 })
 export class BadgeFormComponent {

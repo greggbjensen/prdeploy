@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Environment, EnvironmentsGQL } from '../shared/graphql';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
@@ -13,7 +13,6 @@ import { AlertPanelComponent } from '../shared/components';
 
 @Component({
   selector: 'app-environments',
-  standalone: true,
   imports: [
     MatButtonModule,
     MatIconModule,
@@ -24,6 +23,7 @@ import { AlertPanelComponent } from '../shared/components';
     RouterModule
   ],
   templateUrl: './environments.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './environments.component.scss'
 })
 export class EnvironmentsComponent implements OnInit {
@@ -86,9 +86,11 @@ export class EnvironmentsComponent implements OnInit {
     const repo = this.repoManager.repo;
     const environmentsResponse = await firstValueFrom(
       this._environmentsGQL.fetch({
-        input: {
-          owner,
-          repo
+        variables: {
+          input: {
+            owner,
+            repo
+          }
         }
       })
     );

@@ -1,7 +1,7 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, DOCUMENT, ChangeDetectionStrategy } from '@angular/core';
 import { navigation, NavItem } from '../../../app-navigation';
 import { MatTreeModule, MatTreeNestedDataSource } from '@angular/material/tree';
-import { DOCUMENT, KeyValuePipe } from '@angular/common';
+import { KeyValuePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { RepoManager } from '../../managers';
@@ -11,7 +11,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   selector: 'app-side-navigation-menu',
   templateUrl: './side-navigation-menu.component.html',
   styleUrls: ['./side-navigation-menu.component.scss'],
-  standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatTreeModule, KeyValuePipe, RouterModule, MatIconModule]
 })
 export class SideNavigationMenuComponent {

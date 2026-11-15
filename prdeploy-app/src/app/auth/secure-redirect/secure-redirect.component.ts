@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { firstValueFrom } from 'rxjs';
 import { EnabledOwnerReposGQL } from 'src/app/shared/graphql';
@@ -6,9 +6,9 @@ import { RepoManager, RouteManager } from 'src/app/shared/managers';
 
 @Component({
   selector: 'app-secure-redirect',
-  standalone: true,
   imports: [MatProgressSpinnerModule],
   templateUrl: './secure-redirect.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './secure-redirect.component.scss'
 })
 export class SecureRedirectComponent {

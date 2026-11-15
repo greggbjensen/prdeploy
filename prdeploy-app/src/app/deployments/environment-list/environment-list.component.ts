@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input } from '@angular/core';
+import { AfterViewInit, Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { DeployEnvironment, DeployEnvironmentDeployGQL, DeployEnvironmentFreeGQL } from 'src/app/shared/graphql';
 import { firstValueFrom } from 'rxjs';
 import { LoggingService } from 'src/app/shared/services';
@@ -21,7 +21,7 @@ import { CleanMarkdownPipe } from 'src/app/shared/pipes';
   selector: 'app-environment-list',
   templateUrl: './environment-list.component.html',
   styleUrls: ['./environment-list.component.scss'],
-  standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatButtonModule,
     MatIconModule,
@@ -67,11 +67,13 @@ export class EnvironmentListComponent implements AfterViewInit {
     try {
       await firstValueFrom(
         this._deployEnvironmentFreeGQL.mutate({
-          input: {
-            owner: this.repoManager.owner,
-            repo: this.repoManager.repo,
-            environment,
-            pullNumber
+          variables: {
+            input: {
+              owner: this.repoManager.owner,
+              repo: this.repoManager.repo,
+              environment,
+              pullNumber
+            }
           }
         })
       );
@@ -109,11 +111,13 @@ export class EnvironmentListComponent implements AfterViewInit {
     try {
       await firstValueFrom(
         this._deployEnvironmentDeployGQL.mutate({
-          input: {
-            owner: this.repoManager.owner,
-            repo: this.repoManager.repo,
-            environment,
-            pullNumber
+          variables: {
+            input: {
+              owner: this.repoManager.owner,
+              repo: this.repoManager.repo,
+              environment,
+              pullNumber
+            }
           }
         })
       );

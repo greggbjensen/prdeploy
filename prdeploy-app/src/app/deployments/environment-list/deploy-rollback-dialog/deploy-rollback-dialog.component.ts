@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -22,7 +22,6 @@ import { MtxButtonModule } from '@ng-matero/extensions/button';
 
 @Component({
   selector: 'app-deploy-rollback-dialog',
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,
@@ -34,6 +33,7 @@ import { MtxButtonModule } from '@ng-matero/extensions/button';
     ReactiveFormsModule
   ],
   templateUrl: './deploy-rollback-dialog.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './deploy-rollback-dialog.component.scss'
 })
 export class DeployRollbackDialogComponent {
@@ -65,12 +65,14 @@ export class DeployRollbackDialogComponent {
       const rollbackCount = this.form.value.rollbackCount;
       await firstValueFrom(
         this._deployEnvironmentDeployGQL.mutate({
-          input: {
-            owner: this.data.repository.owner,
-            repo: this.data.repository.repo,
-            environment: this.data.environment,
-            pullNumber: this.data.pullNumber,
-            count: rollbackCount
+          variables: {
+            input: {
+              owner: this.data.repository.owner,
+              repo: this.data.repository.repo,
+              environment: this.data.environment,
+              pullNumber: this.data.pullNumber,
+              count: rollbackCount
+            }
           }
         })
       );

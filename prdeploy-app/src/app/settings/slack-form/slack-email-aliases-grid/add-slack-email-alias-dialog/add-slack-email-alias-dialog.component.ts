@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,7 +14,6 @@ import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-add-slack-email-alias-dialog',
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,
@@ -26,6 +25,7 @@ import { MatInputModule } from '@angular/material/input';
     ReactiveFormsModule
   ],
   templateUrl: './add-slack-email-alias-dialog.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './add-slack-email-alias-dialog.component.scss'
 })
 export class AddSlackEmailAliasDialogComponent {

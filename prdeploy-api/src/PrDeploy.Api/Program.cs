@@ -140,9 +140,9 @@ try
             return result;
         });
 
-    app.MapGraphQL().WithOptions(new GraphQLServerOptions
+    app.MapGraphQL().WithOptions(options =>
     {
-        Tool = { Enable = false } // Use Apollo Playground instead of Banana Cake Pop.
+        options.Tool.Enable = false; // Use Apollo Playground instead of Banana Cake Pop.
     });
 
     app.MapApolloSandboxRedirect();

@@ -1,5 +1,5 @@
 import { KeyValuePipe } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -32,7 +32,6 @@ import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-add-pr-service-dialog',
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,
@@ -52,6 +51,7 @@ import { RouterModule } from '@angular/router';
     KeyValuePipe
   ],
   templateUrl: './add-pr-service-dialog.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './add-pr-service-dialog.component.scss'
 })
 export class AddPrServiceDialogComponent {
@@ -86,7 +86,9 @@ export class AddPrServiceDialogComponent {
 
         this.loadingServices = true;
         const response = await firstValueFrom(
-          this._repositoryServicesGQL.fetch({ input: { owner: this.repoManager.owner, repo: this.repoManager.repo } })
+          this._repositoryServicesGQL.fetch({
+            variables: { input: { owner: this.repoManager.owner, repo: this.repoManager.repo } }
+          })
         );
         this.repositoryServices = response.data.repositoryServices;
         this.loadingServices = false;
@@ -102,10 +104,12 @@ export class AddPrServiceDialogComponent {
   async filterPullRequests(search: string = '') {
     const result = await firstValueFrom(
       this._openPullRequestsGQL.fetch({
-        input: {
-          owner: this.repoManager.owner,
-          repo: this.repoManager.repo,
-          search
+        variables: {
+          input: {
+            owner: this.repoManager.owner,
+            repo: this.repoManager.repo,
+            search
+          }
         }
       })
     );
@@ -142,11 +146,13 @@ export class AddPrServiceDialogComponent {
     try {
       await firstValueFrom(
         this._pullRequestAddServicesGQL.mutate({
-          input: {
-            owner: this.repoManager.owner,
-            repo: this.repoManager.repo,
-            pullNumber: this.selectedPullRequest.number,
-            services: this.selectedServices
+          variables: {
+            input: {
+              owner: this.repoManager.owner,
+              repo: this.repoManager.repo,
+              pullNumber: this.selectedPullRequest.number,
+              services: this.selectedServices
+            }
           }
         })
       );

@@ -23,7 +23,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   selector: 'app-deployments',
   templateUrl: './deployments.component.html',
   styleUrls: ['./deployments.component.scss'],
-  standalone: true,
   imports: [
     MatButtonModule,
     MatIconModule,
@@ -71,11 +70,13 @@ export class DeploymentsComponent implements OnInit {
       const pullRequest = queue.pullRequests[0];
       await firstValueFrom(
         this._deployEnvironmentDeployGQL.mutate({
-          input: {
-            owner: this.repoManager.owner,
-            repo: this.repoManager.repo,
-            environment: queue.environment,
-            pullNumber: pullRequest.number
+          variables: {
+            input: {
+              owner: this.repoManager.owner,
+              repo: this.repoManager.repo,
+              environment: queue.environment,
+              pullNumber: pullRequest.number
+            }
           }
         })
       );
@@ -96,9 +97,11 @@ export class DeploymentsComponent implements OnInit {
 
       const response = await firstValueFrom(
         this._deployEnvironmentsAndQueuesGQL.fetch({
-          input: {
-            owner: this.repoManager.owner,
-            repo: this.repoManager.repo
+          variables: {
+            input: {
+              owner: this.repoManager.owner,
+              repo: this.repoManager.repo
+            }
           }
         })
       );

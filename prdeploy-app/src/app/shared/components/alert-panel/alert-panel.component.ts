@@ -1,12 +1,12 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { AlertType } from './alert-type';
 
 @Component({
   selector: 'app-alert-panel',
-  standalone: true,
   imports: [MatIconModule],
   templateUrl: './alert-panel.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './alert-panel.component.scss'
 })
 export class AlertPanelComponent {

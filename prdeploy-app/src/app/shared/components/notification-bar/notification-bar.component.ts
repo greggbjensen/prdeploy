@@ -1,13 +1,13 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
 import { NotificationData } from '../../managers';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-notification-bar',
-  standalone: true,
   imports: [MatIcon],
   templateUrl: './notification-bar.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './notification-bar.component.scss'
 })
 export class NotificationBarComponent {

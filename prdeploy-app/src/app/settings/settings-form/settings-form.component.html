@@ -8,8 +8,7 @@
     @for (tab of settingsTabs; track tab.id) {
       <mat-list-option [value]="tab.id">
         <div class="settings-menu-item{{ tab.id === activeTabId ? ' settings-nav-selected' : '' }}">
-          <mat-icon>{{ tab.icon }}</mat-icon
-          ><span>{{ tab.text }} </span>
+          <mat-icon>{{ tab.icon }}</mat-icon><span>{{ tab.text }} </span>
         </div>
       </mat-list-option>
     }

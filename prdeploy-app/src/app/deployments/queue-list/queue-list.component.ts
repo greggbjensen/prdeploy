@@ -1,4 +1,13 @@
-import { AfterViewInit, ChangeDetectorRef, Component, DestroyRef, EventEmitter, Input, Output } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  EventEmitter,
+  Input,
+  Output,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { debounceTime, firstValueFrom } from 'rxjs';
 import {
   DeployQueue,
@@ -29,7 +38,7 @@ import { CdkDragDrop, CdkDropList, CdkDrag, moveItemInArray } from '@angular/cdk
   selector: 'app-queue-list',
   templateUrl: './queue-list.component.html',
   styleUrls: ['./queue-list.component.scss'],
-  standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatAutocompleteModule,
     MatButtonModule,
@@ -112,10 +121,12 @@ export class QueueListComponent implements AfterViewInit {
   async filterPullRequests(search: string = '') {
     const result = await firstValueFrom(
       this._openPullRequestsGQL.fetch({
-        input: {
-          owner: this._repoManager.owner,
-          repo: this._repoManager.repo,
-          search
+        variables: {
+          input: {
+            owner: this._repoManager.owner,
+            repo: this._repoManager.repo,
+            search
+          }
         }
       })
     );
@@ -171,11 +182,13 @@ export class QueueListComponent implements AfterViewInit {
     this.queueUpdateStarted.emit(pullRequestNumbers);
     await firstValueFrom(
       this._deployQueueUpdateGQL.mutate({
-        input: {
-          owner: this._repoManager.owner,
-          repo: this._repoManager.repo,
-          environment: this.queue?.environment as string,
-          pullNumbers: pullRequestNumbers
+        variables: {
+          input: {
+            owner: this._repoManager.owner,
+            repo: this._repoManager.repo,
+            environment: this.queue?.environment as string,
+            pullNumbers: pullRequestNumbers
+          }
         }
       })
     );

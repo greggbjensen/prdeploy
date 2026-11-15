@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, DestroyRef, Inject, OnInit } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, Inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { debounceTime, firstValueFrom } from 'rxjs';
 import { DeployEnvironmentDeployGQL, OpenPullRequestsGQL, PullRequest } from 'src/app/shared/graphql';
 import { LoggingService } from 'src/app/shared/services';
@@ -28,7 +28,7 @@ import { MatIconModule } from '@angular/material/icon';
   selector: 'app-deploy-force-dialog',
   templateUrl: './deploy-force-dialog.component.html',
   styleUrls: ['./deploy-force-dialog.component.scss'],
-  standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatDialogTitle,
     MatDialogContent,
@@ -91,10 +91,12 @@ export class DeployForceDialogComponent implements OnInit, AfterViewInit {
   async filterPullRequests(search: string = '') {
     const result = await firstValueFrom(
       this._openPullRequestsGQL.fetch({
-        input: {
-          owner: this.data.repository.owner,
-          repo: this.data.repository.repo,
-          search
+        variables: {
+          input: {
+            owner: this.data.repository.owner,
+            repo: this.data.repository.repo,
+            search
+          }
         }
       })
     );
@@ -116,13 +118,15 @@ export class DeployForceDialogComponent implements OnInit, AfterViewInit {
     try {
       await firstValueFrom(
         this._deployEnvironmentDeployGQL.mutate({
-          input: {
-            owner: this.data.repository.owner,
-            repo: this.data.repository.repo,
-            environment: this.data.environment,
-            pullNumber: this.selectedPullRequest.number,
-            force: true,
-            retain: this.form.value.retainLocks
+          variables: {
+            input: {
+              owner: this.data.repository.owner,
+              repo: this.data.repository.repo,
+              environment: this.data.environment,
+              pullNumber: this.selectedPullRequest.number,
+              force: true,
+              retain: this.form.value.retainLocks
+            }
           }
         })
       );

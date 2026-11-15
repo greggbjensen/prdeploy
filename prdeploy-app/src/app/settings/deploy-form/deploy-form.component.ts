@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { DeploySettingsCompare } from 'src/app/shared/graphql';
 import { SettingsLevel } from '../models';
 import { BadgeFormComponent } from './badge-form/badge-form.component';
@@ -9,9 +9,9 @@ import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-deploy-form',
-  standalone: true,
   imports: [BadgeFormComponent, MatInputModule, MatButtonModule, FormsModule, MatSelectModule],
   templateUrl: './deploy-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './deploy-form.component.scss'
 })
 export class DeployFormComponent {

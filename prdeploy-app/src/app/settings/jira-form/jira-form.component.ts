@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { JiraSettingsCompare } from 'src/app/shared/graphql';
 import { SettingsLevel } from '../models';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -11,7 +11,6 @@ import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-jira-form',
-  standalone: true,
   imports: [
     MatCheckboxModule,
     MatIconModule,
@@ -22,6 +21,7 @@ import { MatInputModule } from '@angular/material/input';
     FormsModule
   ],
   templateUrl: './jira-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './jira-form.component.scss'
 })
 export class JiraFormComponent {

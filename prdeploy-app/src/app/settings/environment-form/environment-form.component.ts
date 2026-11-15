@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { EnvironmentSettings } from 'src/app/shared/graphql';
 import { KeyValuePipe, NgStyle } from '@angular/common';
 import { SettingsLevel } from '../models';
@@ -17,7 +17,6 @@ import { MtxColorpickerModule } from '@ng-matero/extensions/colorpicker';
 
 @Component({
   selector: 'app-environment-form',
-  standalone: true,
   imports: [
     MatButtonModule,
     MatIconModule,
@@ -33,6 +32,7 @@ import { MtxColorpickerModule } from '@ng-matero/extensions/colorpicker';
     KeyValuePipe
   ],
   templateUrl: './environment-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './environment-form.component.scss'
 })
 export class EnvironmentFormComponent {

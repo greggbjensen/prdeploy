@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import {
   BadgeSettingsCompare,
@@ -49,7 +49,6 @@ class SetCompareValue<T> {
 
 @Component({
   selector: 'app-settings-form',
-  standalone: true,
   imports: [
     DeployFormComponent,
     EnvironmentFormComponent,
@@ -65,6 +64,7 @@ class SetCompareValue<T> {
     ServicesFormComponent
   ],
   templateUrl: './settings-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './settings-form.component.scss'
 })
 export class SettingsFormComponent implements AfterViewInit {
@@ -161,14 +161,16 @@ export class SettingsFormComponent implements AfterViewInit {
       const repoSettings = this.gatherSettings(new SetCompareValue(this.settingsCompare, 'repo'));
       await firstValueFrom(
         this._deploySettingsSetGQL.mutate({
-          ownerInput: {
-            owner: this._repoManager.owner,
-            settings: ownerSettings
-          },
-          repoInput: {
-            owner: this._repoManager.owner,
-            repo: this._repoManager.repo,
-            settings: repoSettings
+          variables: {
+            ownerInput: {
+              owner: this._repoManager.owner,
+              settings: ownerSettings
+            },
+            repoInput: {
+              owner: this._repoManager.owner,
+              repo: this._repoManager.repo,
+              settings: repoSettings
+            }
           }
         })
       );
@@ -196,9 +198,11 @@ export class SettingsFormComponent implements AfterViewInit {
     this.loading = true;
     const response = await firstValueFrom(
       this._deploySettingsCompareGQL.fetch({
-        input: {
-          owner: this._repoManager.owner,
-          repo: this._repoManager.repo
+        variables: {
+          input: {
+            owner: this._repoManager.owner,
+            repo: this._repoManager.repo
+          }
         }
       })
     );

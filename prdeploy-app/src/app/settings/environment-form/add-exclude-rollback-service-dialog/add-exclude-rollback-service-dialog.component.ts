@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,7 +15,6 @@ import { MtxButtonModule } from '@ng-matero/extensions/button';
 
 @Component({
   selector: 'app-add-exclude-rollback-service-dialog',
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,
@@ -28,6 +27,7 @@ import { MtxButtonModule } from '@ng-matero/extensions/button';
     ReactiveFormsModule
   ],
   templateUrl: './add-exclude-rollback-service-dialog.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './add-exclude-rollback-service-dialog.component.scss'
 })
 export class AddExcludeRollbackServiceDialogComponent {

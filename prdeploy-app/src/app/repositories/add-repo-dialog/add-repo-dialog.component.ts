@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -22,7 +22,6 @@ import { MtxButtonModule } from '@ng-matero/extensions/button';
 
 @Component({
   selector: 'app-add-repo-dialog',
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,
@@ -35,6 +34,7 @@ import { MtxButtonModule } from '@ng-matero/extensions/button';
     ReactiveFormsModule
   ],
   templateUrl: './add-repo-dialog.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './add-repo-dialog.component.scss'
 })
 export class AddRepoDialogComponent {
@@ -83,7 +83,9 @@ export class AddRepoDialogComponent {
       };
       await firstValueFrom(
         this._ownerRepoAddEnabledGQL.mutate({
-          input: repository
+          variables: {
+            input: repository
+          }
         })
       );
 

@@ -1,5 +1,5 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -14,9 +14,9 @@ import { RepoManager } from 'src/app/shared/managers';
 
 @Component({
   selector: 'app-environments-grid',
-  standalone: true,
   imports: [MatTableModule, MatSortModule, MatProgressSpinnerModule],
   templateUrl: './environments-grid.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './environments-grid.component.scss'
 })
 export class EnvironmentsGridComponent {
@@ -68,11 +68,13 @@ export class EnvironmentsGridComponent {
 
     const stateResponse = await firstValueFrom(
       this._deployStateComparisonGQL.fetch({
-        input: {
-          owner: this._repoManager.owner,
-          repo: this._repoManager.repo,
-          sourceEnvironment: this.sourceEnvironment.name,
-          targetEnvironment: this.targetEnvironment.name
+        variables: {
+          input: {
+            owner: this._repoManager.owner,
+            repo: this._repoManager.repo,
+            sourceEnvironment: this.sourceEnvironment.name,
+            targetEnvironment: this.targetEnvironment.name
+          }
         }
       })
     );

@@ -9,5 +9,5 @@ inputs:
     required: true
     description: 'The GitHub token to use for authentication'
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'dist/index.js'

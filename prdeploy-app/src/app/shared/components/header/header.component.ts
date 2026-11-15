@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { UserPanelComponent } from '../user-panel/user-panel.component';
 import { RepoManager } from '../../managers';
@@ -14,7 +14,7 @@ import { MatSelectChange, MatSelectModule } from '@angular/material/select';
   selector: 'app-header',
   templateUrl: 'header.component.html',
   styleUrls: ['./header.component.scss'],
-  standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatToolbarModule, MatButtonModule, MatIconModule, MatSelectModule, UserPanelComponent]
 })
 export class HeaderComponent {

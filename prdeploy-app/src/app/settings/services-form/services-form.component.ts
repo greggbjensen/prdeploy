@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { OwnerRepoValueOfListOfServiceSettings, ServiceSettings } from 'src/app/shared/graphql';
 import { SettingsLevel } from '../models';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,9 +14,9 @@ import _ from 'lodash';
 
 @Component({
   selector: 'app-services-form',
-  standalone: true,
   imports: [MatButtonModule, MatIconModule, MatTableModule, MatInputModule, FormsModule, JsonPipe],
   templateUrl: './services-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './services-form.component.scss'
 })
 export class ServicesFormComponent {
