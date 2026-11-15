@@ -6,7 +6,7 @@ In order to be able to listen and respond to pull request events, we need to cre
 {: style="margin: 30px 0 60px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
 
 1. Navigate to [https://github.com](https://github.com) and sign in.
-2. Click on your profile photo in the top right and choose **Your Organizations**.
+2. Click on your profile photo in the top right and choose **Organizations**.
 3. Click on the organization you want to add **prdeploy** to.
 4. Select the **Settings** tab, expand **Developer settings** on the left nav and choose **GitHub Apps**.
 5. Click **New GitHub App** in the top right.
@@ -41,7 +41,7 @@ In order to be able to listen and respond to pull request events, we need to cre
 | -------------- | -------------- |
 | Actions        | Read and write |
 | Administration | Read-only      |
-| Checks         | Read-only      |
+| Checks         | Read and write |
 | Contents       | Read and write |
 | Issues         | Read-only      |
 | Metadata       | Read-only      |
