@@ -17,6 +17,19 @@ Review the prdeploy documentation at https://prdeploy.readthedocs.io.
   - [deploy-tags](./.github/actions/deploy-tags/README.md)
   - [get-build-info](./.github/actions/get-build-info/README.md)
 
+## Bruno API Client
+
+The version-controlled Bruno OpenCollection YAML collection is in [`bruno/`](./bruno/opencollection.yml). Download and install the Bruno desktop client from [usebruno.com/downloads](https://www.usebruno.com/downloads).
+
+To use it locally:
+
+1. Start the API following the [API development instructions](./prdeploy-api/README.md#development). The API listens on `http://localhost:4302`.
+2. Copy `bruno/environments/local.example.yml` to `bruno/environments/local.yml`, then open the repository's `bruno/` folder as a collection in Bruno and select the **Local** environment.
+3. Set the local environment's `jwt`, `owner`, and `repo` values as needed. The local environment file is git-ignored; keep tokens and other credentials private.
+4. Choose a request under **REST endpoints** or **GraphQL operations** and send it. GraphQL requests need a valid prdeploy JWT. OAuth code exchange needs a fresh, single-use authorization code.
+
+The API's OpenAPI document is available at [http://localhost:4302/openapi/v1.json](http://localhost:4302/openapi/v1.json) while the API is running in Development. REST request documentation links directly to the corresponding OpenAPI operation. GraphQL requests link to their source operation files. Review mutation inputs carefully; deployments, settings, and queue mutations change state.
+
 # prdeploy portal
 
 Use the prdeploy portal dashboard to overview releases and deployment queues and act on them.

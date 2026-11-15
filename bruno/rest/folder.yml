@@ -1,0 +1,6 @@
+info:
+  name: REST endpoints
+  type: folder
+  seq: 1
+docs: |-
+  REST endpoints mapped by the prdeploy API host. The generated OpenAPI document is served at `/openapi/v1.json` in Development.

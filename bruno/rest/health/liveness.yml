@@ -1,0 +1,21 @@
+info:
+  name: Liveness
+  type: http
+  seq: 1
+http:
+  method: GET
+  url: "{{baseUrl}}/health/live"
+  auth: none
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+settings:
+  encodeUrl: true
+docs: |-
+  Checks whether the API process is alive. This endpoint is anonymous and is intended for Kubernetes liveness probes.
+
+  Swagger/OpenAPI: [GET /health/live](http://localhost:4302/openapi/v1.json#/paths/~1health~1live/get)
+
+  Implementation: `prdeploy-api/src/PrDeploy.Api/Program.cs`.

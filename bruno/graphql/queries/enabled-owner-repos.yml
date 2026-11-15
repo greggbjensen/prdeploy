@@ -1,0 +1,45 @@
+info:
+  name: List enabled repositories
+  type: graphql
+  seq: 4
+  tags:
+    - query
+graphql:
+  method: POST
+  url: '{{baseUrl}}/graphql'
+  auth:
+    type: bearer
+    token: '{{jwt}}'
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    query: |-
+      query EnabledOwnerRepos {
+        enabledOwnerRepos {
+          owner
+          repos
+        }
+      }
+    variables: '{}'
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("returns GraphQL data without errors", function () {
+          expect(res.status).to.equal(200);
+          expect(res.body.errors).to.be.undefined;
+        });
+settings:
+  encodeUrl: true
+docs: >-
+  Lists owners and repositories enabled for prdeploy.
+
+
+  Client operation:
+  [enabled-owner-repos.graphql](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-app/src/app/shared/graphql/prdeploy-api/queries/enabled-owner-repos.graphql).
+
+  Server schema:
+  [OwnerRepoQuery.cs](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-api/src/PrDeploy.Api/Schema/Queries/OwnerRepoQuery.cs).
+
+  Required environment: a valid `jwt`.

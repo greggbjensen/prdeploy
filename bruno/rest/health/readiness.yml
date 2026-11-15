@@ -1,0 +1,21 @@
+info:
+  name: Readiness
+  type: http
+  seq: 2
+http:
+  method: GET
+  url: "{{baseUrl}}/health/ready"
+  auth: none
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+settings:
+  encodeUrl: true
+docs: |-
+  Checks whether the API is ready to receive traffic. This endpoint is anonymous and is intended for Kubernetes readiness probes.
+
+  Swagger/OpenAPI: [GET /health/ready](http://localhost:4302/openapi/v1.json#/paths/~1health~1ready/get)
+
+  Implementation: `prdeploy-api/src/PrDeploy.Api/Program.cs`.

@@ -10,6 +10,10 @@ as well as the GitHub App webhooks that respond to pull request, comment, and wo
 | `/webhooks`             | GitHub App webhook URL, authenticated by the webhook secret signature.                     |
 | `/health/live`, `ready` | Kubernetes health checks.                                                                  |
 
+## OpenAPI
+
+When running in the Development environment, the generated OpenAPI document is available at `http://localhost:4302/openapi/v1.json`. It documents the REST endpoints above; the GraphQL schema and operations are available through the `/graphql` endpoint.
+
 ## Projects
 
 | Project                  | Purpose                                                                                       |

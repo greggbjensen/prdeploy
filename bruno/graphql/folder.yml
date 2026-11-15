@@ -1,0 +1,6 @@
+info:
+  name: GraphQL operations
+  type: folder
+  seq: 4
+docs: |-
+  The GraphQL endpoint is `/graphql`. These requests mirror the query and mutation documents used by the Angular client. GraphQL operations are documented by their source files and schema, not Swagger REST paths.

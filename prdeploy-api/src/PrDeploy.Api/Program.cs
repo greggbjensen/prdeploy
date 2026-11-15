@@ -25,6 +25,8 @@ try
     DotEnv.Load(dotenv);
 
     var builder = WebApplication.CreateBuilder(args);
+    builder.Services.AddOpenApi();
+
     var configuration = builder.Configuration
         // This is loaded in the Kubernetes cluster as a mounted secret.
         .AddJsonFile("secrets/appsettings.secret.json", optional: true, reloadOnChange: true)
@@ -78,6 +80,11 @@ try
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.MapOpenApi();
+    }
+
     app.UseForwardedHeaders();
     app.UseSerilogRequestLogging();
     app.UseGraphQlStandards(); // Must be here for context.Request.EnableBuffering().
@@ -123,7 +130,13 @@ try
         }
 
         return result;
-    }).AllowAnonymous();
+    })
+        .WithName("OAuthAccessToken")
+        .WithSummary("Exchange an OAuth code for an access token")
+        .WithDescription("Accepts form-urlencoded OAuth fields. Upstream OAuth errors retain their status code.")
+        .Produces<AccessTokenResponse>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status500InternalServerError)
+        .AllowAnonymous();
 
     // User info endpoint since GitHub does not provide one for OAuth.
     app.MapGet("/api/oauth/userinfo", async (HttpRequest request, IGitHubAuthClient authClient) =>
@@ -141,7 +154,13 @@ try
             }
 
             return result;
-        });
+        })
+        .WithName("OAuthUserInfo")
+        .WithSummary("Get the authenticated user's profile")
+        .WithDescription("Returns GitHub user information. Upstream HTTP errors retain their status code.")
+        .Produces<UserInfo>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status401Unauthorized)
+        .Produces(StatusCodes.Status403Forbidden);
 
     // GitHub App events, authenticated by the webhook signature.
     app.MapGitHubWebhooks();
@@ -156,12 +175,26 @@ try
     app.MapHealthChecks("/health/ready", new HealthCheckOptions
     {
         Predicate = healthCheck => healthCheck.Tags.Contains("ready")
-    }).AllowAnonymous();
+    })
+        .WithName("Readiness")
+        .WithSummary("Check application readiness")
+        .WithDescription("Returns 200 when the application is ready, or 503 otherwise.")
+        .WithMetadata(
+            new ProducesResponseTypeMetadata(StatusCodes.Status200OK, typeof(string), ["text/plain"]),
+            new ProducesResponseTypeMetadata(StatusCodes.Status503ServiceUnavailable, typeof(string), ["text/plain"]))
+        .AllowAnonymous();
 
     app.MapHealthChecks("/health/live", new HealthCheckOptions
     {
         Predicate = healthCheck => healthCheck.Tags.Contains("live")
-    }).AllowAnonymous();
+    })
+        .WithName("Liveness")
+        .WithSummary("Check application liveness")
+        .WithDescription("Returns 200 while the application is live, or 503 otherwise.")
+        .WithMetadata(
+            new ProducesResponseTypeMetadata(StatusCodes.Status200OK, typeof(string), ["text/plain"]),
+            new ProducesResponseTypeMetadata(StatusCodes.Status503ServiceUnavailable, typeof(string), ["text/plain"]))
+        .AllowAnonymous();
 
     app.Run();
 }

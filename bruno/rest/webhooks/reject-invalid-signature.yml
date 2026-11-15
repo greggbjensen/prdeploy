@@ -1,0 +1,36 @@
+info:
+  name: Reject invalid webhook signature
+  type: http
+  seq: 1
+  tags:
+    - negative-test
+http:
+  method: POST
+  url: "{{baseUrl}}/webhooks"
+  auth: none
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: X-GitHub-Event
+      value: ping
+    - name: X-GitHub-Delivery
+      value: 00000000-0000-0000-0000-000000000000
+    - name: X-Hub-Signature-256
+      value: sha256=invalid
+  body:
+    type: json
+    data: |-
+      {}
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "401"
+settings:
+  encodeUrl: true
+docs: |-
+  Negative test for webhook signature verification. The intentionally invalid signature must be rejected before the event is queued; this request does not trigger a webhook action. Do not replace it with a real secret or use live webhook payloads.
+
+  Swagger/OpenAPI: [POST /webhooks](http://localhost:4302/openapi/v1.json#/paths/~1webhooks/post)
+
+  Implementation: `prdeploy-api/src/PrDeploy.Api.Webhooks/Events/WebhookRequestHandler.cs`.

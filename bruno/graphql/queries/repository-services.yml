@@ -1,0 +1,48 @@
+info:
+  name: List repository services
+  type: graphql
+  seq: 7
+  tags:
+    - query
+graphql:
+  method: POST
+  url: '{{baseUrl}}/graphql'
+  auth:
+    type: bearer
+    token: '{{jwt}}'
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    query: |-
+      query RepositoryServices($input: RepoQueryInput!) {
+        repositoryServices(input: $input)
+      }
+    variables: |-
+      {
+        "input": {
+          "owner": "{{owner}}",
+          "repo": "{{repo}}"
+        }
+      }
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("returns GraphQL data without errors", function () {
+          expect(res.status).to.equal(200);
+          expect(res.body.errors).to.be.undefined;
+        });
+settings:
+  encodeUrl: true
+docs: >-
+  Lists services configured for a repository.
+
+
+  Client operation:
+  [repository-services.graphql](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-app/src/app/shared/graphql/prdeploy-api/queries/repository-services.graphql).
+
+  Server schema:
+  [RepositoryQuery.cs](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-api/src/PrDeploy.Api/Schema/Queries/RepositoryQuery.cs).
+
+  Required environment: `owner`, `repo`, and a valid `jwt`.

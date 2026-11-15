@@ -1,0 +1,34 @@
+info:
+  name: Exchange OAuth authorization code
+  type: http
+  seq: 1
+http:
+  method: POST
+  url: "{{baseUrl}}/api/oauth/access_token"
+  auth: none
+  body:
+    type: form-urlencoded
+    data:
+      - name: grant_type
+        value: authorization_code
+      - name: code
+        value: "{{oauthCode}}"
+      - name: redirect_uri
+        value: "{{oauthRedirectUri}}"
+      - name: code_verifier
+        value: "{{oauthCodeVerifier}}"
+      - name: client_id
+        value: "{{oauthClientId}}"
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+settings:
+  encodeUrl: true
+docs: |-
+  Exchanges a GitHub OAuth authorization code for the prdeploy signed JWT. Supply a fresh authorization code, the registered client ID and redirect URI, and the PKCE verifier when used. Authorization codes are single-use; do not save real codes or credentials in this collection.
+
+  Swagger/OpenAPI: [POST /api/oauth/access_token](http://localhost:4302/openapi/v1.json#/paths/~1api~1oauth~1access_token/post)
+
+  Implementation: `prdeploy-api/src/PrDeploy.Api/Program.cs` and `prdeploy-api/src/PrDeploy.Api.Business/Clients/GitHubAuthClient.cs`.

@@ -1,0 +1,6 @@
+opencollection: 1.0.0
+info:
+  name: prdeploy API
+  type: collection
+  version: 1.0.0
+  description: Requests for the REST endpoints and GraphQL operations used by prdeploy.

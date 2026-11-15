@@ -1,0 +1,53 @@
+info:
+  name: Update deploy queue
+  type: graphql
+  seq: 4
+  tags:
+    - mutation
+graphql:
+  method: POST
+  url: '{{baseUrl}}/graphql'
+  auth:
+    type: bearer
+    token: '{{jwt}}'
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    query: |-
+      mutation DeployQueueUpdate($input: DeployQueueUpdateInput!) {
+        deployQueueUpdate(input: $input) {
+          environment
+        }
+      }
+    variables: |-
+      {
+        "input": {
+          "owner": "{{owner}}",
+          "repo": "{{repo}}",
+          "environment": "{{environment}}",
+          "pullNumbers": []
+        }
+      }
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("returns GraphQL data without errors", function () {
+          expect(res.status).to.equal(200);
+          expect(res.body.errors).to.be.undefined;
+        });
+settings:
+  encodeUrl: true
+docs: >-
+  Reorders or updates the pull requests in an environment's deployment queue. An empty `pullNumbers`
+  list may clear the queue; set the intended order explicitly before sending.
+
+
+  Client operation:
+  [deploy-queue-update.graphql](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-app/src/app/shared/graphql/prdeploy-api/mutations/deploy-queue-update.graphql).
+
+  Server schema:
+  [DeployQueueMutation.cs](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-api/src/PrDeploy.Api/Schema/Mutations/DeployQueueMutation.cs).
+
+  Required environment: `owner`, `repo`, `environment`, and a valid `jwt`.

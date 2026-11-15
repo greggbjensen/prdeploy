@@ -1,0 +1,53 @@
+info:
+  name: Add services to pull request
+  type: graphql
+  seq: 8
+  tags:
+    - mutation
+graphql:
+  method: POST
+  url: '{{baseUrl}}/graphql'
+  auth:
+    type: bearer
+    token: '{{jwt}}'
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    query: |-
+      mutation PullRequestAddServices($input: PullRequestAddServicesInput!) {
+        pullRequestAddServices(input: $input) {
+          success
+        }
+      }
+    variables: |-
+      {
+        "input": {
+          "owner": "{{owner}}",
+          "repo": "{{repo}}",
+          "pullNumber": 0,
+          "services": []
+        }
+      }
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("returns GraphQL data without errors", function () {
+          expect(res.status).to.equal(200);
+          expect(res.body.errors).to.be.undefined;
+        });
+settings:
+  encodeUrl: true
+docs: >-
+  Adds services to the specified pull request's deployment, including services with no code changes.
+  Set the exact pull request number and service names before sending.
+
+
+  Client operation:
+  [pull-request-add-services.graphql](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-app/src/app/shared/graphql/prdeploy-api/mutations/pull-request-add-services.graphql).
+
+  Server schema:
+  [PullRequestMutation.cs](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-api/src/PrDeploy.Api/Schema/Mutations/PullRequestMutation.cs).
+
+  Required environment: `owner`, `repo`, `jwt`, and a valid pull number.

@@ -1,0 +1,181 @@
+info:
+  name: Compare deploy settings
+  type: graphql
+  seq: 2
+  tags:
+    - query
+graphql:
+  method: POST
+  url: '{{baseUrl}}/graphql'
+  auth:
+    type: bearer
+    token: '{{jwt}}'
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    query: |-
+      query DeploySettingsCompare($input: RepoQueryInput!) {
+        deploySettingsCompare(input: $input) {
+          deployWorkflow {
+            owner
+            repo
+          }
+          environments {
+            owner {
+              name
+              queue
+              color
+              url
+              requireApproval
+              requireBranchUpToDate
+              automationTest {
+                enabled
+                workflow
+                inputs
+              }
+              excludeFromRollback
+            }
+            repo {
+              name
+              queue
+              color
+              url
+              requireApproval
+              requireBranchUpToDate
+              automationTest {
+                enabled
+                workflow
+                inputs
+              }
+              excludeFromRollback
+            }
+          }
+          services {
+            owner {
+              name
+              path
+            }
+            repo {
+              name
+              path
+            }
+          }
+          defaultEnvironment {
+            owner
+            repo
+          }
+          releaseEnvironment {
+            owner
+            repo
+          }
+          jira {
+            addIssuesEnabled {
+              owner
+              repo
+            }
+            host {
+              owner
+              repo
+            }
+            username {
+              owner
+              repo
+            }
+            password {
+              owner
+              repo
+            }
+          }
+          builds {
+            checkPattern {
+              owner
+              repo
+            }
+            workflowPattern {
+              owner
+              repo
+            }
+          }
+          slack {
+            token {
+              owner
+              repo
+            }
+            emailDomain {
+              owner
+              repo
+            }
+            emailAliases {
+              owner
+              repo
+            }
+            webhooks {
+              deployUrl {
+                owner
+                repo
+              }
+              releaseUrl {
+                owner
+                repo
+              }
+            }
+            notificationsEnabled {
+              owner
+              repo
+            }
+          }
+          badge {
+            statusColors {
+              error {
+                owner
+                repo
+              }
+              warn {
+                owner
+                repo
+              }
+              success {
+                owner
+                repo
+              }
+              info {
+                owner
+                repo
+              }
+            }
+          }
+          prdeployPortalUrl {
+            owner
+            repo
+          }
+        }
+      }
+    variables: |-
+      {
+        "input": {
+          "owner": "{{owner}}",
+          "repo": "{{repo}}"
+        }
+      }
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("returns GraphQL data without errors", function () {
+          expect(res.status).to.equal(200);
+          expect(res.body.errors).to.be.undefined;
+        });
+settings:
+  encodeUrl: true
+docs: >-
+  Compares owner-level defaults with repository-level deploy settings.
+
+
+  Client operation:
+  [deploy-settings-compare.graphql](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-app/src/app/shared/graphql/prdeploy-api/queries/deploy-settings-compare.graphql).
+
+  Server schema:
+  [DeploySettingsQuery.cs](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-api/src/PrDeploy.Api/Schema/Queries/DeploySettingsQuery.cs).
+
+  Required environment: `owner`, `repo`, and a valid `jwt`.

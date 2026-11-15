@@ -1,6 +1,6 @@
 ---
 name: bruno-api-testing
-description: Guidance for maintaining Bruno HTTP collections, request specifications, assertions, and environment variables.
+description: Guidance for maintaining Bruno REST and GraphQL collections, request specifications, assertions, and environment variables.
 ---
 
 # Bruno API Testing
@@ -29,6 +29,8 @@ bruno/
 - Add assertions for relevant status codes and important response properties.
 - Keep authentication and headers consistent with the API's documented contract.
 - Organize requests by resource or behavior, matching the collection's existing conventions.
+- Represent GraphQL operations with Bruno's native GraphQL request type, not as generic HTTP requests carrying JSON. Keep the GraphQL query or mutation and its variables in their dedicated fields so they remain editable and recognizable as GraphQL in Bruno. In OpenCollection YAML, use `info.type: graphql` and a top-level `graphql` section with `body.query` and `body.variables`.
+- Format GraphQL queries and mutations across multiple lines with indentation that reflects the selection-set structure. Preserve the canonical operation formatting from its source document instead of collapsing it into a single-line string.
 
 ## Maintenance
 

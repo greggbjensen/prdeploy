@@ -1,0 +1,55 @@
+info:
+  name: List open pull requests
+  type: graphql
+  seq: 6
+  tags:
+    - query
+graphql:
+  method: POST
+  url: '{{baseUrl}}/graphql'
+  auth:
+    type: bearer
+    token: '{{jwt}}'
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    query: |-
+      query OpenPullRequests($input: OpenPullRequestInput!) {
+        openPullRequests(input: $input) {
+          number
+          title
+          user {
+            name
+          }
+        }
+      }
+    variables: |-
+      {
+        "input": {
+          "owner": "{{owner}}",
+          "repo": "{{repo}}",
+          "search": ""
+        }
+      }
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("returns GraphQL data without errors", function () {
+          expect(res.status).to.equal(200);
+          expect(res.body.errors).to.be.undefined;
+        });
+settings:
+  encodeUrl: true
+docs: >-
+  Lists a repository's open pull requests, optionally filtered by a search string.
+
+
+  Client operation:
+  [open-pull-requests.graphql](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-app/src/app/shared/graphql/prdeploy-api/queries/open-pull-requests.graphql).
+
+  Server schema:
+  [PullRequestQuery.cs](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-api/src/PrDeploy.Api/Schema/Queries/PullRequestQuery.cs).
+
+  Required environment: `owner`, `repo`, and a valid `jwt`.

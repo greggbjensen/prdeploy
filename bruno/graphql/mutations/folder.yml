@@ -1,0 +1,6 @@
+info:
+  name: Mutations
+  type: folder
+  seq: 2
+docs: |-
+  These operations modify deployment state, queues, settings, or enabled repositories. Review all variables and use only a local or explicitly authorized test system before sending them.

@@ -68,6 +68,14 @@ public static class IServiceCollectionExtensions
         return endpoints
             .MapPost(pattern, (HttpContext context, WebhookRequestHandler handler) =>
                 handler.HandleAsync(context.Request, context.RequestAborted))
+            .WithName("GitHubWebhook")
+            .WithSummary("Receive a GitHub App webhook")
+            .WithDescription("Validates the GitHub signature and queues supported events. Returns 202 when queued, or 200 when ignored.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status202Accepted)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status503ServiceUnavailable)
             .AllowAnonymous(); // Authenticated by the webhook signature.
     }
 }

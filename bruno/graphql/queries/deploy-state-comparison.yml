@@ -1,0 +1,64 @@
+info:
+  name: Compare deploy states
+  type: graphql
+  seq: 3
+  tags:
+    - query
+graphql:
+  method: POST
+  url: '{{baseUrl}}/graphql'
+  auth:
+    type: bearer
+    token: '{{jwt}}'
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    query: |-
+      query DeployStateComparison($input: DeployStateComparisonInput!) {
+        deployStateComparison(input: $input) {
+          sourceEnvironment
+          sourcePullNumber
+          targetEnvironment
+          targetPullNumber
+          serviceComparisons {
+            name
+            sourceRunId
+            sourceVersion
+            targetRunId
+            targetVersion
+          }
+        }
+      }
+    variables: |-
+      {
+        "input": {
+          "owner": "{{owner}}",
+          "repo": "{{repo}}",
+          "sourceEnvironment": "{{environment}}",
+          "targetEnvironment": "{{environment}}"
+        }
+      }
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("returns GraphQL data without errors", function () {
+          expect(res.status).to.equal(200);
+          expect(res.body.errors).to.be.undefined;
+        });
+settings:
+  encodeUrl: true
+docs: >-
+  Compares deployed service versions between the selected source and target environments. Set the
+  two environment names independently in the request variables when comparing different
+  environments.
+
+
+  Client operation:
+  [deploy-state-comparison.graphql](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-app/src/app/shared/graphql/prdeploy-api/queries/deploy-state-comparison.graphql).
+
+  Server schema:
+  [DeployEnvironmentQuery.cs](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-api/src/PrDeploy.Api/Schema/Queries/DeployEnvironmentQuery.cs).
+
+  Required environment: `owner`, `repo`, `environment`, and a valid `jwt`.

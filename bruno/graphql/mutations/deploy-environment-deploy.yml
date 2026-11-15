@@ -1,0 +1,56 @@
+info:
+  name: Deploy pull request
+  type: graphql
+  seq: 1
+  tags:
+    - mutation
+graphql:
+  method: POST
+  url: '{{baseUrl}}/graphql'
+  auth:
+    type: bearer
+    token: '{{jwt}}'
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    query: |-
+      mutation DeployEnvironmentDeploy($input: EnvironmentDeployInput!) {
+        deployEnvironmentDeploy(input: $input) {
+          success
+        }
+      }
+    variables: |-
+      {
+        "input": {
+          "owner": "{{owner}}",
+          "repo": "{{repo}}",
+          "environment": "{{environment}}",
+          "pullNumber": 0,
+          "force": false,
+          "retain": false
+        }
+      }
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("returns GraphQL data without errors", function () {
+          expect(res.status).to.equal(200);
+          expect(res.body.errors).to.be.undefined;
+        });
+settings:
+  encodeUrl: true
+docs: >-
+  Requests deployment of a pull request to an environment. This may start builds and deployments.
+  Set the repository, environment, and pull number deliberately; never run against production unless
+  explicitly intended.
+
+
+  Client operation:
+  [deploy-environment-deploy.graphql](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-app/src/app/shared/graphql/prdeploy-api/mutations/deploy-environment-deploy.graphql).
+
+  Server schema:
+  [DeployEnvironmentMutation.cs](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-api/src/PrDeploy.Api/Schema/Mutations/DeployEnvironmentMutation.cs).
+
+  Required environment: `owner`, `repo`, `environment`, `jwt`, and a valid pull number.

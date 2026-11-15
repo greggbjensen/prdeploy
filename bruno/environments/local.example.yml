@@ -1,0 +1,33 @@
+name: Local example
+variables:
+  - name: baseUrl
+    value: http://localhost:4302
+    enabled: true
+  - name: jwt
+    value: ""
+    enabled: true
+    secret: true
+  - name: owner
+    value: ""
+    enabled: true
+  - name: repo
+    value: ""
+    enabled: true
+  - name: environment
+    value: ""
+    enabled: true
+  - name: pullNumber
+    value: ""
+    enabled: true
+  - name: oauthClientId
+    value: ""
+    enabled: true
+  - name: oauthCode
+    value: ""
+    enabled: true
+  - name: oauthRedirectUri
+    value: ""
+    enabled: true
+  - name: oauthCodeVerifier
+    value: ""
+    enabled: true

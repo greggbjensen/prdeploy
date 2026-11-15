@@ -1,0 +1,58 @@
+info:
+  name: Update deploy settings
+  type: graphql
+  seq: 5
+  tags:
+    - mutation
+graphql:
+  method: POST
+  url: '{{baseUrl}}/graphql'
+  auth:
+    type: bearer
+    token: '{{jwt}}'
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    query: >-
+      mutation DeploySettingsSet($ownerInput: SetOwnerSettingsInput!, $repoInput:
+      SetRepoSettingsInput!) {
+        ownerSettingsSet(input: $ownerInput) {
+          success
+        }
+        repoSettingsSet(input: $repoInput) {
+          success
+        }
+      }
+    variables: |-
+      {
+        "ownerInput": {
+          "owner": "{{owner}}"
+        },
+        "repoInput": {
+          "owner": "{{owner}}",
+          "repo": "{{repo}}"
+        }
+      }
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("returns GraphQL data without errors", function () {
+          expect(res.status).to.equal(200);
+          expect(res.body.errors).to.be.undefined;
+        });
+settings:
+  encodeUrl: true
+docs: >-
+  Updates owner and repository deploy settings. The example omits `settings`; fill both complete
+  settings objects carefully before sending to avoid changing configuration unintentionally.
+
+
+  Client operation:
+  [deploy-settings-set.graphql](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-app/src/app/shared/graphql/prdeploy-api/mutations/deploy-settings-set.graphql).
+
+  Server schema:
+  [DeploySettingsMutation.cs](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-api/src/PrDeploy.Api/Schema/Mutations/DeploySettingsMutation.cs).
+
+  Required environment: `owner`, `repo`, and a valid `jwt`.

@@ -1,0 +1,54 @@
+info:
+  name: Roll back environment
+  type: graphql
+  seq: 3
+  tags:
+    - mutation
+graphql:
+  method: POST
+  url: '{{baseUrl}}/graphql'
+  auth:
+    type: bearer
+    token: '{{jwt}}'
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    query: |-
+      mutation DeployEnvironmentRollback($input: RollbackInput!) {
+        deployEnvironmentRollback(input: $input) {
+          success
+        }
+      }
+    variables: |-
+      {
+        "input": {
+          "owner": "{{owner}}",
+          "repo": "{{repo}}",
+          "environment": "{{environment}}",
+          "pullNumber": 0,
+          "count": 1
+        }
+      }
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("returns GraphQL data without errors", function () {
+          expect(res.status).to.equal(200);
+          expect(res.body.errors).to.be.undefined;
+        });
+settings:
+  encodeUrl: true
+docs: >-
+  Rolls an environment back for the specified pull request. This changes deployment state; verify
+  the environment and rollback count before sending.
+
+
+  Client operation:
+  [deploy-environment-rollback.graphql](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-app/src/app/shared/graphql/prdeploy-api/mutations/deploy-environment-rollback.graphql).
+
+  Server schema:
+  [DeployEnvironmentMutation.cs](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-api/src/PrDeploy.Api/Schema/Mutations/DeployEnvironmentMutation.cs).
+
+  Required environment: `owner`, `repo`, `environment`, `jwt`, and a valid pull number.
