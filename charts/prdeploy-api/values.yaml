@@ -19,6 +19,7 @@ global:
       name: "prdeploy-backend"
 
 aspnetcore_environment: production
+apollo_sandbox_enabled: false
 
 logging:
   # Serilog level for GitHub App webhook processing, such as Debug, Information or Warning.

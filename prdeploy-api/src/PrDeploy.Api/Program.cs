@@ -167,10 +167,13 @@ try
 
     app.MapGraphQL().WithOptions(options =>
     {
-        options.Tool.Enable = false; // Use Apollo Playground instead of Banana Cake Pop.
+        options.Tool.Enable = false; // Use Apollo Sandbox instead of Banana Cake Pop.
     });
 
-    app.MapApolloSandboxRedirect();
+    if (configuration.GetValue<bool>("ApolloSandbox:Enabled"))
+    {
+        app.MapApolloSandboxRedirect();
+    }
 
     app.MapHealthChecks("/health/ready", new HealthCheckOptions
     {
