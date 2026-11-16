@@ -1,10 +1,18 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 
 namespace PrDeploy.Api.Auth
 {
+    /// <summary>
+    /// Represents the git Hub Repo Authorization Handler used by the application.
+    /// </summary>
     public class GitHubRepoAuthorizationHandler : AuthorizationHandler<GitHubRepoAccessRequirement>
     {
+        /// <summary>
+        /// Handles the Requirement according to the application's workflow.
+        /// </summary>
+        /// <param name="context">Request or application context used by the operation.</param>
+        /// <param name="requirement">Value supplied for requirement.</param>
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, GitHubRepoAccessRequirement requirement)
         {
             if (context.User.Identity != null && context.User.Identity.IsAuthenticated)

@@ -26,5 +26,9 @@ public record WebhookEvent(string Name, string Action, string DeliveryId, JsonEl
         $"{WorkflowRun}.completed"
     ];
 
+    /// <summary>
+    /// Gets the Is Handled.
+    /// </summary>
+    /// <returns>The value exposed by this member.</returns>
     public bool IsHandled => HandledEvents.Contains($"{Name}.{Action}");
 }

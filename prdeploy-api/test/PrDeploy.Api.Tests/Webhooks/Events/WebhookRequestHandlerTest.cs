@@ -9,6 +9,9 @@ using MsOptions = Microsoft.Extensions.Options.Options;
 
 namespace PrDeploy.Api.Tests.Webhooks.Events;
 
+/// <summary>
+/// Contains tests that verify the behavior of the webhook Request Handler Test.
+/// </summary>
 public class WebhookRequestHandlerTest
 {
     private const string Secret = "It's a Secret to Everybody";
@@ -21,6 +24,9 @@ public class WebhookRequestHandlerTest
     private readonly WebhookEventQueue _queue;
     private readonly WebhookRequestHandler _handler;
 
+    /// <summary>
+    /// Initializes the test fixture and prepares its dependencies.
+    /// </summary>
     public WebhookRequestHandlerTest()
     {
         var options = MsOptions.Create(new GitHubAppOptions { WebhookSecret = Secret, QueueCapacity = 1 });
@@ -28,6 +34,9 @@ public class WebhookRequestHandlerTest
         _handler = new WebhookRequestHandler(_queue, options, NullLogger<WebhookRequestHandler>.Instance);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: matches Git Hub Example.
+    /// </summary>
     [Fact]
     public void WebhookSignature_MatchesGitHubExample()
     {
@@ -42,6 +51,9 @@ public class WebhookRequestHandlerTest
         Assert.False(WebhookSignature.IsValid("", body, expected));
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: queues Handled Events.
+    /// </summary>
     [Fact]
     public async Task HandleAsync_QueuesHandledEvents()
     {
@@ -55,6 +67,9 @@ public class WebhookRequestHandlerTest
         Assert.Equal("delivery-1", events.Current.DeliveryId);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: rejects Invalid Signature.
+    /// </summary>
     [Fact]
     public async Task HandleAsync_RejectsInvalidSignature()
     {
@@ -65,6 +80,9 @@ public class WebhookRequestHandlerTest
         Assert.True(_queue.TryEnqueue(null!)); // Nothing was queued, so there is still capacity.
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: acknowledges Ping And Unhandled Events.
+    /// </summary>
     [Fact]
     public async Task HandleAsync_AcknowledgesPingAndUnhandledEvents()
     {
@@ -74,6 +92,9 @@ public class WebhookRequestHandlerTest
         Assert.True(_queue.TryEnqueue(null!));
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: returns Service Unavailable When Queue Is Full.
+    /// </summary>
     [Fact]
     public async Task HandleAsync_ReturnsServiceUnavailableWhenQueueIsFull()
     {
@@ -83,6 +104,9 @@ public class WebhookRequestHandlerTest
         Assert.Equal(StatusCodes.Status503ServiceUnavailable, Assert.IsType<StatusCodeHttpResult>(result).StatusCode);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: returns Service Unavailable When Secret Is Not Configured.
+    /// </summary>
     [Fact]
     public async Task HandleAsync_ReturnsServiceUnavailableWhenSecretIsNotConfigured()
     {
@@ -95,6 +119,13 @@ public class WebhookRequestHandlerTest
         Assert.Equal(StatusCodes.Status503ServiceUnavailable, Assert.IsType<StatusCodeHttpResult>(result).StatusCode);
     }
 
+    /// <summary>
+    /// Creates the Request from the supplied inputs.
+    /// </summary>
+    /// <param name="eventName">Value supplied for event Name.</param>
+    /// <param name="payload">Value supplied for payload.</param>
+    /// <param name="signature">Value supplied for signature.</param>
+    /// <returns>The value produced by this operation.</returns>
     private static HttpRequest CreateRequest(string eventName, string payload, string? signature = null)
     {
         var body = Encoding.UTF8.GetBytes(payload);

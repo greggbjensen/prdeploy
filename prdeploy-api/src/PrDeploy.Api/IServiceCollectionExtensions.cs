@@ -2,22 +2,34 @@ using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Microsoft.AspNetCore.DataProtection.Repositories;
+using Microsoft.Extensions.Options;
 using Octokit.Internal;
 using Octokit;
+using PrDeploy.Api.Business;
+using PrDeploy.Api.Business.Stores;
 using PrDeploy.Api.Auth;
 using PrDeploy.Api.Filters;
 using PrDeploy.Api.Business.Auth.Interfaces;
-using PrDeploy.Api.Business.Options;
 using PrDeploy.Api.Schema.Mutations;
 using PrDeploy.Api.Schema.Queries;
 using PrDeploy.Api.Business.Services;
 
 namespace PrDeploy.Api;
 
+/// <summary>
+/// Registers the API's GraphQL, authentication, and persistence services.
+/// </summary>
 public static class IServiceCollectionExtensions
 {
+    /// <summary>
+    /// Adds the PrDeploy API services and configures Data Protection key persistence.
+    /// </summary>
     public static IServiceCollection AddPrDeployApi(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddPrDeployStorage(configuration);
+
         services
             .AddGraphQLServer()
             .AddAuthorization()
@@ -67,16 +79,62 @@ public static class IServiceCollectionExtensions
             })
             .AddScoped<IAuthorizationHandler, GitHubRepoAuthorizationHandler>();
 
-        var awsOptions = new AwsExtendedOptions();
-        configuration.Bind("AWS", awsOptions);
-        services.AddDataProtection()
-                .PersistKeysToAWSSystemsManager($"{awsOptions.SecretPathPrefix}/DATA_PROTECTION")
-                .UseCryptographicAlgorithms(new()
-                {
-                    EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
-                    ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
-                });
+        ConfigureDataProtectionKeyStorage(services, configuration);
 
         return services;
+    }
+
+    /// <summary>
+    /// Selects the Data Protection key repository associated with the configured storage provider.
+    /// </summary>
+    private static void ConfigureDataProtectionKeyStorage(
+        IServiceCollection services,
+        IConfiguration configuration)
+    {
+        const string keyStorageSection = "DataProtection:KeyStorage";
+        var provider = StorageProviderConfiguration.GetProvider(configuration);
+        var dataProtection = services.AddDataProtection();
+
+        if (provider == StorageProvider.AWS &&
+            UsesLegacySystemsManagerForDataProtection(configuration))
+        {
+            var storage = configuration.GetSection(keyStorageSection);
+            var parameterPath = configuration["Storage:AWS:DataProtectionParameterPath"] ??
+                storage["ParameterPath"] ??
+                $"{(configuration["Storage:DeploymentValuePathPrefix"] ??
+                   configuration["Aws:SecretPathPrefix"])?.TrimEnd('/')}/DATA_PROTECTION";
+            if (string.IsNullOrWhiteSpace(parameterPath) ||
+                !parameterPath.StartsWith("/", StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    "'Storage:AWS:DataProtectionParameterPath' must be an AWS Systems Manager Parameter Store path starting with '/'.");
+            }
+
+            dataProtection.PersistKeysToAWSSystemsManager(parameterPath);
+        }
+        else
+        {
+            services.AddSingleton<IConfigureOptions<KeyManagementOptions>>(serviceProvider =>
+                new ConfigureNamedOptions<KeyManagementOptions>(
+                    Microsoft.Extensions.Options.Options.DefaultName,
+                    options => options.XmlRepository = serviceProvider.GetRequiredService<IXmlRepository>()));
+        }
+
+        dataProtection.UseCryptographicAlgorithms(new()
+        {
+            EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
+            ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
+        });
+    }
+
+    /// <summary>
+    /// Checks whether AWS Systems Manager Parameter Store was selected for Data Protection keys.
+    /// </summary>
+    private static bool UsesLegacySystemsManagerForDataProtection(IConfiguration configuration)
+    {
+        var keyStorage = configuration.GetSection("DataProtection:KeyStorage");
+        return !string.IsNullOrWhiteSpace(configuration["Storage:AWS:DataProtectionParameterPath"]) ||
+               string.Equals(keyStorage["Provider"], "AWSSystemsManager", StringComparison.OrdinalIgnoreCase) ||
+               !string.IsNullOrWhiteSpace(keyStorage["ParameterPath"]);
     }
 }

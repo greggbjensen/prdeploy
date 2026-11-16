@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using PrDeploy.Api.Models.Auth;
 using PrDeploy.Api.Models.Auth.Validators;
@@ -9,8 +9,16 @@ using PrDeploy.Api.Models.General.Inputs.Validators;
 
 namespace PrDeploy.Api.Models
 {
+    /// <summary>
+    /// Defines the contract for service Collection Extensions operations.
+    /// </summary>
     public static class IServiceCollectionExtensions
     {
+        /// <summary>
+        /// Adds the Pr Deploy Api Model Validation to the associated collection.
+        /// </summary>
+        /// <param name="services">Services to include in the operation.</param>
+        /// <returns>The value produced by this operation.</returns>
         public static IServiceCollection AddPrDeployApiModelValidation(this IServiceCollection services)
         {
             services

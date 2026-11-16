@@ -1,7 +1,5 @@
 using System.Text.Json;
 using System.Text.Encodings.Web;
-using Amazon.SimpleSystemsManagement;
-using Amazon.SimpleSystemsManagement.Model;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.DataProtection.Repositories;
@@ -16,22 +14,19 @@ using System.Xml.Linq;
 
 namespace PrDeploy.Api.Tests.OpenApi;
 
+/// <summary>
+/// Contains tests that verify the behavior of the rest Open Api Document Test.
+/// </summary>
+/// <param name="factory">Value supplied for factory.</param>
 public class RestOpenApiDocumentTest(DeployApiApplicationFactory factory) : DeployApiTest(factory)
 {
+    /// <summary>
+    /// Performs the configure Test Services operation.
+    /// </summary>
+    /// <param name="services">Services to include in the operation.</param>
     public override void ConfigureTestServices(IServiceCollection services)
     {
         services.RemoveAll<IHostedService>();
-        services.RemoveAll<IAmazonSimpleSystemsManagement>();
-        var ssm = new Mock<IAmazonSimpleSystemsManagement>();
-        ssm.Setup(client => client.GetParametersByPathAsync(
-                It.IsAny<GetParametersByPathRequest>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new GetParametersByPathResponse { Parameters = [] });
-        ssm.Setup(client => client.PutParameterAsync(
-                It.IsAny<PutParameterRequest>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new PutParameterResponse());
-        services.AddSingleton(ssm.Object);
         services.AddAuthentication("OpenApiTest")
             .AddScheme<AuthenticationSchemeOptions, NoAuthenticationHandler>("OpenApiTest", _ => { });
         services.PostConfigure<AuthenticationOptions>(options =>
@@ -46,6 +41,9 @@ public class RestOpenApiDocumentTest(DeployApiApplicationFactory factory) : Depl
         });
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: describes Rest Endpoints.
+    /// </summary>
     [Fact]
     public async Task OpenApiDocument_DescribesRestEndpoints()
     {
@@ -63,6 +61,13 @@ public class RestOpenApiDocumentTest(DeployApiApplicationFactory factory) : Depl
         AssertEndpoint(paths, "/health/live", "get", "Check application liveness");
     }
 
+    /// <summary>
+    /// Performs the assert Endpoint operation.
+    /// </summary>
+    /// <param name="paths">Value supplied for paths.</param>
+    /// <param name="path">Path used to locate the resource.</param>
+    /// <param name="method">Value supplied for method.</param>
+    /// <param name="summary">Value supplied for summary.</param>
     private static void AssertEndpoint(JsonElement paths, string path, string method, string summary)
     {
         Assert.True(
@@ -73,22 +78,44 @@ public class RestOpenApiDocumentTest(DeployApiApplicationFactory factory) : Depl
         Assert.True(operation.TryGetProperty("responses", out _));
     }
 
+    /// <summary>
+    /// Represents the no Authentication Handler used by the application.
+    /// </summary>
+    /// <param name="options">Value supplied for options.</param>
+    /// <param name="logger">Logger used to report operational information and errors.</param>
+    /// <param name="encoder">Value supplied for encoder.</param>
     private sealed class NoAuthenticationHandler(
         IOptionsMonitor<AuthenticationSchemeOptions> options,
         ILoggerFactory logger,
         UrlEncoder encoder) : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
     {
+        /// <summary>
+        /// Handles the Authenticate according to the application's workflow.
+        /// </summary>
+        /// <returns>The value produced by this operation.</returns>
         protected override Task<AuthenticateResult> HandleAuthenticateAsync() =>
             Task.FromResult(AuthenticateResult.NoResult());
     }
 
+    /// <summary>
+    /// Represents the in Memory Xml Repository used by the application.
+    /// </summary>
     private sealed class InMemoryXmlRepository : IXmlRepository
     {
         private readonly List<XElement> _elements = [];
 
+        /// <summary>
+        /// Retrieves the All Elements.
+        /// </summary>
+        /// <returns>The value produced by this operation.</returns>
         public IReadOnlyCollection<XElement> GetAllElements() =>
             _elements.Select(element => new XElement(element)).ToArray();
 
+        /// <summary>
+        /// Performs the store Element operation.
+        /// </summary>
+        /// <param name="element">Value supplied for element.</param>
+        /// <param name="friendlyName">Value supplied for friendly Name.</param>
         public void StoreElement(XElement element, string friendlyName) =>
             _elements.Add(new XElement(element));
     }

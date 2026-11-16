@@ -1,0 +1,33 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "PrDeploy API",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "Build API",
+      "program": "${workspaceFolder}/prdeploy-api/src/PrDeploy.Api/bin/Debug/net10.0/PrDeploy.Api.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/prdeploy-api/src/PrDeploy.Api",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:4302"
+      }
+    },
+    {
+      "name": "PrDeploy App (Chrome)",
+      "type": "pwa-chrome",
+      "request": "launch",
+      "preLaunchTask": "Serve App",
+      "url": "http://localhost:4301",
+      "webRoot": "${workspaceFolder}/prdeploy-app"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "PrDeploy API and App",
+      "configurations": ["PrDeploy API", "PrDeploy App (Chrome)"]
+    }
+  ]
+}

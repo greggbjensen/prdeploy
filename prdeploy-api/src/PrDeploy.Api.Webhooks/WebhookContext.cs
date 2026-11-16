@@ -12,10 +12,34 @@ namespace PrDeploy.Api.Webhooks;
 /// </remarks>
 public class WebhookContext
 {
+    /// <summary>
+    /// Gets or sets the Git Hub.
+    /// </summary>
+    /// <returns>The value exposed by this member.</returns>
     public IGitHubClient GitHub { get; set; } = null!;
+    /// <summary>
+    /// Gets or sets the Owner.
+    /// </summary>
+    /// <returns>The value exposed by this member.</returns>
     public string Owner { get; set; } = string.Empty;
+    /// <summary>
+    /// Gets or sets the Repo.
+    /// </summary>
+    /// <returns>The value exposed by this member.</returns>
     public string Repo { get; set; } = string.Empty;
+    /// <summary>
+    /// Gets or sets the Repository Html Url.
+    /// </summary>
+    /// <returns>The value exposed by this member.</returns>
     public string RepositoryHtmlUrl { get; set; } = string.Empty;
+    /// <summary>
+    /// Gets or sets the Default Branch.
+    /// </summary>
+    /// <returns>The value exposed by this member.</returns>
     public string DefaultBranch { get; set; } = "main";
+    /// <summary>
+    /// Gets or sets the Settings.
+    /// </summary>
+    /// <returns>The value exposed by this member.</returns>
     public DeploySettings Settings { get; set; } = new();
 }

@@ -15,6 +15,13 @@ public partial class JiraManager
     private readonly TemplateService _templateService;
     private readonly ILogger<JiraManager> _logger;
 
+    /// <summary>
+    /// Initializes a jira Manager with the supplied dependencies.
+    /// </summary>
+    /// <param name="jiraService">Value supplied for jira Service.</param>
+    /// <param name="pullRequestService">Value supplied for pull Request Service.</param>
+    /// <param name="templateService">Value supplied for template Service.</param>
+    /// <param name="logger">Logger used to report operational information and errors.</param>
     public JiraManager(JiraService jiraService, PullRequestService pullRequestService,
         TemplateService templateService, ILogger<JiraManager> logger)
     {
@@ -24,6 +31,10 @@ public partial class JiraManager
         _logger = logger;
     }
 
+    /// <summary>
+    /// Adds the Jira Issues To Pull Request to the associated collection.
+    /// </summary>
+    /// <param name="pullRequest">Pull request associated with the operation.</param>
     public async Task AddJiraIssuesToPullRequestAsync(PullRequest pullRequest)
     {
         var branchName = pullRequest.Head.Ref;
@@ -49,6 +60,10 @@ public partial class JiraManager
         await _pullRequestService.UpdatePullRequestBodyAsync(pullRequest.Number, body);
     }
 
+    /// <summary>
+    /// Determines whether the issues Text Regex condition holds.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"<!-- ISSUES_START(?::(?<branchName>.*?))? .*? ISSUES_END -->", RegexOptions.Singleline | RegexOptions.Multiline)]
     private static partial Regex IssuesTextRegex();
 }

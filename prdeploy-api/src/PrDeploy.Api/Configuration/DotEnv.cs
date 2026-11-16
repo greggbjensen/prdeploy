@@ -1,8 +1,15 @@
-﻿namespace PrDeploy.Api.Configuration
+namespace PrDeploy.Api.Configuration
 {
+    /// <summary>
+    /// Represents the dot Env used by the application.
+    /// </summary>
     public class DotEnv
     {
         //// SourceRef: https://dusted.codes/dotenv-in-dotnet
+        /// <summary>
+        /// Performs the load operation.
+        /// </summary>
+        /// <param name="filePath">Value supplied for file Path.</param>
         public static void Load(string filePath)
         {
             if (!File.Exists(filePath))

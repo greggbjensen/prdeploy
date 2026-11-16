@@ -17,6 +17,12 @@ public partial class PullRequestService
     private readonly EnvironmentUtil _environmentUtil;
     private readonly ILogger<PullRequestService> _logger;
 
+    /// <summary>
+    /// Initializes a pull Request Service with the supplied dependencies.
+    /// </summary>
+    /// <param name="context">Request or application context used by the operation.</param>
+    /// <param name="environmentUtil">Value supplied for environment Util.</param>
+    /// <param name="logger">Logger used to report operational information and errors.</param>
     public PullRequestService(WebhookContext context, EnvironmentUtil environmentUtil,
         ILogger<PullRequestService> logger)
     {
@@ -25,11 +31,20 @@ public partial class PullRequestService
         _logger = logger;
     }
 
+    /// <summary>
+    /// Retrieves the requested value.
+    /// </summary>
+    /// <param name="pullNumber">Number identifying the pull request.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<PullRequest> GetAsync(int pullNumber)
     {
         return await _context.GitHub.PullRequest.Get(_context.Owner, _context.Repo, pullNumber);
     }
 
+    /// <summary>
+    /// Finds and returns the Deployed.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<IReadOnlyList<PullRequest>> ListDeployedAsync()
     {
         // Get all environments currently in use.
@@ -52,6 +67,13 @@ public partial class PullRequestService
             .ToList();
     }
 
+    /// <summary>
+    /// Performs the progress Environment operation and returns its result.
+    /// </summary>
+    /// <param name="pullRequest">Pull request associated with the operation.</param>
+    /// <param name="environment">Deployment environment involved in the operation.</param>
+    /// <param name="retainLocks">Value supplied for retain Locks.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<List<string>> ProgressEnvironmentAsync(PullRequest pullRequest, string environment,
         bool retainLocks)
     {
@@ -88,6 +110,12 @@ public partial class PullRequestService
         return await UpdateEnvironmentsAsync(pullRequest, [], removeEnvironments);
     }
 
+    /// <summary>
+    /// Removes the Environment from the associated collection.
+    /// </summary>
+    /// <param name="pullRequest">Pull request associated with the operation.</param>
+    /// <param name="environment">Deployment environment involved in the operation.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<List<string>> RemoveEnvironmentAsync(PullRequest pullRequest, string? environment)
     {
         _logger.LogInformation("Removing environment from pull request {PullNumber} for {Environment}.",
@@ -137,6 +165,13 @@ public partial class PullRequestService
         return lockLabels;
     }
 
+    /// <summary>
+    /// Finds and returns the With Environment.
+    /// </summary>
+    /// <param name="pulls">Value supplied for pulls.</param>
+    /// <param name="environment">Deployment environment involved in the operation.</param>
+    /// <param name="filterPullNumber">Value supplied for filter Pull Number.</param>
+    /// <returns>The value produced by this operation.</returns>
     public List<PullRequest> ListWithEnvironment(IEnumerable<PullRequest> pulls, string environment,
         int filterPullNumber = 0)
     {
@@ -146,6 +181,13 @@ public partial class PullRequestService
             .ToList();
     }
 
+    /// <summary>
+    /// Retrieves the Used Environments.
+    /// </summary>
+    /// <param name="pulls">Value supplied for pulls.</param>
+    /// <param name="normalizedEnvironment">Deployment environment involved in the operation.</param>
+    /// <param name="currentPullNumber">Value supplied for current Pull Number.</param>
+    /// <returns>The value produced by this operation.</returns>
     public List<string> GetUsedEnvironments(IEnumerable<PullRequest> pulls, string normalizedEnvironment,
         int currentPullNumber)
     {
@@ -160,6 +202,11 @@ public partial class PullRequestService
             .ToList();
     }
 
+    /// <summary>
+    /// Updates the Pull Request Body using the supplied inputs.
+    /// </summary>
+    /// <param name="pullNumber">Number identifying the pull request.</param>
+    /// <param name="body">Value supplied for body.</param>
     public async Task UpdatePullRequestBodyAsync(int pullNumber, string body)
     {
         await _context.GitHub.PullRequest.Update(_context.Owner, _context.Repo, pullNumber,
@@ -168,6 +215,12 @@ public partial class PullRequestService
         _logger.LogInformation("Updated pull request {PullNumber} body.", pullNumber);
     }
 
+    /// <summary>
+    /// Retrieves the Environment.
+    /// </summary>
+    /// <param name="pullRequest">Pull request associated with the operation.</param>
+    /// <param name="run">Value supplied for run.</param>
+    /// <returns>The value produced by this operation.</returns>
     public string GetEnvironment(PullRequest? pullRequest, WorkflowRun? run = null)
     {
         var environment = string.Empty;
@@ -214,24 +267,45 @@ public partial class PullRequestService
         return environment;
     }
 
+    /// <summary>
+    /// Determines whether the rollback condition holds.
+    /// </summary>
+    /// <param name="run">Value supplied for run.</param>
+    /// <returns>The value produced by this operation.</returns>
     public bool IsRollback(WorkflowRun run)
     {
         var match = EnvironmentTitleRegex().Match(run.Name ?? string.Empty);
         return match.Success && match.Groups["rollback"].Value == "ROLLBACK";
     }
 
+    /// <summary>
+    /// Retrieves the Rollback Count.
+    /// </summary>
+    /// <param name="run">Value supplied for run.</param>
+    /// <returns>The value produced by this operation.</returns>
     public int GetRollbackCount(WorkflowRun run)
     {
         var match = EnvironmentTitleRegex().Match(run.Name ?? string.Empty);
         return match.Success && int.TryParse(match.Groups["rollbackCount"].Value, out var count) ? count : 1;
     }
 
+    /// <summary>
+    /// Retrieves the Rollback Pull Number.
+    /// </summary>
+    /// <param name="run">Value supplied for run.</param>
+    /// <returns>The value produced by this operation.</returns>
     public int GetRollbackPullNumber(WorkflowRun run)
     {
         var match = EnvironmentTitleRegex().Match(run.Name ?? string.Empty);
         return match.Success && int.TryParse(match.Groups["pullNumber"].Value, out var pullNumber) ? pullNumber : 0;
     }
 
+    /// <summary>
+    /// Retrieves the Defaulted Environment.
+    /// </summary>
+    /// <param name="pullRequest">Pull request associated with the operation.</param>
+    /// <param name="environment">Deployment environment involved in the operation.</param>
+    /// <returns>The value produced by this operation.</returns>
     public string GetDefaultedEnvironment(PullRequest pullRequest, string? environment)
     {
         if (!string.IsNullOrEmpty(environment))
@@ -248,6 +322,13 @@ public partial class PullRequestService
             : defaultEnvironment;
     }
 
+    /// <summary>
+    /// Updates the Environments using the supplied inputs.
+    /// </summary>
+    /// <param name="pullRequest">Pull request associated with the operation.</param>
+    /// <param name="addLabels">Value supplied for add Labels.</param>
+    /// <param name="removeLabels">Value supplied for remove Labels.</param>
+    /// <returns>The value produced by this operation.</returns>
     private async Task<List<string>> UpdateEnvironmentsAsync(PullRequest pullRequest,
         IReadOnlyCollection<string> addLabels, IReadOnlyCollection<string> removeLabels)
     {
@@ -274,9 +355,17 @@ public partial class PullRequestService
         return availableEnvironments;
     }
 
+    /// <summary>
+    /// Performs the environment Title Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"^\[(?<environment>\w+\d*)(?:\s+(?<rollback>ROLLBACK)(?:\s+#(?<pullNumber>\d+))?(?:\s+(?<rollbackCount>\d+))?)?\]")]
     private static partial Regex EnvironmentTitleRegex();
 
+    /// <summary>
+    /// Performs the environment Lock Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex("-lock$", RegexOptions.IgnoreCase)]
     private static partial Regex EnvironmentLockRegex();
 }

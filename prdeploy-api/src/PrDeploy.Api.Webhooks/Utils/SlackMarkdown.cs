@@ -16,6 +16,11 @@ public static partial class SlackMarkdown
     private const char PlaceholderEnd = '\u0003';
     private const char BoldMarker = '\u0001';
 
+    /// <summary>
+    /// Performs the convert operation and returns its result.
+    /// </summary>
+    /// <param name="markdown">Value supplied for markdown.</param>
+    /// <returns>The value produced by this operation.</returns>
     public static string Convert(string? markdown)
     {
         if (string.IsNullOrEmpty(markdown))
@@ -41,6 +46,11 @@ public static partial class SlackMarkdown
         return text.Trim('\n');
     }
 
+    /// <summary>
+    /// Performs the convert Text operation and returns its result.
+    /// </summary>
+    /// <param name="text">Value supplied for text.</param>
+    /// <returns>The value produced by this operation.</returns>
     private static string ConvertText(string text)
     {
         if (text.Length == 0)
@@ -49,6 +59,11 @@ public static partial class SlackMarkdown
         }
 
         var placeholders = new List<string>();
+        /// <summary>
+        /// Performs the protect operation and returns its result.
+        /// </summary>
+        /// <param name="value">Value to store or process.</param>
+        /// <returns>The value produced by this operation.</returns>
         string Protect(string value)
         {
             placeholders.Add(value);
@@ -84,65 +99,149 @@ public static partial class SlackMarkdown
         return PlaceholderRegex().Replace(text, m => placeholders[int.Parse(m.Groups["index"].Value)]);
     }
 
+    /// <summary>
+    /// Performs the format Link operation and returns its result.
+    /// </summary>
+    /// <param name="url">Value supplied for url.</param>
+    /// <param name="text">Value supplied for text.</param>
+    /// <returns>The value produced by this operation.</returns>
     private static string FormatLink(string url, string text)
     {
         text = StripEmphasis(text).Trim();
         return string.IsNullOrEmpty(text) || text == url ? $"<{url}>" : $"<{url}|{Escape(text)}>";
     }
 
+    /// <summary>
+    /// Performs the strip Emphasis operation and returns its result.
+    /// </summary>
+    /// <param name="text">Value supplied for text.</param>
+    /// <returns>The value produced by this operation.</returns>
     private static string StripEmphasis(string text) => EmphasisCharsRegex().Replace(text, string.Empty);
 
+    /// <summary>
+    /// Performs the escape operation and returns its result.
+    /// </summary>
+    /// <param name="text">Value supplied for text.</param>
+    /// <returns>The value produced by this operation.</returns>
     private static string Escape(string text) =>
         text.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
 
+    /// <summary>
+    /// Performs the code Block Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"^[ \t]*```[^\n]*\n(?<code>.*?)^[ \t]*```[ \t]*$", RegexOptions.Singleline | RegexOptions.Multiline)]
     private static partial Regex CodeBlockRegex();
 
+    /// <summary>
+    /// Performs the inline Code Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"`[^`\n]+`")]
     private static partial Regex InlineCodeRegex();
 
+    /// <summary>
+    /// Performs the image Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"!\[(?<text>[^\]]*)\]\((?<url>[^)\s]+)(?:\s+""[^""]*"")?\)")]
     private static partial Regex ImageRegex();
 
+    /// <summary>
+    /// Performs the link Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"\[(?<text>[^\]]+)\]\((?<url>[^)\s]+)(?:\s+""[^""]*"")?\)")]
     private static partial Regex LinkRegex();
 
+    /// <summary>
+    /// Performs the auto Link Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"<(?<url>https?://[^>\s]+)>")]
     private static partial Regex AutoLinkRegex();
 
+    /// <summary>
+    /// Performs the block Quote Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"^(?<indent>[ \t]*)>[ \t]?", RegexOptions.Multiline)]
     private static partial Regex BlockQuoteRegex();
 
+    /// <summary>
+    /// Performs the heading Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"^[ \t]*#{1,6}[ \t]+(?<text>.+?)[ \t]*#*[ \t]*$", RegexOptions.Multiline)]
     private static partial Regex HeadingRegex();
 
+    /// <summary>
+    /// Performs the horizontal Rule Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"^[ \t]*([-*_])([ \t]*\1){2,}[ \t]*$", RegexOptions.Multiline)]
     private static partial Regex HorizontalRuleRegex();
 
+    /// <summary>
+    /// Performs the task List Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"^(?<indent>[ \t]*)[-*+][ \t]+\[(?<done>[ xX])\][ \t]+", RegexOptions.Multiline)]
     private static partial Regex TaskListRegex();
 
+    /// <summary>
+    /// Performs the bullet Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"^(?<indent>[ \t]*)[-*+][ \t]+", RegexOptions.Multiline)]
     private static partial Regex BulletRegex();
 
+    /// <summary>
+    /// Performs the bold Asterisk Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"\*\*(?<text>[^\n]+?)\*\*")]
     private static partial Regex BoldAsteriskRegex();
 
+    /// <summary>
+    /// Performs the bold Underscore Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"(?<![\w_])__(?<text>[^\n]+?)__(?![\w_])")]
     private static partial Regex BoldUnderscoreRegex();
 
+    /// <summary>
+    /// Performs the italic Asterisk Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"(?<![\w*])\*(?![\s*])(?<text>[^\n*]+?)(?<!\s)\*(?![\w*])")]
     private static partial Regex ItalicAsteriskRegex();
 
+    /// <summary>
+    /// Performs the strikethrough Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"~~(?<text>[^\n]+?)~~")]
     private static partial Regex StrikethroughRegex();
 
+    /// <summary>
+    /// Performs the emphasis Chars Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"[*_~]{1,3}")]
     private static partial Regex EmphasisCharsRegex();
 
+    /// <summary>
+    /// Performs the placeholder Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex("\u0002(?<index>\\d+)\u0003")]
     private static partial Regex PlaceholderRegex();
 
+    /// <summary>
+    /// Performs the extra Blank Lines Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"\n{3,}")]
     private static partial Regex ExtraBlankLinesRegex();
 }

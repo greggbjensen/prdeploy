@@ -1,4 +1,4 @@
-@import '../../../sass/variables';
+@use '../../../sass/variables' as *;
 
 .mat-column-environment {
   width: 125px;

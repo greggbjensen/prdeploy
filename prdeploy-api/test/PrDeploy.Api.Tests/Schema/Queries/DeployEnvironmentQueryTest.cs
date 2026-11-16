@@ -7,13 +7,24 @@ using PrDeploy.Api.Tests.Framework.Client;
 
 namespace PrDeploy.Api.Tests.Schema.Queries;
 
+/// <summary>
+/// Contains tests that verify the behavior of the deploy Environment Query Test.
+/// </summary>
 public class DeployEnvironmentQueryTest : DeployApiTest
 {
+    /// <summary>
+    /// Initializes the test fixture and prepares its dependencies.
+    /// </summary>
+    /// <param name="factory">Value supplied for factory.</param>
     public DeployEnvironmentQueryTest(DeployApiApplicationFactory factory)
         : base(factory)
     {
     }
 
+    /// <summary>
+    /// Performs the configure Services operation.
+    /// </summary>
+    /// <param name="services">Services to include in the operation.</param>
     public override void ConfigureServices(IServiceCollection services)
     {
         services.AddTransient<IGitHubClient>(s =>
@@ -50,6 +61,9 @@ public class DeployEnvironmentQueryTest : DeployApiTest
         });
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: returns All Environments.
+    /// </summary>
     [Fact]
     public async Task DeployEnvironments_ReturnsAllEnvironments()
     {

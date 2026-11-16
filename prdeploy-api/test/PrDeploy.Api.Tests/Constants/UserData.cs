@@ -2,6 +2,9 @@ using PrDeploy.Api.Models;
 using PrDeploy.Api.Models.PullRequests;
 
 namespace PrDeploy.Api.Tests.Constants;
+/// <summary>
+/// Represents the deploy User Data used by the application.
+/// </summary>
 public class DeployUserData
 {
     public DeployUser JohnDoe = new()

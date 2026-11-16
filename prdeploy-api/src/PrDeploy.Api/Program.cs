@@ -214,8 +214,17 @@ finally
 
 // Required for integration testing.
 // SourceRef: https://stackoverflow.com/questions/55131379/integration-testing-asp-net-core-with-net-framework-cant-find-deps-json
+/// <summary>
+/// Represents the program used by the application.
+/// </summary>
 public partial class Program
 {
+    /// <summary>
+    /// Retrieves the Value.
+    /// </summary>
+    /// <param name="form">Value supplied for form.</param>
+    /// <param name="name">Name used to identify the value or resource.</param>
+    /// <returns>The value produced by this operation.</returns>
     public static string GetValue(IFormCollection form, string name)
     {
         return (form?.TryGetValue(name, out var value) == true ? value.FirstOrDefault() : string.Empty)!;

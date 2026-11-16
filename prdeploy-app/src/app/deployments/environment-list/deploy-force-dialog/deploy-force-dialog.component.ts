@@ -5,7 +5,6 @@ import { LoggingService } from 'src/app/shared/services';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
-  MatDialogClose,
   MatDialogContent,
   MatDialogRef,
   MatDialogTitle
@@ -33,7 +32,6 @@ import { MatIconModule } from '@angular/material/icon';
     MatDialogTitle,
     MatDialogContent,
     MatDialogActions,
-    MatDialogClose,
     MatAutocompleteModule,
     MatInputModule,
     MatIconModule,

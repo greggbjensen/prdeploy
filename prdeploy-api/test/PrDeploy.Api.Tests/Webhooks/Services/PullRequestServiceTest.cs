@@ -5,16 +5,25 @@ using PrDeploy.Api.Webhooks.Services;
 
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
+/// <summary>
+/// Contains tests that verify the behavior of the pull Request Service Test.
+/// </summary>
 public class PullRequestServiceTest : IDisposable
 {
     private readonly WebhookTestHost _host = new();
     private readonly PullRequestService _service;
 
+    /// <summary>
+    /// Initializes the test fixture and prepares its dependencies.
+    /// </summary>
     public PullRequestServiceTest()
     {
         _service = _host.Get<PullRequestService>();
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: gets Pull Request By Number.
+    /// </summary>
     [Fact]
     public async Task GetAsync_GetsPullRequestByNumber()
     {
@@ -27,6 +36,11 @@ public class PullRequestServiceTest : IDisposable
         Assert.Equal("Some new feature", pullRequest.Title);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: gets Environment From Workflow Run Name.
+    /// </summary>
+    /// <param name="runName">Value supplied for run Name.</param>
+    /// <param name="expected">Value supplied for expected.</param>
     [Theory]
     [InlineData("[stage] SCRUM-12345-my-feature: This is a test commit message.", "stage")]
     [InlineData("[prod ROLLBACK] SCRUM-12345-my-feature: This is a test commit message.", "prod")]
@@ -37,6 +51,9 @@ public class PullRequestServiceTest : IDisposable
         Assert.Equal(expected, _service.GetEnvironment(null, run));
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: gets Environment From Pull Request When In Single Environment.
+    /// </summary>
     [Fact]
     public void GetEnvironment_GetsEnvironmentFromPullRequestWhenInSingleEnvironment()
     {
@@ -44,6 +61,9 @@ public class PullRequestServiceTest : IDisposable
         Assert.Equal("stage", _service.GetEnvironment(pullRequest));
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: gets Environment By Priority When In Multiple Environments.
+    /// </summary>
     [Fact]
     public void GetEnvironment_GetsEnvironmentByPriorityWhenInMultipleEnvironments()
     {
@@ -55,12 +75,20 @@ public class PullRequestServiceTest : IDisposable
         Assert.Equal("prod", _service.GetEnvironment(pullRequest));
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: returns Empty When No Labels.
+    /// </summary>
     [Fact]
     public void GetEnvironment_ReturnsEmptyWhenNoLabels()
     {
         Assert.Equal(string.Empty, _service.GetEnvironment(GitHubModels.PullRequest(1)));
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: gets Rollback Status From Workflow Run Name.
+    /// </summary>
+    /// <param name="runName">Value supplied for run Name.</param>
+    /// <param name="expected">Value supplied for expected.</param>
     [Theory]
     [InlineData("[prod ROLLBACK] SCRUM-12345-my-feature: This is a test commit message.", true)]
     [InlineData("[prod] SCRUM-12345-my-feature: This is a test commit message.", false)]
@@ -69,6 +97,11 @@ public class PullRequestServiceTest : IDisposable
         Assert.Equal(expected, _service.IsRollback(GitHubModels.WorkflowRun(1, runName)));
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: gets Count From Workflow Run Name.
+    /// </summary>
+    /// <param name="runName">Value supplied for run Name.</param>
+    /// <param name="expected">Value supplied for expected.</param>
     [Theory]
     [InlineData("[prod ROLLBACK] SCRUM-12345-my-feature: message.", 1)]
     [InlineData("[prod ROLLBACK 3] SCRUM-12345-my-feature: message.", 3)]
@@ -78,6 +111,9 @@ public class PullRequestServiceTest : IDisposable
         Assert.Equal(expected, _service.GetRollbackCount(GitHubModels.WorkflowRun(1, runName)));
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: gets Pull Number From Workflow Run Name.
+    /// </summary>
     [Fact]
     public void GetRollbackPullNumber_GetsPullNumberFromWorkflowRunName()
     {
@@ -85,6 +121,9 @@ public class PullRequestServiceTest : IDisposable
         Assert.Equal(0, _service.GetRollbackPullNumber(GitHubModels.WorkflowRun(1, "[prod] x: y")));
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: uses Assigned Dev Environment.
+    /// </summary>
     [Fact]
     public void GetDefaultedEnvironment_UsesAssignedDevEnvironment()
     {
@@ -94,6 +133,9 @@ public class PullRequestServiceTest : IDisposable
         Assert.Equal("dev", _service.GetDefaultedEnvironment(GitHubModels.PullRequest(2), null));
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: lists Locked Environments For Other Pull Requests.
+    /// </summary>
     [Fact]
     public void GetUsedEnvironments_ListsLockedEnvironmentsForOtherPullRequests()
     {
@@ -108,6 +150,9 @@ public class PullRequestServiceTest : IDisposable
         Assert.Equal(["dev2"], _service.GetUsedEnvironments(pulls, "dev", currentPullNumber: 1));
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: removes Lock Labels And Returns Available Environments.
+    /// </summary>
     [Fact]
     public async Task FreeAsync_RemovesLockLabelsAndReturnsAvailableEnvironments()
     {
@@ -123,6 +168,9 @@ public class PullRequestServiceTest : IDisposable
         Assert.Equal(["dev2", "bug"], labels);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: adds Environment And Removes Other Locks.
+    /// </summary>
     [Fact]
     public async Task ProgressEnvironmentAsync_AddsEnvironmentAndRemovesOtherLocks()
     {
@@ -139,5 +187,8 @@ public class PullRequestServiceTest : IDisposable
         Assert.Equal(["dev", "stage", "stage-lock"], labels);
     }
 
+    /// <summary>
+    /// Releases resources owned by this instance.
+    /// </summary>
     public void Dispose() => _host.Dispose();
 }

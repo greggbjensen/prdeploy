@@ -19,6 +19,12 @@ public class WebhookRequestHandler
     private readonly GitHubAppOptions _options;
     private readonly ILogger<WebhookRequestHandler> _logger;
 
+    /// <summary>
+    /// Initializes a webhook Request Handler with the supplied dependencies.
+    /// </summary>
+    /// <param name="queue">Value supplied for queue.</param>
+    /// <param name="options">Value supplied for options.</param>
+    /// <param name="logger">Logger used to report operational information and errors.</param>
     public WebhookRequestHandler(WebhookEventQueue queue, IOptions<GitHubAppOptions> options,
         ILogger<WebhookRequestHandler> logger)
     {
@@ -27,6 +33,12 @@ public class WebhookRequestHandler
         _logger = logger;
     }
 
+    /// <summary>
+    /// Handles the requested value according to the application's workflow.
+    /// </summary>
+    /// <param name="request">Request to process or send to the associated service.</param>
+    /// <param name="cancellationToken">Value supplied for cancellation Token.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<IResult> HandleAsync(HttpRequest request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(_options.WebhookSecret))

@@ -26,8 +26,6 @@ import { MtxColorpickerModule } from '@ng-matero/extensions/colorpicker';
     FormsModule,
     MatCheckboxModule,
     MtxColorpickerModule,
-    AddAutomationInputDialogComponent,
-    AddExcludeRollbackServiceDialogComponent,
     NgStyle,
     KeyValuePipe
   ],

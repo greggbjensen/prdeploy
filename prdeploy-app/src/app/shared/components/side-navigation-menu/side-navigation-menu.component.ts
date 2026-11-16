@@ -1,7 +1,6 @@
 import { Component, Inject, DOCUMENT, ChangeDetectionStrategy } from '@angular/core';
 import { navigation, NavItem } from '../../../app-navigation';
 import { MatTreeModule, MatTreeNestedDataSource } from '@angular/material/tree';
-import { KeyValuePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { RepoManager } from '../../managers';
@@ -12,7 +11,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   templateUrl: './side-navigation-menu.component.html',
   styleUrls: ['./side-navigation-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [MatTreeModule, KeyValuePipe, RouterModule, MatIconModule]
+  imports: [MatTreeModule, RouterModule, MatIconModule]
 })
 export class SideNavigationMenuComponent {
   navItems = new MatTreeNestedDataSource<NavItem>();

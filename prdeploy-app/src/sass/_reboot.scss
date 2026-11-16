@@ -1,5 +1,5 @@
-@import './variables';
-@import './rfs';
+@use 'variables' as *;
+@use 'rfs' as *;
 
 // stylelint-disable declaration-no-important, selector-no-qualifying-type, property-no-vendor-prefix
 

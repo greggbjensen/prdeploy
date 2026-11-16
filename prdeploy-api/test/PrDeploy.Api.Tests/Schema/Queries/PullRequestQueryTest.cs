@@ -7,13 +7,24 @@ using PrDeploy.Api.Tests.Framework.Client;
 
 namespace PrDeploy.Api.Tests.Schema.Queries;
 
+/// <summary>
+/// Contains tests that verify the behavior of the pull Request Query Test.
+/// </summary>
 public class PullRequestQueryTest : DeployApiTest
 {
+    /// <summary>
+    /// Initializes the test fixture and prepares its dependencies.
+    /// </summary>
+    /// <param name="factory">Value supplied for factory.</param>
     public PullRequestQueryTest(DeployApiApplicationFactory factory)
         : base(factory)
     {
     }
 
+    /// <summary>
+    /// Performs the configure Services operation.
+    /// </summary>
+    /// <param name="services">Services to include in the operation.</param>
     public override void ConfigureServices(IServiceCollection services)
     {
         services.AddTransient<IGitHubClient>(s =>
@@ -34,6 +45,9 @@ public class PullRequestQueryTest : DeployApiTest
         });
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: searches Open Pull Requests.
+    /// </summary>
     [Fact]
     public async Task OpenPullRequests_SearchesOpenPullRequests()
     {

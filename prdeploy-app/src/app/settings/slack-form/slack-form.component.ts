@@ -1,7 +1,6 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { SlackSettingsCompare } from 'src/app/shared/graphql';
 import { SettingsLevel } from '../models';
-import { KeyValuePipe } from '@angular/common';
 import { SlackEmailAliasesGridComponent } from './slack-email-aliases-grid/slack-email-aliases-grid.component';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
@@ -19,8 +18,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatIconModule,
     MatButtonModule,
     RevealPasswordDirective,
-    FormsModule,
-    KeyValuePipe
+    FormsModule
   ],
   templateUrl: './slack-form.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,

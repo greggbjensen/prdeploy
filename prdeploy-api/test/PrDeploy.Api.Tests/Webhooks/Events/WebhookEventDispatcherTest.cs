@@ -11,12 +11,18 @@ using PrDeploy.Api.Webhooks.Events;
 
 namespace PrDeploy.Api.Tests.Webhooks.Events;
 
+/// <summary>
+/// Contains tests that verify the behavior of the webhook Event Dispatcher Test.
+/// </summary>
 public class WebhookEventDispatcherTest
 {
     private readonly Mock<IGitHubClient> _github = new() { DefaultValue = DefaultValue.Mock };
-    private readonly InMemoryParameterStore _parameterStore = new();
+    private readonly InMemoryDeploymentStore _deploymentStore = new();
     private readonly WebhookEventDispatcher _dispatcher;
 
+    /// <summary>
+    /// Initializes the test fixture and prepares its dependencies.
+    /// </summary>
     public WebhookEventDispatcherTest()
     {
         var clientFactory = new Mock<IGitHubAppClientFactory>();
@@ -25,17 +31,20 @@ public class WebhookEventDispatcherTest
         var provider = new ServiceCollection()
             .AddLogging()
             .AddPrDeployWebhookServices()
-            .AddSingleton<IParameterStore>(_parameterStore)
+            .AddSingleton<IDeploymentStore>(_deploymentStore)
             .BuildServiceProvider();
 
         _dispatcher = new WebhookEventDispatcher(provider.GetRequiredService<IServiceScopeFactory>(),
             clientFactory.Object, NullLogger<WebhookEventDispatcher>.Instance);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: loads Settings And Runs Comment Command.
+    /// </summary>
     [Fact]
     public async Task DispatchAsync_LoadsSettingsAndRunsCommentCommand()
     {
-        await _parameterStore.SetAsync(WebhookTestHost.Owner, "DEPLOY_SETTINGS", WebhookTestHost.CreateDefaultSettings());
+        await _deploymentStore.SetAsync(WebhookTestHost.Owner, "DEPLOY_SETTINGS", WebhookTestHost.CreateDefaultSettings());
         Mock.Get(_github.Object.Repository)
             .Setup(c => c.Get(WebhookTestHost.Owner, WebhookTestHost.Repo))
             .ReturnsAsync(GitHubModels.FromJson<Repository>("""{ "default_branch": "develop" }"""));
@@ -64,12 +73,15 @@ public class WebhookEventDispatcherTest
             It.Is<NewLabel>(l => l.Name == "stage" && l.Color == "2e86c1")));
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: deserializes Pull Request Payload.
+    /// </summary>
     [Fact]
     public async Task DispatchAsync_DeserializesPullRequestPayload()
     {
         var settings = WebhookTestHost.CreateDefaultSettings();
         settings.Jira!.AddIssuesEnabled = false;
-        await _parameterStore.SetAsync(WebhookTestHost.Owner, "DEPLOY_SETTINGS", settings);
+        await _deploymentStore.SetAsync(WebhookTestHost.Owner, "DEPLOY_SETTINGS", settings);
 
         await _dispatcher.DispatchAsync(Event("pull_request", "closed", """
             "pull_request": { "number": 8, "merged": true, "head": { "ref": "b" }, "base": { "ref": "main" },
@@ -80,6 +92,9 @@ public class WebhookEventDispatcherTest
             WebhookTestHost.Repo, 8, new[] { "stage" }));
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: logs And Continues When Flow Fails.
+    /// </summary>
     [Fact]
     public async Task DispatchAsync_LogsAndContinuesWhenFlowFails()
     {
@@ -93,6 +108,13 @@ public class WebhookEventDispatcherTest
             """));
     }
 
+    /// <summary>
+    /// Performs the event operation and returns its result.
+    /// </summary>
+    /// <param name="name">Name used to identify the value or resource.</param>
+    /// <param name="action">Value supplied for action.</param>
+    /// <param name="properties">Value supplied for properties.</param>
+    /// <returns>The value produced by this operation.</returns>
     private static WebhookEvent Event(string name, string action, string properties)
     {
         using var document = JsonDocument.Parse($$"""

@@ -3,16 +3,25 @@ using PrDeploy.Api.Webhooks.Services;
 
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
+/// <summary>
+/// Contains tests that verify the behavior of the check Service Test.
+/// </summary>
 public class CheckServiceTest : IDisposable
 {
     private readonly WebhookTestHost _host = new();
     private readonly CheckService _service;
 
+    /// <summary>
+    /// Initializes the test fixture and prepares its dependencies.
+    /// </summary>
     public CheckServiceTest()
     {
         _service = _host.Get<CheckService>();
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: lists Builds And Versions From Reference.
+    /// </summary>
     [Fact]
     public async Task ListBuildsAsync_ListsBuildsAndVersionsFromReference()
     {
@@ -29,6 +38,9 @@ public class CheckServiceTest : IDisposable
         Assert.Equal(10014663490, build.RunId);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: lists Builds From Override Run Ids.
+    /// </summary>
     [Fact]
     public async Task ListBuildsAsync_ListsBuildsFromOverrideRunIds()
     {
@@ -41,6 +53,9 @@ public class CheckServiceTest : IDisposable
         Assert.Equal("2024.2.26-r8055221191", build.Version);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: excludes Deploy Workflow Checks.
+    /// </summary>
     [Fact]
     public async Task ListIncompletePullChecksAsync_ExcludesDeployWorkflowChecks()
     {
@@ -58,5 +73,8 @@ public class CheckServiceTest : IDisposable
         Assert.Equal(["Build", "Tests"], checks.Select(c => c.Name));
     }
 
+    /// <summary>
+    /// Releases resources owned by this instance.
+    /// </summary>
     public void Dispose() => _host.Dispose();
 }

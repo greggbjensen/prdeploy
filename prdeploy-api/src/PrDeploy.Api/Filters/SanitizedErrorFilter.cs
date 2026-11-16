@@ -1,20 +1,33 @@
-﻿using System.Net;
+using System.Net;
 using FluentValidation;
 using HotChocolate.Execution;
 
 namespace PrDeploy.Api.Filters
 {
+    /// <summary>
+    /// Represents the sanitized Error Filter used by the application.
+    /// </summary>
     public class SanitizedErrorFilter : IErrorFilter
     {
         private readonly ILogger<SanitizedErrorFilter> _logger;
         private readonly IHostEnvironment _hostEnvironment;
 
+        /// <summary>
+        /// Initializes a sanitized Error Filter with the supplied dependencies.
+        /// </summary>
+        /// <param name="logger">Logger used to report operational information and errors.</param>
+        /// <param name="hostEnvironment">Value supplied for host Environment.</param>
         public SanitizedErrorFilter(ILogger<SanitizedErrorFilter> logger, IHostEnvironment hostEnvironment)
         {
             _logger = logger;
             _hostEnvironment = hostEnvironment;
         }
 
+        /// <summary>
+        /// Performs the on Error operation and returns its result.
+        /// </summary>
+        /// <param name="error">Value supplied for error.</param>
+        /// <returns>The value produced by this operation.</returns>
         public IError OnError(IError error)
         {
             var result = error;

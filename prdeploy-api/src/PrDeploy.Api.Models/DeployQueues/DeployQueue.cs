@@ -4,13 +4,24 @@ using PrDeploy.Api.Models.PullRequests;
 
 namespace PrDeploy.Api.Models.DeployQueues
 {
+    /// <summary>
+    /// Represents the deploy Queue used by the application.
+    /// </summary>
     [GraphQLDescription("Queue for a specific environment of pull requests waiting to be deployed.")]
     public class DeployQueue
     {
+        /// <summary>
+        /// Gets or sets the Environment.
+        /// </summary>
+        /// <returns>The value exposed by this member.</returns>
         [GraphQLType(typeof(IdType))]
         [GraphQLDescription("Environment to list the queue for.")]
         public string? Environment { get; set; }
 
+        /// <summary>
+        /// Gets or sets the Pull Requests.
+        /// </summary>
+        /// <returns>The value exposed by this member.</returns>
         [GraphQLDescription("Ordered list of pull requests waiting in queue.")]
         public List<PullRequest> PullRequests { get; set; } = new();
     }

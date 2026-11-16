@@ -4,16 +4,25 @@ using PrDeploy.Api.Webhooks.Services;
 
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
+/// <summary>
+/// Contains tests that verify the behavior of the deploy State Service Test.
+/// </summary>
 public class DeployStateServiceTest : IDisposable
 {
     private readonly WebhookTestHost _host = new();
     private readonly DeployStateService _service;
 
+    /// <summary>
+    /// Initializes the test fixture and prepares its dependencies.
+    /// </summary>
     public DeployStateServiceTest()
     {
         _service = _host.Get<DeployStateService>();
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: adds Services To Deploy State.
+    /// </summary>
     [Fact]
     public async Task UpdateAsync_AddsServicesToDeployState()
     {
@@ -36,6 +45,9 @@ public class DeployStateServiceTest : IDisposable
         Assert.Equal("2024.2.25-r8067229180", actual.Services.Single(s => s.Name == "myorg-api-internal").Version);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: creates Default Deploy State When None Is Available.
+    /// </summary>
     [Fact]
     public async Task GetAsync_CreatesDefaultDeployStateWhenNoneIsAvailable()
     {
@@ -43,10 +55,13 @@ public class DeployStateServiceTest : IDisposable
 
         Assert.Equal(0, actual.PullNumber);
         Assert.Empty(actual.Services!);
-        Assert.True(_host.ParameterStore.Parameters.ContainsKey(
+        Assert.True(_host.DeploymentStore.DeploymentValues.ContainsKey(
             $"{WebhookTestHost.Owner}/{WebhookTestHost.Repo}/DEPLOY_STATE_DEV".ToUpperInvariant()));
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: returns Historical State Without Overwriting Current.
+    /// </summary>
     [Fact]
     public async Task GetAsync_ReturnsHistoricalStateWithoutOverwritingCurrent()
     {
@@ -59,6 +74,9 @@ public class DeployStateServiceTest : IDisposable
         Assert.Equal(2, (await _service.GetAsync("stable")).PullNumber);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: determines Difference Between Environments.
+    /// </summary>
     [Fact]
     public async Task DiffAsync_DeterminesDifferenceBetweenEnvironments()
     {
@@ -84,5 +102,8 @@ public class DeployStateServiceTest : IDisposable
         Assert.Equal(8068273297, actual.Services.Single(s => s.Name == "myorg-app-main").RunId);
     }
 
+    /// <summary>
+    /// Releases resources owned by this instance.
+    /// </summary>
     public void Dispose() => _host.Dispose();
 }

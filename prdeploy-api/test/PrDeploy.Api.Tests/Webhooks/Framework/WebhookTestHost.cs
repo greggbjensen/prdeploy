@@ -9,7 +9,7 @@ using PrDeploy.Api.Webhooks.Services;
 namespace PrDeploy.Api.Tests.Webhooks.Framework;
 
 /// <summary>
-/// Builds the webhook services for a single event with a mocked GitHub client, parameter store and HTTP calls.
+/// Builds the webhook services for a single event with a mocked GitHub client, deployment store and HTTP calls.
 /// </summary>
 public sealed class WebhookTestHost : IDisposable
 {
@@ -20,6 +20,10 @@ public sealed class WebhookTestHost : IDisposable
     private readonly ServiceProvider _provider;
     private readonly IServiceScope _scope;
 
+    /// <summary>
+    /// Initializes a webhook Test Host with the supplied dependencies.
+    /// </summary>
+    /// <param name="settings">Settings used to configure the operation.</param>
     public WebhookTestHost(DeploySettings? settings = null)
     {
         GitHub = new Mock<IGitHubClient> { DefaultValue = DefaultValue.Mock };
@@ -27,7 +31,7 @@ public sealed class WebhookTestHost : IDisposable
         var services = new ServiceCollection()
             .AddLogging(b => b.SetMinimumLevel(LogLevel.Debug))
             .AddPrDeployWebhookServices()
-            .AddSingleton<PrDeploy.Api.Business.Stores.Interfaces.IParameterStore>(ParameterStore);
+            .AddSingleton<PrDeploy.Api.Business.Stores.Interfaces.IDeploymentStore>(DeploymentStore);
 
         var httpClientFactory = new Mock<IHttpClientFactory>();
         httpClientFactory.Setup(f => f.CreateClient(It.IsAny<string>())).Returns(() => new HttpClient(Http));
@@ -46,16 +50,43 @@ public sealed class WebhookTestHost : IDisposable
         WebhookSettingsService.NormalizeDefaults(Context.Settings);
     }
 
+    /// <summary>
+    /// Gets the Git Hub.
+    /// </summary>
+    /// <returns>The value exposed by this member.</returns>
     public Mock<IGitHubClient> GitHub { get; }
 
-    public InMemoryParameterStore ParameterStore { get; } = new();
+    /// <summary>
+    /// Gets the Deployment Store.
+    /// </summary>
+    /// <returns>The value exposed by this member.</returns>
+    public InMemoryDeploymentStore DeploymentStore { get; } = new();
 
+    /// <summary>
+    /// Gets the Http.
+    /// </summary>
+    /// <returns>The value exposed by this member.</returns>
     public FakeHttpMessageHandler Http { get; } = new();
 
+    /// <summary>
+    /// Gets the Context.
+    /// </summary>
+    /// <returns>The value exposed by this member.</returns>
     public WebhookContext Context { get; }
 
+    /// <summary>
+    /// Retrieves the requested value.
+    /// </summary>
+    /// <typeparam name="T">Type used by this operation.</typeparam>
+    /// <returns>The value produced by this operation.</returns>
     public T Get<T>() where T : notnull => _scope.ServiceProvider.GetRequiredService<T>();
 
+    /// <summary>
+    /// Performs the mock Of operation and returns its result.
+    /// </summary>
+    /// <param name="client">Value supplied for client.</param>
+    /// <typeparam name="T">Type used by this operation.</typeparam>
+    /// <returns>The value produced by this operation.</returns>
     public Mock<T> MockOf<T>(T client) where T : class => Mock.Get(client);
 
     /// <summary>
@@ -116,6 +147,14 @@ public sealed class WebhookTestHost : IDisposable
         }
     };
 
+    /// <summary>
+    /// Performs the environment operation and returns its result.
+    /// </summary>
+    /// <param name="name">Name used to identify the value or resource.</param>
+    /// <param name="queue">Value supplied for queue.</param>
+    /// <param name="color">Value supplied for color.</param>
+    /// <param name="requireApproval">Value supplied for require Approval.</param>
+    /// <returns>The value produced by this operation.</returns>
     private static EnvironmentSettings Environment(string name, string queue, string color,
         bool requireApproval = false) => new()
     {
@@ -126,6 +165,9 @@ public sealed class WebhookTestHost : IDisposable
         RequireApproval = requireApproval
     };
 
+    /// <summary>
+    /// Releases resources owned by this instance.
+    /// </summary>
     public void Dispose()
     {
         _scope.Dispose();

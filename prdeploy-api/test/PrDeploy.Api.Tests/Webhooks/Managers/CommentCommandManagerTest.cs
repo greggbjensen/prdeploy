@@ -5,6 +5,9 @@ using PrDeploy.Api.Webhooks.Managers;
 
 namespace PrDeploy.Api.Tests.Webhooks.Managers;
 
+/// <summary>
+/// Contains tests that verify the behavior of the comment Command Manager Test.
+/// </summary>
 public class CommentCommandManagerTest : IDisposable
 {
     private const long CommentId = 2015899564;
@@ -19,6 +22,9 @@ public class CommentCommandManagerTest : IDisposable
     private readonly List<(long Number, string Body)> _comments;
     private readonly Dictionary<long, string[]> _labels;
 
+    /// <summary>
+    /// Initializes the test fixture and prepares its dependencies.
+    /// </summary>
     public CommentCommandManagerTest()
     {
         _manager = _host.Get<CommentCommandManager>();
@@ -42,6 +48,9 @@ public class CommentCommandManagerTest : IDisposable
                 """{ "commit": { "message": "This is a test commit message.\n\nWith more details." } }""")]);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: deploys To Default Environment.
+    /// </summary>
     [Fact]
     public async Task ProcessCommentAsync_DeploysToDefaultEnvironment()
     {
@@ -62,6 +71,9 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Equal(["prod", "dev", "dev-lock"], _labels[PullNumber]);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: uses Next Available Environment In Queue.
+    /// </summary>
     [Fact]
     public async Task ProcessCommentAsync_UsesNextAvailableEnvironmentInQueue()
     {
@@ -75,18 +87,21 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Equal("dev3", Assert.Single(_dispatches).Dispatch.Inputs["environment"]);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: enqueues When No Environment Is Available.
+    /// </summary>
     [Fact]
     public async Task ProcessCommentAsync_EnqueuesWhenNoEnvironmentIsAvailable()
     {
         _host.SetupPullRequest(GitHubModels.PullRequest(PullNumber, Branch));
         _host.SetupDeployedPullRequests(
             GitHubModels.PullRequest(1, labels: ["stage", "stage-lock"]));
-        await _host.ParameterStore.SetAsync(WebhookTestHost.Owner, WebhookTestHost.Repo, "STAGE_PR_QUEUE", new List<int> { 5 });
+        await _host.DeploymentStore.SetAsync(WebhookTestHost.Owner, WebhookTestHost.Repo, "STAGE_PR_QUEUE", new List<int> { 5 });
 
         await _manager.ProcessCommentAsync(CommentId, "/deploy stage", IssueUrl);
 
         Assert.Empty(_dispatches);
-        var queue = await _host.ParameterStore.GetAsync<List<int>>(WebhookTestHost.Owner, WebhookTestHost.Repo, "STAGE_PR_QUEUE");
+        var queue = await _host.DeploymentStore.GetAsync<List<int>>(WebhookTestHost.Owner, WebhookTestHost.Repo, "STAGE_PR_QUEUE");
         Assert.Equal([5, PullNumber], queue);
         var (_, body) = Assert.Single(_comments);
         Assert.Contains("Your position in the queue is 2.", body);
@@ -95,6 +110,9 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Contains("| [5](https://github.com/greggbjensen/prdeploy-example-repo/pull/5) | [8](", body);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: force Deploys With Retained Locks.
+    /// </summary>
     [Fact]
     public async Task ProcessCommentAsync_ForceDeploysWithRetainedLocks()
     {
@@ -108,6 +126,9 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Empty(_labels[1]); // Other pull request is removed from stage.
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: frees Environment And Dequeues Next Pull Request.
+    /// </summary>
     [Fact]
     public async Task ProcessCommentAsync_FreesEnvironmentAndDequeuesNextPullRequest()
     {
@@ -115,7 +136,7 @@ public class CommentCommandManagerTest : IDisposable
         var next = GitHubModels.PullRequest(9, "next-branch");
         _host.SetupPullRequest(next);
         _host.SetupChecks("next-branch", ("Build helm chart", "completed", "success", 10014663490));
-        await _host.ParameterStore.SetAsync(WebhookTestHost.Owner, WebhookTestHost.Repo, "STAGE_PR_QUEUE", new List<int> { 9 });
+        await _host.DeploymentStore.SetAsync(WebhookTestHost.Owner, WebhookTestHost.Repo, "STAGE_PR_QUEUE", new List<int> { 9 });
 
         await _manager.ProcessCommentAsync(CommentId, "/free stage", IssueUrl);
 
@@ -124,17 +145,20 @@ public class CommentCommandManagerTest : IDisposable
         var (_, dispatch) = Assert.Single(_dispatches);
         Assert.Equal("9", dispatch.Inputs["pull_number"]);
         Assert.Equal("stage", dispatch.Inputs["environment"]);
-        var queue = await _host.ParameterStore.GetAsync<List<int>?>(WebhookTestHost.Owner, WebhookTestHost.Repo, "STAGE_PR_QUEUE");
+        var queue = await _host.DeploymentStore.GetAsync<List<int>?>(WebhookTestHost.Owner, WebhookTestHost.Repo, "STAGE_PR_QUEUE");
         Assert.Empty(queue ?? []);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: rolls Back To Previous Stable State.
+    /// </summary>
     [Fact]
     public async Task ProcessCommentAsync_RollsBackToPreviousStableState()
     {
         _host.SetupPullRequest(GitHubModels.PullRequest(PullNumber, Branch, labels: ["prod", "prod-lock"]));
         var stable = GitHubModels.PullRequest(7, "stable-branch");
         _host.SetupPullRequest(stable);
-        await _host.ParameterStore.SetAsync(WebhookTestHost.Owner, WebhookTestHost.Repo, "DEPLOY_STATE_STABLE",
+        await _host.DeploymentStore.SetAsync(WebhookTestHost.Owner, WebhookTestHost.Repo, "DEPLOY_STATE_STABLE",
             new PrDeploy.Api.Models.DeployEnvironments.DeployState
             {
                 PullNumber = 7,
@@ -150,6 +174,9 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Equal("[prod ROLLBACK #8] add-service-pr: This is a test commit message.", dispatch.Inputs["deploy_name"]);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: adds Service Deploy Files.
+    /// </summary>
     [Fact]
     public async Task ProcessCommentAsync_AddsServiceDeployFiles()
     {
@@ -168,6 +195,9 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Empty(_comments);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: comments When Service Is Not Configured.
+    /// </summary>
     [Fact]
     public async Task ProcessCommentAsync_CommentsWhenServiceIsNotConfigured()
     {
@@ -179,6 +209,9 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Contains("- deploy-bad-test", body);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: ignores Comments Without Commands.
+    /// </summary>
     [Fact]
     public async Task ProcessCommentAsync_IgnoresCommentsWithoutCommands()
     {
@@ -188,5 +221,8 @@ public class CommentCommandManagerTest : IDisposable
         _host.MockOf(_host.GitHub.Object.PullRequest).Verify(c => c.Get(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never);
     }
 
+    /// <summary>
+    /// Releases resources owned by this instance.
+    /// </summary>
     public void Dispose() => _host.Dispose();
 }

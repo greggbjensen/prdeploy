@@ -8,6 +8,9 @@ using PrDeploy.Api.Webhooks.Models;
 
 namespace PrDeploy.Api.Webhooks.Services;
 
+/// <summary>
+/// Coordinates operations for the jira Service and its collaborators.
+/// </summary>
 public partial class JiraService
 {
     public const string HttpClientName = "jira";
@@ -16,6 +19,12 @@ public partial class JiraService
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<JiraService> _logger;
 
+    /// <summary>
+    /// Initializes a jira Service with the supplied dependencies.
+    /// </summary>
+    /// <param name="context">Request or application context used by the operation.</param>
+    /// <param name="httpClientFactory">Value supplied for http Client Factory.</param>
+    /// <param name="logger">Logger used to report operational information and errors.</param>
     public JiraService(WebhookContext context, IHttpClientFactory httpClientFactory, ILogger<JiraService> logger)
     {
         _context = context;
@@ -23,6 +32,11 @@ public partial class JiraService
         _logger = logger;
     }
 
+    /// <summary>
+    /// Finds and returns the Associated Issues.
+    /// </summary>
+    /// <param name="branchName">Branch associated with the operation.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<List<JiraIssue>> ListAssociatedIssuesAsync(string branchName)
     {
         _logger.LogInformation("Parsing branch: {BranchName}", branchName);
@@ -74,44 +88,94 @@ public partial class JiraService
         }
     }
 
+    /// <summary>
+    /// Retrieves the Base Url.
+    /// </summary>
+    /// <param name="self">Value supplied for self.</param>
+    /// <param name="host">Value supplied for host.</param>
+    /// <returns>The value produced by this operation.</returns>
     private static string GetBaseUrl(string? self, string host)
     {
         var url = Uri.TryCreate(self, UriKind.Absolute, out var selfUri) ? selfUri : new Uri(host);
         return url.GetLeftPart(UriPartial.Authority);
     }
 
+    /// <summary>
+    /// Performs the jira Issue Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"[a-z]{2,6}-\d+", RegexOptions.IgnoreCase)]
     private static partial Regex JiraIssueRegex();
 
+    /// <summary>
+    /// Represents a response containing the jira Search Response.
+    /// </summary>
     private class JiraSearchResponse
     {
+        /// <summary>
+        /// Gets or sets the Issues.
+        /// </summary>
+        /// <returns>The value exposed by this member.</returns>
         [JsonPropertyName("issues")]
         public List<JiraSearchIssue>? Issues { get; set; }
     }
 
+    /// <summary>
+    /// Represents the jira Search Issue used by the application.
+    /// </summary>
     private class JiraSearchIssue
     {
+        /// <summary>
+        /// Gets or sets the Key.
+        /// </summary>
+        /// <returns>The value exposed by this member.</returns>
         [JsonPropertyName("key")]
         public string? Key { get; set; }
 
+        /// <summary>
+        /// Gets or sets the Self.
+        /// </summary>
+        /// <returns>The value exposed by this member.</returns>
         [JsonPropertyName("self")]
         public string? Self { get; set; }
 
+        /// <summary>
+        /// Gets or sets the Fields.
+        /// </summary>
+        /// <returns>The value exposed by this member.</returns>
         [JsonPropertyName("fields")]
         public JiraSearchFields? Fields { get; set; }
     }
 
+    /// <summary>
+    /// Represents the jira Search Fields used by the application.
+    /// </summary>
     private class JiraSearchFields
     {
+        /// <summary>
+        /// Gets or sets the Summary.
+        /// </summary>
+        /// <returns>The value exposed by this member.</returns>
         [JsonPropertyName("summary")]
         public string? Summary { get; set; }
 
+        /// <summary>
+        /// Gets or sets the Issue Type.
+        /// </summary>
+        /// <returns>The value exposed by this member.</returns>
         [JsonPropertyName("issuetype")]
         public JiraIssueType? IssueType { get; set; }
     }
 
+    /// <summary>
+    /// Represents the jira Issue Type used by the application.
+    /// </summary>
     private class JiraIssueType
     {
+        /// <summary>
+        /// Gets or sets the Name.
+        /// </summary>
+        /// <returns>The value exposed by this member.</returns>
         [JsonPropertyName("name")]
         public string? Name { get; set; }
     }

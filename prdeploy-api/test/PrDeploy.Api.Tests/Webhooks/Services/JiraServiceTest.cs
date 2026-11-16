@@ -5,11 +5,17 @@ using PrDeploy.Api.Webhooks.Services;
 
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
+/// <summary>
+/// Contains tests that verify the behavior of the jira Service Test.
+/// </summary>
 public class JiraServiceTest : IDisposable
 {
     private readonly WebhookTestHost _host = new();
     private readonly JiraService _service;
 
+    /// <summary>
+    /// Initializes the test fixture and prepares its dependencies.
+    /// </summary>
     public JiraServiceTest()
     {
         _service = _host.Get<JiraService>();
@@ -32,6 +38,9 @@ public class JiraServiceTest : IDisposable
         };
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: handles No Associated Issues.
+    /// </summary>
     [Fact]
     public async Task ListAssociatedIssuesAsync_HandlesNoAssociatedIssues()
     {
@@ -41,6 +50,9 @@ public class JiraServiceTest : IDisposable
         Assert.Empty(_host.Http.Requests);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: lists Associated Issues.
+    /// </summary>
     [Fact]
     public async Task ListAssociatedIssuesAsync_ListsAssociatedIssues()
     {
@@ -58,6 +70,9 @@ public class JiraServiceTest : IDisposable
         Assert.Equal("key in ('SCRUM-1234', 'SCRUM-1242', 'UX-553')", json.RootElement.GetProperty("jql").GetString());
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: returns Empty When Jira Fails.
+    /// </summary>
     [Fact]
     public async Task ListAssociatedIssuesAsync_ReturnsEmptyWhenJiraFails()
     {
@@ -66,5 +81,8 @@ public class JiraServiceTest : IDisposable
         Assert.Empty(await _service.ListAssociatedIssuesAsync("SCRUM-1234-feature"));
     }
 
+    /// <summary>
+    /// Releases resources owned by this instance.
+    /// </summary>
     public void Dispose() => _host.Dispose();
 }

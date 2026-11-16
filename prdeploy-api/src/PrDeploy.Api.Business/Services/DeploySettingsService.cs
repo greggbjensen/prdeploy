@@ -15,6 +15,9 @@ using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
 namespace PrDeploy.Api.Business.Services;
+/// <summary>
+/// Coordinates operations for the deploy Settings Service and its collaborators.
+/// </summary>
 public class DeploySettingsService : IDeploySettingsService
 {
     private const string DeploySettingsKey = "DEPLOY_SETTINGS";
@@ -23,16 +26,27 @@ public class DeploySettingsService : IDeploySettingsService
     private static DeploySettings? _defaultOwnerSettings;
     private readonly IMemoryCache _cache;
 
-    private readonly IParameterStore _parameterStore;
+    private readonly IDeploymentStore _deploymentStore;
     private readonly IGitHubSecurity _gitHubSecurity;
 
-    public DeploySettingsService(IParameterStore parameterStore, IGitHubSecurity gitHubSecurity, IMemoryCache cache)
+    /// <summary>
+    /// Initializes a deploy Settings Service with the supplied dependencies.
+    /// </summary>
+    /// <param name="deploymentStore">Value supplied for deployment Store.</param>
+    /// <param name="gitHubSecurity">Value supplied for git Hub Security.</param>
+    /// <param name="cache">Value supplied for cache.</param>
+    public DeploySettingsService(IDeploymentStore deploymentStore, IGitHubSecurity gitHubSecurity, IMemoryCache cache)
     {
-        _parameterStore = parameterStore;
+        _deploymentStore = deploymentStore;
         _gitHubSecurity = gitHubSecurity;
         _cache = cache;
     }
 
+    /// <summary>
+    /// Compares the requested value and returns the differences.
+    /// </summary>
+    /// <param name="input">Input object containing the operation's arguments.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<DeploySettingsCompare> CompareAsync(RepoQueryInput input)
     {
         // Add validation.
@@ -43,6 +57,12 @@ public class DeploySettingsService : IDeploySettingsService
         return settingsCompare!;
     }
 
+    /// <summary>
+    /// Retrieves the Merged.
+    /// </summary>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <param name="repo">Repository whose values are addressed.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<DeploySettings> GetMergedAsync(string owner, string repo)
     {
         var repoKey = GetSettingsCacheKey(owner, repo);
@@ -63,6 +83,13 @@ public class DeploySettingsService : IDeploySettingsService
         return repoSettings;
     }
 
+    /// <summary>
+    /// Retrieves the Environment.
+    /// </summary>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <param name="repo">Repository whose values are addressed.</param>
+    /// <param name="environment">Deployment environment involved in the operation.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<EnvironmentSettings> GetEnvironmentAsync(string owner, string repo, string environment)
     {
         var repoSettings = await GetMergedAsync(owner, repo);
@@ -70,6 +97,14 @@ public class DeploySettingsService : IDeploySettingsService
         return result!;
     }
 
+    /// <summary>
+    /// Retrieves the Environment.
+    /// </summary>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <param name="repo">Repository whose values are addressed.</param>
+    /// <param name="environment">Deployment environment involved in the operation.</param>
+    /// <param name="deploySettings">Value supplied for deploy Settings.</param>
+    /// <returns>The value produced by this operation.</returns>
     public EnvironmentSettings? GetEnvironment(string owner, string repo, string environment,
         DeploySettings deploySettings)
     {
@@ -85,6 +120,12 @@ public class DeploySettingsService : IDeploySettingsService
         return result;
     }
 
+    /// <summary>
+    /// Retrieves the Queue Environments.
+    /// </summary>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <param name="repo">Repository whose values are addressed.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<List<EnvironmentSettings>> GetQueueEnvironmentsAsync(string owner, string repo)
     {
         var repoSettings = await GetMergedAsync(owner, repo);
@@ -99,6 +140,11 @@ public class DeploySettingsService : IDeploySettingsService
         return environmentSettings;
     }
 
+    /// <summary>
+    /// Finds and returns the Services.
+    /// </summary>
+    /// <param name="input">Input object containing the operation's arguments.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<List<string>> ListServicesAsync(RepoQueryInput input)
     {
         List<string>? services = null;
@@ -112,27 +158,37 @@ public class DeploySettingsService : IDeploySettingsService
         return services ?? new List<string>();
     }
 
+    /// <summary>
+    /// Retrieves the Owner Settings.
+    /// </summary>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<DeploySettings> GetOwnerSettingsAsync(string owner)
     {
         await _gitHubSecurity.GuardOwnerAsync(owner);
 
         // Repo specific settings, which are optional.
-        var deploySettings = await _parameterStore.GetAsync<DeploySettings?>(owner, DeploySettingsKey);
+        var deploySettings = await _deploymentStore.GetAsync<DeploySettings?>(owner, DeploySettingsKey);
         if (deploySettings == null)
         {
             _defaultOwnerSettings ??= await LoadDefaultOwnerSettingsAsync();
             deploySettings = _defaultOwnerSettings;
-            await _parameterStore.SetAsync(owner, DeploySettingsKey, deploySettings, true);
+            await _deploymentStore.SetAsync(owner, DeploySettingsKey, deploySettings, true);
         }
 
         return deploySettings;
     }
 
+    /// <summary>
+    /// Stores or updates the Owner Settings.
+    /// </summary>
+    /// <param name="input">Input object containing the operation's arguments.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<StatusResponse> SetOwnerSettingsAsync(SetOwnerSettingsInput input)
     {
         await _gitHubSecurity.GuardOwnerAsync(input.Owner);
 
-        await _parameterStore.SetAsync(input.Owner, DeploySettingsKey, input.Settings, true);
+        await _deploymentStore.SetAsync(input.Owner, DeploySettingsKey, input.Settings, true);
 
         return new StatusResponse
         {
@@ -140,26 +196,37 @@ public class DeploySettingsService : IDeploySettingsService
         };
     }
 
+    /// <summary>
+    /// Retrieves the Repo Settings.
+    /// </summary>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <param name="repo">Repository whose values are addressed.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<DeploySettings> GetRepoSettingsAsync(string owner, string repo)
     {
         await _gitHubSecurity.GuardRepoAsync(owner, repo);
 
         // Repo specific settings, which are optional.
-        var deploySettings = await _parameterStore.GetAsync<DeploySettings?>(owner, repo, DeploySettingsKey);
+        var deploySettings = await _deploymentStore.GetAsync<DeploySettings?>(owner, repo, DeploySettingsKey);
         if (deploySettings == null)
         {
             deploySettings = new DeploySettings();
-            await _parameterStore.SetAsync(owner, repo, DeploySettingsKey, deploySettings, true);
+            await _deploymentStore.SetAsync(owner, repo, DeploySettingsKey, deploySettings, true);
         }
 
         return deploySettings;
     }
 
+    /// <summary>
+    /// Stores or updates the Repo Settings.
+    /// </summary>
+    /// <param name="input">Input object containing the operation's arguments.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<StatusResponse> SetRepoSettingsAsync(SetRepoSettingsInput input)
     {
         await _gitHubSecurity.GuardRepoAsync(input.Owner, input.Repo);
 
-        await _parameterStore.SetAsync(input.Owner, input.Repo, DeploySettingsKey, input.Settings, true);
+        await _deploymentStore.SetAsync(input.Owner, input.Repo, DeploySettingsKey, input.Settings, true);
 
         // Clear cache so it can update, including the settings used by webhooks.
         _cache.Remove(GetSettingsCacheKey(input.Owner, input.Repo));
@@ -171,11 +238,20 @@ public class DeploySettingsService : IDeploySettingsService
         };
     }
 
+    /// <summary>
+    /// Normalizes the Environment for consistent processing.
+    /// </summary>
+    /// <param name="environment">Deployment environment involved in the operation.</param>
+    /// <returns>The value produced by this operation.</returns>
     public string NormalizeEnvironment(string environment)
     {
         return NormalizeEnvironmentRegex.Replace(environment, string.Empty);
     }
 
+    /// <summary>
+    /// Performs the load Default Owner Settings operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     private async Task<DeploySettings> LoadDefaultOwnerSettingsAsync()
     {
         var yaml = await File.ReadAllTextAsync("default-owner-settings.yaml");
@@ -188,7 +264,19 @@ public class DeploySettingsService : IDeploySettingsService
         return deploySettings;
     }
 
+    /// <summary>
+    /// Retrieves the Settings Cache Key.
+    /// </summary>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <param name="repo">Repository whose values are addressed.</param>
+    /// <returns>The value produced by this operation.</returns>
     private static string GetSettingsCacheKey(string owner, string repo) => $"{owner}:{repo}:settings";
 
+    /// <summary>
+    /// Retrieves the Webhook Settings Cache Key.
+    /// </summary>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <param name="repo">Repository whose values are addressed.</param>
+    /// <returns>The value produced by this operation.</returns>
     public static string GetWebhookSettingsCacheKey(string owner, string repo) => $"{owner}:{repo}:webhook-settings";
 }

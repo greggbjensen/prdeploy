@@ -55,7 +55,6 @@ class SetCompareValue<T> {
     ServicesFormComponent,
     JiraFormComponent,
     SlackFormComponent,
-    AddEnvironmentDialogComponent,
     MatProgressSpinnerModule,
     MatExpansionModule,
     MatButtonModule,

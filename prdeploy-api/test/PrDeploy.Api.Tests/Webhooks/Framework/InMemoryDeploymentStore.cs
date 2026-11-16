@@ -5,9 +5,12 @@ using YamlDotNet.Serialization.NamingConventions;
 namespace PrDeploy.Api.Tests.Webhooks.Framework;
 
 /// <summary>
-/// Stores YAML values with history, like AWS Parameter Store, using the same serialization as ParameterStore.
+/// Stores serialized deployment values and their revisions for webhook tests.
 /// </summary>
-public class InMemoryParameterStore : IParameterStore
+/// <remarks>
+/// This fake uses the same YAML serialization as the production deployment stores.
+/// </remarks>
+public class InMemoryDeploymentStore : IDeploymentStore
 {
     private static readonly ISerializer Serializer = new SerializerBuilder()
         .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitEmptyCollections | DefaultValuesHandling.OmitNull)
@@ -18,30 +21,43 @@ public class InMemoryParameterStore : IParameterStore
         .IgnoreUnmatchedProperties()
         .Build();
 
-    private readonly Dictionary<string, List<string>> _parameters = new();
+    private readonly Dictionary<string, List<string>> _deploymentValues = new();
 
-    public IReadOnlyDictionary<string, List<string>> Parameters => _parameters;
+    /// <summary>
+    /// Gets the stored serialized values, keyed by their normalized path.
+    /// </summary>
+    public IReadOnlyDictionary<string, List<string>> DeploymentValues => _deploymentValues;
 
+    /// <inheritdoc />
     public Task<T> GetAsync<T>(string owner, string repo, string name) => Task.FromResult(Get<T>($"{owner}/{repo}/{name}", 0));
 
+    /// <inheritdoc />
     public Task<T> GetHistoricalAsync<T>(string owner, string repo, string name, int historical) =>
         Task.FromResult(Get<T>($"{owner}/{repo}/{name}", historical));
 
+    /// <inheritdoc />
     public Task<T> GetAsync<T>(string owner, string name) => Task.FromResult(Get<T>($"{owner}/{name}", 0));
 
+    /// <inheritdoc />
     public Task<T> GetAsync<T>(string name) => Task.FromResult(Get<T>(name, 0));
 
+    /// <inheritdoc />
     public Task SetAsync<T>(string owner, string repo, string name, T value, bool isSecure = false) =>
         Set($"{owner}/{repo}/{name}", value);
 
+    /// <inheritdoc />
     public Task SetAsync<T>(string owner, string name, T value, bool isSecure = false) =>
         Set($"{owner}/{name}", value);
 
+    /// <inheritdoc />
     public Task SetAsync<T>(string name, T value, bool isSecure = false) => Set(name, value);
 
+    /// <summary>
+    /// Deserializes the requested value revision, returning the type default when it is unavailable.
+    /// </summary>
     private T Get<T>(string key, int historical)
     {
-        if (!_parameters.TryGetValue(key.ToUpperInvariant(), out var history) || history.Count <= historical)
+        if (!_deploymentValues.TryGetValue(key.ToUpperInvariant(), out var history) || history.Count <= historical)
         {
             return default!;
         }
@@ -49,13 +65,16 @@ public class InMemoryParameterStore : IParameterStore
         return Deserializer.Deserialize<T>(history[history.Count - (historical + 1)]);
     }
 
+    /// <summary>
+    /// Appends a YAML-serialized value to its in-memory revision history.
+    /// </summary>
     private Task Set<T>(string key, T value)
     {
         var upperKey = key.ToUpperInvariant();
-        if (!_parameters.TryGetValue(upperKey, out var history))
+        if (!_deploymentValues.TryGetValue(upperKey, out var history))
         {
             history = [];
-            _parameters[upperKey] = history;
+            _deploymentValues[upperKey] = history;
         }
 
         history.Add(Serializer.Serialize(value));

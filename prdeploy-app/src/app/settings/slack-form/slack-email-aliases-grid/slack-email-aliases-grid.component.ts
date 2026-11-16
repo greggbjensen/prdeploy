@@ -10,19 +10,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
-import { KeyValuePipe } from '@angular/common';
 
 @Component({
   selector: 'app-slack-email-aliases-grid',
-  imports: [
-    AddSlackEmailAliasDialogComponent,
-    MatButtonModule,
-    MatIconModule,
-    MatTableModule,
-    MatInputModule,
-    FormsModule,
-    KeyValuePipe
-  ],
+  imports: [MatButtonModule, MatIconModule, MatTableModule, MatInputModule, FormsModule],
   templateUrl: './slack-email-aliases-grid.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './slack-email-aliases-grid.component.scss'

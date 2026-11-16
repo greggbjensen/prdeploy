@@ -1,21 +1,33 @@
-using Amazon.SimpleSystemsManagement;
-using Amazon.SimpleSystemsManagement.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Octokit;
+using PrDeploy.Api.Business.Stores.Interfaces;
 using PrDeploy.Api.Tests.Client;
+using PrDeploy.Api.Tests.Constants;
 using PrDeploy.Api.Tests.Framework;
 using PrDeploy.Api.Tests.Framework.Client;
+using PrDeploy.Api.Tests.Webhooks.Framework;
 
 namespace PrDeploy.Api.Tests.Schema.Mutations;
 
+/// <summary>
+/// Contains tests that verify the behavior of the deploy Queue Mutation Test.
+/// </summary>
 public class DeployQueueMutationTest : DeployApiTest
 {
+    /// <summary>
+    /// Initializes the test fixture and prepares its dependencies.
+    /// </summary>
+    /// <param name="factory">Value supplied for factory.</param>
     public DeployQueueMutationTest(DeployApiApplicationFactory factory)
         : base(factory)
     {
     }
 
+    /// <summary>
+    /// Performs the configure Services operation.
+    /// </summary>
+    /// <param name="services">Services to include in the operation.</param>
     public override void ConfigureServices(IServiceCollection services)
     {
         services.AddTransient(s =>
@@ -40,28 +52,19 @@ public class DeployQueueMutationTest : DeployApiTest
             return gitHubMock.Object;
         });
 
-        services.AddTransient(s =>
-        {
-            var awsSsmClient = new Mock<IAmazonSimpleSystemsManagement>(MockBehavior.Strict);
-
-            awsSsmClient.Setup(x => x.PutParameterAsync(
-                    It.IsAny<PutParameterRequest>(),
-                    default(CancellationToken)))
-                .ReturnsAsync(Mocker.PutParameterResponse(
-                    ParameterVariables.DevPrQueue,
-                    PullRequests.TestPull.Number.ToString()));
-
-            awsSsmClient.Setup(x => x.GetParameterAsync(
-                    It.IsAny<GetParameterRequest>(),
-                    default(CancellationToken)))
-                .ReturnsAsync(Mocker.GetParameterResponse(
-                    ParameterVariables.DevPrQueue,
-                    $" - {PullRequests.TestPull.Number}"));
-
-            return awsSsmClient.Object;
-        });
+        var deploymentStore = new InMemoryDeploymentStore();
+        var defaultSettings = WebhookTestHost.CreateDefaultSettings();
+        deploymentStore.SetAsync(GitHub.Owner, "DEPLOY_SETTINGS", defaultSettings).GetAwaiter().GetResult();
+        deploymentStore.SetAsync(GitHub.Owner, GitHub.Repo, "DEPLOY_SETTINGS", defaultSettings)
+            .GetAwaiter().GetResult();
+        deploymentStore.SetAsync(GitHub.Owner, GitHub.Repo, DeploymentValueNames.DevPrQueue,
+            new List<int> { PullRequests.TestPull.Number }).GetAwaiter().GetResult();
+        services.AddSingleton<IDeploymentStore>(deploymentStore);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: sets Environment Pull Request Queue In Order.
+    /// </summary>
     [Fact]
     public async Task DeployQueueUpdate_SetsEnvironmentPullRequestQueueInOrder()
     {

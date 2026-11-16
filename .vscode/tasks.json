@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build API",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "${workspaceFolder}/prdeploy-api/src/PrDeploy.Api/PrDeploy.Api.csproj",
+        "--configuration",
+        "Debug"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": "$msCompile",
+      "group": "build"
+    },
+    {
+      "label": "Build App",
+      "type": "process",
+      "command": "npm",
+      "args": ["run", "build"],
+      "options": {
+        "cwd": "${workspaceFolder}/prdeploy-app"
+      },
+      "problemMatcher": "$tsc",
+      "group": "build"
+    },
+    {
+      "label": "Serve App",
+      "type": "process",
+      "command": "npm",
+      "args": ["start"],
+      "options": {
+        "cwd": "${workspaceFolder}/prdeploy-app"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "angular",
+        "pattern": {
+          "regexp": "^(.*)$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": ".*http://localhost:4301/.*"
+        }
+      }
+    }
+  ]
+}

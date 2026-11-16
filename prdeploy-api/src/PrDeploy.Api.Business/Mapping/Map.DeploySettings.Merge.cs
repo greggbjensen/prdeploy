@@ -1,8 +1,16 @@
 using PrDeploy.Api.Models.Settings;
 
 namespace PrDeploy.Api.Business.Mapping;
+/// <summary>
+/// Represents the map used by the application.
+/// </summary>
 public static partial class Map
 {
+    /// <summary>
+    /// Performs the merge operation.
+    /// </summary>
+    /// <param name="target">Target environment or value for the operation.</param>
+    /// <param name="source">Source environment or value for the operation.</param>
     public static void Merge(DeploySettings? target, DeploySettings? source)
     {
         if (source == null || target == null)
@@ -65,6 +73,11 @@ public static partial class Map
         }
     }
 
+    /// <summary>
+    /// Performs the merge operation.
+    /// </summary>
+    /// <param name="target">Target environment or value for the operation.</param>
+    /// <param name="source">Source environment or value for the operation.</param>
     private static void Merge(BuildsSettings? target, BuildsSettings? source)
     {
         if (source == null || target == null)
@@ -76,6 +89,11 @@ public static partial class Map
         target.WorkflowPattern ??= source.WorkflowPattern;
     }
 
+    /// <summary>
+    /// Performs the merge operation.
+    /// </summary>
+    /// <param name="target">Target environment or value for the operation.</param>
+    /// <param name="source">Source environment or value for the operation.</param>
     private static void Merge(SlackSettings? target, SlackSettings? source)
     {
         if (source == null || target == null)
@@ -98,6 +116,11 @@ public static partial class Map
         }
     }
 
+    /// <summary>
+    /// Performs the merge operation.
+    /// </summary>
+    /// <param name="target">Target environment or value for the operation.</param>
+    /// <param name="source">Source environment or value for the operation.</param>
     private static void Merge(SlackWebHooksSettings? target, SlackWebHooksSettings? source)
     {
         if (source == null || target == null)
@@ -109,6 +132,11 @@ public static partial class Map
         target.ReleaseUrl ??= source.ReleaseUrl;
     }
 
+    /// <summary>
+    /// Performs the merge operation.
+    /// </summary>
+    /// <param name="target">Target environment or value for the operation.</param>
+    /// <param name="source">Source environment or value for the operation.</param>
     private static void Merge(JiraSettings? target, JiraSettings? source)
     {
         if (source == null || target == null)
@@ -122,6 +150,11 @@ public static partial class Map
         target.Password ??= source.Password;
     }
 
+    /// <summary>
+    /// Performs the merge operation.
+    /// </summary>
+    /// <param name="target">Target environment or value for the operation.</param>
+    /// <param name="source">Source environment or value for the operation.</param>
     public static void Merge(Dictionary<string, object>? target, Dictionary<string, object>? source)
     {
         if (source == null || target == null)
@@ -138,6 +171,11 @@ public static partial class Map
         }
     }
 
+    /// <summary>
+    /// Performs the merge operation.
+    /// </summary>
+    /// <param name="target">Target environment or value for the operation.</param>
+    /// <param name="source">Source environment or value for the operation.</param>
     public static void Merge(BadgeSettings? target, BadgeSettings? source)
     {
         if (source == null || target == null)
@@ -148,6 +186,11 @@ public static partial class Map
         Merge(target.StatusColors, source.StatusColors);
     }
 
+    /// <summary>
+    /// Performs the merge operation.
+    /// </summary>
+    /// <param name="target">Target environment or value for the operation.</param>
+    /// <param name="source">Source environment or value for the operation.</param>
     public static void Merge(BadgeStatusColorsSettings? target, BadgeStatusColorsSettings? source)
     {
         if (source == null || target == null)

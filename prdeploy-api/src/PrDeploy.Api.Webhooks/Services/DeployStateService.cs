@@ -5,31 +5,48 @@ using PrDeploy.Api.Models.DeployEnvironments;
 namespace PrDeploy.Api.Webhooks.Services;
 
 /// <summary>
-/// Tracks which service versions are deployed to each environment in AWS Parameter Store.
+/// Tracks which service versions are deployed to each environment as deployment values.
 /// </summary>
 public class DeployStateService
 {
     public const string StableEnvironment = "stable";
     private const string DeployStatePrefix = "DEPLOY_STATE_";
 
-    private readonly IParameterStore _parameterStore;
+    private readonly IDeploymentStore _deploymentStore;
     private readonly WebhookContext _context;
     private readonly ILogger<DeployStateService> _logger;
 
-    public DeployStateService(IParameterStore parameterStore, WebhookContext context,
+    /// <summary>
+    /// Initializes a deploy State Service with the supplied dependencies.
+    /// </summary>
+    /// <param name="deploymentStore">Value supplied for deployment Store.</param>
+    /// <param name="context">Request or application context used by the operation.</param>
+    /// <param name="logger">Logger used to report operational information and errors.</param>
+    public DeployStateService(IDeploymentStore deploymentStore, WebhookContext context,
         ILogger<DeployStateService> logger)
     {
-        _parameterStore = parameterStore;
+        _deploymentStore = deploymentStore;
         _context = context;
         _logger = logger;
     }
 
+    /// <summary>
+    /// Synchronizes the requested value with the current source of truth.
+    /// </summary>
+    /// <param name="environment">Deployment environment involved in the operation.</param>
     public async Task SyncAsync(string environment)
     {
         var stableState = await GetAsync(StableEnvironment);
         await SetAsync(environment, stableState);
     }
 
+    /// <summary>
+    /// Updates the target value using the supplied inputs.
+    /// </summary>
+    /// <param name="environment">Deployment environment involved in the operation.</param>
+    /// <param name="pullNumber">Number identifying the pull request.</param>
+    /// <param name="services">Services to include in the operation.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<DeployState> UpdateAsync(string environment, int pullNumber,
         IReadOnlyCollection<DeployedService> services)
     {
@@ -50,12 +67,18 @@ public class DeployStateService
         return state;
     }
 
+    /// <summary>
+    /// Retrieves the requested value.
+    /// </summary>
+    /// <param name="environment">Deployment environment involved in the operation.</param>
+    /// <param name="historical">Number of revisions to move back from the latest value; zero selects the latest revision.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<DeployState> GetAsync(string environment, int historical = 0)
     {
         var name = GetVariableName(environment);
         var value = historical == 0
-            ? await _parameterStore.GetAsync<DeployState?>(_context.Owner, _context.Repo, name)
-            : await _parameterStore.GetHistoricalAsync<DeployState?>(_context.Owner, _context.Repo, name, historical);
+            ? await _deploymentStore.GetAsync<DeployState?>(_context.Owner, _context.Repo, name)
+            : await _deploymentStore.GetHistoricalAsync<DeployState?>(_context.Owner, _context.Repo, name, historical);
 
         if (value == null)
         {
@@ -65,15 +88,22 @@ public class DeployStateService
             if (historical == 0)
             {
                 _logger.LogInformation("Creating deploy state for: {Name}.", name);
-                await _parameterStore.SetAsync(_context.Owner, _context.Repo, name, value);
+                await _deploymentStore.SetAsync(_context.Owner, _context.Repo, name, value);
             }
         }
 
-        // Empty lists are not saved to parameter store.
+        // Empty lists are not saved to deployment storage.
         value.Services ??= [];
         return value;
     }
 
+    /// <summary>
+    /// Compares the requested value and returns the differences.
+    /// </summary>
+    /// <param name="sourceEnvironment">Source environment or value for the operation.</param>
+    /// <param name="targetEnvironment">Target environment or value for the operation.</param>
+    /// <param name="sourceHistorical">Value supplied for source Historical.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<DeployState> DiffAsync(string sourceEnvironment, string targetEnvironment,
         int sourceHistorical = 0)
     {
@@ -92,12 +122,22 @@ public class DeployStateService
         };
     }
 
+    /// <summary>
+    /// Stores or updates the supplied value.
+    /// </summary>
+    /// <param name="environment">Deployment environment involved in the operation.</param>
+    /// <param name="state">Value supplied for state.</param>
     private async Task SetAsync(string environment, DeployState state)
     {
         var name = GetVariableName(environment);
-        await _parameterStore.SetAsync(_context.Owner, _context.Repo, name, state);
+        await _deploymentStore.SetAsync(_context.Owner, _context.Repo, name, state);
     }
 
+    /// <summary>
+    /// Retrieves the Variable Name.
+    /// </summary>
+    /// <param name="environment">Deployment environment involved in the operation.</param>
+    /// <returns>The value produced by this operation.</returns>
     private static string GetVariableName(string environment) =>
         $"{DeployStatePrefix}{environment.ToUpperInvariant()}";
 }

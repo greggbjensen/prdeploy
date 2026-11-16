@@ -26,8 +26,6 @@ import { CleanMarkdownPipe } from 'src/app/shared/pipes';
     MatButtonModule,
     MatIconModule,
     MatTableModule,
-    DeployForceDialogComponent,
-    DeployRollbackDialogComponent,
     MtxPopoverModule,
     MarkdownComponent,
     DatePipe,

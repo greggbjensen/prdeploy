@@ -29,8 +29,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatExpansionModule,
     MatProgressSpinnerModule,
     EnvironmentListComponent,
-    QueueListComponent,
-    AddPrServiceDialogComponent
+    QueueListComponent
   ],
   viewProviders: [MatExpansionPanel],
   changeDetection: ChangeDetectionStrategy.OnPush

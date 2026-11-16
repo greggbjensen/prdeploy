@@ -19,7 +19,7 @@ When running in the Development environment, the generated OpenAPI document is a
 | Project                  | Purpose                                                                                       |
 | ------------------------ | --------------------------------------------------------------------------------------------- |
 | `PrDeploy.Api`           | ASP.NET host, GraphQL schema, authentication, and endpoint mapping.                           |
-| `PrDeploy.Api.Business`  | Services for the GraphQL API and the shared AWS Parameter Store access.                       |
+| `PrDeploy.Api.Business`  | Services for the GraphQL API and the configurable deployment document store.                  |
 | `PrDeploy.Api.Models`    | Models shared by the GraphQL API and webhooks, including deploy settings and deploy state.    |
 | `PrDeploy.Api.Webhooks`  | GitHub App webhook processing for comment commands, deploy status, queues, Slack, and Jira.   |
 
@@ -43,8 +43,19 @@ Because the queue and some caches are in memory, the API runs as a single replic
 
 1. Create a `.env` file in `src/PrDeploy.Api` similar to `.env.sample` and set actual values.
 2. Download the private key from your organization's GitHub App page and save it as `gh-app-key-local.pem` in this folder, or set `GitHubApp__PrivateKey` to its contents.
-3. Make sure you have AWS credentials for Parameter Store, such as an AWS profile.
+3. LiteDB is the default local storage provider for deployment values and Data Protection keys; local startup does not require cloud credentials. Use `Storage:Provider` to select a cloud provider.
 4. Start the API with `dotnet run --project src/PrDeploy.Api`, which listens on `http://localhost:4302`.
+
+### Storage providers
+
+`Storage:Provider` defaults to `Local`. Supported values are `Local`, `Azure`, `AWS`, and `GCP` (the old `SQLite` name is accepted as a Local alias). Provider settings and connection details are configured in the `Storage` section of `appsettings.json`. `Storage:DeploymentValuePathPrefix` defaults to `/prdeploy` and scopes owner/repository values; the old `Aws:SecretPathPrefix` remains a compatibility fallback. Only the selected backend is registered; Local does not initialize cloud SDK clients or resolve cloud credentials.
+
+- **Local / LiteDB:** deployment values (YAML text plus every historical revision) and Data Protection key XML are stored in one LiteDB file. By default it is `${LocalApplicationData}/prdeploy/deployment-storage.db`; override with `Storage:Local:DatabasePath`. Set `Storage:Local:Password` to encrypt the local database. Protect the file and backups; `isSecure` is metadata and does not independently encrypt values.
+- **Azure / Cosmos DB:** configure `Storage:Azure:ConnectionString`, or `Storage:Azure:Endpoint` and `Storage:Azure:Key`. Optional `Storage:Azure:DatabaseName` and `Storage:Azure:ContainerName` default to `prdeploy` and `storage`. The service creates the database and container if missing. The container uses `/partitionKey`, with each deployment-value path as a partition key and a dedicated partition for Data Protection keys.
+- **AWS / DynamoDB:** configure `Storage:AWS:Region` and optional `Storage:AWS:TableName` (default `PrDeployStorage`); credentials use the normal AWS SDK credential chain. Pre-create a table with string partition key `PK` and string sort key `SK`, on-demand capacity, and grant the service role `dynamodb:PutItem` and `dynamodb:Query` for that table. Deployment values are versioned items and Data Protection key XML is persisted in the same table. The chart retains the existing AWS Systems Manager Parameter Store Data Protection key path under `Storage:AWS:DataProtectionParameterPath` for continuity, but application deployment values use DynamoDB.
+- **GCP / Firestore:** configure `Storage:GCP:ProjectId` and use Application Default Credentials. Firestore must be enabled and its default database provisioned. Optional `Storage:GCP:CollectionName` defaults to `prdeploy_storage`; key XML is kept in a companion collection. Create the Firestore composite index for `path` (ascending) and `revision` (descending) used to read revision history.
+
+All four providers store deployment-value YAML and historical revisions, and persist the Data Protection XML key ring. The `isSecure` flag is retained as metadata. Cloud providers rely on each cloud database's at-rest encryption and IAM controls; configure those controls for your environment. Switching providers does not copy data. Before switching an existing deployment, migrate deployment-value history and Data Protection keys intentionally; otherwise previously encrypted payloads may no longer be readable. The Helm chart selects AWS and expects the DynamoDB table and IAM permissions described above.
 
 ### Receiving webhooks locally
 

@@ -2,7 +2,8 @@
 @use '@angular/material' as mat;
 @use '@ng-matero/extensions' as mtx;
 @use '@angular/cdk' as cdk;
-@import '../sass/variables';
+@use '../sass/variables' as *;
+@use '../sass/functions' as *;
 
 $theme-primary: $blue;
 $theme-secondary: $gray-600;

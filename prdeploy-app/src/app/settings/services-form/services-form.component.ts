@@ -9,12 +9,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { AddServiceDialogComponent } from './add-service-dialog/add-service-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
-import { JsonPipe } from '@angular/common';
 import _ from 'lodash';
 
 @Component({
   selector: 'app-services-form',
-  imports: [MatButtonModule, MatIconModule, MatTableModule, MatInputModule, FormsModule, JsonPipe],
+  imports: [MatButtonModule, MatIconModule, MatTableModule, MatInputModule, FormsModule],
   templateUrl: './services-form.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './services-form.component.scss'

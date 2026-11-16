@@ -45,6 +45,7 @@
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
+            "externalDependencies": ["marked-katex-extension"],
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
               "src/themes/m3-theme.scss",
@@ -122,7 +123,10 @@
     }
   },
   "cli": {
-    "schematicCollections": ["@angular-eslint/schematics"]
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ],
+    "analytics": false
   },
   "schematics": {
     "@schematics/angular:component": {

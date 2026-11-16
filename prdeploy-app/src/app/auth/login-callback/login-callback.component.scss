@@ -1,4 +1,4 @@
-@import '_variables';
+@use '_variables' as *;
 
 :host {
   flex: 1 1 auto;

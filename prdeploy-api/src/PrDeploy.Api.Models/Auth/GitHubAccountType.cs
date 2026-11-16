@@ -1,5 +1,8 @@
-﻿namespace PrDeploy.Api.Models.Auth
+namespace PrDeploy.Api.Models.Auth
 {
+    /// <summary>
+    /// Represents the git Hub Account Type used by the application.
+    /// </summary>
     public enum GitHubAccountType
     {
         User = 0,

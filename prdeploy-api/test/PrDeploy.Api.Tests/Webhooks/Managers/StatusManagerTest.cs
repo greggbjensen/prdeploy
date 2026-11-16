@@ -5,16 +5,27 @@ using PrDeploy.Api.Webhooks.Managers;
 
 namespace PrDeploy.Api.Tests.Webhooks.Managers;
 
+/// <summary>
+/// Contains tests that verify the behavior of the status Manager Test.
+/// </summary>
 public class StatusManagerTest : IDisposable
 {
     private readonly WebhookTestHost _host = new();
     private readonly StatusManager _manager;
 
+    /// <summary>
+    /// Initializes the test fixture and prepares its dependencies.
+    /// </summary>
     public StatusManagerTest()
     {
         _manager = _host.Get<StatusManager>();
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: matches Configured Deploy Workflow.
+    /// </summary>
+    /// <param name="path">Path used to locate the resource.</param>
+    /// <param name="expected">Value supplied for expected.</param>
     [Theory]
     [InlineData(".github/workflows/deploy.yml", true)]
     [InlineData(".github/workflows/DEPLOY.yml", true)]
@@ -25,6 +36,9 @@ public class StatusManagerTest : IDisposable
         Assert.Equal(expected, _manager.IsDeployWorkflow(path));
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: retriggers Deploy When Build Completes.
+    /// </summary>
     [Fact]
     public async Task ProcessWorkflowRunAsync_RetriggersDeployWhenBuildCompletes()
     {
@@ -48,6 +62,9 @@ public class StatusManagerTest : IDisposable
         Assert.Equal("stage", Assert.Single(dispatches).Dispatch.Inputs["environment"]);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: ignores Runs Without Pull Request.
+    /// </summary>
     [Fact]
     public async Task ProcessWorkflowRunAsync_IgnoresRunsWithoutPullRequest()
     {
@@ -61,11 +78,14 @@ public class StatusManagerTest : IDisposable
             .Verify(c => c.Get(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: promotes Release To Stable When Merged.
+    /// </summary>
     [Fact]
     public async Task ProcessPullRequestClosedAsync_PromotesReleaseToStableWhenMerged()
     {
         _host.CaptureLabels();
-        await _host.ParameterStore.SetAsync(WebhookTestHost.Owner, WebhookTestHost.Repo, "DEPLOY_STATE_PROD",
+        await _host.DeploymentStore.SetAsync(WebhookTestHost.Owner, WebhookTestHost.Repo, "DEPLOY_STATE_PROD",
             new PrDeploy.Api.Models.DeployEnvironments.DeployState
             {
                 PullNumber = 4,
@@ -75,11 +95,14 @@ public class StatusManagerTest : IDisposable
         await _manager.ProcessPullRequestClosedAsync(
             GitHubModels.PullRequest(4, labels: ["prod", "prod-lock"], merged: true));
 
-        var stable = await _host.ParameterStore.GetAsync<PrDeploy.Api.Models.DeployEnvironments.DeployState>(
+        var stable = await _host.DeploymentStore.GetAsync<PrDeploy.Api.Models.DeployEnvironments.DeployState>(
             WebhookTestHost.Owner, WebhookTestHost.Repo, "DEPLOY_STATE_STABLE");
         Assert.Equal(4, stable.PullNumber);
         Assert.Equal("2.0.0", Assert.Single(stable.Services!).Version);
     }
 
+    /// <summary>
+    /// Releases resources owned by this instance.
+    /// </summary>
     public void Dispose() => _host.Dispose();
 }

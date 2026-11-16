@@ -1,8 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import './sass/variables';
-@import './sass/reboot';
-@import './sass/root';
+@use './sass/variables' as *;
+@use './sass/reboot';
+@use './sass/root';
 
 html, body { height: 100%; }
 body {

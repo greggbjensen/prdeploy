@@ -1,17 +1,10 @@
-import { KeyValuePipe } from '@angular/common';
 import { Component, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
-import {
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle
-} from '@angular/material/dialog';
+import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -36,7 +29,6 @@ import { RouterModule } from '@angular/router';
     MatDialogTitle,
     MatDialogContent,
     MatDialogActions,
-    MatDialogClose,
     MatButtonModule,
     MatAutocompleteModule,
     MatInputModule,
@@ -47,8 +39,7 @@ import { RouterModule } from '@angular/router';
     MtxButtonModule,
     ReactiveFormsModule,
     AlertPanelComponent,
-    RouterModule,
-    KeyValuePipe
+    RouterModule
   ],
   templateUrl: './add-pr-service-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,

@@ -15,7 +15,7 @@ import { AlertPanelComponent } from '../shared/components';
 
 @Component({
   selector: 'app-repositories',
-  imports: [MatButtonModule, MatIconModule, RepositoriesGridComponent, AddRepoDialogComponent, AlertPanelComponent],
+  imports: [MatButtonModule, MatIconModule, RepositoriesGridComponent, AlertPanelComponent],
   templateUrl: './repositories.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './repositories.component.scss'

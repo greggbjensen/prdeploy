@@ -5,11 +5,20 @@ using PrDeploy.Api.Models.PullRequests;
 using PullRequest = Octokit.PullRequest;
 
 namespace PrDeploy.Api.Tests.Framework;
+/// <summary>
+/// Represents the mocker used by the application.
+/// </summary>
 public static partial class Mocker
 {
     public static readonly PullRequestData PullRequests = new();
     public static readonly DeployUserData DeployUsers = new();
 
+    /// <summary>
+    /// Determines whether the issue condition holds.
+    /// </summary>
+    /// <param name="pullRequest">Pull request associated with the operation.</param>
+    /// <param name="user">Value supplied for user.</param>
+    /// <returns>The value produced by this operation.</returns>
     public static Issue Issue(Models.PullRequests.PullRequest pullRequest, DeployUser user) =>
         new(null,
             pullRequest.Url,
@@ -42,6 +51,12 @@ public static partial class Mocker
             null,
             null);
 
+    /// <summary>
+    /// Performs the pull Request operation and returns its result.
+    /// </summary>
+    /// <param name="pullRequest">Pull request associated with the operation.</param>
+    /// <param name="user">Value supplied for user.</param>
+    /// <returns>The value produced by this operation.</returns>
     public static PullRequest PullRequest(Models.PullRequests.PullRequest pullRequest, DeployUser user) =>
         new (81234,
             null,
@@ -86,6 +101,12 @@ public static partial class Mocker
             },
             null);
 
+    /// <summary>
+    /// Performs the label operation and returns its result.
+    /// </summary>
+    /// <param name="name">Name used to identify the value or resource.</param>
+    /// <param name="color">Value supplied for color.</param>
+    /// <returns>The value produced by this operation.</returns>
     public static Label Label(string name, string color) => new(
         1,
         null,
@@ -95,6 +116,11 @@ public static partial class Mocker
         null,
         false);
 
+    /// <summary>
+    /// Performs the user operation and returns its result.
+    /// </summary>
+    /// <param name="user">Value supplied for user.</param>
+    /// <returns>The value produced by this operation.</returns>
     public static User User(DeployUser user) => new(
         null,
         null,
@@ -126,12 +152,22 @@ public static partial class Mocker
         null,
         null);
 
+    /// <summary>
+    /// Performs the repository Variable operation and returns its result.
+    /// </summary>
+    /// <param name="name">Name used to identify the value or resource.</param>
+    /// <param name="value">Value to store or process.</param>
+    /// <returns>The value produced by this operation.</returns>
     public static RepositoryVariable RepositoryVariable(string name, string value) => new(
         name,
         value,
         new DateTimeOffset(2023, 10, 16, 14, 0, 0, TimeSpan.Zero),
         new DateTimeOffset(2023, 10, 17, 14, 0, 0, TimeSpan.Zero));
 
+    /// <summary>
+    /// Determines whether the issue Comment condition holds.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     public static IssueComment IssueComment() => new(
         9852,
         null,

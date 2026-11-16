@@ -36,19 +36,30 @@ public class WebhookSettingsService
     };
 
     private readonly WebhookContext _context;
-    private readonly IParameterStore _parameterStore;
+    private readonly IDeploymentStore _deploymentStore;
     private readonly IMemoryCache _cache;
     private readonly ILogger<WebhookSettingsService> _logger;
 
-    public WebhookSettingsService(WebhookContext context, IParameterStore parameterStore, IMemoryCache cache,
+    /// <summary>
+    /// Initializes a webhook Settings Service with the supplied dependencies.
+    /// </summary>
+    /// <param name="context">Request or application context used by the operation.</param>
+    /// <param name="deploymentStore">Value supplied for deployment Store.</param>
+    /// <param name="cache">Value supplied for cache.</param>
+    /// <param name="logger">Logger used to report operational information and errors.</param>
+    public WebhookSettingsService(WebhookContext context, IDeploymentStore deploymentStore, IMemoryCache cache,
         ILogger<WebhookSettingsService> logger)
     {
         _context = context;
-        _parameterStore = parameterStore;
+        _deploymentStore = deploymentStore;
         _cache = cache;
         _logger = logger;
     }
 
+    /// <summary>
+    /// Retrieves the requested value.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<RepoSettings> GetAsync()
     {
         var cacheKey = DeploySettingsService.GetWebhookSettingsCacheKey(_context.Owner, _context.Repo);
@@ -85,6 +96,10 @@ public class WebhookSettingsService
         }
     }
 
+    /// <summary>
+    /// Normalizes the Defaults for consistent processing.
+    /// </summary>
+    /// <param name="settings">Settings used to configure the operation.</param>
     internal static void NormalizeDefaults(DeploySettings settings)
     {
         settings.Services ??= [];
@@ -121,9 +136,13 @@ public class WebhookSettingsService
         settings.Badge.StatusColors ??= new BadgeStatusColorsSettings();
     }
 
+    /// <summary>
+    /// Retrieves the Owner Settings.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     private async Task<DeploySettings?> GetOwnerSettingsAsync()
     {
-        var settings = await _parameterStore.GetAsync<DeploySettings?>(_context.Owner, DeploySettingsKey);
+        var settings = await _deploymentStore.GetAsync<DeploySettings?>(_context.Owner, DeploySettingsKey);
         if (settings == null)
         {
             _logger.LogError(
@@ -134,10 +153,14 @@ public class WebhookSettingsService
         return settings;
     }
 
+    /// <summary>
+    /// Retrieves the Repo Settings.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     private async Task<DeploySettings> GetRepoSettingsAsync()
     {
         var settings =
-            await _parameterStore.GetAsync<DeploySettings?>(_context.Owner, _context.Repo, DeploySettingsKey);
+            await _deploymentStore.GetAsync<DeploySettings?>(_context.Owner, _context.Repo, DeploySettingsKey);
         if (settings == null)
         {
             _logger.LogWarning(
@@ -149,6 +172,10 @@ public class WebhookSettingsService
         return settings;
     }
 
+    /// <summary>
+    /// Retrieves the Default Branch.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     private async Task<string> GetDefaultBranchAsync()
     {
         try
@@ -163,6 +190,10 @@ public class WebhookSettingsService
         }
     }
 
+    /// <summary>
+    /// Performs the apply Environment Colors operation.
+    /// </summary>
+    /// <param name="settings">Settings used to configure the operation.</param>
     private async Task ApplyEnvironmentColorsAsync(DeploySettings settings)
     {
         if (settings.Environments == null || settings.Environments.Count == 0)
@@ -214,6 +245,11 @@ public class WebhookSettingsService
         }
     }
 
+    /// <summary>
+    /// Retrieves the Default Color.
+    /// </summary>
+    /// <param name="label">Value supplied for label.</param>
+    /// <returns>The value produced by this operation.</returns>
     private static string GetDefaultColor(string label)
     {
         if (label.EndsWith(LockSuffix, StringComparison.Ordinal))

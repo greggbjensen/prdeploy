@@ -6,18 +6,31 @@ using PrDeploy.Api.Models.General;
 using PrDeploy.Api.Models.OwnerRepo;
 
 namespace PrDeploy.Api.Business.Services;
+/// <summary>
+/// Coordinates operations for the owner Repo Service and its collaborators.
+/// </summary>
 public class OwnerRepoService : IOwnerRepoService
 {
     private const string OwnerReposKey = "OWNER_REPOS";
-    private readonly IParameterStore _parameterStore;
+    private readonly IDeploymentStore _deploymentStore;
     private readonly IGitHubSecurity _gitHubSecurity;
 
-    public OwnerRepoService(IParameterStore parameterStore, IGitHubSecurity gitHubSecurity)
+    /// <summary>
+    /// Initializes a owner Repo Service with the supplied dependencies.
+    /// </summary>
+    /// <param name="deploymentStore">Value supplied for deployment Store.</param>
+    /// <param name="gitHubSecurity">Value supplied for git Hub Security.</param>
+    public OwnerRepoService(IDeploymentStore deploymentStore, IGitHubSecurity gitHubSecurity)
     {
-        _parameterStore = parameterStore;
+        _deploymentStore = deploymentStore;
         _gitHubSecurity = gitHubSecurity;
     }
 
+    /// <summary>
+    /// Adds the Enabled to the associated collection.
+    /// </summary>
+    /// <param name="repository">Repository whose values are addressed.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<StatusResponse> AddEnabledAsync(Repository repository)
     {
         await _gitHubSecurity.GuardRepoAsync(repository.Owner, repository.Repo);
@@ -42,7 +55,7 @@ public class OwnerRepoService : IOwnerRepoService
             ownerRepos.Add(ownerRepo);
         }
 
-        await _parameterStore.SetAsync(OwnerReposKey, ownerRepos);
+        await _deploymentStore.SetAsync(OwnerReposKey, ownerRepos);
 
         return new StatusResponse
         {
@@ -50,6 +63,11 @@ public class OwnerRepoService : IOwnerRepoService
         };
     }
 
+    /// <summary>
+    /// Removes the Enabled from the associated collection.
+    /// </summary>
+    /// <param name="repository">Repository whose values are addressed.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<StatusResponse> RemoveEnabledAsync(Repository repository)
     {
         await _gitHubSecurity.GuardRepoAsync(repository.Owner, repository.Repo);
@@ -64,7 +82,7 @@ public class OwnerRepoService : IOwnerRepoService
             {
                 ownerRepos.Remove(ownerRepo);
             }
-            await _parameterStore.SetAsync(OwnerReposKey, ownerRepos);
+            await _deploymentStore.SetAsync(OwnerReposKey, ownerRepos);
         }
 
         return new StatusResponse
@@ -73,15 +91,19 @@ public class OwnerRepoService : IOwnerRepoService
         };
     }
 
+    /// <summary>
+    /// Finds and returns the Enabled.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<List<OwnerRepos>> ListEnabledAsync()
     {
         // TODO GBJ: Use _githubAppClient.GitHubApps.GetAllInstallationsForCurrent() once issue is fixed:
         // https://github.com/octokit/octokit.net/issues/2833
-        var ownerRepos = await _parameterStore.GetAsync<List<OwnerRepos>?>(OwnerReposKey);
+        var ownerRepos = await _deploymentStore.GetAsync<List<OwnerRepos>?>(OwnerReposKey);
         if (ownerRepos == null)
         {
             ownerRepos = new List<OwnerRepos>();
-            await _parameterStore.SetAsync(OwnerReposKey, ownerRepos);
+            await _deploymentStore.SetAsync(OwnerReposKey, ownerRepos);
         }
 
 

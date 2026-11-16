@@ -11,6 +11,9 @@ using PrDeploy.Api.Webhooks.Utils;
 
 namespace PrDeploy.Api.Webhooks.Services;
 
+/// <summary>
+/// Coordinates operations for the slack Service and its collaborators.
+/// </summary>
 public partial class SlackService
 {
     public const string HttpClientName = "slack";
@@ -20,6 +23,12 @@ public partial class SlackService
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<SlackService> _logger;
 
+    /// <summary>
+    /// Initializes a slack Service with the supplied dependencies.
+    /// </summary>
+    /// <param name="context">Request or application context used by the operation.</param>
+    /// <param name="httpClientFactory">Value supplied for http Client Factory.</param>
+    /// <param name="logger">Logger used to report operational information and errors.</param>
     public SlackService(WebhookContext context, IHttpClientFactory httpClientFactory, ILogger<SlackService> logger)
     {
         _context = context;
@@ -27,6 +36,11 @@ public partial class SlackService
         _logger = logger;
     }
 
+    /// <summary>
+    /// Posts the Message to the configured destination.
+    /// </summary>
+    /// <param name="channel">Value supplied for channel.</param>
+    /// <param name="json">Value supplied for json.</param>
     public async Task PostMessageAsync(SlackChannel channel, string json)
     {
         var slack = _context.Settings.Slack;
@@ -71,6 +85,11 @@ public partial class SlackService
         }
     }
 
+    /// <summary>
+    /// Performs the lookup User operation and returns its result.
+    /// </summary>
+    /// <param name="user">Value supplied for user.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<SlackUser?> LookupUserAsync(User user)
     {
         var slack = _context.Settings.Slack;
@@ -142,6 +161,11 @@ public partial class SlackService
         return result;
     }
 
+    /// <summary>
+    /// Performs the translate Git Hub Markdown operation and returns its result.
+    /// </summary>
+    /// <param name="markdown">Value supplied for markdown.</param>
+    /// <returns>The value produced by this operation.</returns>
     public string TranslateGitHubMarkdown(string? markdown)
     {
         // Preprocess HTML content (tables, br tags, etc.) before converting markdown.
@@ -149,6 +173,12 @@ public partial class SlackService
         return SlackMarkdown.Convert(htmlProcessed);
     }
 
+    /// <summary>
+    /// Builds the Email From Name from the supplied inputs.
+    /// </summary>
+    /// <param name="name">Name used to identify the value or resource.</param>
+    /// <param name="emailDomain">Value supplied for email Domain.</param>
+    /// <returns>The value produced by this operation.</returns>
     private string BuildEmailFromName(string name, string? emailDomain)
     {
         // Get only first and last name, skipping middle if present.
@@ -164,26 +194,56 @@ public partial class SlackService
         return email;
     }
 
+    /// <summary>
+    /// Performs the whitespace Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"\s+")]
     private static partial Regex WhitespaceRegex();
 
+    /// <summary>
+    /// Represents a response containing the slack Lookup Response.
+    /// </summary>
     private class SlackLookupResponse
     {
+        /// <summary>
+        /// Gets or sets the Ok.
+        /// </summary>
+        /// <returns>The value exposed by this member.</returns>
         [JsonPropertyName("ok")]
         public bool Ok { get; set; }
 
+        /// <summary>
+        /// Gets or sets the Error.
+        /// </summary>
+        /// <returns>The value exposed by this member.</returns>
         [JsonPropertyName("error")]
         public string? Error { get; set; }
 
+        /// <summary>
+        /// Gets or sets the User.
+        /// </summary>
+        /// <returns>The value exposed by this member.</returns>
         [JsonPropertyName("user")]
         public SlackLookupUser? User { get; set; }
     }
 
+    /// <summary>
+    /// Represents the slack Lookup User used by the application.
+    /// </summary>
     private class SlackLookupUser
     {
+        /// <summary>
+        /// Gets or sets the Id.
+        /// </summary>
+        /// <returns>The value exposed by this member.</returns>
         [JsonPropertyName("id")]
         public string? Id { get; set; }
 
+        /// <summary>
+        /// Gets or sets the Name.
+        /// </summary>
+        /// <returns>The value exposed by this member.</returns>
         [JsonPropertyName("name")]
         public string? Name { get; set; }
     }

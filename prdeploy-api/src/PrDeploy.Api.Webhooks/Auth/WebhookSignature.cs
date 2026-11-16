@@ -11,12 +11,25 @@ public static class WebhookSignature
     public const string HeaderName = "X-Hub-Signature-256";
     private const string Prefix = "sha256=";
 
+    /// <summary>
+    /// Performs the compute operation and returns its result.
+    /// </summary>
+    /// <param name="secret">Value supplied for secret.</param>
+    /// <param name="body">Value supplied for body.</param>
+    /// <returns>The value produced by this operation.</returns>
     public static string Compute(string secret, byte[] body)
     {
         var hash = HMACSHA256.HashData(Encoding.UTF8.GetBytes(secret), body);
         return Prefix + Convert.ToHexStringLower(hash);
     }
 
+    /// <summary>
+    /// Determines whether the valid condition holds.
+    /// </summary>
+    /// <param name="secret">Value supplied for secret.</param>
+    /// <param name="body">Value supplied for body.</param>
+    /// <param name="signature">Value supplied for signature.</param>
+    /// <returns>The value produced by this operation.</returns>
     public static bool IsValid(string secret, byte[] body, string? signature)
     {
         if (string.IsNullOrEmpty(secret) || string.IsNullOrEmpty(signature)

@@ -6,10 +6,16 @@ using PrDeploy.Api.Webhooks.Services;
 
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
+/// <summary>
+/// Contains tests that verify the behavior of the template Service Test.
+/// </summary>
 public class TemplateServiceTest
 {
     private readonly TemplateService _service = new();
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: renders Dynamic Pull Request Queue Table.
+    /// </summary>
     [Fact]
     public void RenderQueueTable_RendersDynamicPullRequestQueueTable()
     {
@@ -23,6 +29,9 @@ public class TemplateServiceTest
             """.Replace("\r", ""), result);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: renders Static Template Without Context.
+    /// </summary>
     [Fact]
     public void Render_RendersStaticTemplateWithoutContext()
     {
@@ -30,6 +39,9 @@ public class TemplateServiceTest
         Assert.NotNull(result);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: renders Issues Template With Context.
+    /// </summary>
     [Fact]
     public void Render_RendersIssuesTemplateWithContext()
     {
@@ -67,6 +79,9 @@ public class TemplateServiceTest
             """.Replace("\r", ""), result);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: omits Issues Block When No Issues.
+    /// </summary>
     [Fact]
     public void Render_OmitsIssuesBlockWhenNoIssues()
     {
@@ -81,6 +96,9 @@ public class TemplateServiceTest
         Assert.Equal("Body", result.Trim());
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: renders Valid Json With Escaping.
+    /// </summary>
     [Fact]
     public void Render_RendersValidJsonWithEscaping()
     {
@@ -96,6 +114,9 @@ public class TemplateServiceTest
         Assert.Contains("\" these things", text);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: keeps Non Ascii Characters Like Handlebars Js.
+    /// </summary>
     [Fact]
     public void Render_KeepsNonAsciiCharactersLikeHandlebarsJs()
     {
@@ -113,6 +134,9 @@ public class TemplateServiceTest
         Assert.Contains("placehold.co/32x32/1d8348/ffffff", result);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: renders Each With Parent Context.
+    /// </summary>
     [Fact]
     public void Render_RendersEachWithParentContext()
     {

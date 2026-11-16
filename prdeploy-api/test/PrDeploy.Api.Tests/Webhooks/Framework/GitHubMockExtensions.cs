@@ -3,6 +3,9 @@ using Octokit;
 
 namespace PrDeploy.Api.Tests.Webhooks.Framework;
 
+/// <summary>
+/// Represents the git Hub Mock Extensions used by the application.
+/// </summary>
 public static class GitHubMockExtensions
 {
     private const string Owner = WebhookTestHost.Owner;
@@ -29,6 +32,12 @@ public static class GitHubMockExtensions
                 "build-details.zip")));
     }
 
+    /// <summary>
+    /// Stores or updates the Setup Checks.
+    /// </summary>
+    /// <param name="host">Value supplied for host.</param>
+    /// <param name="reference">Value supplied for reference.</param>
+    /// <param name="checks">Value supplied for checks.</param>
     public static void SetupChecks(this WebhookTestHost host, string reference,
         params (string Name, string Status, string? Conclusion, long RunId)[] checks)
     {
@@ -37,6 +46,11 @@ public static class GitHubMockExtensions
             .ReturnsAsync(GitHubModels.CheckRuns(checks));
     }
 
+    /// <summary>
+    /// Stores or updates the Setup Pull Request.
+    /// </summary>
+    /// <param name="host">Value supplied for host.</param>
+    /// <param name="pullRequest">Pull request associated with the operation.</param>
     public static void SetupPullRequest(this WebhookTestHost host, PullRequest pullRequest)
     {
         host.MockOf(host.GitHub.Object.PullRequest)
@@ -44,6 +58,11 @@ public static class GitHubMockExtensions
             .ReturnsAsync(pullRequest);
     }
 
+    /// <summary>
+    /// Stores or updates the Setup Deployed Pull Requests.
+    /// </summary>
+    /// <param name="host">Value supplied for host.</param>
+    /// <param name="pullRequests">Value supplied for pull Requests.</param>
     public static void SetupDeployedPullRequests(this WebhookTestHost host, params PullRequest[] pullRequests)
     {
         host.MockOf(host.GitHub.Object.PullRequest)
@@ -51,6 +70,12 @@ public static class GitHubMockExtensions
             .ReturnsAsync(pullRequests);
     }
 
+    /// <summary>
+    /// Stores or updates the Setup User.
+    /// </summary>
+    /// <param name="host">Value supplied for host.</param>
+    /// <param name="login">Value supplied for login.</param>
+    /// <param name="name">Name used to identify the value or resource.</param>
     public static void SetupUser(this WebhookTestHost host, string login, string? name = null)
     {
         host.MockOf(host.GitHub.Object.User)
@@ -85,6 +110,11 @@ public static class GitHubMockExtensions
         return comments;
     }
 
+    /// <summary>
+    /// Performs the capture Dispatches operation and returns its result.
+    /// </summary>
+    /// <param name="host">Value supplied for host.</param>
+    /// <returns>The value produced by this operation.</returns>
     public static List<(string Workflow, CreateWorkflowDispatch Dispatch)> CaptureDispatches(this WebhookTestHost host)
     {
         var dispatches = new List<(string, CreateWorkflowDispatch)>();

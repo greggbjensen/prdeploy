@@ -1,4 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
@@ -9,10 +9,20 @@ using PrDeploy.Api.Business.Auth.Interfaces;
 
 namespace PrDeploy.Api.Auth
 {
+    /// <summary>
+    /// Represents the git Hub Authentication Handler used by the application.
+    /// </summary>
     public class GitHubAuthenticationHandler : JwtBearerHandler
     {
         private readonly ICipherService _cipherService;
 
+        /// <summary>
+        /// Initializes a git Hub Authentication Handler with the supplied dependencies.
+        /// </summary>
+        /// <param name="options">Value supplied for options.</param>
+        /// <param name="logger">Logger used to report operational information and errors.</param>
+        /// <param name="encoder">Value supplied for encoder.</param>
+        /// <param name="cipherService">Value supplied for cipher Service.</param>
         public GitHubAuthenticationHandler(
             IOptionsMonitor<JwtBearerOptions> options, 
             ILoggerFactory logger, 
@@ -23,6 +33,10 @@ namespace PrDeploy.Api.Auth
             _cipherService = cipherService;
         }
 
+        /// <summary>
+        /// Handles the Authenticate according to the application's workflow.
+        /// </summary>
+        /// <returns>The value produced by this operation.</returns>
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             var result = await base.HandleAuthenticateAsync();

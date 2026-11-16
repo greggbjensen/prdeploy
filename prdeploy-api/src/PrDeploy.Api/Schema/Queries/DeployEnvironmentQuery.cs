@@ -6,17 +6,38 @@ using Environment = PrDeploy.Api.Models.DeployEnvironments.Environment;
 
 namespace PrDeploy.Api.Schema.Queries;
 
+/// <summary>
+/// Defines queries for retrieving the deploy Environment Query.
+/// </summary>
 [ExtendObjectType("DeployQuery")]
 public class DeployEnvironmentQuery
 {
+    /// <summary>
+    /// Performs the deploy Environments operation and returns its result.
+    /// </summary>
+    /// <param name="service">Value supplied for service.</param>
+    /// <param name="input">Input object containing the operation's arguments.</param>
+    /// <returns>The value produced by this operation.</returns>
     [GraphQLName("deployEnvironments")]
     public async Task<List<DeployEnvironment>> DeployEnvironments(IDeployEnvironmentService service, RepoQueryInput input) =>
         await service.ListAsync(input);
 
+    /// <summary>
+    /// Performs the environments operation and returns its result.
+    /// </summary>
+    /// <param name="service">Value supplied for service.</param>
+    /// <param name="input">Input object containing the operation's arguments.</param>
+    /// <returns>The value produced by this operation.</returns>
     [GraphQLName("environments")]
     public async Task<List<Environment>> Environments(IDeployEnvironmentService service, RepoQueryInput input) =>
         await service.ListEnvironmentsAsync(input);
 
+    /// <summary>
+    /// Performs the deploy State Comparison operation and returns its result.
+    /// </summary>
+    /// <param name="service">Value supplied for service.</param>
+    /// <param name="input">Input object containing the operation's arguments.</param>
+    /// <returns>The value produced by this operation.</returns>
     [GraphQLName("deployStateComparison")]
     public async Task<DeployStateComparison> DeployStateComparison(IDeployEnvironmentService service, DeployStateComparisonInput input) =>
         await service.CompareDeployStateAsync(input);

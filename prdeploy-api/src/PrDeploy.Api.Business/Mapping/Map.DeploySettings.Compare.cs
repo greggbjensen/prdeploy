@@ -3,8 +3,17 @@ using PrDeploy.Api.Models.Settings.Compare;
 
 namespace PrDeploy.Api.Business.Mapping;
 
+/// <summary>
+/// Represents the map used by the application.
+/// </summary>
 public static partial class Map
 {
+    /// <summary>
+    /// Compares the requested value and returns the differences.
+    /// </summary>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <param name="repo">Repository whose values are addressed.</param>
+    /// <returns>The value produced by this operation.</returns>
     public static DeploySettingsCompare? Compare(DeploySettings? owner, DeploySettings? repo)
     {
         if (owner == null || repo == null)
@@ -56,6 +65,12 @@ public static partial class Map
         return compare;
     }
 
+    /// <summary>
+    /// Compares the requested value and returns the differences.
+    /// </summary>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <param name="repo">Repository whose values are addressed.</param>
+    /// <returns>The value produced by this operation.</returns>
     public static BuildsSettingsCompare Compare(BuildsSettings? owner, BuildsSettings? repo)
     {
         return new()
@@ -73,6 +88,12 @@ public static partial class Map
         };
     }
 
+    /// <summary>
+    /// Compares the requested value and returns the differences.
+    /// </summary>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <param name="repo">Repository whose values are addressed.</param>
+    /// <returns>The value produced by this operation.</returns>
     public static JiraSettingsCompare Compare(JiraSettings? owner, JiraSettings? repo)
     {
         return new()
@@ -100,6 +121,12 @@ public static partial class Map
         };
     }
 
+    /// <summary>
+    /// Compares the requested value and returns the differences.
+    /// </summary>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <param name="repo">Repository whose values are addressed.</param>
+    /// <returns>The value produced by this operation.</returns>
     public static SlackSettingsCompare Compare(SlackSettings? owner, SlackSettings? repo)
     {
         return new()
@@ -129,6 +156,12 @@ public static partial class Map
         };
     }
 
+    /// <summary>
+    /// Compares the requested value and returns the differences.
+    /// </summary>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <param name="repo">Repository whose values are addressed.</param>
+    /// <returns>The value produced by this operation.</returns>
     public static SlackWebHooksSettingsCompare Compare(SlackWebHooksSettings? owner, SlackWebHooksSettings? repo)
     {
         return new()
@@ -146,6 +179,12 @@ public static partial class Map
         };
     }
 
+    /// <summary>
+    /// Compares the requested value and returns the differences.
+    /// </summary>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <param name="repo">Repository whose values are addressed.</param>
+    /// <returns>The value produced by this operation.</returns>
     public static BadgeSettingsCompare Compare(BadgeSettings? owner, BadgeSettings? repo)
     {
         return new()

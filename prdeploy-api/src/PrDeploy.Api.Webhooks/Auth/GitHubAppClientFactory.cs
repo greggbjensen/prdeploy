@@ -8,6 +8,9 @@ using PrDeploy.Api.Webhooks.Options;
 
 namespace PrDeploy.Api.Webhooks.Auth;
 
+/// <summary>
+/// Defines the contract for git Hub App Client Factory operations.
+/// </summary>
 public interface IGitHubAppClientFactory
 {
     /// <summary>
@@ -33,11 +36,22 @@ public class GitHubAppClientFactory : IGitHubAppClientFactory
     private readonly Func<IGitHubClient, long, Task<AccessToken>> _createInstallationToken;
     private RSA? _privateKey;
 
+    /// <summary>
+    /// Initializes a git Hub App Client Factory with the supplied dependencies.
+    /// </summary>
+    /// <param name="options">Value supplied for options.</param>
+    /// <param name="timeProvider">Value supplied for time Provider.</param>
     public GitHubAppClientFactory(IOptions<GitHubAppOptions> options, TimeProvider timeProvider)
         : this(options, timeProvider, (client, id) => client.GitHubApps.CreateInstallationToken(id))
     {
     }
 
+    /// <summary>
+    /// Initializes a git Hub App Client Factory with the supplied dependencies.
+    /// </summary>
+    /// <param name="options">Value supplied for options.</param>
+    /// <param name="timeProvider">Value supplied for time Provider.</param>
+    /// <param name="createInstallationToken">Value supplied for create Installation Token.</param>
     internal GitHubAppClientFactory(IOptions<GitHubAppOptions> options, TimeProvider timeProvider,
         Func<IGitHubClient, long, Task<AccessToken>> createInstallationToken)
     {
@@ -46,6 +60,11 @@ public class GitHubAppClientFactory : IGitHubAppClientFactory
         _createInstallationToken = createInstallationToken;
     }
 
+    /// <summary>
+    /// Creates the Installation Client from the supplied inputs.
+    /// </summary>
+    /// <param name="installationId">Value supplied for installation Id.</param>
+    /// <returns>The value produced by this operation.</returns>
     public async Task<IGitHubClient> CreateInstallationClientAsync(long installationId)
     {
         var token = await GetInstallationTokenAsync(installationId);
@@ -55,6 +74,10 @@ public class GitHubAppClientFactory : IGitHubAppClientFactory
         };
     }
 
+    /// <summary>
+    /// Creates the App Jwt from the supplied inputs.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     internal string CreateAppJwt()
     {
         if (string.IsNullOrWhiteSpace(_options.AppId))
@@ -80,6 +103,11 @@ public class GitHubAppClientFactory : IGitHubAppClientFactory
         return $"{unsigned}.{Base64UrlEncode(signature)}";
     }
 
+    /// <summary>
+    /// Retrieves the Installation Token.
+    /// </summary>
+    /// <param name="installationId">Value supplied for installation Id.</param>
+    /// <returns>The value produced by this operation.</returns>
     private async Task<AccessToken> GetInstallationTokenAsync(long installationId)
     {
         if (TryGetCachedToken(installationId, out var token))
@@ -110,12 +138,22 @@ public class GitHubAppClientFactory : IGitHubAppClientFactory
         }
     }
 
+    /// <summary>
+    /// Attempts to get Cached Token; the result indicates whether it succeeded.
+    /// </summary>
+    /// <param name="installationId">Value supplied for installation Id.</param>
+    /// <param name="token">Authentication token used for the operation.</param>
+    /// <returns>The value produced by this operation.</returns>
     private bool TryGetCachedToken(long installationId, out AccessToken token)
     {
         return _tokens.TryGetValue(installationId, out token!)
                && token.ExpiresAt - TokenRefreshMargin > _timeProvider.GetUtcNow();
     }
 
+    /// <summary>
+    /// Retrieves the Private Key.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     private RSA GetPrivateKey()
     {
         if (_privateKey != null)
@@ -142,6 +180,11 @@ public class GitHubAppClientFactory : IGitHubAppClientFactory
         return rsa;
     }
 
+    /// <summary>
+    /// Performs the base64 Url Encode operation and returns its result.
+    /// </summary>
+    /// <param name="bytes">Value supplied for bytes.</param>
+    /// <returns>The value produced by this operation.</returns>
     private static string Base64UrlEncode(byte[] bytes) =>
         Convert.ToBase64String(bytes).TrimEnd('=').Replace('+', '-').Replace('/', '_');
 }

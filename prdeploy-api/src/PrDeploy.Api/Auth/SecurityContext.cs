@@ -1,17 +1,28 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using PrDeploy.Api.Business.Auth;
 using PrDeploy.Api.Business.Auth.Interfaces;
 
 namespace PrDeploy.Api.Auth
 {
+    /// <summary>
+    /// Represents the security Context used by the application.
+    /// </summary>
     public class SecurityContext : ISecurityContext
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
+        /// <summary>
+        /// Initializes a security Context with the supplied dependencies.
+        /// </summary>
+        /// <param name="httpContextAccessor">Value supplied for http Context Accessor.</param>
         public SecurityContext(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
         }
 
+        /// <summary>
+        /// Gets the User Token.
+        /// </summary>
+        /// <returns>The value exposed by this member.</returns>
         public string UserToken
         {
             get
@@ -26,6 +37,10 @@ namespace PrDeploy.Api.Auth
             }
         }
 
+        /// <summary>
+        /// Gets the Login.
+        /// </summary>
+        /// <returns>The value exposed by this member.</returns>
         public string Login
         {
             get

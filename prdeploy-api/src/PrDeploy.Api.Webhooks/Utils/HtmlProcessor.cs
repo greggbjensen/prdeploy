@@ -24,6 +24,12 @@ public static partial class HtmlProcessor
         return ProcessHtml("root", markdown);
     }
 
+    /// <summary>
+    /// Processes the Html and applies the associated behavior.
+    /// </summary>
+    /// <param name="currentTag">Value supplied for current Tag.</param>
+    /// <param name="currentValue">Value supplied for current Value.</param>
+    /// <returns>The value produced by this operation.</returns>
     private static string ProcessHtml(string currentTag, string currentValue)
     {
         if (string.IsNullOrEmpty(currentTag))
@@ -68,13 +74,25 @@ public static partial class HtmlProcessor
         return text;
     }
 
+    /// <summary>
+    /// Performs the html Comment Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex("<!--.*?-->", RegexOptions.Singleline)]
     private static partial Regex HtmlCommentRegex();
 
+    /// <summary>
+    /// Performs the closed Tag Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"<([^>\s]+)(?:\s[^>]*)?>(.*?)(</\1>)(\s*)", RegexOptions.Singleline)]
     private static partial Regex ClosedTagRegex();
 
     // Excludes : so markdown autolinks like <https://example.com> are kept.
+    /// <summary>
+    /// Performs the open Tag Regex operation and returns its result.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     [GeneratedRegex(@"<([^>\s:]+)(?:\s[^>]*)?/?>")]
     private static partial Regex OpenTagRegex();
 }

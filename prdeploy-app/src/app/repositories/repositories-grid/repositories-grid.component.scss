@@ -1,4 +1,4 @@
-@import '../../../sass/variables';
+@use '../../../sass/variables' as *;
 
 .repositories-list {
   max-width: 550px;

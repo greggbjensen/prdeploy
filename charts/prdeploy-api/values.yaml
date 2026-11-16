@@ -18,6 +18,10 @@ global:
       annotations: {}
       name: "prdeploy-backend"
 
+storage:
+  aws:
+    tableName: PrDeployStorage
+
 aspnetcore_environment: production
 apollo_sandbox_enabled: false
 

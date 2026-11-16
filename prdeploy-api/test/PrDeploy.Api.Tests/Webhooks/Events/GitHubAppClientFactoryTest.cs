@@ -10,11 +10,17 @@ using MsOptions = Microsoft.Extensions.Options.Options;
 
 namespace PrDeploy.Api.Tests.Webhooks.Events;
 
+/// <summary>
+/// Contains tests that verify the behavior of the git Hub App Client Factory Test.
+/// </summary>
 public class GitHubAppClientFactoryTest
 {
     private readonly RSA _rsa = RSA.Create(2048);
     private readonly FakeTimeProvider _time = new(new DateTimeOffset(2026, 11, 15, 12, 0, 0, TimeSpan.Zero));
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: creates Signed Jwt For App.
+    /// </summary>
     [Fact]
     public void CreateAppJwt_CreatesSignedJwtForApp()
     {
@@ -37,6 +43,9 @@ public class GitHubAppClientFactoryTest
         Assert.Equal(now + 540, payload.RootElement.GetProperty("exp").GetInt64());
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: caches Installation Tokens Until Near Expiry.
+    /// </summary>
     [Fact]
     public async Task CreateInstallationClientAsync_CachesInstallationTokensUntilNearExpiry()
     {
@@ -59,12 +68,22 @@ public class GitHubAppClientFactoryTest
         Assert.Equal("token-2", client.Connection.Credentials.Password);
     }
 
+    /// <summary>
+    /// Creates the Factory from the supplied inputs.
+    /// </summary>
+    /// <param name="createToken">Value supplied for create Token.</param>
+    /// <returns>The value produced by this operation.</returns>
     private GitHubAppClientFactory CreateFactory(Func<IGitHubClient, long, Task<AccessToken>> createToken)
     {
         var options = MsOptions.Create(new GitHubAppOptions { AppId = "12345", PrivateKey = _rsa.ExportRSAPrivateKeyPem() });
         return new GitHubAppClientFactory(options, _time, createToken);
     }
 
+    /// <summary>
+    /// Performs the base64 Url Decode operation and returns its result.
+    /// </summary>
+    /// <param name="value">Value to store or process.</param>
+    /// <returns>The value produced by this operation.</returns>
     private static byte[] Base64UrlDecode(string value)
     {
         var base64 = value.Replace('-', '+').Replace('_', '/');

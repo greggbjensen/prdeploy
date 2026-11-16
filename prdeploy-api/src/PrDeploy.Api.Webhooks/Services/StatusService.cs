@@ -28,6 +28,18 @@ public class StatusService
     private readonly IMemoryCache _cache;
     private readonly ILogger<StatusService> _logger;
 
+    /// <summary>
+    /// Initializes a status Service with the supplied dependencies.
+    /// </summary>
+    /// <param name="context">Request or application context used by the operation.</param>
+    /// <param name="templateService">Value supplied for template Service.</param>
+    /// <param name="slackService">Value supplied for slack Service.</param>
+    /// <param name="checkService">Value supplied for check Service.</param>
+    /// <param name="deployStateService">Value supplied for deploy State Service.</param>
+    /// <param name="pullRequestService">Value supplied for pull Request Service.</param>
+    /// <param name="environmentUtil">Value supplied for environment Util.</param>
+    /// <param name="cache">Value supplied for cache.</param>
+    /// <param name="logger">Logger used to report operational information and errors.</param>
     public StatusService(WebhookContext context, TemplateService templateService, SlackService slackService,
         CheckService checkService, DeployStateService deployStateService, PullRequestService pullRequestService,
         EnvironmentUtil environmentUtil, IMemoryCache cache, ILogger<StatusService> logger)
@@ -43,6 +55,11 @@ public class StatusService
         _logger = logger;
     }
 
+    /// <summary>
+    /// Posts the Deploy Completed to the configured destination.
+    /// </summary>
+    /// <param name="pullRequest">Pull request associated with the operation.</param>
+    /// <param name="run">Value supplied for run.</param>
     public async Task PostDeployCompletedAsync(PullRequest pullRequest, WorkflowRun run)
     {
         var environment = _pullRequestService.GetEnvironment(pullRequest, run);
@@ -165,6 +182,11 @@ public class StatusService
         _cache.Set(cacheKey, true, PostReleaseMessageDelay);
     }
 
+    /// <summary>
+    /// Posts the Deploy Started to the configured destination.
+    /// </summary>
+    /// <param name="pullRequest">Pull request associated with the operation.</param>
+    /// <param name="run">Value supplied for run.</param>
     public async Task PostDeployStartedAsync(PullRequest pullRequest, WorkflowRun run)
     {
         // We need to retrieve the workflow run to get the correct title as it was not set yet.

@@ -12,6 +12,9 @@ using PrDeploy.Api.Webhooks.Utils;
 
 namespace PrDeploy.Api.Webhooks;
 
+/// <summary>
+/// Defines the contract for service Collection Extensions operations.
+/// </summary>
 public static class IServiceCollectionExtensions
 {
     /// <summary>

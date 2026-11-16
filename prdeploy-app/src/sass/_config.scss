@@ -1,0 +1,33 @@
+// Shared configuration
+//
+// Settings that both `_functions.scss` and `_variables.scss` depend on. Under the
+// `@import` model Bootstrap's functions read these from the variables file, but the
+// module system does not allow the resulting circular `@use`, so they live here.
+// `_variables.scss` forwards this module so consumers still see every setting.
+
+// scss-docs-start gray-color-variables
+$white:    #fff !default;
+$black:    #000 !default;
+// scss-docs-end gray-color-variables
+
+// The contrast ratio to reach against white, to determine if color changes from "light" to "dark". Acceptable values for WCAG 2.0 are 3, 4.5 and 7.
+// See https://www.w3.org/TR/WCAG20/#visual-audio-contrast-contrast
+$min-contrast-ratio:   4.5 !default;
+
+// Customize the light and dark text colors for use in our color contrast function.
+$color-contrast-dark:      $black !default;
+$color-contrast-light:     $white !default;
+
+// Characters which are escaped by the escape-svg function
+$escaped-characters: (
+  ("<", "%3c"),
+  (">", "%3e"),
+  ("#", "%23"),
+  ("(", "%28"),
+  (")", "%29"),
+) !default;
+
+// Prefix for :root CSS variables
+
+$variable-prefix:             bs- !default; // Deprecated in v5.2.0 for the shorter `$prefix`
+$prefix:                      $variable-prefix !default;

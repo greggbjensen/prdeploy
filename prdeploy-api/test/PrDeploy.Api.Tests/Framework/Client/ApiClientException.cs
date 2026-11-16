@@ -1,17 +1,28 @@
-﻿using StrawberryShake;
+using StrawberryShake;
 using System.Text;
 
 namespace PrDeploy.Api.Tests.Framework.Client
 {
+    /// <summary>
+    /// Represents an error encountered while processing the api Client Exception.
+    /// </summary>
     internal class ApiClientException : Exception
     {
         private readonly string? _stackTrace = null;
 
+        /// <summary>
+        /// Initializes a api Client Exception with the supplied dependencies.
+        /// </summary>
+        /// <param name="message">Value supplied for message.</param>
         public ApiClientException(string message)
             : this(new ClientError(message))
         {
         }
 
+        /// <summary>
+        /// Initializes a api Client Exception with the supplied dependencies.
+        /// </summary>
+        /// <param name="error">Value supplied for error.</param>
         public ApiClientException(IClientError error)
         {
             ArgumentNullException.ThrowIfNull(error);
@@ -20,6 +31,10 @@ namespace PrDeploy.Api.Tests.Framework.Client
             Errors = new[] { error };
         }
 
+        /// <summary>
+        /// Initializes a api Client Exception with the supplied dependencies.
+        /// </summary>
+        /// <param name="errors">Value supplied for errors.</param>
         public ApiClientException(params IClientError[] errors)
         {
             ArgumentNullException.ThrowIfNull(errors);
@@ -57,6 +72,10 @@ namespace PrDeploy.Api.Tests.Framework.Client
             Errors = errors;
         }
 
+        /// <summary>
+        /// Initializes a api Client Exception with the supplied dependencies.
+        /// </summary>
+        /// <param name="errors">Value supplied for errors.</param>
         public ApiClientException(IEnumerable<IClientError> errors)
             // We pass this null safe to the constructor using arrays and let it throw there
             // with a proper ArgumentNullException.
@@ -69,6 +88,10 @@ namespace PrDeploy.Api.Tests.Framework.Client
         /// </summary>
         public sealed override string Message { get; }
 
+        /// <summary>
+        /// Gets the Stack Trace.
+        /// </summary>
+        /// <returns>The value exposed by this member.</returns>
         public override string? StackTrace => _stackTrace;
 
         /// <summary>

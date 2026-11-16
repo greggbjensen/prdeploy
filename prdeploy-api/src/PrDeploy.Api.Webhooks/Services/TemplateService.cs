@@ -52,12 +52,28 @@ public class TemplateService
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
     };
 
+    /// <summary>
+    /// Performs the render operation and returns its result.
+    /// </summary>
+    /// <param name="templateName">Value supplied for template Name.</param>
+    /// <param name="context">Request or application context used by the operation.</param>
+    /// <returns>The value produced by this operation.</returns>
     public string Render(string templateName, object? context = null)
     {
         var template = Templates.GetOrAdd(templateName, name => Handlebars.Compile(LoadTemplate(name)));
         return template(ToTemplateContext(context));
     }
 
+    /// <summary>
+    /// Performs the render Queue Table operation and returns its result.
+    /// </summary>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <param name="repo">Repository whose values are addressed.</param>
+    /// <param name="normalizedEnvironment">Deployment environment involved in the operation.</param>
+    /// <param name="queuePullNumbers">Value supplied for queue Pull Numbers.</param>
+    /// <param name="repositoryUrl">Value supplied for repository Url.</param>
+    /// <param name="prdeployPortalUrl">Value supplied for prdeploy Portal Url.</param>
+    /// <returns>The value produced by this operation.</returns>
     public string RenderQueueTable(string owner, string repo, string normalizedEnvironment,
         IEnumerable<int> queuePullNumbers, string repositoryUrl, string? prdeployPortalUrl)
     {
@@ -78,6 +94,11 @@ public class TemplateService
         return $"{positions}\n{columns}\n{pulls}";
     }
 
+    /// <summary>
+    /// Performs the pull operation and returns its result.
+    /// </summary>
+    /// <param name="pullRequest">Pull request associated with the operation.</param>
+    /// <returns>The value produced by this operation.</returns>
     public static object? Pull(PullRequest? pullRequest) => pullRequest == null
         ? null
         : new
@@ -88,6 +109,11 @@ public class TemplateService
             body = pullRequest.Body
         };
 
+    /// <summary>
+    /// Performs the run operation and returns its result.
+    /// </summary>
+    /// <param name="run">Value supplied for run.</param>
+    /// <returns>The value produced by this operation.</returns>
     public static object? Run(WorkflowRun? run) => run == null
         ? null
         : new
@@ -99,6 +125,11 @@ public class TemplateService
             conclusion = run.Conclusion?.StringValue
         };
 
+    /// <summary>
+    /// Checks whether the condition condition is satisfied.
+    /// </summary>
+    /// <param name="check">Value supplied for check.</param>
+    /// <returns>The value produced by this operation.</returns>
     public static object Check(CheckRun check) => new
     {
         name = check.Name,
@@ -107,6 +138,11 @@ public class TemplateService
         conclusion = check.Conclusion?.StringValue
     };
 
+    /// <summary>
+    /// Converts the supplied value to the Template Context.
+    /// </summary>
+    /// <param name="context">Request or application context used by the operation.</param>
+    /// <returns>The value produced by this operation.</returns>
     internal static object ToTemplateContext(object? context)
     {
         if (context == null)
@@ -118,6 +154,11 @@ public class TemplateService
         return ToTemplateValue(element) ?? new Dictionary<string, object?>();
     }
 
+    /// <summary>
+    /// Converts the supplied value to the Template Value.
+    /// </summary>
+    /// <param name="element">Value supplied for element.</param>
+    /// <returns>The value produced by this operation.</returns>
     private static object? ToTemplateValue(JsonElement element) => element.ValueKind switch
     {
         JsonValueKind.Object => element.EnumerateObject()
@@ -130,6 +171,11 @@ public class TemplateService
         _ => null
     };
 
+    /// <summary>
+    /// Performs the load Template operation and returns its result.
+    /// </summary>
+    /// <param name="templateName">Value supplied for template Name.</param>
+    /// <returns>The value produced by this operation.</returns>
     private static string LoadTemplate(string templateName)
     {
         var assembly = typeof(TemplateService).Assembly;
@@ -140,6 +186,10 @@ public class TemplateService
         return reader.ReadToEnd().Replace("\r", string.Empty);
     }
 
+    /// <summary>
+    /// Creates the Handlebars from the supplied inputs.
+    /// </summary>
+    /// <returns>The value produced by this operation.</returns>
     private static IHandlebars CreateHandlebars()
     {
         var handlebars = HandlebarsDotNet.Handlebars.Create(new HandlebarsConfiguration
@@ -162,6 +212,11 @@ public class TemplateService
         return handlebars;
     }
 
+    /// <summary>
+    /// Retrieves the String.
+    /// </summary>
+    /// <param name="arguments">Value supplied for arguments.</param>
+    /// <returns>The value produced by this operation.</returns>
     private static string? GetString(Arguments arguments) =>
         arguments.Length > 0 && arguments[0] is not UndefinedBindingResult ? arguments[0]?.ToString() : null;
 
@@ -170,6 +225,11 @@ public class TemplateService
     /// </summary>
     private sealed class HandlebarsJsTextEncoder : ITextEncoder
     {
+        /// <summary>
+        /// Performs the encode operation.
+        /// </summary>
+        /// <param name="text">Value supplied for text.</param>
+        /// <param name="target">Target environment or value for the operation.</param>
         public void Encode(StringBuilder text, TextWriter target)
         {
             for (var i = 0; i < text.Length; i++)
@@ -178,6 +238,11 @@ public class TemplateService
             }
         }
 
+        /// <summary>
+        /// Performs the encode operation.
+        /// </summary>
+        /// <param name="text">Value supplied for text.</param>
+        /// <param name="target">Target environment or value for the operation.</param>
         public void Encode(string text, TextWriter target)
         {
             foreach (var c in text)
@@ -186,6 +251,12 @@ public class TemplateService
             }
         }
 
+        /// <summary>
+        /// Performs the encode operation.
+        /// </summary>
+        /// <param name="text">Value supplied for text.</param>
+        /// <param name="target">Target environment or value for the operation.</param>
+        /// <typeparam name="T">Type used by this operation.</typeparam>
         public void Encode<T>(T text, TextWriter target) where T : IEnumerator<char>
         {
             while (text.MoveNext())
@@ -194,6 +265,11 @@ public class TemplateService
             }
         }
 
+        /// <summary>
+        /// Performs the write operation.
+        /// </summary>
+        /// <param name="c">Value supplied for c.</param>
+        /// <param name="target">Target environment or value for the operation.</param>
         private static void Write(char c, TextWriter target)
         {
             switch (c)

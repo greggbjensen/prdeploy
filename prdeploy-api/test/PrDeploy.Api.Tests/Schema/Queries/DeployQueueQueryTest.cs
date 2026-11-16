@@ -1,28 +1,38 @@
-using Amazon.SimpleSystemsManagement;
-using Amazon.SimpleSystemsManagement.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Octokit;
+using PrDeploy.Api.Business.Stores.Interfaces;
 using PrDeploy.Api.Tests.Client;
+using PrDeploy.Api.Tests.Constants;
 using PrDeploy.Api.Tests.Framework;
 using PrDeploy.Api.Tests.Framework.Client;
+using PrDeploy.Api.Tests.Webhooks.Framework;
 
 namespace PrDeploy.Api.Tests.Schema.Queries;
 
+/// <summary>
+/// Contains tests that verify the behavior of the deploy Queue Query Test.
+/// </summary>
 public class DeployQueueQueryTest : DeployApiTest
 {
+    /// <summary>
+    /// Initializes the test fixture and prepares its dependencies.
+    /// </summary>
+    /// <param name="factory">Value supplied for factory.</param>
     public DeployQueueQueryTest(DeployApiApplicationFactory factory)
         : base(factory)
     {
     }
 
+    /// <summary>
+    /// Performs the configure Services operation.
+    /// </summary>
+    /// <param name="services">Services to include in the operation.</param>
     public override void ConfigureServices(IServiceCollection services)
     {
         services.AddTransient<IGitHubClient>(s =>
         {
             var mock = new Mock<IGitHubClient>(MockBehavior.Strict);
-
-            // TODO Add SSM mocks.
 
             mock.Setup(x => x.PullRequest.Get(
                     GitHub.Owner,
@@ -33,35 +43,23 @@ public class DeployQueueQueryTest : DeployApiTest
             return mock.Object;
         });
 
-        services.AddTransient(s =>
-        {
-            var awsSsmClient = new Mock<IAmazonSimpleSystemsManagement>(MockBehavior.Strict);
-
-            awsSsmClient.Setup(x => x.GetParameterAsync(
-                    It.Is<GetParameterRequest>(r => r.Name == ParameterVariables.DevPrQueue),
-                    default(CancellationToken)))
-                .ReturnsAsync(Mocker.GetParameterResponse(
-                    ParameterVariables.DevPrQueue,
-                    $" - {PullRequests.TestPull.Number}"));
-
-            awsSsmClient.Setup(x => x.GetParameterAsync(
-                    It.Is<GetParameterRequest>(r => r.Name == ParameterVariables.StagePrQueue),
-                    default(CancellationToken)))
-                .ReturnsAsync(Mocker.GetParameterResponse(
-                    ParameterVariables.StagePrQueue,
-                    "[]"));
-
-            awsSsmClient.Setup(x => x.GetParameterAsync(
-                    It.Is<GetParameterRequest>(r => r.Name == ParameterVariables.ProdPrQueue),
-                    default(CancellationToken)))
-                .ReturnsAsync(Mocker.GetParameterResponse(
-                    ParameterVariables.ProdPrQueue,
-                    "[]"));
-
-            return awsSsmClient.Object;
-        });
+        var deploymentStore = new InMemoryDeploymentStore();
+        var defaultSettings = WebhookTestHost.CreateDefaultSettings();
+        deploymentStore.SetAsync(GitHub.Owner, "DEPLOY_SETTINGS", defaultSettings).GetAwaiter().GetResult();
+        deploymentStore.SetAsync(GitHub.Owner, GitHub.Repo, "DEPLOY_SETTINGS", defaultSettings)
+            .GetAwaiter().GetResult();
+        deploymentStore.SetAsync(GitHub.Owner, GitHub.Repo, DeploymentValueNames.DevPrQueue,
+            new List<int> { PullRequests.TestPull.Number }).GetAwaiter().GetResult();
+        deploymentStore.SetAsync(GitHub.Owner, GitHub.Repo, DeploymentValueNames.StagePrQueue,
+            new List<int>()).GetAwaiter().GetResult();
+        deploymentStore.SetAsync(GitHub.Owner, GitHub.Repo, DeploymentValueNames.ProdPrQueue,
+            new List<int>()).GetAwaiter().GetResult();
+        services.AddSingleton<IDeploymentStore>(deploymentStore);
     }
 
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: returns All Queues.
+    /// </summary>
     [Fact]
     public async Task DeployQueues_ReturnsAllQueues()
     {

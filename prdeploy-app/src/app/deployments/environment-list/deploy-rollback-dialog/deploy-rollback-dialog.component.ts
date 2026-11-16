@@ -3,7 +3,6 @@ import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
-  MatDialogClose,
   MatDialogContent,
   MatDialogRef,
   MatDialogTitle
@@ -26,7 +25,6 @@ import { MtxButtonModule } from '@ng-matero/extensions/button';
     MatDialogTitle,
     MatDialogContent,
     MatDialogActions,
-    MatDialogClose,
     MatButtonModule,
     MatInputModule,
     MtxButtonModule,
