@@ -17,7 +17,7 @@
     },
     {
       "name": "PrDeploy App (Chrome)",
-      "type": "pwa-chrome",
+      "type": "chrome",
       "request": "launch",
       "preLaunchTask": "Serve App",
       "url": "http://localhost:4301",

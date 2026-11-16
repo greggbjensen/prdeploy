@@ -40,7 +40,9 @@
       "problemMatcher": {
         "owner": "angular",
         "pattern": {
-          "regexp": "^(.*)$"
+          "regexp": "^\\s*✘ \\[ERROR\\]\\s+(.*)$",
+          "message": 1,
+          "severity": "error"
         },
         "background": {
           "activeOnStart": true,
