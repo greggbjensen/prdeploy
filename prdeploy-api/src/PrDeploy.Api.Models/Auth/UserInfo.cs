@@ -21,13 +21,13 @@ namespace PrDeploy.Api.Models.Auth
         /// Gets or sets the login.
         /// </summary>
         /// <value>Current login value.</value>
-        public string Login { get; set; }
+        public string Login { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
         /// <value>Current name value.</value>
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the admin.

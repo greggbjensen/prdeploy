@@ -78,7 +78,7 @@ namespace PrDeploy.Api.Business.Security
 
             var userHash = HashToken(userToken);
             var authKey = $"auth/{owner}/{repo}/{userHash}";
-            var hasAccess = _cache.TryGetValue(authKey, out object _);
+            var hasAccess = _cache.TryGetValue(authKey, out _);
             if (hasAccess)
             {
                 return true;
@@ -115,7 +115,7 @@ namespace PrDeploy.Api.Business.Security
 
             var userHash = HashToken(userToken);
             var authKey = $"auth/{owner}/{userHash}";
-            var hasAccess = _cache.TryGetValue(authKey, out object _);
+            var hasAccess = _cache.TryGetValue(authKey, out _);
             if (hasAccess)
             {
                 return true;
