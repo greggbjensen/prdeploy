@@ -10,7 +10,7 @@ spec:
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   {{- if .Values.persistence.enabled }}
-  # A ReadWriteOnce volume and the LiteDB file lock allow only one pod at a time.
+  # A ReadWriteOnce volume backs the local database, so replace the pod instead of overlapping replicas.
   strategy:
     type: Recreate
   {{- end }}
@@ -51,7 +51,7 @@ spec:
               value: {{ .Values.apollo_sandbox_enabled | quote }}
             {{- if .Values.persistence.enabled }}
             - name: Storage__Local__DatabasePath
-              value: {{ .Values.persistence.mountPath }}/deployment-storage.db
+              value: {{ .Values.persistence.mountPath }}/deployment-storage.blite
             {{- end }}
           ports:
             - name: http

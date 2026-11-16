@@ -10,7 +10,7 @@ services:
     ports:
       - "8087:8080"
     volumes:
-      # Persists the LiteDB database (deployment values and Data Protection keys) across restarts.
+      # Persists the BLite database (deployment values and Data Protection keys) across restarts.
       - prdeploy-data:/app/data
 
 volumes:

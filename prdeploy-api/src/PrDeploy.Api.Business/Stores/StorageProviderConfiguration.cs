@@ -8,7 +8,7 @@ namespace PrDeploy.Api.Business.Stores;
 public enum StorageProvider
 {
     /// <summary>
-    /// Stores documents locally in LiteDB without cloud credentials.
+    /// Stores documents locally in BLite without cloud credentials.
     /// </summary>
     Local,
 
@@ -43,7 +43,8 @@ public static class StorageProviderConfiguration
         var provider = configuration["Storage:Provider"];
         if (string.IsNullOrWhiteSpace(provider) ||
             provider.Equals("Local", StringComparison.OrdinalIgnoreCase) ||
-            provider.Equals("LiteDB", StringComparison.OrdinalIgnoreCase))
+            provider.Equals("LiteDB", StringComparison.OrdinalIgnoreCase) ||
+            provider.Equals("BLite", StringComparison.OrdinalIgnoreCase))
         {
             return StorageProvider.Local;
         }
@@ -88,7 +89,7 @@ public static class StorageProviderConfiguration
                 "A local data directory is unavailable. Configure 'Storage:Local:DatabasePath'.");
         }
 
-        return Path.Combine(localApplicationData, "prdeploy", "deployment-storage.db");
+        return Path.Combine(localApplicationData, "prdeploy", "deployment-storage.blite");
     }
 
     /// <summary>

@@ -2,7 +2,6 @@ using Amazon.DynamoDBv2;
 using Amazon.Extensions.NETCore.Setup;
 using Amazon.SimpleSystemsManagement;
 using Google.Cloud.Firestore;
-using LiteDB;
 using Microsoft.Azure.Cosmos;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.Extensions.Configuration;
@@ -66,7 +65,7 @@ public static class IServiceCollectionExtensions
     /// Registers the selected document-storage backend and its Data Protection key repository.
     /// </summary>
     /// <remarks>
-    /// The default Local provider uses LiteDB and does not register or resolve cloud SDK clients
+    /// The default Local provider uses BLite and does not register or resolve cloud SDK clients
     /// or credential providers.
     /// </remarks>
     public static IServiceCollection AddPrDeployStorage(
@@ -88,9 +87,9 @@ public static class IServiceCollectionExtensions
             case StorageProvider.Local:
                 var databasePath = StorageProviderConfiguration.GetLocalDatabasePath(configuration);
                 var localPassword = configuration["Storage:Local:Password"];
-                services.TryAddSingleton(_ => new LiteDbStorage(databasePath, localPassword));
-                services.TryAddSingleton<IXmlRepository, LiteDbDataProtectionXmlRepository>();
-                services.TryAddScoped<IDeploymentStore, LiteDbDeploymentStore>();
+                services.TryAddSingleton(_ => new BliteStorage(databasePath, localPassword));
+                services.TryAddSingleton<IXmlRepository, BliteDataProtectionXmlRepository>();
+                services.TryAddScoped<IDeploymentStore, BliteDeploymentStore>();
                 break;
 
             case StorageProvider.Azure:

@@ -8,7 +8,7 @@ namespace PrDeploy.Api.Tests.Stores;
 /// <summary>
 /// Exercises the local deployment store's value serialization and revision history.
 /// </summary>
-public sealed class LiteDbDeploymentStoreTests
+public sealed class BliteDeploymentStoreTests
 {
     /// <summary>
     /// Confirms local storage round-trips YAML values and retains earlier revisions.
@@ -17,7 +17,7 @@ public sealed class LiteDbDeploymentStoreTests
     public async Task DeploymentStore_PreservesYamlValuesAndHistoricalRevisions()
     {
         var directory = Path.Combine(Path.GetTempPath(), "prdeploy-deployment-store-test", Guid.NewGuid().ToString("N"));
-        var databasePath = Path.Combine(directory, "deployment-values.db");
+        var databasePath = Path.Combine(directory, "deployment-values.blite");
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {

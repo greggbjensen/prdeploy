@@ -4,12 +4,12 @@ using PrDeploy.Api.Business.Stores;
 namespace PrDeploy.Api.Tests.Stores;
 
 /// <summary>
-/// Verifies that the local LiteDB database is created when missing and reused when present.
+/// Verifies that the local BLite database is created when missing and reused when present.
 /// </summary>
-public sealed class LiteDbStorageTests : IDisposable
+public sealed class BliteStorageTests : IDisposable
 {
     private readonly string _directory = Path.Combine(
-        Path.GetTempPath(), "prdeploy-litedb-storage-test", Guid.NewGuid().ToString("N"));
+        Path.GetTempPath(), "prdeploy-blite-storage-test", Guid.NewGuid().ToString("N"));
 
     /// <summary>
     /// Releases resources owned by this instance.
@@ -28,12 +28,12 @@ public sealed class LiteDbStorageTests : IDisposable
     [Fact]
     public void Constructor_CreatesDatabaseAndDirectories_WhenMissing()
     {
-        var databasePath = Path.Combine(_directory, "nested", "data", "deployment-storage.db");
+        var databasePath = Path.Combine(_directory, "nested", "data", "deployment-storage.blite");
         Assert.False(File.Exists(databasePath));
 
-        using (var storage = new LiteDbStorage(databasePath))
+        using (var storage = new BliteStorage(databasePath))
         {
-            new LiteDbDataProtectionXmlRepository(storage)
+            new BliteDataProtectionXmlRepository(storage)
                 .StoreElement(new XElement("key", "value"), "key-1");
         }
 
@@ -46,16 +46,16 @@ public sealed class LiteDbStorageTests : IDisposable
     [Fact]
     public void Constructor_ReusesExistingDatabase_WhenPresent()
     {
-        var databasePath = Path.Combine(_directory, "deployment-storage.db");
+        var databasePath = Path.Combine(_directory, "deployment-storage.blite");
 
-        using (var storage = new LiteDbStorage(databasePath))
+        using (var storage = new BliteStorage(databasePath))
         {
-            new LiteDbDataProtectionXmlRepository(storage)
+            new BliteDataProtectionXmlRepository(storage)
                 .StoreElement(new XElement("key", "persisted"), "key-1");
         }
 
-        using var reopened = new LiteDbStorage(databasePath);
-        var elements = new LiteDbDataProtectionXmlRepository(reopened).GetAllElements();
+        using var reopened = new BliteStorage(databasePath);
+        var elements = new BliteDataProtectionXmlRepository(reopened).GetAllElements();
 
         Assert.Equal("persisted", Assert.Single(elements).Value);
     }
@@ -66,17 +66,17 @@ public sealed class LiteDbStorageTests : IDisposable
     [Fact]
     public void Constructor_Throws_WhenPasswordDoesNotMatch()
     {
-        var databasePath = Path.Combine(_directory, "deployment-storage.db");
-        using (var storage = new LiteDbStorage(databasePath, "correct"))
+        var databasePath = Path.Combine(_directory, "deployment-storage.blite");
+        using (var storage = new BliteStorage(databasePath, "correct"))
         {
-            new LiteDbDataProtectionXmlRepository(storage)
+            new BliteDataProtectionXmlRepository(storage)
                 .StoreElement(new XElement("key", "secret"), "key-1");
         }
 
         Assert.ThrowsAny<Exception>(() =>
         {
-            using var wrong = new LiteDbStorage(databasePath, "wrong");
-            new LiteDbDataProtectionXmlRepository(wrong).GetAllElements();
+            using var wrong = new BliteStorage(databasePath, "wrong");
+            new BliteDataProtectionXmlRepository(wrong).GetAllElements();
         });
     }
 }

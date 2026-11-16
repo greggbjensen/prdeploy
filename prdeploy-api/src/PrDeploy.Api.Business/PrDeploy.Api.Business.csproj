@@ -9,7 +9,7 @@
     <PackageReference Include="AWSSDK.SSOOIDC" />
     <PackageReference Include="Google.Cloud.Firestore" />
     <PackageReference Include="LinqKit.Core" />
-    <PackageReference Include="LiteDB" />
+    <PackageReference Include="BLite" />
     <PackageReference Include="Microsoft.Azure.Cosmos" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" />

@@ -22,7 +22,7 @@ storage:
   aws:
     tableName: PrDeployStorage
 
-# Persistent volume for the LiteDB database used by the Local storage provider (Storage:Provider=Local).
+# Persistent volume for the BLite database used by the Local storage provider (Storage:Provider=Local).
 # The chart ships with the AWS provider, so this is off by default.
 persistence:
   enabled: false

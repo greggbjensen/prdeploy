@@ -21,13 +21,32 @@ namespace PrDeploy.Api.Tests.DataProtection;
 public class DataProtectionKeyStorageTest
 {
     /// <summary>
+    /// Confirms current and legacy local provider names select the BLite-backed local provider.
+    /// </summary>
+    [Theory]
+    [InlineData("Local")]
+    [InlineData("BLite")]
+    [InlineData("LiteDB")]
+    public void StorageProviderConfiguration_MapsLocalAliasesToLocal(string provider)
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Storage:Provider"] = provider
+            })
+            .Build();
+
+        Assert.Equal(StorageProvider.Local, StorageProviderConfiguration.GetProvider(configuration));
+    }
+
+    /// <summary>
     /// Confirms the default provider persists keys locally without registering cloud clients.
     /// </summary>
     [Fact]
-    public async Task AddPrDeployApi_UsesLiteDbByDefaultWithoutCloudServicesAndPersistsKeys()
+    public async Task AddPrDeployApi_UsesBliteByDefaultWithoutCloudServicesAndPersistsKeys()
     {
         var directory = Path.Combine(Path.GetTempPath(), "prdeploy-storage-test", Guid.NewGuid().ToString("N"));
-        var databasePath = Path.Combine(directory, "prdeploy.db");
+        var databasePath = Path.Combine(directory, "prdeploy.blite");
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
@@ -50,9 +69,9 @@ public class DataProtectionKeyStorageTest
                 protectedValue = protector.Protect("round-trip");
 
                 Assert.Equal("round-trip", protector.Unprotect(protectedValue));
-                Assert.IsType<LiteDbDataProtectionXmlRepository>(
+                Assert.IsType<BliteDataProtectionXmlRepository>(
                     serviceProvider.GetRequiredService<IOptions<KeyManagementOptions>>().Value.XmlRepository);
-                Assert.IsType<LiteDbDeploymentStore>(serviceProvider.GetRequiredService<IDeploymentStore>());
+                Assert.IsType<BliteDeploymentStore>(serviceProvider.GetRequiredService<IDeploymentStore>());
                 Assert.Null(serviceProvider.GetService<IAmazonSimpleSystemsManagement>());
                 Assert.Null(serviceProvider.GetService<IAmazonDynamoDB>());
                 Assert.Null(serviceProvider.GetService<CosmosClient>());

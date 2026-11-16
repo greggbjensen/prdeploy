@@ -61,8 +61,8 @@ public class DeployApiApplicationFactory : WebApplicationFactory<Program>
 
         builder.ConfigureServices(services =>
         {
-            services.RemoveAll<LiteDbStorage>();
-            services.AddSingleton(_ => new LiteDbStorage(Path.Combine(_storageDirectory, "prdeploy.db")));
+            services.RemoveAll<BliteStorage>();
+            services.AddSingleton(_ => new BliteStorage(Path.Combine(_storageDirectory, "prdeploy.blite")));
             services.RemoveAll<IDeploymentStore>();
             var deploymentStore = new InMemoryDeploymentStore();
             var defaultSettings = WebhookTestHost.CreateDefaultSettings();
