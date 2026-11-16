@@ -11,11 +11,11 @@ namespace PrDeploy.Api.Schema.Mutations;
 public class PullRequestMutation
 {
     /// <summary>
-    /// Performs the pull Request Add Services operation and returns its result.
+    /// Performs the pull request add services operation and returns its result.
     /// </summary>
-    /// <param name="service">Value supplied for service.</param>
+    /// <param name="service">Object containing the service data used by the operation.</param>
     /// <param name="input">Input object containing the operation's arguments.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The status response produced by the operation.</returns>
     [GraphQLName("pullRequestAddServices")]
     public async Task<StatusResponse> PullRequestAddServices(IPullRequestService service, PullRequestAddServicesInput input) =>
         await service.AddServicesAsync(input);

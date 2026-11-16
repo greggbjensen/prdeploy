@@ -20,13 +20,13 @@ public class StatusManager
     private readonly ILogger<StatusManager> _logger;
 
     /// <summary>
-    /// Initializes a status Manager with the supplied dependencies.
+    /// Initializes the instance with its required dependencies.
     /// </summary>
     /// <param name="context">Request or application context used by the operation.</param>
-    /// <param name="statusService">Value supplied for status Service.</param>
-    /// <param name="deployService">Value supplied for deploy Service.</param>
-    /// <param name="pullRequestService">Value supplied for pull Request Service.</param>
-    /// <param name="automationTestService">Value supplied for automation Test Service.</param>
+    /// <param name="statusService">Object containing the status service data used by the operation.</param>
+    /// <param name="deployService">Object containing the deploy service data used by the operation.</param>
+    /// <param name="pullRequestService">Object containing the pull request service data used by the operation.</param>
+    /// <param name="automationTestService">Object containing the automation test service data used by the operation.</param>
     /// <param name="logger">Logger used to report operational information and errors.</param>
     public StatusManager(WebhookContext context, StatusService statusService, DeployService deployService,
         PullRequestService pullRequestService, AutomationTestService automationTestService,
@@ -41,10 +41,10 @@ public class StatusManager
     }
 
     /// <summary>
-    /// Processes the Workflow Run and applies the associated behavior.
+    /// Processes the workflow run and applies the associated behavior.
     /// </summary>
-    /// <param name="run">Value supplied for run.</param>
-    /// <param name="action">Value supplied for action.</param>
+    /// <param name="run">Object containing the run data used by the operation.</param>
+    /// <param name="action">Text used as the action.</param>
     public async Task ProcessWorkflowRunAsync(WorkflowRun run, string action)
     {
         var pullNumber = run.PullRequests?.Count > 0 ? run.PullRequests[0].Number : 0;
@@ -90,7 +90,7 @@ public class StatusManager
     }
 
     /// <summary>
-    /// Processes the Pull Request Closed and applies the associated behavior.
+    /// Processes the pull request closed and applies the associated behavior.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     public async Task ProcessPullRequestClosedAsync(PullRequest pullRequest)
@@ -99,10 +99,10 @@ public class StatusManager
     }
 
     /// <summary>
-    /// Determines whether the deploy Workflow condition holds.
+    /// Determines whether the deploy workflow condition holds.
     /// </summary>
-    /// <param name="workflowPath">Value supplied for workflow Path.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="workflowPath">Text used as the workflow path.</param>
+    /// <returns>True when the requested condition is met; otherwise, false.</returns>
     internal bool IsDeployWorkflow(string? workflowPath)
     {
         return !string.IsNullOrEmpty(workflowPath)
@@ -112,10 +112,10 @@ public class StatusManager
     }
 
     /// <summary>
-    /// Determines whether the excluded Workflow condition holds.
+    /// Determines whether the excluded workflow condition holds.
     /// </summary>
-    /// <param name="workflowPath">Value supplied for workflow Path.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="workflowPath">Text used as the workflow path.</param>
+    /// <returns>True when the requested condition is met; otherwise, false.</returns>
     internal bool IsExcludedWorkflow(string? workflowPath)
     {
         var checkWorkflow = Path.GetFileName(workflowPath ?? string.Empty).ToLowerInvariant();

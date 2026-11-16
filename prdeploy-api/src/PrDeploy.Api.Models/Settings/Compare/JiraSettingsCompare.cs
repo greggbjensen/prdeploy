@@ -1,29 +1,29 @@
 namespace PrDeploy.Api.Models.Settings.Compare
 {
     /// <summary>
-    /// Represents the jira Settings Compare used by the application.
+    /// Represents Jira settings compare data used by the application.
     /// </summary>
     public class JiraSettingsCompare
     {
         /// <summary>
-        /// Gets or sets the Add Issues Enabled.
+        /// Gets or sets the add issues enabled.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current add issues enabled value.</value>
         public OwnerRepoValue<bool?> AddIssuesEnabled { get; set; } = null!;
         /// <summary>
-        /// Gets or sets the Host.
+        /// Gets or sets the host.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current host value.</value>
         public OwnerRepoValue<string> Host { get; set; } = null!;
         /// <summary>
-        /// Gets or sets the Username.
+        /// Gets or sets the username.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current username value.</value>
         public OwnerRepoValue<string> Username { get; set; } = null!;
         /// <summary>
-        /// Gets or sets the Password.
+        /// Gets or sets the password.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current password value.</value>
         public OwnerRepoValue<string> Password { get; set; } = null!;
     }
 }

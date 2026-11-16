@@ -26,13 +26,15 @@ public sealed class CosmosDocumentStorage : IDisposable
     }
 
     /// <summary>
-    /// Gets the Cosmos DB database used by this storage instance.
+    /// Gets the database name.
     /// </summary>
+    /// <value>Current database name value.</value>
     public string DatabaseName { get; }
 
     /// <summary>
-    /// Gets the Cosmos DB container used by this storage instance.
+    /// Gets the container name.
     /// </summary>
+    /// <value>Current container name value.</value>
     public string ContainerName { get; }
 
     /// <summary>
@@ -135,13 +137,14 @@ public sealed class CosmosDocumentStorage : IDisposable
     public const string DataProtectionPartition = "data-protection";
 
     /// <summary>
-    /// Releases the Cosmos client owned by this storage instance.
+    /// Releases resources owned by this instance.
     /// </summary>
     public void Dispose() => _client.Dispose();
 
     /// <summary>
-    /// Creates the configured database and container when needed, then returns the container handle.
+    /// Performs the initialize container operation and returns its result.
     /// </summary>
+    /// <returns>The container produced by the operation.</returns>
     private async Task<Container> InitializeContainerAsync()
     {
         var databaseResponse = await _client.CreateDatabaseIfNotExistsAsync(DatabaseName)
@@ -159,32 +162,37 @@ public sealed class CosmosDocumentStorage : IDisposable
 public sealed class StorageDocument
 {
     /// <summary>
-    /// Gets or sets the document identifier.
+    /// Gets or sets the id.
     /// </summary>
+    /// <value>Current id value.</value>
     [JsonPropertyName("id")]
     public string Id { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the document partition key.
+    /// Gets or sets the partition key.
     /// </summary>
+    /// <value>Current partition key value.</value>
     [JsonPropertyName("partitionKey")]
     public string PartitionKey { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the document kind.
+    /// Gets or sets the document type.
     /// </summary>
+    /// <value>Current document type value.</value>
     [JsonPropertyName("documentType")]
     public string DocumentType { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the deployment-value path.
+    /// Gets or sets the path.
     /// </summary>
+    /// <value>Current path value.</value>
     [JsonPropertyName("path")]
     public string Path { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the serialized deployment value.
+    /// Gets or sets the value.
     /// </summary>
+    /// <value>Current value value.</value>
     [JsonPropertyName("value")]
     public string Value { get; set; } = string.Empty;
 
@@ -195,20 +203,23 @@ public sealed class StorageDocument
     public bool IsSecure { get; set; }
 
     /// <summary>
-    /// Gets or sets the revision sequence.
+    /// Gets or sets the revision.
     /// </summary>
+    /// <value>Current revision value.</value>
     [JsonPropertyName("revision")]
     public long Revision { get; set; }
 
     /// <summary>
-    /// Gets or sets the Data Protection key friendly name.
+    /// Gets or sets the friendly name.
     /// </summary>
+    /// <value>Current friendly name value.</value>
     [JsonPropertyName("friendlyName")]
     public string FriendlyName { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the Data Protection key XML.
+    /// Gets or sets the XML.
     /// </summary>
+    /// <value>Current XML value.</value>
     [JsonPropertyName("xml")]
     public string Xml { get; set; } = string.Empty;
 }

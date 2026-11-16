@@ -18,8 +18,11 @@ namespace PrDeploy.Api.Webhooks;
 public static class IServiceCollectionExtensions
 {
     /// <summary>
-    /// Adds the GitHub App webhook endpoint dependencies and background event processing.
+    /// Adds the pr deploy webhooks to the associated collection.
     /// </summary>
+    /// <param name="services">Services to include in the operation.</param>
+    /// <param name="configuration">Object containing the configuration data used by the operation.</param>
+    /// <returns>The i service collection produced by the operation.</returns>
     public static IServiceCollection AddPrDeployWebhooks(this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -35,8 +38,10 @@ public static class IServiceCollectionExtensions
     }
 
     /// <summary>
-    /// Adds the services that process an event, each scoped to a single webhook event.
+    /// Adds the pr deploy webhook services to the associated collection.
     /// </summary>
+    /// <param name="services">Services to include in the operation.</param>
+    /// <returns>The i service collection produced by the operation.</returns>
     public static IServiceCollection AddPrDeployWebhookServices(this IServiceCollection services)
     {
         services.AddHttpClient(SlackService.HttpClientName);

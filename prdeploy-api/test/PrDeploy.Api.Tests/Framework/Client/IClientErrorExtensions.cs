@@ -8,10 +8,10 @@ namespace PrDeploy.Api.Tests.Framework.Client
     public static class IClientErrorExtensions
     {
         /// <summary>
-        /// Retrieves the Exception Detail.
+        /// Retrieves the exception detail.
         /// </summary>
-        /// <param name="error">Value supplied for error.</param>
-        /// <returns>The value produced by this operation.</returns>
+        /// <param name="error">Object containing the error data used by the operation.</param>
+        /// <returns>Requested value, or its default when no value is available.</returns>
         public static ExceptionDetail GetExceptionDetail(this IClientError error)
         {
             var detail = new ExceptionDetail();

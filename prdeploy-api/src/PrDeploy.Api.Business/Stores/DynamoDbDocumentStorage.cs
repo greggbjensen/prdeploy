@@ -6,6 +6,8 @@ namespace PrDeploy.Api.Business.Stores;
 /// <summary>
 /// Provides document operations for deployment values and Data Protection keys in DynamoDB.
 /// </summary>
+/// <param name="dynamoDb">AWS SDK client used to query and write DynamoDB items.</param>
+/// <param name="tableName">Name of the table containing deployment and key documents.</param>
 public sealed class DynamoDbDocumentStorage(IAmazonDynamoDB dynamoDb, string tableName)
 {
     private const string DataProtectionPartition = "DATA_PROTECTION";
@@ -130,7 +132,9 @@ public sealed class DynamoDbDocumentStorage(IAmazonDynamoDB dynamoDb, string tab
         }, cancellationToken);
 
     /// <summary>
-    /// Creates the partition key that isolates revisions for one deployment-value path.
+    /// Performs the deployment partition operation and returns its result.
     /// </summary>
+    /// <param name="path">Path used to locate the resource.</param>
+    /// <returns>Text produced or selected by the operation.</returns>
     private static string DeploymentPartition(string path) => $"DEPLOYMENT#{path}";
 }

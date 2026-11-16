@@ -22,10 +22,10 @@ public class WebhookEventDispatcher
     private readonly ILogger<WebhookEventDispatcher> _logger;
 
     /// <summary>
-    /// Initializes a webhook Event Dispatcher with the supplied dependencies.
+    /// Initializes the instance with its required dependencies.
     /// </summary>
-    /// <param name="scopeFactory">Value supplied for scope Factory.</param>
-    /// <param name="clientFactory">Value supplied for client Factory.</param>
+    /// <param name="scopeFactory">Object containing the scope factory data used by the operation.</param>
+    /// <param name="clientFactory">Object containing the client factory data used by the operation.</param>
     /// <param name="logger">Logger used to report operational information and errors.</param>
     public WebhookEventDispatcher(IServiceScopeFactory scopeFactory, IGitHubAppClientFactory clientFactory,
         ILogger<WebhookEventDispatcher> logger)
@@ -38,7 +38,7 @@ public class WebhookEventDispatcher
     /// <summary>
     /// Performs the dispatch operation.
     /// </summary>
-    /// <param name="webhookEvent">Value supplied for webhook Event.</param>
+    /// <param name="webhookEvent">Object containing the webhook event data used by the operation.</param>
     public async Task DispatchAsync(WebhookEvent webhookEvent)
     {
         var payload = webhookEvent.Payload;
@@ -82,7 +82,7 @@ public class WebhookEventDispatcher
     /// <summary>
     /// Performs the route operation.
     /// </summary>
-    /// <param name="webhookEvent">Value supplied for webhook Event.</param>
+    /// <param name="webhookEvent">Object containing the webhook event data used by the operation.</param>
     /// <param name="services">Services to include in the operation.</param>
     private async Task RouteAsync(WebhookEvent webhookEvent, IServiceProvider services)
     {
@@ -141,8 +141,8 @@ public class WebhookEventDispatcher
     /// <summary>
     /// Performs the deserialize operation and returns its result.
     /// </summary>
-    /// <param name="element">Value supplied for element.</param>
-    /// <typeparam name="T">Type used by this operation.</typeparam>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="element">Object containing the element data used by the operation.</param>
+    /// <typeparam name="T">Type of value consumed or produced by this operation.</typeparam>
+    /// <returns>The t produced by the operation.</returns>
     internal static T Deserialize<T>(JsonElement element) => OctokitSerializer.Deserialize<T>(element.GetRawText());
 }

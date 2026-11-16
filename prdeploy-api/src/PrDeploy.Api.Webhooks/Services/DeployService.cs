@@ -25,17 +25,17 @@ public class DeployService
     private readonly ILogger<DeployService> _logger;
 
     /// <summary>
-    /// Initializes a deploy Service with the supplied dependencies.
+    /// Initializes the instance with its required dependencies.
     /// </summary>
     /// <param name="context">Request or application context used by the operation.</param>
-    /// <param name="checkService">Value supplied for check Service.</param>
-    /// <param name="templateService">Value supplied for template Service.</param>
-    /// <param name="slackService">Value supplied for slack Service.</param>
-    /// <param name="deploymentStore">Value supplied for deployment Store.</param>
-    /// <param name="pullRequestService">Value supplied for pull Request Service.</param>
-    /// <param name="deployStateService">Value supplied for deploy State Service.</param>
-    /// <param name="environmentUtil">Value supplied for environment Util.</param>
-    /// <param name="timeProvider">Value supplied for time Provider.</param>
+    /// <param name="checkService">Object containing the check service data used by the operation.</param>
+    /// <param name="templateService">Object containing the template service data used by the operation.</param>
+    /// <param name="slackService">Object containing the Slack service data used by the operation.</param>
+    /// <param name="deploymentStore">Object containing the deployment store data used by the operation.</param>
+    /// <param name="pullRequestService">Object containing the pull request service data used by the operation.</param>
+    /// <param name="deployStateService">Object containing the deploy state service data used by the operation.</param>
+    /// <param name="environmentUtil">Object containing the environment util data used by the operation.</param>
+    /// <param name="timeProvider">Object containing the time provider data used by the operation.</param>
     /// <param name="logger">Logger used to report operational information and errors.</param>
     public DeployService(WebhookContext context, CheckService checkService, TemplateService templateService,
         SlackService slackService, IDeploymentStore deploymentStore, PullRequestService pullRequestService,
@@ -55,18 +55,18 @@ public class DeployService
     }
 
     /// <summary>
-    /// Gets the Settings.
+    /// Gets the settings.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current settings value.</value>
     private DeploySettings Settings => _context.Settings;
     /// <summary>
-    /// Gets the Git Hub.
+    /// Gets the git hub.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current git hub value.</value>
     private IGitHubClient GitHub => _context.GitHub;
 
     /// <summary>
-    /// Attempts to retrigger Deploy; the result indicates whether it succeeded.
+    /// Attempts to retrigger a deployment after the pull request checks complete; the result indicates whether it succeeded.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     public async Task TryRetriggerDeployAsync(PullRequest pullRequest)
@@ -102,13 +102,13 @@ public class DeployService
     }
 
     /// <summary>
-    /// Requests the Deploy from the associated service.
+    /// Requests the deploy from the associated service.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <param name="environment">Deployment environment involved in the operation.</param>
     /// <param name="commentId">Identifier of the GitHub comment associated with the request.</param>
-    /// <param name="force">Value supplied for force.</param>
-    /// <param name="retainLocks">Value supplied for retain Locks.</param>
+    /// <param name="force">Whether the force option is enabled.</param>
+    /// <param name="retainLocks">Whether the retain locks option is enabled.</param>
     public async Task RequestDeployAsync(PullRequest pullRequest, string? environment, long commentId, bool force,
         bool retainLocks)
     {
@@ -140,7 +140,7 @@ public class DeployService
     }
 
     /// <summary>
-    /// Releases the Pull Request for other operations.
+    /// Releases the pull request for other operations.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     public async Task ReleasePullRequestAsync(PullRequest pullRequest)
@@ -164,12 +164,12 @@ public class DeployService
     }
 
     /// <summary>
-    /// Restores the Deploy to a previous state.
+    /// Restores the deploy to a previous state.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <param name="environment">Deployment environment involved in the operation.</param>
     /// <param name="commentId">Identifier of the GitHub comment associated with the request.</param>
-    /// <param name="rollbackCount">Value supplied for rollback Count.</param>
+    /// <param name="rollbackCount">Numeric value used for the rollback count.</param>
     public async Task RollbackDeployAsync(PullRequest pullRequest, string? environment, long commentId,
         int rollbackCount)
     {
@@ -195,7 +195,7 @@ public class DeployService
     }
 
     /// <summary>
-    /// Releases the Deploy so it can be used again.
+    /// Releases the deploy so it can be used again.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <param name="environment">Deployment environment involved in the operation.</param>
@@ -210,7 +210,7 @@ public class DeployService
     }
 
     /// <summary>
-    /// Adds the Services to the associated collection.
+    /// Adds the services to the associated collection.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <param name="services">Services to include in the operation.</param>
@@ -276,11 +276,11 @@ public class DeployService
     }
 
     /// <summary>
-    /// Attempts to get File; the result indicates whether it succeeded.
+    /// Attempts to get file; the result indicates whether it succeeded.
     /// </summary>
     /// <param name="path">Path used to locate the resource.</param>
-    /// <param name="reference">Value supplied for reference.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="reference">Text used as the reference.</param>
+    /// <returns>The repository content produced by the operation.</returns>
     private async Task<RepositoryContent?> TryGetFileAsync(string path, string reference)
     {
         try
@@ -296,10 +296,10 @@ public class DeployService
     }
 
     /// <summary>
-    /// Removes the Pull Request From Queues from the associated collection.
+    /// Removes the pull request from queues from the associated collection.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
-    /// <param name="keepEnvironment">Value supplied for keep Environment.</param>
+    /// <param name="keepEnvironment">Text used as the keep environment.</param>
     private async Task RemovePullRequestFromQueuesAsync(PullRequest pullRequest, string keepEnvironment = "")
     {
         var queueGroups = (Settings.Environments ?? []).GroupBy(e => e.Queue);
@@ -327,11 +327,11 @@ public class DeployService
     }
 
     /// <summary>
-    /// Performs the enqueue Pull Request operation.
+    /// Performs the enqueue pull request operation.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <param name="normalizedEnvironment">Deployment environment involved in the operation.</param>
-    /// <param name="retainLocks">Value supplied for retain Locks.</param>
+    /// <param name="retainLocks">Whether the retain locks option is enabled.</param>
     private async Task EnqueuePullRequestAsync(PullRequest pullRequest, string normalizedEnvironment,
         bool retainLocks)
     {
@@ -391,13 +391,13 @@ public class DeployService
     }
 
     /// <summary>
-    /// Performs the trigger Deploy operation.
+    /// Performs the trigger deploy operation.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <param name="environment">Deployment environment involved in the operation.</param>
-    /// <param name="retainLocks">Value supplied for retain Locks.</param>
-    /// <param name="rollback">Value supplied for rollback.</param>
-    /// <param name="rollbackCount">Value supplied for rollback Count.</param>
+    /// <param name="retainLocks">Whether the retain locks option is enabled.</param>
+    /// <param name="rollback">Whether the rollback option is enabled.</param>
+    /// <param name="rollbackCount">Numeric value used for the rollback count.</param>
     private async Task TriggerDeployAsync(PullRequest pullRequest, string environment, bool retainLocks,
         bool rollback = false, int rollbackCount = 1)
     {
@@ -464,14 +464,14 @@ public class DeployService
     }
 
     /// <summary>
-    /// Performs the trigger Deploy Workflow operation.
+    /// Performs the trigger deploy workflow operation.
     /// </summary>
-    /// <param name="deployName">Value supplied for deploy Name.</param>
+    /// <param name="deployName">Text used as the deploy name.</param>
     /// <param name="environment">Deployment environment involved in the operation.</param>
-    /// <param name="triggeringPullRequest">Value supplied for triggering Pull Request.</param>
-    /// <param name="deployPullRequest">Value supplied for deploy Pull Request.</param>
-    /// <param name="rollback">Value supplied for rollback.</param>
-    /// <param name="rollbackCount">Value supplied for rollback Count.</param>
+    /// <param name="triggeringPullRequest">Object containing the triggering pull request data used by the operation.</param>
+    /// <param name="deployPullRequest">Object containing the deploy pull request data used by the operation.</param>
+    /// <param name="rollback">Whether the rollback option is enabled.</param>
+    /// <param name="rollbackCount">Numeric value used for the rollback count.</param>
     private async Task TriggerDeployWorkflowAsync(string deployName, string environment,
         PullRequest triggeringPullRequest, PullRequest? deployPullRequest, bool rollback, int rollbackCount)
     {
@@ -566,10 +566,10 @@ public class DeployService
     }
 
     /// <summary>
-    /// Converts the supplied value to the Deployed Service.
+    /// Converts the supplied value to the deployed service.
     /// </summary>
-    /// <param name="build">Value supplied for build.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="build">Object containing the build data used by the operation.</param>
+    /// <returns>The deployed service produced by the operation.</returns>
     private static DeployedService ToDeployedService(Build build) => new()
     {
         Name = build.Name,
@@ -578,12 +578,12 @@ public class DeployService
     };
 
     /// <summary>
-    /// Posts the Deploy Failed to the configured destination.
+    /// Posts the deploy failed to the configured destination.
     /// </summary>
     /// <param name="pullNumber">Number identifying the pull request.</param>
     /// <param name="environment">Deployment environment involved in the operation.</param>
-    /// <param name="rollback">Value supplied for rollback.</param>
-    /// <param name="message">Value supplied for message.</param>
+    /// <param name="rollback">Whether the rollback option is enabled.</param>
+    /// <param name="message">Text used as the message.</param>
     private async Task PostDeployFailedAsync(int pullNumber, string? environment, bool rollback, string message)
     {
         var body = _templateService.Render(TemplateService.DeployFailed, new
@@ -601,7 +601,7 @@ public class DeployService
     }
 
     /// <summary>
-    /// Posts the No Deployments Found to the configured destination.
+    /// Posts the no deployments found to the configured destination.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <param name="environment">Deployment environment involved in the operation.</param>
@@ -635,21 +635,21 @@ public class DeployService
     }
 
     /// <summary>
-    /// Adds the Comment Reaction to the associated collection.
+    /// Adds the comment reaction to the associated collection.
     /// </summary>
     /// <param name="commentId">Identifier of the GitHub comment associated with the request.</param>
-    /// <param name="reaction">Value supplied for reaction.</param>
+    /// <param name="reaction">Object containing the reaction data used by the operation.</param>
     private async Task AddCommentReactionAsync(long commentId, ReactionType reaction)
     {
         await GitHub.Reaction.IssueComment.Create(_context.Owner, _context.Repo, commentId, new NewReaction(reaction));
     }
 
     /// <summary>
-    /// Finds and returns the Available Environment For Queue.
+    /// Finds and returns the available environment for queue.
     /// </summary>
     /// <param name="normalizedEnvironment">Deployment environment involved in the operation.</param>
     /// <param name="pullNumber">Number identifying the pull request.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>Items matching the supplied criteria.</returns>
     private async Task<string> FindAvailableEnvironmentForQueueAsync(string normalizedEnvironment, int pullNumber)
     {
         var availableEnvironment = string.Empty;
@@ -695,9 +695,9 @@ public class DeployService
     }
 
     /// <summary>
-    /// Performs the dequeue Pull Requests operation.
+    /// Performs the dequeue pull requests operation.
     /// </summary>
-    /// <param name="normalizedEnvironments">Value supplied for normalized Environments.</param>
+    /// <param name="normalizedEnvironments">Object containing the normalized environments data used by the operation.</param>
     private async Task DequeuePullRequestsAsync(IReadOnlyCollection<string> normalizedEnvironments)
     {
         if (normalizedEnvironments.Count == 0)
@@ -709,7 +709,7 @@ public class DeployService
     }
 
     /// <summary>
-    /// Performs the dequeue Pull Request operation.
+    /// Performs the dequeue pull request operation.
     /// </summary>
     /// <param name="normalizedEnvironment">Deployment environment involved in the operation.</param>
     private async Task DequeuePullRequestAsync(string normalizedEnvironment)
@@ -726,10 +726,10 @@ public class DeployService
     }
 
     /// <summary>
-    /// Posts the Environment Available Message to the configured destination.
+    /// Posts the environment available message to the configured destination.
     /// </summary>
     /// <param name="environment">Deployment environment involved in the operation.</param>
-    /// <param name="takenPullRequest">Value supplied for taken Pull Request.</param>
+    /// <param name="takenPullRequest">Object containing the taken pull request data used by the operation.</param>
     private async Task PostEnvironmentAvailableMessageAsync(string environment, PullRequest? takenPullRequest)
     {
         var takenMessage = takenPullRequest != null
@@ -745,10 +745,10 @@ public class DeployService
     }
 
     /// <summary>
-    /// Retrieves the Queue Pull Numbers.
+    /// Retrieves the queue pull numbers.
     /// </summary>
     /// <param name="normalizedEnvironment">Deployment environment involved in the operation.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     private async Task<List<int>> GetQueuePullNumbersAsync(string normalizedEnvironment)
     {
         var queueName = _environmentUtil.GetRequiredSettings(normalizedEnvironment).Queue;
@@ -763,10 +763,10 @@ public class DeployService
     }
 
     /// <summary>
-    /// Stores or updates the Queue Pull Numbers.
+    /// Stores or updates the queue pull numbers.
     /// </summary>
     /// <param name="normalizedEnvironment">Deployment environment involved in the operation.</param>
-    /// <param name="pullNumbers">Value supplied for pull Numbers.</param>
+    /// <param name="pullNumbers">Object containing the pull numbers data used by the operation.</param>
     private async Task SetQueuePullNumbersAsync(string normalizedEnvironment, List<int> pullNumbers)
     {
         var queueName = _environmentUtil.GetRequiredSettings(normalizedEnvironment).Queue;

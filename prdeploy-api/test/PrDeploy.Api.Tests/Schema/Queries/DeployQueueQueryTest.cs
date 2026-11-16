@@ -11,21 +11,21 @@ using PrDeploy.Api.Tests.Webhooks.Framework;
 namespace PrDeploy.Api.Tests.Schema.Queries;
 
 /// <summary>
-/// Contains tests that verify the behavior of the deploy Queue Query Test.
+/// Contains tests that verify deploy queue query behavior.
 /// </summary>
 public class DeployQueueQueryTest : DeployApiTest
 {
     /// <summary>
     /// Initializes the test fixture and prepares its dependencies.
     /// </summary>
-    /// <param name="factory">Value supplied for factory.</param>
+    /// <param name="factory">Object containing the factory data used by the operation.</param>
     public DeployQueueQueryTest(DeployApiApplicationFactory factory)
         : base(factory)
     {
     }
 
     /// <summary>
-    /// Performs the configure Services operation.
+    /// Configures the services for the current application or test.
     /// </summary>
     /// <param name="services">Services to include in the operation.</param>
     public override void ConfigureServices(IServiceCollection services)
@@ -58,7 +58,7 @@ public class DeployQueueQueryTest : DeployApiTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: returns All Queues.
+    /// Verifies the expected behavior for this scenario: returns all queues.
     /// </summary>
     [Fact]
     public async Task DeployQueues_ReturnsAllQueues()

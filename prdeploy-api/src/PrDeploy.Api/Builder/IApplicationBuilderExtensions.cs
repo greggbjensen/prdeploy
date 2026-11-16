@@ -8,10 +8,10 @@ namespace PrDeploy.Api.Builder
     public static class IApplicationBuilderExtensions
     {
         /// <summary>
-        /// Performs the use Graph Ql Standards operation and returns its result.
+        /// Performs the use graph ql standards operation and returns its result.
         /// </summary>
-        /// <param name="app">Value supplied for app.</param>
-        /// <returns>The value produced by this operation.</returns>
+        /// <param name="app">Object containing the app data used by the operation.</param>
+        /// <returns>The i application builder produced by the operation.</returns>
         public static IApplicationBuilder UseGraphQlStandards(this IApplicationBuilder app)
         {
             return app.UseMiddleware<GraphQlStandardsMiddleware>(); ;

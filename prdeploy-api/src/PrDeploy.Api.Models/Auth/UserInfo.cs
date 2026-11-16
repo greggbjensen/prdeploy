@@ -1,44 +1,44 @@
 namespace PrDeploy.Api.Models.Auth
 {
     /// <summary>
-    /// Represents the user Info used by the application.
+    /// Represents user info data used by the application.
     /// </summary>
     public class UserInfo
     {
         /// <summary>
-        /// Gets or sets the Id.
+        /// Gets or sets the id.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current id value.</value>
         public long Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the Avatar Url.
+        /// Gets or sets the avatar URL.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current avatar URL value.</value>
         public string AvatarUrl { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the Login.
+        /// Gets or sets the login.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current login value.</value>
         public string Login { get; set; }
 
         /// <summary>
-        /// Gets or sets the Name.
+        /// Gets or sets the name.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current name value.</value>
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the Admin.
+        /// Gets or sets the admin.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current admin value.</value>
         public bool Admin { get; set; }
 
         /// <summary>
-        /// Gets or sets the Type.
+        /// Gets or sets the type.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current type value.</value>
         public GitHubAccountType? Type { get; set; }
     }
 }

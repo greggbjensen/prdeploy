@@ -10,11 +10,11 @@ namespace PrDeploy.Api.Middleware
         private readonly IHostEnvironment _hostEnvironment;
 
         /// <summary>
-        /// Initializes a graph Ql Standards Middleware with the supplied dependencies.
+        /// Initializes the instance with its required dependencies.
         /// </summary>
-        /// <param name="next">Value supplied for next.</param>
+        /// <param name="next">Object containing the next data used by the operation.</param>
         /// <param name="logger">Logger used to report operational information and errors.</param>
-        /// <param name="hostEnvironment">Value supplied for host Environment.</param>
+        /// <param name="hostEnvironment">Object containing the host environment data used by the operation.</param>
         public GraphQlStandardsMiddleware(RequestDelegate next, ILogger<GraphQlStandardsMiddleware> logger,
             IHostEnvironment hostEnvironment)
         {
@@ -46,9 +46,9 @@ namespace PrDeploy.Api.Middleware
         }
 
         /// <summary>
-        /// Performs the on Response Starting operation.
+        /// Performs the on response starting operation.
         /// </summary>
-        /// <param name="arg">Value supplied for arg.</param>
+        /// <param name="arg">Object containing the arg data used by the operation.</param>
         private Task OnResponseStarting(object arg)
         {
             HttpContext context = (HttpContext)arg;

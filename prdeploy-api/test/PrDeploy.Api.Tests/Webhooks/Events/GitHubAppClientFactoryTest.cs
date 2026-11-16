@@ -11,7 +11,7 @@ using MsOptions = Microsoft.Extensions.Options.Options;
 namespace PrDeploy.Api.Tests.Webhooks.Events;
 
 /// <summary>
-/// Contains tests that verify the behavior of the git Hub App Client Factory Test.
+/// Contains tests that verify git hub app client factory behavior.
 /// </summary>
 public class GitHubAppClientFactoryTest
 {
@@ -19,7 +19,7 @@ public class GitHubAppClientFactoryTest
     private readonly FakeTimeProvider _time = new(new DateTimeOffset(2026, 11, 15, 12, 0, 0, TimeSpan.Zero));
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: creates Signed Jwt For App.
+    /// Verifies the expected behavior for this scenario: creates signed JWT for app.
     /// </summary>
     [Fact]
     public void CreateAppJwt_CreatesSignedJwtForApp()
@@ -44,7 +44,7 @@ public class GitHubAppClientFactoryTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: caches Installation Tokens Until Near Expiry.
+    /// Verifies the expected behavior for this scenario: caches installation tokens until near expiry.
     /// </summary>
     [Fact]
     public async Task CreateInstallationClientAsync_CachesInstallationTokensUntilNearExpiry()
@@ -69,10 +69,10 @@ public class GitHubAppClientFactoryTest
     }
 
     /// <summary>
-    /// Creates the Factory from the supplied inputs.
+    /// Creates the factory from the supplied inputs.
     /// </summary>
-    /// <param name="createToken">Value supplied for create Token.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="createToken">Object containing the create token data used by the operation.</param>
+    /// <returns>The object created from the supplied inputs.</returns>
     private GitHubAppClientFactory CreateFactory(Func<IGitHubClient, long, Task<AccessToken>> createToken)
     {
         var options = MsOptions.Create(new GitHubAppOptions { AppId = "12345", PrivateKey = _rsa.ExportRSAPrivateKeyPem() });
@@ -80,10 +80,10 @@ public class GitHubAppClientFactoryTest
     }
 
     /// <summary>
-    /// Performs the base64 Url Decode operation and returns its result.
+    /// Performs the base64 URL decode operation and returns its result.
     /// </summary>
     /// <param name="value">Value to store or process.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The byte[] produced by the operation.</returns>
     private static byte[] Base64UrlDecode(string value)
     {
         var base64 = value.Replace('-', '+').Replace('_', '/');

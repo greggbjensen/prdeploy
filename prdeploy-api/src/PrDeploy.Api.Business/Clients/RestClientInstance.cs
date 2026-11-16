@@ -4,20 +4,20 @@ using RestSharp;
 namespace PrDeploy.Api.Business.Clients
 {
     /// <summary>
-    /// Represents the rest Client Instance used by the application.
+    /// Represents rest client instance data used by the application.
     /// </summary>
     public class RestClientInstance<TOptions> : IRestClientInstance<TOptions>
         where TOptions : class
     {
         /// <summary>
-        /// Gets or sets the Options.
+        /// Gets or sets the options.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current options value.</value>
         public TOptions Options { get; set; } = null!;
         /// <summary>
-        /// Gets or sets the Rest Client.
+        /// Gets or sets the rest client.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current rest client value.</value>
         public IRestClient RestClient { get; set; } = null!;
     }
 }

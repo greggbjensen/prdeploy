@@ -29,16 +29,16 @@ public class StatusService
     private readonly ILogger<StatusService> _logger;
 
     /// <summary>
-    /// Initializes a status Service with the supplied dependencies.
+    /// Initializes the instance with its required dependencies.
     /// </summary>
     /// <param name="context">Request or application context used by the operation.</param>
-    /// <param name="templateService">Value supplied for template Service.</param>
-    /// <param name="slackService">Value supplied for slack Service.</param>
-    /// <param name="checkService">Value supplied for check Service.</param>
-    /// <param name="deployStateService">Value supplied for deploy State Service.</param>
-    /// <param name="pullRequestService">Value supplied for pull Request Service.</param>
-    /// <param name="environmentUtil">Value supplied for environment Util.</param>
-    /// <param name="cache">Value supplied for cache.</param>
+    /// <param name="templateService">Object containing the template service data used by the operation.</param>
+    /// <param name="slackService">Object containing the Slack service data used by the operation.</param>
+    /// <param name="checkService">Object containing the check service data used by the operation.</param>
+    /// <param name="deployStateService">Object containing the deploy state service data used by the operation.</param>
+    /// <param name="pullRequestService">Object containing the pull request service data used by the operation.</param>
+    /// <param name="environmentUtil">Object containing the environment util data used by the operation.</param>
+    /// <param name="cache">Object containing the cache data used by the operation.</param>
     /// <param name="logger">Logger used to report operational information and errors.</param>
     public StatusService(WebhookContext context, TemplateService templateService, SlackService slackService,
         CheckService checkService, DeployStateService deployStateService, PullRequestService pullRequestService,
@@ -56,10 +56,10 @@ public class StatusService
     }
 
     /// <summary>
-    /// Posts the Deploy Completed to the configured destination.
+    /// Posts the deploy completed to the configured destination.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
-    /// <param name="run">Value supplied for run.</param>
+    /// <param name="run">Object containing the run data used by the operation.</param>
     public async Task PostDeployCompletedAsync(PullRequest pullRequest, WorkflowRun run)
     {
         var environment = _pullRequestService.GetEnvironment(pullRequest, run);
@@ -183,10 +183,10 @@ public class StatusService
     }
 
     /// <summary>
-    /// Posts the Deploy Started to the configured destination.
+    /// Posts the deploy started to the configured destination.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
-    /// <param name="run">Value supplied for run.</param>
+    /// <param name="run">Object containing the run data used by the operation.</param>
     public async Task PostDeployStartedAsync(PullRequest pullRequest, WorkflowRun run)
     {
         // We need to retrieve the workflow run to get the correct title as it was not set yet.

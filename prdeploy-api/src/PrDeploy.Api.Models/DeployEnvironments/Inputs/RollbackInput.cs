@@ -1,14 +1,14 @@
 namespace PrDeploy.Api.Models.DeployEnvironments.Inputs
 {
     /// <summary>
-    /// Carries input values for the rollback Input.
+    /// Carries input values for rollback operations.
     /// </summary>
     public class RollbackInput : PullDeployInput
     {
         /// <summary>
-        /// Gets or sets the Count.
+        /// Gets or sets the count.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current count value.</value>
         public int Count { get; set; } = 0;
     }
 }

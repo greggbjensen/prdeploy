@@ -1,19 +1,19 @@
 namespace PrDeploy.Api.Models.DeployEnvironments
 {
     /// <summary>
-    /// Represents the deploy State used by the application.
+    /// Represents deploy state data used by the application.
     /// </summary>
     public class DeployState
     {
         /// <summary>
-        /// Gets or sets the Pull Number.
+        /// Gets or sets the pull number.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current pull number value.</value>
         public int PullNumber { get; set; }
         /// <summary>
-        /// Gets or sets the Services.
+        /// Gets or sets the services.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current services value.</value>
         public List<DeployedService>? Services { get; set; } = null!;
     }
 }

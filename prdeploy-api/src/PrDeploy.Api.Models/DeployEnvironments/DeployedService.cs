@@ -1,24 +1,24 @@
 namespace PrDeploy.Api.Models.DeployEnvironments
 {
     /// <summary>
-    /// Coordinates operations for the deployed Service and its collaborators.
+    /// Coordinates deployed operations and their collaborators.
     /// </summary>
     public class DeployedService
     {
         /// <summary>
-        /// Gets or sets the Name.
+        /// Gets or sets the name.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current name value.</value>
         public string Name { get; set; } = string.Empty;
         /// <summary>
-        /// Gets or sets the Run Id.
+        /// Gets or sets the run id.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current run id value.</value>
         public long RunId { get; set; }
         /// <summary>
-        /// Gets or sets the Version.
+        /// Gets or sets the version.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current version value.</value>
         public string Version { get; set; } = string.Empty;
     }
 }

@@ -4,7 +4,7 @@ using Octokit;
 namespace PrDeploy.Api.Tests.Webhooks.Framework;
 
 /// <summary>
-/// Represents the git Hub Mock Extensions used by the application.
+/// Represents git hub mock extensions data used by the application.
 /// </summary>
 public static class GitHubMockExtensions
 {
@@ -33,11 +33,11 @@ public static class GitHubMockExtensions
     }
 
     /// <summary>
-    /// Stores or updates the Setup Checks.
+    /// Stores or updates the setup checks.
     /// </summary>
-    /// <param name="host">Value supplied for host.</param>
-    /// <param name="reference">Value supplied for reference.</param>
-    /// <param name="checks">Value supplied for checks.</param>
+    /// <param name="host">Object containing the host data used by the operation.</param>
+    /// <param name="reference">Text used as the reference.</param>
+    /// <param name="checks">Object containing the checks data used by the operation.</param>
     public static void SetupChecks(this WebhookTestHost host, string reference,
         params (string Name, string Status, string? Conclusion, long RunId)[] checks)
     {
@@ -47,9 +47,9 @@ public static class GitHubMockExtensions
     }
 
     /// <summary>
-    /// Stores or updates the Setup Pull Request.
+    /// Stores or updates the setup pull request.
     /// </summary>
-    /// <param name="host">Value supplied for host.</param>
+    /// <param name="host">Object containing the host data used by the operation.</param>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     public static void SetupPullRequest(this WebhookTestHost host, PullRequest pullRequest)
     {
@@ -59,10 +59,10 @@ public static class GitHubMockExtensions
     }
 
     /// <summary>
-    /// Stores or updates the Setup Deployed Pull Requests.
+    /// Stores or updates the setup deployed pull requests.
     /// </summary>
-    /// <param name="host">Value supplied for host.</param>
-    /// <param name="pullRequests">Value supplied for pull Requests.</param>
+    /// <param name="host">Object containing the host data used by the operation.</param>
+    /// <param name="pullRequests">Object containing the pull requests data used by the operation.</param>
     public static void SetupDeployedPullRequests(this WebhookTestHost host, params PullRequest[] pullRequests)
     {
         host.MockOf(host.GitHub.Object.PullRequest)
@@ -71,10 +71,10 @@ public static class GitHubMockExtensions
     }
 
     /// <summary>
-    /// Stores or updates the Setup User.
+    /// Stores or updates the setup user.
     /// </summary>
-    /// <param name="host">Value supplied for host.</param>
-    /// <param name="login">Value supplied for login.</param>
+    /// <param name="host">Object containing the host data used by the operation.</param>
+    /// <param name="login">Text used as the login.</param>
     /// <param name="name">Name used to identify the value or resource.</param>
     public static void SetupUser(this WebhookTestHost host, string login, string? name = null)
     {
@@ -111,10 +111,10 @@ public static class GitHubMockExtensions
     }
 
     /// <summary>
-    /// Performs the capture Dispatches operation and returns its result.
+    /// Performs the capture dispatches operation and returns its result.
     /// </summary>
-    /// <param name="host">Value supplied for host.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="host">Object containing the host data used by the operation.</param>
+    /// <returns>The collection of items produced by the operation.</returns>
     public static List<(string Workflow, CreateWorkflowDispatch Dispatch)> CaptureDispatches(this WebhookTestHost host)
     {
         var dispatches = new List<(string, CreateWorkflowDispatch)>();

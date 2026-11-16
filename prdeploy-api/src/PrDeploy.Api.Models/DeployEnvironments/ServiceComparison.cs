@@ -4,44 +4,44 @@ using HotChocolate.Types;
 namespace PrDeploy.Api.Models.DeployEnvironments
 {
     /// <summary>
-    /// Represents the service Comparison used by the application.
+    /// Represents service comparison data used by the application.
     /// </summary>
     [GraphQLDescription("Comparison of services between a source and target environment.")]
     public class ServiceComparison
     {
         /// <summary>
-        /// Gets or sets the Name.
+        /// Gets or sets the name.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current name value.</value>
         [GraphQLType(typeof(IdType))]
         [GraphQLDescription("Name of the service deployed.")]
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the Source Run Id.
+        /// Gets or sets the source run id.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current source run id value.</value>
         [GraphQLDescription("Workflow run ID of the source service.")]
         public long SourceRunId { get; set; }
 
         /// <summary>
-        /// Gets or sets the Source Version.
+        /// Gets or sets the source version.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current source version value.</value>
         [GraphQLDescription("Version of the source service.")]
         public string SourceVersion { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the Target Run Id.
+        /// Gets or sets the target run id.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current target run id value.</value>
         [GraphQLDescription("Workflow run ID of the target service.")]
         public long TargetRunId { get; set; }
 
         /// <summary>
-        /// Gets or sets the Target Version.
+        /// Gets or sets the target version.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current target version value.</value>
         [GraphQLDescription("Version of the target service.")]
         public string TargetVersion { get; set; } = string.Empty;
     }

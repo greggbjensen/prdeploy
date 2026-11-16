@@ -1,18 +1,18 @@
 namespace PrDeploy.Api.Models.Settings.Compare;
 
 /// <summary>
-/// Represents the slack Web Hooks Settings Compare used by the application.
+/// Represents Slack web hooks settings compare data used by the application.
 /// </summary>
 public class SlackWebHooksSettingsCompare
 {
     /// <summary>
-    /// Gets or sets the Deploy Url.
+    /// Gets or sets the deploy URL.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current deploy URL value.</value>
     public OwnerRepoValue<string> DeployUrl { get; set; } = null!;
     /// <summary>
-    /// Gets or sets the Release Url.
+    /// Gets or sets the release URL.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current release URL value.</value>
     public OwnerRepoValue<string> ReleaseUrl { get; set; } = null!;
 }

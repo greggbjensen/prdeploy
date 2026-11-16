@@ -27,8 +27,8 @@ public record WebhookEvent(string Name, string Action, string DeliveryId, JsonEl
     ];
 
     /// <summary>
-    /// Gets the Is Handled.
+    /// Gets the is handled.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current is handled value.</value>
     public bool IsHandled => HandledEvents.Contains($"{Name}.{Action}");
 }

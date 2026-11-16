@@ -1,59 +1,59 @@
 namespace PrDeploy.Api.Models.Settings.Compare
 {
     /// <summary>
-    /// Represents the deploy Settings Compare used by the application.
+    /// Represents deploy settings compare data used by the application.
     /// </summary>
     public class DeploySettingsCompare
     {
         /// <summary>
-        /// Gets or sets the Deploy Workflow.
+        /// Gets or sets the deploy workflow.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current deploy workflow value.</value>
         public OwnerRepoValue<string> DeployWorkflow { get; set; } = null!;
         /// <summary>
-        /// Gets or sets the Environments.
+        /// Gets or sets the environments.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current environments value.</value>
         public OwnerRepoValue<List<EnvironmentSettings>> Environments { get; set; } = null!;
         /// <summary>
-        /// Gets or sets the Services.
+        /// Gets or sets the services.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current services value.</value>
         public OwnerRepoValue<List<ServiceSettings>> Services { get; set; } = new();
         /// <summary>
-        /// Gets or sets the Default Environment.
+        /// Gets or sets the default environment.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current default environment value.</value>
         public OwnerRepoValue<string> DefaultEnvironment { get; set; } = null!;
         /// <summary>
-        /// Gets or sets the Release Environment.
+        /// Gets or sets the release environment.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current release environment value.</value>
         public OwnerRepoValue<string> ReleaseEnvironment { get; set; } = null!;
         /// <summary>
         /// Gets or sets the Jira.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current Jira value.</value>
         public JiraSettingsCompare Jira { get; set; } = null!;
         /// <summary>
-        /// Gets or sets the Builds.
+        /// Gets or sets the builds.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current builds value.</value>
         public BuildsSettingsCompare Builds { get; set; } = null!;
         /// <summary>
         /// Gets or sets the Slack.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current Slack value.</value>
         public SlackSettingsCompare Slack { get; set; } = null!;
         /// <summary>
-        /// Gets or sets the Prdeploy Portal Url.
+        /// Gets or sets the PrDeploy portal URL.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current PrDeploy portal URL value.</value>
         public OwnerRepoValue<string> PrdeployPortalUrl { get; set; } = null!;
         /// <summary>
-        /// Gets or sets the Badge.
+        /// Gets or sets the badge.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current badge value.</value>
         public BadgeSettingsCompare Badge { get; set; } = null!;
     }
 }

@@ -1,7 +1,7 @@
 namespace PrDeploy.Api.Configuration
 {
     /// <summary>
-    /// Represents the dot Env used by the application.
+    /// Represents dot env data used by the application.
     /// </summary>
     public class DotEnv
     {
@@ -9,7 +9,7 @@ namespace PrDeploy.Api.Configuration
         /// <summary>
         /// Performs the load operation.
         /// </summary>
-        /// <param name="filePath">Value supplied for file Path.</param>
+        /// <param name="filePath">Text used as the file path.</param>
         public static void Load(string filePath)
         {
             if (!File.Exists(filePath))

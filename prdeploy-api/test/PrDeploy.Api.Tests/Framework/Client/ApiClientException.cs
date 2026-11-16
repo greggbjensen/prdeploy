@@ -11,18 +11,18 @@ namespace PrDeploy.Api.Tests.Framework.Client
         private readonly string? _stackTrace = null;
 
         /// <summary>
-        /// Initializes a api Client Exception with the supplied dependencies.
+        /// Initializes the instance with its required dependencies.
         /// </summary>
-        /// <param name="message">Value supplied for message.</param>
+        /// <param name="message">Text used as the message.</param>
         public ApiClientException(string message)
             : this(new ClientError(message))
         {
         }
 
         /// <summary>
-        /// Initializes a api Client Exception with the supplied dependencies.
+        /// Initializes the instance with its required dependencies.
         /// </summary>
-        /// <param name="error">Value supplied for error.</param>
+        /// <param name="error">Object containing the error data used by the operation.</param>
         public ApiClientException(IClientError error)
         {
             ArgumentNullException.ThrowIfNull(error);
@@ -32,9 +32,9 @@ namespace PrDeploy.Api.Tests.Framework.Client
         }
 
         /// <summary>
-        /// Initializes a api Client Exception with the supplied dependencies.
+        /// Initializes the instance with its required dependencies.
         /// </summary>
-        /// <param name="errors">Value supplied for errors.</param>
+        /// <param name="errors">Object containing the errors data used by the operation.</param>
         public ApiClientException(params IClientError[] errors)
         {
             ArgumentNullException.ThrowIfNull(errors);
@@ -73,9 +73,9 @@ namespace PrDeploy.Api.Tests.Framework.Client
         }
 
         /// <summary>
-        /// Initializes a api Client Exception with the supplied dependencies.
+        /// Initializes the instance with its required dependencies.
         /// </summary>
-        /// <param name="errors">Value supplied for errors.</param>
+        /// <param name="errors">Object containing the errors data used by the operation.</param>
         public ApiClientException(IEnumerable<IClientError> errors)
             // We pass this null safe to the constructor using arrays and let it throw there
             // with a proper ArgumentNullException.
@@ -89,9 +89,9 @@ namespace PrDeploy.Api.Tests.Framework.Client
         public sealed override string Message { get; }
 
         /// <summary>
-        /// Gets the Stack Trace.
+        /// Gets the stack trace.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current stack trace value.</value>
         public override string? StackTrace => _stackTrace;
 
         /// <summary>

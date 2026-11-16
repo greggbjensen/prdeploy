@@ -1,8 +1,16 @@
+using System.Text.Encodings.Web;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using PrDeploy.Api.Business.Auth;
+using PrDeploy.Api.Business.Security.Interfaces;
 using PrDeploy.Api.Business.Stores;
 using PrDeploy.Api.Business.Stores.Interfaces;
 using PrDeploy.Api.Tests.Webhooks.Framework;
@@ -20,15 +28,15 @@ public class DeployApiApplicationFactory : WebApplicationFactory<Program>
         Guid.NewGuid().ToString("N"));
 
     /// <summary>
-    /// Gets or sets the Configure Services.
+    /// Gets or sets the configure services.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current configure services value.</value>
     public Action<IServiceCollection>? ConfigureServices { get; set; }
 
     /// <summary>
-    /// Gets or sets the Configure Test Services.
+    /// Gets or sets the configure test services.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current configure test services value.</value>
     public Action<IServiceCollection>? ConfigureTestServices { get; set; }
 
     /// <summary>
@@ -38,6 +46,16 @@ public class DeployApiApplicationFactory : WebApplicationFactory<Program>
     {
         builder.ConfigureTestServices(services =>
         {
+            services.AddAuthentication("Test")
+                .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>("Test", _ => { });
+            services.PostConfigure<AuthenticationOptions>(options =>
+            {
+                options.DefaultAuthenticateScheme = "Test";
+                options.DefaultChallengeScheme = "Test";
+                options.DefaultScheme = "Test";
+            });
+            services.RemoveAll<IGitHubSecurity>();
+            services.AddSingleton<IGitHubSecurity, TestGitHubSecurity>();
             ConfigureTestServices?.Invoke(services);
         });
 
@@ -79,5 +97,34 @@ public class DeployApiApplicationFactory : WebApplicationFactory<Program>
         {
             Directory.Delete(_storageDirectory, recursive: true);
         }
+    }
+
+    private sealed class TestAuthenticationHandler(
+        IOptionsMonitor<AuthenticationSchemeOptions> options,
+        ILoggerFactory logger,
+        UrlEncoder encoder) : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
+    {
+        protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+        {
+            var claims = new[]
+            {
+                new Claim(PrDeployClaimNames.GitHubToken, "test-token"),
+                new Claim(JwtRegisteredClaimNames.Name, "test-user")
+            };
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, Scheme.Name));
+            var ticket = new AuthenticationTicket(principal, Scheme.Name);
+            return Task.FromResult(AuthenticateResult.Success(ticket));
+        }
+    }
+
+    private sealed class TestGitHubSecurity : IGitHubSecurity
+    {
+        public Task GuardRepoAsync(string owner, string repo) => Task.CompletedTask;
+
+        public Task GuardOwnerAsync(string owner) => Task.CompletedTask;
+
+        public Task<bool> HasRepoAccessAsync(string owner, string repo) => Task.FromResult(true);
+
+        public Task<bool> HasOwnerAccessAsync(string owner) => Task.FromResult(true);
     }
 }

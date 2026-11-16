@@ -6,7 +6,7 @@ using PullRequest = Octokit.PullRequest;
 
 namespace PrDeploy.Api.Tests.Framework;
 /// <summary>
-/// Represents the mocker used by the application.
+/// Represents mocker data used by the application.
 /// </summary>
 public static partial class Mocker
 {
@@ -17,8 +17,8 @@ public static partial class Mocker
     /// Determines whether the issue condition holds.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
-    /// <param name="user">Value supplied for user.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="user">Object containing the user data used by the operation.</param>
+    /// <returns>The issue produced by the operation.</returns>
     public static Issue Issue(Models.PullRequests.PullRequest pullRequest, DeployUser user) =>
         new(null,
             pullRequest.Url,
@@ -52,11 +52,11 @@ public static partial class Mocker
             null);
 
     /// <summary>
-    /// Performs the pull Request operation and returns its result.
+    /// Performs the pull request operation and returns its result.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
-    /// <param name="user">Value supplied for user.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="user">Object containing the user data used by the operation.</param>
+    /// <returns>The pull request produced by the operation.</returns>
     public static PullRequest PullRequest(Models.PullRequests.PullRequest pullRequest, DeployUser user) =>
         new (81234,
             null,
@@ -105,8 +105,8 @@ public static partial class Mocker
     /// Performs the label operation and returns its result.
     /// </summary>
     /// <param name="name">Name used to identify the value or resource.</param>
-    /// <param name="color">Value supplied for color.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="color">Text used as the color.</param>
+    /// <returns>The label produced by the operation.</returns>
     public static Label Label(string name, string color) => new(
         1,
         null,
@@ -119,8 +119,8 @@ public static partial class Mocker
     /// <summary>
     /// Performs the user operation and returns its result.
     /// </summary>
-    /// <param name="user">Value supplied for user.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="user">Object containing the user data used by the operation.</param>
+    /// <returns>The user produced by the operation.</returns>
     public static User User(DeployUser user) => new(
         null,
         null,
@@ -153,11 +153,11 @@ public static partial class Mocker
         null);
 
     /// <summary>
-    /// Performs the repository Variable operation and returns its result.
+    /// Performs the repository variable operation and returns its result.
     /// </summary>
     /// <param name="name">Name used to identify the value or resource.</param>
     /// <param name="value">Value to store or process.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The repository variable produced by the operation.</returns>
     public static RepositoryVariable RepositoryVariable(string name, string value) => new(
         name,
         value,
@@ -165,9 +165,9 @@ public static partial class Mocker
         new DateTimeOffset(2023, 10, 17, 14, 0, 0, TimeSpan.Zero));
 
     /// <summary>
-    /// Determines whether the issue Comment condition holds.
+    /// Determines whether the issue comment condition holds.
     /// </summary>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The issue comment produced by the operation.</returns>
     public static IssueComment IssueComment() => new(
         9852,
         null,

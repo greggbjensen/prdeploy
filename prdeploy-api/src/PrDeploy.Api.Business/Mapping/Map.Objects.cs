@@ -6,15 +6,15 @@ using Repository = PrDeploy.Api.Models.OwnerRepo.Repository;
 
 namespace PrDeploy.Api.Business.Mapping;
 /// <summary>
-/// Represents the map used by the application.
+/// Represents map data used by the application.
 /// </summary>
 public static partial class Map
 {
     /// <summary>
-    /// Performs the user Info operation and returns its result.
+    /// Performs the user info operation and returns its result.
     /// </summary>
     /// <param name="source">Source environment or value for the operation.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The user info produced by the operation.</returns>
     public static UserInfo? UserInfo(User? source) =>
         source != null
             ? new UserInfo
@@ -29,10 +29,10 @@ public static partial class Map
             : null;
 
     /// <summary>
-    /// Performs the pull Request operation and returns its result.
+    /// Performs the pull request operation and returns its result.
     /// </summary>
     /// <param name="source">Source environment or value for the operation.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The pull request produced by the operation.</returns>
     public static PullRequest? PullRequest(Octokit.PullRequest? source) =>
         source != null
             ? new PullRequest
@@ -47,10 +47,10 @@ public static partial class Map
             : null;
 
     /// <summary>
-    /// Performs the pull Request operation and returns its result.
+    /// Performs the pull request operation and returns its result.
     /// </summary>
     /// <param name="source">Source environment or value for the operation.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The pull request produced by the operation.</returns>
     public static PullRequest? PullRequest(Octokit.Issue? source) =>
         source != null
             ? new PullRequest
@@ -65,10 +65,10 @@ public static partial class Map
             : null;
 
     /// <summary>
-    /// Performs the deploy User operation and returns its result.
+    /// Performs the deploy user operation and returns its result.
     /// </summary>
     /// <param name="source">Source environment or value for the operation.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The deploy user produced by the operation.</returns>
     public static DeployUser? DeployUser(Octokit.User? source) =>
         source != null
             ? new DeployUser
@@ -82,7 +82,7 @@ public static partial class Map
     /// Performs the repository operation and returns its result.
     /// </summary>
     /// <param name="source">Source environment or value for the operation.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The repository produced by the operation.</returns>
     public static Repository? Repository(Octokit.Repository? source) =>
         source != null
             ? new Repository { Owner = source.Owner.Login, Repo = source.Name }

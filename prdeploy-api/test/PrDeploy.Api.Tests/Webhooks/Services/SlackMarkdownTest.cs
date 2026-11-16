@@ -3,15 +3,15 @@ using PrDeploy.Api.Webhooks.Utils;
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
 /// <summary>
-/// Contains tests that verify the behavior of the slack Markdown Test.
+/// Contains tests that verify Slack markdown behavior.
 /// </summary>
 public class SlackMarkdownTest
 {
     /// <summary>
-    /// Verifies the expected behavior for this scenario: converts Inline Markdown.
+    /// Verifies the expected behavior for this scenario: converts inline markdown.
     /// </summary>
-    /// <param name="markdown">Value supplied for markdown.</param>
-    /// <param name="expected">Value supplied for expected.</param>
+    /// <param name="markdown">Text used as the markdown.</param>
+    /// <param name="expected">Text used as the expected.</param>
     [Theory]
     [InlineData("**Bold text** and *italic text*", "*Bold text* and _italic text_")]
     [InlineData("__bold__ and _italic_", "*bold* and _italic_")]
@@ -33,7 +33,7 @@ public class SlackMarkdownTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: converts Lists.
+    /// Verifies the expected behavior for this scenario: converts lists.
     /// </summary>
     [Fact]
     public void Convert_ConvertsLists()
@@ -43,7 +43,7 @@ public class SlackMarkdownTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: keeps Code Blocks Untouched.
+    /// Verifies the expected behavior for this scenario: keeps code blocks untouched.
     /// </summary>
     [Fact]
     public void Convert_KeepsCodeBlocksUntouched()
@@ -53,7 +53,7 @@ public class SlackMarkdownTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: collapses Extra Blank Lines.
+    /// Verifies the expected behavior for this scenario: collapses extra blank lines.
     /// </summary>
     [Fact]
     public void Convert_CollapsesExtraBlankLines()

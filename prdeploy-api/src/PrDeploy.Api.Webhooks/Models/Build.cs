@@ -1,33 +1,33 @@
 namespace PrDeploy.Api.Webhooks.Models;
 
 /// <summary>
-/// Represents the build used by the application.
+/// Represents build data used by the application.
 /// </summary>
 public class Build
 {
     /// <summary>
-    /// Gets or sets the Run Id.
+    /// Gets or sets the run id.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current run id value.</value>
     public long RunId { get; set; }
     /// <summary>
-    /// Gets or sets the Name.
+    /// Gets or sets the name.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current name value.</value>
     public string Name { get; set; } = string.Empty;
     /// <summary>
-    /// Gets or sets the Version.
+    /// Gets or sets the version.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current version value.</value>
     public string Version { get; set; } = string.Empty;
     /// <summary>
-    /// Gets or sets the Title.
+    /// Gets or sets the title.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current title value.</value>
     public string? Title { get; set; }
     /// <summary>
-    /// Gets or sets the Url.
+    /// Gets or sets the URL.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current URL value.</value>
     public string? Url { get; set; }
 }

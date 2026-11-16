@@ -5,24 +5,24 @@ using PrDeploy.Api.Business.Auth.Interfaces;
 namespace PrDeploy.Api.Auth
 {
     /// <summary>
-    /// Represents the security Context used by the application.
+    /// Represents security context data used by the application.
     /// </summary>
     public class SecurityContext : ISecurityContext
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         /// <summary>
-        /// Initializes a security Context with the supplied dependencies.
+        /// Initializes the instance with its required dependencies.
         /// </summary>
-        /// <param name="httpContextAccessor">Value supplied for http Context Accessor.</param>
+        /// <param name="httpContextAccessor">Object containing the HTTP context accessor data used by the operation.</param>
         public SecurityContext(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
         }
 
         /// <summary>
-        /// Gets the User Token.
+        /// Gets the user token.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current user token value.</value>
         public string UserToken
         {
             get
@@ -38,9 +38,9 @@ namespace PrDeploy.Api.Auth
         }
 
         /// <summary>
-        /// Gets the Login.
+        /// Gets the login.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current login value.</value>
         public string Login
         {
             get

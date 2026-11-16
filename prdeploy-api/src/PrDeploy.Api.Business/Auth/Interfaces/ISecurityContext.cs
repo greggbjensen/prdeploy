@@ -6,13 +6,13 @@ namespace PrDeploy.Api.Business.Auth.Interfaces;
 public interface ISecurityContext
 {
     /// <summary>
-    /// Gets the User Token.
+    /// Gets the user token.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current user token value.</value>
     string UserToken { get; }
     /// <summary>
-    /// Gets the Login.
+    /// Gets the login.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current login value.</value>
     string Login { get; }
 }

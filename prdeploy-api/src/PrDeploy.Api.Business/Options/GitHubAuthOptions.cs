@@ -1,24 +1,24 @@
 namespace PrDeploy.Api.Business.Options
 {
     /// <summary>
-    /// Defines configuration options for the git Hub Auth Options.
+    /// Defines configuration options for git hub auth.
     /// </summary>
     public class GitHubAuthOptions
     {
         /// <summary>
-        /// Gets or sets the Authority.
+        /// Gets or sets the authority.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current authority value.</value>
         public string Authority { get; set; } = string.Empty;
         /// <summary>
-        /// Gets or sets the Client Id.
+        /// Gets or sets the client id.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current client id value.</value>
         public string ClientId { get; set; } = string.Empty;
         /// <summary>
-        /// Gets or sets the Client Secret.
+        /// Gets or sets the client secret.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current client secret value.</value>
         public string ClientSecret { get; set; } = string.Empty;
     }
 }

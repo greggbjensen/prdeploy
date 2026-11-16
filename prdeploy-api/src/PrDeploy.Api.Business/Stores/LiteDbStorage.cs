@@ -40,7 +40,7 @@ public sealed class LiteDbStorage : IDisposable
         _database.GetCollection<T>(name);
 
     /// <summary>
-    /// Releases the database handle.
+    /// Releases resources owned by this instance.
     /// </summary>
     public void Dispose() => _database.Dispose();
 }

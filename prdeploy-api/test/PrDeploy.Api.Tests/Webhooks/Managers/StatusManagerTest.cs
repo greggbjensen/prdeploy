@@ -6,7 +6,7 @@ using PrDeploy.Api.Webhooks.Managers;
 namespace PrDeploy.Api.Tests.Webhooks.Managers;
 
 /// <summary>
-/// Contains tests that verify the behavior of the status Manager Test.
+/// Contains tests that verify status manager behavior.
 /// </summary>
 public class StatusManagerTest : IDisposable
 {
@@ -22,10 +22,10 @@ public class StatusManagerTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: matches Configured Deploy Workflow.
+    /// Verifies the expected behavior for this scenario: matches configured deploy workflow.
     /// </summary>
     /// <param name="path">Path used to locate the resource.</param>
-    /// <param name="expected">Value supplied for expected.</param>
+    /// <param name="expected">Whether the expected option is enabled.</param>
     [Theory]
     [InlineData(".github/workflows/deploy.yml", true)]
     [InlineData(".github/workflows/DEPLOY.yml", true)]
@@ -37,7 +37,7 @@ public class StatusManagerTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: retriggers Deploy When Build Completes.
+    /// Verifies the expected behavior for this scenario: retriggers deploy when build completes.
     /// </summary>
     [Fact]
     public async Task ProcessWorkflowRunAsync_RetriggersDeployWhenBuildCompletes()
@@ -63,7 +63,7 @@ public class StatusManagerTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: ignores Runs Without Pull Request.
+    /// Verifies the expected behavior for this scenario: ignores runs without pull request.
     /// </summary>
     [Fact]
     public async Task ProcessWorkflowRunAsync_IgnoresRunsWithoutPullRequest()
@@ -79,7 +79,7 @@ public class StatusManagerTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: promotes Release To Stable When Merged.
+    /// Verifies the expected behavior for this scenario: promotes release to stable when merged.
     /// </summary>
     [Fact]
     public async Task ProcessPullRequestClosedAsync_PromotesReleaseToStableWhenMerged()

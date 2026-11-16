@@ -11,21 +11,21 @@ using PrDeploy.Api.Tests.Webhooks.Framework;
 namespace PrDeploy.Api.Tests.Schema.Mutations;
 
 /// <summary>
-/// Contains tests that verify the behavior of the deploy Queue Mutation Test.
+/// Contains tests that verify deploy queue mutation behavior.
 /// </summary>
 public class DeployQueueMutationTest : DeployApiTest
 {
     /// <summary>
     /// Initializes the test fixture and prepares its dependencies.
     /// </summary>
-    /// <param name="factory">Value supplied for factory.</param>
+    /// <param name="factory">Object containing the factory data used by the operation.</param>
     public DeployQueueMutationTest(DeployApiApplicationFactory factory)
         : base(factory)
     {
     }
 
     /// <summary>
-    /// Performs the configure Services operation.
+    /// Configures the services for the current application or test.
     /// </summary>
     /// <param name="services">Services to include in the operation.</param>
     public override void ConfigureServices(IServiceCollection services)
@@ -39,13 +39,13 @@ public class DeployQueueMutationTest : DeployApiTest
             gitHubMock.Setup(x => x.PullRequest.Get(
                     GitHub.Owner,
                     GitHub.Repo,
-                    PullRequests.TestPull.Number))
+                    It.IsAny<int>()))
                 .ReturnsAsync(Mocker.PullRequest(PullRequests.TestPull, DeployUsers.JohnDoe));
 
             gitHubMock.Setup(x => x.Issue.Comment.Create(
                     GitHub.Owner,
                     GitHub.Repo,
-                    It.IsAny<int>(),
+                    It.IsAny<long>(),
                     It.IsAny<string>()))
                 .ReturnsAsync(() => Mocker.IssueComment());
 
@@ -63,7 +63,7 @@ public class DeployQueueMutationTest : DeployApiTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: sets Environment Pull Request Queue In Order.
+    /// Verifies the expected behavior for this scenario: sets environment pull request queue in order.
     /// </summary>
     [Fact]
     public async Task DeployQueueUpdate_SetsEnvironmentPullRequestQueueInOrder()

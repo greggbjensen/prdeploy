@@ -15,13 +15,13 @@ using System.Xml.Linq;
 namespace PrDeploy.Api.Tests.OpenApi;
 
 /// <summary>
-/// Contains tests that verify the behavior of the rest Open Api Document Test.
+/// Contains tests that verify rest open API document behavior.
 /// </summary>
-/// <param name="factory">Value supplied for factory.</param>
+/// <param name="factory">Application factory used to start the API under test.</param>
 public class RestOpenApiDocumentTest(DeployApiApplicationFactory factory) : DeployApiTest(factory)
 {
     /// <summary>
-    /// Performs the configure Test Services operation.
+    /// Configures dependency injection services for the test application.
     /// </summary>
     /// <param name="services">Services to include in the operation.</param>
     public override void ConfigureTestServices(IServiceCollection services)
@@ -42,7 +42,7 @@ public class RestOpenApiDocumentTest(DeployApiApplicationFactory factory) : Depl
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: describes Rest Endpoints.
+    /// Verifies the expected behavior for this scenario: describes rest endpoints.
     /// </summary>
     [Fact]
     public async Task OpenApiDocument_DescribesRestEndpoints()
@@ -62,12 +62,12 @@ public class RestOpenApiDocumentTest(DeployApiApplicationFactory factory) : Depl
     }
 
     /// <summary>
-    /// Performs the assert Endpoint operation.
+    /// Asserts that the endpoint.
     /// </summary>
-    /// <param name="paths">Value supplied for paths.</param>
+    /// <param name="paths">Object containing the paths data used by the operation.</param>
     /// <param name="path">Path used to locate the resource.</param>
-    /// <param name="method">Value supplied for method.</param>
-    /// <param name="summary">Value supplied for summary.</param>
+    /// <param name="method">Text used as the method.</param>
+    /// <param name="summary">Text used as the summary.</param>
     private static void AssertEndpoint(JsonElement paths, string path, string method, string summary)
     {
         Assert.True(
@@ -79,43 +79,43 @@ public class RestOpenApiDocumentTest(DeployApiApplicationFactory factory) : Depl
     }
 
     /// <summary>
-    /// Represents the no Authentication Handler used by the application.
+    /// Supplies a test authentication handler that deliberately does not authenticate requests.
     /// </summary>
-    /// <param name="options">Value supplied for options.</param>
-    /// <param name="logger">Logger used to report operational information and errors.</param>
-    /// <param name="encoder">Value supplied for encoder.</param>
+    /// <param name="options">Monitor providing authentication scheme options to the base handler.</param>
+    /// <param name="logger">Factory used by the base handler to create its logger.</param>
+    /// <param name="encoder">Encoder used by the base handler when formatting authentication challenges.</param>
     private sealed class NoAuthenticationHandler(
         IOptionsMonitor<AuthenticationSchemeOptions> options,
         ILoggerFactory logger,
         UrlEncoder encoder) : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
     {
         /// <summary>
-        /// Handles the Authenticate according to the application's workflow.
+        /// Returns no authentication result so the OpenAPI test can inspect unauthenticated endpoints.
         /// </summary>
-        /// <returns>The value produced by this operation.</returns>
+        /// <returns>The authenticate result produced by the operation.</returns>
         protected override Task<AuthenticateResult> HandleAuthenticateAsync() =>
             Task.FromResult(AuthenticateResult.NoResult());
     }
 
     /// <summary>
-    /// Represents the in Memory Xml Repository used by the application.
+    /// Stores copies of data protection key XML elements for OpenAPI tests.
     /// </summary>
     private sealed class InMemoryXmlRepository : IXmlRepository
     {
         private readonly List<XElement> _elements = [];
 
         /// <summary>
-        /// Retrieves the All Elements.
+        /// Returns copies of all XML elements currently stored in the test repository.
         /// </summary>
-        /// <returns>The value produced by this operation.</returns>
+        /// <returns>Requested value, or its default when no value is available.</returns>
         public IReadOnlyCollection<XElement> GetAllElements() =>
             _elements.Select(element => new XElement(element)).ToArray();
 
         /// <summary>
-        /// Performs the store Element operation.
+        /// Adds a copy of the supplied XML element to the test repository.
         /// </summary>
-        /// <param name="element">Value supplied for element.</param>
-        /// <param name="friendlyName">Value supplied for friendly Name.</param>
+        /// <param name="element">Object containing the element data used by the operation.</param>
+        /// <param name="friendlyName">Text used as the friendly name.</param>
         public void StoreElement(XElement element, string friendlyName) =>
             _elements.Add(new XElement(element));
     }

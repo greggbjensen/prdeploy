@@ -9,6 +9,11 @@ spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
+  {{- if .Values.persistence.enabled }}
+  # A ReadWriteOnce volume and the LiteDB file lock allow only one pod at a time.
+  strategy:
+    type: Recreate
+  {{- end }}
   selector:
     matchLabels:
       {{- include "prdeploy-api.selectorLabels" . | nindent 6 }}
@@ -44,6 +49,10 @@ spec:
               value: {{ .Values.aspnetcore_environment }}
             - name: ApolloSandbox__Enabled
               value: {{ .Values.apollo_sandbox_enabled | quote }}
+            {{- if .Values.persistence.enabled }}
+            - name: Storage__Local__DatabasePath
+              value: {{ .Values.persistence.mountPath }}/deployment-storage.db
+            {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.service.targetPort }}
@@ -62,10 +71,19 @@ spec:
             - name: secrets
               mountPath: /app/secrets
               readOnly: true
+            {{- if .Values.persistence.enabled }}
+            - name: data
+              mountPath: {{ .Values.persistence.mountPath }}
+            {{- end }}
       volumes:
       - name: secrets
         secret:
           secretName: {{ $fullName }}
+      {{- if .Values.persistence.enabled }}
+      - name: data
+        persistentVolumeClaim:
+          claimName: {{ $fullName }}-data
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

@@ -6,13 +6,13 @@ namespace PrDeploy.Api.Webhooks.Models;
 public class UpdateBranchResponse
 {
     /// <summary>
-    /// Gets or sets the Message.
+    /// Gets or sets the message.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current message value.</value>
     public string? Message { get; set; }
     /// <summary>
-    /// Gets or sets the Url.
+    /// Gets or sets the URL.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current URL value.</value>
     public string? Url { get; set; }
 }

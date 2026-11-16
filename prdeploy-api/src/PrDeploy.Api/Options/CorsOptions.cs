@@ -1,13 +1,13 @@
 namespace PrDeploy.Api.Options;
 
 /// <summary>
-/// Defines configuration options for the cors Options.
+/// Defines configuration options for cors.
 /// </summary>
 public class CorsOptions
 {
     /// <summary>
-    /// Gets or sets the Allowed Origins.
+    /// Gets or sets the allowed origins.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current allowed origins value.</value>
     public string[] AllowedOrigins { get; set; } = Array.Empty<string>();
 }

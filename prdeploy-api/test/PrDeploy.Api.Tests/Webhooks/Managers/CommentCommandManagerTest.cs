@@ -6,7 +6,7 @@ using PrDeploy.Api.Webhooks.Managers;
 namespace PrDeploy.Api.Tests.Webhooks.Managers;
 
 /// <summary>
-/// Contains tests that verify the behavior of the comment Command Manager Test.
+/// Contains tests that verify comment command manager behavior.
 /// </summary>
 public class CommentCommandManagerTest : IDisposable
 {
@@ -49,7 +49,7 @@ public class CommentCommandManagerTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: deploys To Default Environment.
+    /// Verifies the expected behavior for this scenario: deploys to default environment.
     /// </summary>
     [Fact]
     public async Task ProcessCommentAsync_DeploysToDefaultEnvironment()
@@ -72,7 +72,7 @@ public class CommentCommandManagerTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: uses Next Available Environment In Queue.
+    /// Verifies the expected behavior for this scenario: uses next available environment in queue.
     /// </summary>
     [Fact]
     public async Task ProcessCommentAsync_UsesNextAvailableEnvironmentInQueue()
@@ -88,7 +88,7 @@ public class CommentCommandManagerTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: enqueues When No Environment Is Available.
+    /// Verifies the expected behavior for this scenario: enqueues when no environment is available.
     /// </summary>
     [Fact]
     public async Task ProcessCommentAsync_EnqueuesWhenNoEnvironmentIsAvailable()
@@ -111,7 +111,7 @@ public class CommentCommandManagerTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: force Deploys With Retained Locks.
+    /// Verifies the expected behavior for this scenario: force deploys with retained locks.
     /// </summary>
     [Fact]
     public async Task ProcessCommentAsync_ForceDeploysWithRetainedLocks()
@@ -127,7 +127,7 @@ public class CommentCommandManagerTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: frees Environment And Dequeues Next Pull Request.
+    /// Verifies the expected behavior for this scenario: frees environment and dequeues next pull request.
     /// </summary>
     [Fact]
     public async Task ProcessCommentAsync_FreesEnvironmentAndDequeuesNextPullRequest()
@@ -150,7 +150,7 @@ public class CommentCommandManagerTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: rolls Back To Previous Stable State.
+    /// Verifies the expected behavior for this scenario: rolls back to previous stable state.
     /// </summary>
     [Fact]
     public async Task ProcessCommentAsync_RollsBackToPreviousStableState()
@@ -175,7 +175,7 @@ public class CommentCommandManagerTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: adds Service Deploy Files.
+    /// Verifies the expected behavior for this scenario: adds service deploy files.
     /// </summary>
     [Fact]
     public async Task ProcessCommentAsync_AddsServiceDeployFiles()
@@ -196,7 +196,7 @@ public class CommentCommandManagerTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: comments When Service Is Not Configured.
+    /// Verifies the expected behavior for this scenario: comments when service is not configured.
     /// </summary>
     [Fact]
     public async Task ProcessCommentAsync_CommentsWhenServiceIsNotConfigured()
@@ -210,7 +210,7 @@ public class CommentCommandManagerTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: ignores Comments Without Commands.
+    /// Verifies the expected behavior for this scenario: ignores comments without commands.
     /// </summary>
     [Fact]
     public async Task ProcessCommentAsync_IgnoresCommentsWithoutCommands()

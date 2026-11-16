@@ -2,6 +2,7 @@ using HotChocolate.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using PrDeploy.Api;
 using PrDeploy.Api.Auth;
 using PrDeploy.Api.Builder;
@@ -175,9 +176,22 @@ try
         app.MapApolloSandboxRedirect();
     }
 
-    app.MapHealthChecks("/health/ready", new HealthCheckOptions
+    var readyHealthCheckOptions = new HealthCheckOptions
     {
         Predicate = healthCheck => healthCheck.Tags.Contains("ready")
+    };
+    app.MapGet("/health/ready", async (HealthCheckService healthCheckService, HttpContext context) =>
+    {
+        var report = await healthCheckService.CheckHealthAsync(
+            readyHealthCheckOptions.Predicate,
+            context.RequestAborted);
+        context.Response.Headers.CacheControl = "no-store, no-cache";
+        context.Response.Headers.Pragma = "no-cache";
+        context.Response.Headers.Expires = "Thu, 01 Jan 1970 00:00:00 GMT";
+        return Results.Content(
+            report.Status.ToString(),
+            "text/plain",
+            statusCode: readyHealthCheckOptions.ResultStatusCodes[report.Status]);
     })
         .WithName("Readiness")
         .WithSummary("Check application readiness")
@@ -187,9 +201,22 @@ try
             new ProducesResponseTypeMetadata(StatusCodes.Status503ServiceUnavailable, typeof(string), ["text/plain"]))
         .AllowAnonymous();
 
-    app.MapHealthChecks("/health/live", new HealthCheckOptions
+    var liveHealthCheckOptions = new HealthCheckOptions
     {
         Predicate = healthCheck => healthCheck.Tags.Contains("live")
+    };
+    app.MapGet("/health/live", async (HealthCheckService healthCheckService, HttpContext context) =>
+    {
+        var report = await healthCheckService.CheckHealthAsync(
+            liveHealthCheckOptions.Predicate,
+            context.RequestAborted);
+        context.Response.Headers.CacheControl = "no-store, no-cache";
+        context.Response.Headers.Pragma = "no-cache";
+        context.Response.Headers.Expires = "Thu, 01 Jan 1970 00:00:00 GMT";
+        return Results.Content(
+            report.Status.ToString(),
+            "text/plain",
+            statusCode: liveHealthCheckOptions.ResultStatusCodes[report.Status]);
     })
         .WithName("Liveness")
         .WithSummary("Check application liveness")
@@ -215,16 +242,16 @@ finally
 // Required for integration testing.
 // SourceRef: https://stackoverflow.com/questions/55131379/integration-testing-asp-net-core-with-net-framework-cant-find-deps-json
 /// <summary>
-/// Represents the program used by the application.
+/// Represents program data used by the application.
 /// </summary>
 public partial class Program
 {
     /// <summary>
-    /// Retrieves the Value.
+    /// Retrieves the value.
     /// </summary>
-    /// <param name="form">Value supplied for form.</param>
+    /// <param name="form">Object containing the form data used by the operation.</param>
     /// <param name="name">Name used to identify the value or resource.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     public static string GetValue(IFormCollection form, string name)
     {
         return (form?.TryGetValue(name, out var value) == true ? value.FirstOrDefault() : string.Empty)!;

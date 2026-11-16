@@ -1,17 +1,17 @@
 namespace PrDeploy.Api.Models.Settings;
 /// <summary>
-/// Stores configuration values for the slack Web Hooks Settings.
+/// Stores configuration values for Slack web hooks.
 /// </summary>
 public class SlackWebHooksSettings
 {
     /// <summary>
-    /// Gets or sets the Deploy Url.
+    /// Gets or sets the deploy URL.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current deploy URL value.</value>
     public string? DeployUrl { get; set; }
     /// <summary>
-    /// Gets or sets the Release Url.
+    /// Gets or sets the release URL.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current release URL value.</value>
     public string? ReleaseUrl { get; set; }
 }

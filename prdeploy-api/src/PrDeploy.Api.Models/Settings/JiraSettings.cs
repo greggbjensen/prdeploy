@@ -1,29 +1,29 @@
 namespace PrDeploy.Api.Models.Settings
 {
     /// <summary>
-    /// Stores configuration values for the jira Settings.
+    /// Stores configuration values for Jira.
     /// </summary>
     public class JiraSettings
     {
         /// <summary>
-        /// Gets or sets the Add Issues Enabled.
+        /// Gets or sets the add issues enabled.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current add issues enabled value.</value>
         public bool? AddIssuesEnabled { get; set; }
         /// <summary>
-        /// Gets or sets the Host.
+        /// Gets or sets the host.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current host value.</value>
         public string? Host { get; set; }
         /// <summary>
-        /// Gets or sets the Username.
+        /// Gets or sets the username.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current username value.</value>
         public string? Username { get; set; }
         /// <summary>
-        /// Gets or sets the Password.
+        /// Gets or sets the password.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current password value.</value>
         public string? Password { get; set; }
     }
 }

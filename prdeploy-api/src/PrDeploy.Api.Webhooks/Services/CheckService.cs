@@ -10,7 +10,7 @@ using PrDeploy.Api.Webhooks.Utils;
 namespace PrDeploy.Api.Webhooks.Services;
 
 /// <summary>
-/// Coordinates operations for the check Service and its collaborators.
+/// Coordinates check operations and their collaborators.
 /// </summary>
 public partial class CheckService
 {
@@ -28,13 +28,13 @@ public partial class CheckService
     private readonly ILogger<CheckService> _logger;
 
     /// <summary>
-    /// Initializes a check Service with the supplied dependencies.
+    /// Initializes the instance with its required dependencies.
     /// </summary>
     /// <param name="context">Request or application context used by the operation.</param>
-    /// <param name="templateService">Value supplied for template Service.</param>
-    /// <param name="slackService">Value supplied for slack Service.</param>
-    /// <param name="pullRequestService">Value supplied for pull Request Service.</param>
-    /// <param name="environmentUtil">Value supplied for environment Util.</param>
+    /// <param name="templateService">Object containing the template service data used by the operation.</param>
+    /// <param name="slackService">Object containing the Slack service data used by the operation.</param>
+    /// <param name="pullRequestService">Object containing the pull request service data used by the operation.</param>
+    /// <param name="environmentUtil">Object containing the environment util data used by the operation.</param>
     /// <param name="logger">Logger used to report operational information and errors.</param>
     public CheckService(WebhookContext context, TemplateService templateService, SlackService slackService,
         PullRequestService pullRequestService, EnvironmentUtil environmentUtil, ILogger<CheckService> logger)
@@ -48,17 +48,17 @@ public partial class CheckService
     }
 
     /// <summary>
-    /// Gets the Settings.
+    /// Gets the settings.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current settings value.</value>
     private DeploySettings Settings => _context.Settings;
 
     /// <summary>
-    /// Checks whether the deploy Ready condition is satisfied.
+    /// Checks whether the deploy ready condition is satisfied.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <param name="environment">Deployment environment involved in the operation.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>True when the requested condition is met; otherwise, false.</returns>
     public async Task<bool> VerifyDeployReadyAsync(PullRequest pullRequest, string? environment = null)
     {
         var deployEnvironment = _pullRequestService.GetDefaultedEnvironment(pullRequest, environment);
@@ -81,11 +81,11 @@ public partial class CheckService
     }
 
     /// <summary>
-    /// Finds and returns the Builds.
+    /// Finds and returns the builds.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
-    /// <param name="overrideBuildRunIds">Value supplied for override Build Run Ids.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="overrideBuildRunIds">Object containing the override build run ids data used by the operation.</param>
+    /// <returns>Items matching the supplied criteria.</returns>
     public async Task<List<Build>> ListBuildsAsync(PullRequest pullRequest, IReadOnlyCollection<long>? overrideBuildRunIds = null)
     {
         if (string.IsNullOrEmpty(Settings.Builds?.WorkflowPattern))
@@ -126,10 +126,10 @@ public partial class CheckService
     }
 
     /// <summary>
-    /// Finds and returns the Incomplete Pull Checks.
+    /// Finds and returns the incomplete pull checks.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>Items matching the supplied criteria.</returns>
     public async Task<List<CheckRun>> ListIncompletePullChecksAsync(PullRequest pullRequest)
     {
         _logger.LogInformation("Listing checks for ref: {Ref}", pullRequest.Head.Ref);
@@ -191,10 +191,10 @@ public partial class CheckService
     }
 
     /// <summary>
-    /// Retrieves the Checks For Ref.
+    /// Retrieves the checks for ref.
     /// </summary>
-    /// <param name="reference">Value supplied for reference.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="reference">Text used as the reference.</param>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     private async Task<CheckRunsResponse> GetChecksForRefAsync(string reference)
     {
         return await _context.GitHub.Check.Run.GetAllForReference(_context.Owner, _context.Repo, reference,
@@ -202,10 +202,10 @@ public partial class CheckService
     }
 
     /// <summary>
-    /// Parses the supplied input as the Run Id.
+    /// Parses the supplied input as the run id.
     /// </summary>
-    /// <param name="url">Value supplied for url.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="url">Text used as the URL.</param>
+    /// <returns>The long produced by the operation.</returns>
     private static long ParseRunId(string? url)
     {
         var match = RunRegex().Match(url ?? string.Empty);
@@ -213,11 +213,11 @@ public partial class CheckService
     }
 
     /// <summary>
-    /// Checks whether the pull Checks Complete condition is satisfied.
+    /// Checks whether the pull checks complete condition is satisfied.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
-    /// <param name="environmentSettings">Value supplied for environment Settings.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="environmentSettings">Object containing the environment settings data used by the operation.</param>
+    /// <returns>True when the requested condition is met; otherwise, false.</returns>
     private async Task<bool> VerifyPullChecksCompleteAsync(PullRequest pullRequest,
         EnvironmentSettings environmentSettings)
     {
@@ -244,11 +244,11 @@ public partial class CheckService
     }
 
     /// <summary>
-    /// Checks whether the branch Up To Date condition is satisfied.
+    /// Checks whether the branch up to date condition is satisfied.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
-    /// <param name="environmentSettings">Value supplied for environment Settings.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="environmentSettings">Object containing the environment settings data used by the operation.</param>
+    /// <returns>True when the requested condition is met; otherwise, false.</returns>
     private async Task<bool> VerifyBranchUpToDateAsync(PullRequest pullRequest,
         EnvironmentSettings environmentSettings)
     {
@@ -306,11 +306,11 @@ public partial class CheckService
     }
 
     /// <summary>
-    /// Attempts to update Branch With Main; the result indicates whether it succeeded.
+    /// Attempts to update branch with main; the result indicates whether it succeeded.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
-    /// <param name="environmentSettings">Value supplied for environment Settings.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="environmentSettings">Object containing the environment settings data used by the operation.</param>
+    /// <returns>True when the requested condition is met; otherwise, false.</returns>
     private async Task<bool> TryUpdateBranchWithMainAsync(PullRequest pullRequest,
         EnvironmentSettings environmentSettings)
     {
@@ -345,11 +345,11 @@ public partial class CheckService
     }
 
     /// <summary>
-    /// Performs the extract Build operation and returns its result.
+    /// Performs the extract build operation and returns its result.
     /// </summary>
-    /// <param name="workflowRegex">Value supplied for workflow Regex.</param>
-    /// <param name="runId">Value supplied for run Id.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="workflowRegex">Object containing the workflow regex data used by the operation.</param>
+    /// <param name="runId">Numeric value used for the run id.</param>
+    /// <returns>The build produced by the operation.</returns>
     private async Task<Build> ExtractBuildAsync(Regex workflowRegex, long runId)
     {
         _logger.LogDebug("Getting the workflow run with ID: {RunId}", runId);
@@ -379,10 +379,10 @@ public partial class CheckService
     }
 
     /// <summary>
-    /// Performs the extract Version operation and returns its result.
+    /// Performs the extract version operation and returns its result.
     /// </summary>
-    /// <param name="runId">Value supplied for run Id.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="runId">Numeric value used for the run id.</param>
+    /// <returns>Text produced or selected by the operation.</returns>
     private async Task<string> ExtractVersionAsync(long runId)
     {
         try
@@ -419,9 +419,9 @@ public partial class CheckService
     }
 
     /// <summary>
-    /// Performs the run Regex operation and returns its result.
+    /// Performs the run regex operation and returns its result.
     /// </summary>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"/runs/([0-9]+)/jobs?/", RegexOptions.IgnoreCase)]
     private static partial Regex RunRegex();
 }

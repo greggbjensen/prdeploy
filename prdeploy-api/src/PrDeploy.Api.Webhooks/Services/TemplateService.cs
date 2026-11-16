@@ -55,9 +55,9 @@ public class TemplateService
     /// <summary>
     /// Performs the render operation and returns its result.
     /// </summary>
-    /// <param name="templateName">Value supplied for template Name.</param>
+    /// <param name="templateName">Text used as the template name.</param>
     /// <param name="context">Request or application context used by the operation.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>Text produced or selected by the operation.</returns>
     public string Render(string templateName, object? context = null)
     {
         var template = Templates.GetOrAdd(templateName, name => Handlebars.Compile(LoadTemplate(name)));
@@ -65,15 +65,15 @@ public class TemplateService
     }
 
     /// <summary>
-    /// Performs the render Queue Table operation and returns its result.
+    /// Performs the render queue table operation and returns its result.
     /// </summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <param name="normalizedEnvironment">Deployment environment involved in the operation.</param>
-    /// <param name="queuePullNumbers">Value supplied for queue Pull Numbers.</param>
-    /// <param name="repositoryUrl">Value supplied for repository Url.</param>
-    /// <param name="prdeployPortalUrl">Value supplied for prdeploy Portal Url.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="queuePullNumbers">Object containing the queue pull numbers data used by the operation.</param>
+    /// <param name="repositoryUrl">Text used as the repository URL.</param>
+    /// <param name="prdeployPortalUrl">Text used as the PrDeploy portal URL.</param>
+    /// <returns>Text produced or selected by the operation.</returns>
     public string RenderQueueTable(string owner, string repo, string normalizedEnvironment,
         IEnumerable<int> queuePullNumbers, string repositoryUrl, string? prdeployPortalUrl)
     {
@@ -98,7 +98,7 @@ public class TemplateService
     /// Performs the pull operation and returns its result.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The object produced by the operation.</returns>
     public static object? Pull(PullRequest? pullRequest) => pullRequest == null
         ? null
         : new
@@ -112,8 +112,8 @@ public class TemplateService
     /// <summary>
     /// Performs the run operation and returns its result.
     /// </summary>
-    /// <param name="run">Value supplied for run.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="run">Object containing the run data used by the operation.</param>
+    /// <returns>The object produced by the operation.</returns>
     public static object? Run(WorkflowRun? run) => run == null
         ? null
         : new
@@ -128,8 +128,8 @@ public class TemplateService
     /// <summary>
     /// Checks whether the condition condition is satisfied.
     /// </summary>
-    /// <param name="check">Value supplied for check.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="check">Object containing the check data used by the operation.</param>
+    /// <returns>The object produced by the operation.</returns>
     public static object Check(CheckRun check) => new
     {
         name = check.Name,
@@ -139,10 +139,10 @@ public class TemplateService
     };
 
     /// <summary>
-    /// Converts the supplied value to the Template Context.
+    /// Converts the supplied value to the template context.
     /// </summary>
     /// <param name="context">Request or application context used by the operation.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The object produced by the operation.</returns>
     internal static object ToTemplateContext(object? context)
     {
         if (context == null)
@@ -155,10 +155,10 @@ public class TemplateService
     }
 
     /// <summary>
-    /// Converts the supplied value to the Template Value.
+    /// Converts the supplied value to the template value.
     /// </summary>
-    /// <param name="element">Value supplied for element.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="element">Object containing the element data used by the operation.</param>
+    /// <returns>The object produced by the operation.</returns>
     private static object? ToTemplateValue(JsonElement element) => element.ValueKind switch
     {
         JsonValueKind.Object => element.EnumerateObject()
@@ -172,10 +172,10 @@ public class TemplateService
     };
 
     /// <summary>
-    /// Performs the load Template operation and returns its result.
+    /// Performs the load template operation and returns its result.
     /// </summary>
-    /// <param name="templateName">Value supplied for template Name.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="templateName">Text used as the template name.</param>
+    /// <returns>Text produced or selected by the operation.</returns>
     private static string LoadTemplate(string templateName)
     {
         var assembly = typeof(TemplateService).Assembly;
@@ -187,9 +187,9 @@ public class TemplateService
     }
 
     /// <summary>
-    /// Creates the Handlebars from the supplied inputs.
+    /// Creates the handlebars from the supplied inputs.
     /// </summary>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The object created from the supplied inputs.</returns>
     private static IHandlebars CreateHandlebars()
     {
         var handlebars = HandlebarsDotNet.Handlebars.Create(new HandlebarsConfiguration
@@ -213,10 +213,10 @@ public class TemplateService
     }
 
     /// <summary>
-    /// Retrieves the String.
+    /// Retrieves the string.
     /// </summary>
-    /// <param name="arguments">Value supplied for arguments.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="arguments">Object containing the arguments data used by the operation.</param>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     private static string? GetString(Arguments arguments) =>
         arguments.Length > 0 && arguments[0] is not UndefinedBindingResult ? arguments[0]?.ToString() : null;
 
@@ -228,7 +228,7 @@ public class TemplateService
         /// <summary>
         /// Performs the encode operation.
         /// </summary>
-        /// <param name="text">Value supplied for text.</param>
+        /// <param name="text">Object containing the text data used by the operation.</param>
         /// <param name="target">Target environment or value for the operation.</param>
         public void Encode(StringBuilder text, TextWriter target)
         {
@@ -241,7 +241,7 @@ public class TemplateService
         /// <summary>
         /// Performs the encode operation.
         /// </summary>
-        /// <param name="text">Value supplied for text.</param>
+        /// <param name="text">Text used as the text.</param>
         /// <param name="target">Target environment or value for the operation.</param>
         public void Encode(string text, TextWriter target)
         {
@@ -254,9 +254,9 @@ public class TemplateService
         /// <summary>
         /// Performs the encode operation.
         /// </summary>
-        /// <param name="text">Value supplied for text.</param>
+        /// <param name="text">Object containing the text data used by the operation.</param>
         /// <param name="target">Target environment or value for the operation.</param>
-        /// <typeparam name="T">Type used by this operation.</typeparam>
+        /// <typeparam name="T">Type of value consumed or produced by this operation.</typeparam>
         public void Encode<T>(T text, TextWriter target) where T : IEnumerator<char>
         {
             while (text.MoveNext())
@@ -268,7 +268,7 @@ public class TemplateService
         /// <summary>
         /// Performs the write operation.
         /// </summary>
-        /// <param name="c">Value supplied for c.</param>
+        /// <param name="c">Object containing the c data used by the operation.</param>
         /// <param name="target">Target environment or value for the operation.</param>
         private static void Write(char c, TextWriter target)
         {

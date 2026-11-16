@@ -7,14 +7,14 @@ using PrDeploy.Api.Webhooks.Services;
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
 /// <summary>
-/// Contains tests that verify the behavior of the template Service Test.
+/// Contains tests that verify template service behavior.
 /// </summary>
 public class TemplateServiceTest
 {
     private readonly TemplateService _service = new();
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: renders Dynamic Pull Request Queue Table.
+    /// Verifies the expected behavior for this scenario: renders dynamic pull request queue table.
     /// </summary>
     [Fact]
     public void RenderQueueTable_RendersDynamicPullRequestQueueTable()
@@ -30,7 +30,7 @@ public class TemplateServiceTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: renders Static Template Without Context.
+    /// Verifies the expected behavior for this scenario: renders static template without context.
     /// </summary>
     [Fact]
     public void Render_RendersStaticTemplateWithoutContext()
@@ -40,7 +40,7 @@ public class TemplateServiceTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: renders Issues Template With Context.
+    /// Verifies the expected behavior for this scenario: renders issues template with context.
     /// </summary>
     [Fact]
     public void Render_RendersIssuesTemplateWithContext()
@@ -80,7 +80,7 @@ public class TemplateServiceTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: omits Issues Block When No Issues.
+    /// Verifies the expected behavior for this scenario: omits issues block when no issues.
     /// </summary>
     [Fact]
     public void Render_OmitsIssuesBlockWhenNoIssues()
@@ -97,7 +97,7 @@ public class TemplateServiceTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: renders Valid Json With Escaping.
+    /// Verifies the expected behavior for this scenario: renders valid JSON with escaping.
     /// </summary>
     [Fact]
     public void Render_RendersValidJsonWithEscaping()
@@ -115,7 +115,7 @@ public class TemplateServiceTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: keeps Non Ascii Characters Like Handlebars Js.
+    /// Verifies the expected behavior for this scenario: keeps non ascii characters like handlebars js.
     /// </summary>
     [Fact]
     public void Render_KeepsNonAsciiCharactersLikeHandlebarsJs()
@@ -135,7 +135,7 @@ public class TemplateServiceTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: renders Each With Parent Context.
+    /// Verifies the expected behavior for this scenario: renders each with parent context.
     /// </summary>
     [Fact]
     public void Render_RendersEachWithParentContext()

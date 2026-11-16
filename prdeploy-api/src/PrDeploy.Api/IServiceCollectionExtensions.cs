@@ -24,8 +24,11 @@ namespace PrDeploy.Api;
 public static class IServiceCollectionExtensions
 {
     /// <summary>
-    /// Adds the PrDeploy API services and configures Data Protection key persistence.
+    /// Adds the pr deploy API to the associated collection.
     /// </summary>
+    /// <param name="services">Services to include in the operation.</param>
+    /// <param name="configuration">Object containing the configuration data used by the operation.</param>
+    /// <returns>The i service collection produced by the operation.</returns>
     public static IServiceCollection AddPrDeployApi(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddPrDeployStorage(configuration);

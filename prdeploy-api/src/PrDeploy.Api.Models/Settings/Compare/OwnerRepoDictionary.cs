@@ -4,20 +4,20 @@ using HotChocolate;
 namespace PrDeploy.Api.Models.Settings.Compare
 {
     /// <summary>
-    /// Represents the owner Repo Dictionary used by the application.
+    /// Represents owner repo dictionary data used by the application.
     /// </summary>
     public class OwnerRepoDictionary
     {
         /// <summary>
-        /// Gets or sets the Owner.
+        /// Gets or sets the owner.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current owner value.</value>
         [GraphQLType(typeof(AnyType))]
         public Dictionary<string, object>? Owner { get; set; }
         /// <summary>
-        /// Gets or sets the Repo.
+        /// Gets or sets the repo.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current repo value.</value>
         [GraphQLType(typeof(AnyType))]
         public Dictionary<string, object>? Repo { get; set; }
     }

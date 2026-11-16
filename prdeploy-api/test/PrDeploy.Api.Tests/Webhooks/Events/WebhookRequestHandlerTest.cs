@@ -10,7 +10,7 @@ using MsOptions = Microsoft.Extensions.Options.Options;
 namespace PrDeploy.Api.Tests.Webhooks.Events;
 
 /// <summary>
-/// Contains tests that verify the behavior of the webhook Request Handler Test.
+/// Contains tests that verify webhook request handler behavior.
 /// </summary>
 public class WebhookRequestHandlerTest
 {
@@ -35,7 +35,7 @@ public class WebhookRequestHandlerTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: matches Git Hub Example.
+    /// Verifies the expected behavior for this scenario: matches git hub example.
     /// </summary>
     [Fact]
     public void WebhookSignature_MatchesGitHubExample()
@@ -52,7 +52,7 @@ public class WebhookRequestHandlerTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: queues Handled Events.
+    /// Verifies the expected behavior for this scenario: queues handled events.
     /// </summary>
     [Fact]
     public async Task HandleAsync_QueuesHandledEvents()
@@ -68,7 +68,7 @@ public class WebhookRequestHandlerTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: rejects Invalid Signature.
+    /// Verifies the expected behavior for this scenario: rejects invalid signature.
     /// </summary>
     [Fact]
     public async Task HandleAsync_RejectsInvalidSignature()
@@ -81,7 +81,7 @@ public class WebhookRequestHandlerTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: acknowledges Ping And Unhandled Events.
+    /// Verifies the expected behavior for this scenario: acknowledges ping and unhandled events.
     /// </summary>
     [Fact]
     public async Task HandleAsync_AcknowledgesPingAndUnhandledEvents()
@@ -93,7 +93,7 @@ public class WebhookRequestHandlerTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: returns Service Unavailable When Queue Is Full.
+    /// Verifies the expected behavior for this scenario: returns service unavailable when queue is full.
     /// </summary>
     [Fact]
     public async Task HandleAsync_ReturnsServiceUnavailableWhenQueueIsFull()
@@ -105,7 +105,7 @@ public class WebhookRequestHandlerTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: returns Service Unavailable When Secret Is Not Configured.
+    /// Verifies the expected behavior for this scenario: returns service unavailable when secret is not configured.
     /// </summary>
     [Fact]
     public async Task HandleAsync_ReturnsServiceUnavailableWhenSecretIsNotConfigured()
@@ -120,12 +120,12 @@ public class WebhookRequestHandlerTest
     }
 
     /// <summary>
-    /// Creates the Request from the supplied inputs.
+    /// Creates the request from the supplied inputs.
     /// </summary>
-    /// <param name="eventName">Value supplied for event Name.</param>
-    /// <param name="payload">Value supplied for payload.</param>
-    /// <param name="signature">Value supplied for signature.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="eventName">Text used as the event name.</param>
+    /// <param name="payload">Text used as the payload.</param>
+    /// <param name="signature">Text used as the signature.</param>
+    /// <returns>The object created from the supplied inputs.</returns>
     private static HttpRequest CreateRequest(string eventName, string payload, string? signature = null)
     {
         var body = Encoding.UTF8.GetBytes(payload);

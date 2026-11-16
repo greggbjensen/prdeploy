@@ -7,6 +7,7 @@ namespace PrDeploy.Api.Business.Stores;
 /// <summary>
 /// Persists ASP.NET Core Data Protection keys in the shared local LiteDB database.
 /// </summary>
+/// <param name="storage">Shared LiteDB adapter that persists and retrieves XML key documents.</param>
 public sealed class LiteDbDataProtectionXmlRepository(LiteDbStorage storage) : IXmlRepository
 {
     /// <inheritdoc />
@@ -42,19 +43,22 @@ public sealed class LiteDbDataProtectionXmlRepository(LiteDbStorage storage) : I
     private sealed class DataProtectionKey
     {
         /// <summary>
-        /// Gets or sets the friendly-name identifier used to replace matching key records.
+        /// Gets or sets the id.
         /// </summary>
+        /// <value>Current id value.</value>
         [BsonId]
         public string Id { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the key's Data Protection friendly name.
+        /// Gets or sets the friendly name.
         /// </summary>
+        /// <value>Current friendly name value.</value>
         public string FriendlyName { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the serialized XML key element.
+        /// Gets or sets the XML.
         /// </summary>
+        /// <value>Current XML value.</value>
         public string Xml { get; set; } = string.Empty;
     }
 }

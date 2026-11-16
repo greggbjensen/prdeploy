@@ -8,23 +8,23 @@ namespace PrDeploy.Api.Models.Auth
     public class AccessTokenResponse
     {
         /// <summary>
-        /// Gets or sets the Access Token.
+        /// Gets or sets the access token.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current access token value.</value>
         [JsonPropertyName("access_token")]
         public string AccessToken { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the Scope.
+        /// Gets or sets the scope.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current scope value.</value>
         [JsonPropertyName("scope")]
         public string Scope  { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the Token Type.
+        /// Gets or sets the token type.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current token type value.</value>
         [JsonPropertyName("token_type")]
         public string TokenType { get; set; } = string.Empty;
     }

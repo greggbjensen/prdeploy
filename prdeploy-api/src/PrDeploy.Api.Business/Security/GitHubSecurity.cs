@@ -10,7 +10,7 @@ using PrDeploy.Api.Business.Security.Interfaces;
 namespace PrDeploy.Api.Business.Security
 {
     /// <summary>
-    /// Represents the git Hub Security used by the application.
+    /// Represents git hub security data used by the application.
     /// </summary>
     public class GitHubSecurity : IGitHubSecurity
     {
@@ -21,12 +21,12 @@ namespace PrDeploy.Api.Business.Security
         private readonly ISecurityContext _securityContext;
 
         /// <summary>
-        /// Initializes a git Hub Security with the supplied dependencies.
+        /// Initializes the instance with its required dependencies.
         /// </summary>
-        /// <param name="client">Value supplied for client.</param>
+        /// <param name="client">Object containing the client data used by the operation.</param>
         /// <param name="logger">Logger used to report operational information and errors.</param>
-        /// <param name="cache">Value supplied for cache.</param>
-        /// <param name="securityContext">Value supplied for security Context.</param>
+        /// <param name="cache">Object containing the cache data used by the operation.</param>
+        /// <param name="securityContext">Object containing the security context data used by the operation.</param>
         public GitHubSecurity(IGitHubClient client, ILogger<GitHubSecurity> logger, IMemoryCache cache, ISecurityContext securityContext)
         {
             _cache = cache;
@@ -63,11 +63,11 @@ namespace PrDeploy.Api.Business.Security
         }
 
         /// <summary>
-        /// Determines whether the repo Access is available.
+        /// Determines whether the repo access is available.
         /// </summary>
         /// <param name="owner">Repository owner or organization whose values are addressed.</param>
         /// <param name="repo">Repository whose values are addressed.</param>
-        /// <returns>The value produced by this operation.</returns>
+        /// <returns>True when the requested condition is met; otherwise, false.</returns>
         public async Task<bool> HasRepoAccessAsync(string owner, string repo)
         {
             var userToken = _securityContext.UserToken;
@@ -101,10 +101,10 @@ namespace PrDeploy.Api.Business.Security
         }
 
         /// <summary>
-        /// Determines whether the owner Access is available.
+        /// Determines whether the owner access is available.
         /// </summary>
         /// <param name="owner">Repository owner or organization whose values are addressed.</param>
-        /// <returns>The value produced by this operation.</returns>
+        /// <returns>True when the requested condition is met; otherwise, false.</returns>
         public async Task<bool> HasOwnerAccessAsync(string owner)
         {
             var userToken = _securityContext.UserToken;
@@ -153,10 +153,10 @@ namespace PrDeploy.Api.Business.Security
         }
 
         /// <summary>
-        /// Determines whether the hash Token is available.
+        /// Determines whether the hash token is available.
         /// </summary>
-        /// <param name="userToken">Value supplied for user Token.</param>
-        /// <returns>The value produced by this operation.</returns>
+        /// <param name="userToken">Text used as the user token.</param>
+        /// <returns>Text produced or selected by the operation.</returns>
         private static string HashToken(string userToken)
         {
             var md5 = MD5.Create();
@@ -167,10 +167,10 @@ namespace PrDeploy.Api.Business.Security
 
         //// SourceRef: https://learn.microsoft.com/en-us/troubleshoot/developer/visualstudio/csharp/language-compilers/compute-hash-values
         /// <summary>
-        /// Performs the byte Array To String operation and returns its result.
+        /// Performs the byte array to string operation and returns its result.
         /// </summary>
-        /// <param name="arrInput">Value supplied for arr Input.</param>
-        /// <returns>The value produced by this operation.</returns>
+        /// <param name="arrInput">Object containing the arr input data used by the operation.</param>
+        /// <returns>Text produced or selected by the operation.</returns>
         private static string ByteArrayToString(byte[] arrInput)
         {
             int i;

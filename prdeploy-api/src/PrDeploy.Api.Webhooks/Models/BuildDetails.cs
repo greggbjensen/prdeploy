@@ -6,53 +6,53 @@ namespace PrDeploy.Api.Webhooks.Models;
 public class BuildDetails
 {
     /// <summary>
-    /// Gets or sets the Run Id.
+    /// Gets or sets the run id.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current run id value.</value>
     public long RunId { get; set; }
     /// <summary>
-    /// Gets or sets the Version.
+    /// Gets or sets the version.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current version value.</value>
     public string? Version { get; set; }
     /// <summary>
-    /// Gets or sets the Head.
+    /// Gets or sets the head.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current head value.</value>
     public string? Head { get; set; }
     /// <summary>
-    /// Gets or sets the Base.
+    /// Gets or sets the base.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current base value.</value>
     public string? Base { get; set; }
     /// <summary>
-    /// Gets or sets the Commit.
+    /// Gets or sets the commit.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current commit value.</value>
     public string? Commit { get; set; }
     /// <summary>
-    /// Gets or sets the Issues.
+    /// Gets or sets the issues.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current issues value.</value>
     public List<string>? Issues { get; set; }
     /// <summary>
-    /// Gets or sets the Pull Request.
+    /// Gets or sets the pull request.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current pull request value.</value>
     public int PullRequest { get; set; }
     /// <summary>
-    /// Gets or sets the Owner.
+    /// Gets or sets the owner.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current owner value.</value>
     public string? Owner { get; set; }
     /// <summary>
-    /// Gets or sets the Repo.
+    /// Gets or sets the repo.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current repo value.</value>
     public string? Repo { get; set; }
     /// <summary>
-    /// Gets or sets the Event Name.
+    /// Gets or sets the event name.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current event name value.</value>
     public string? EventName { get; set; }
 }

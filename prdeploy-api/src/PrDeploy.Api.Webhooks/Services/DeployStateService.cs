@@ -17,9 +17,9 @@ public class DeployStateService
     private readonly ILogger<DeployStateService> _logger;
 
     /// <summary>
-    /// Initializes a deploy State Service with the supplied dependencies.
+    /// Initializes the instance with its required dependencies.
     /// </summary>
-    /// <param name="deploymentStore">Value supplied for deployment Store.</param>
+    /// <param name="deploymentStore">Object containing the deployment store data used by the operation.</param>
     /// <param name="context">Request or application context used by the operation.</param>
     /// <param name="logger">Logger used to report operational information and errors.</param>
     public DeployStateService(IDeploymentStore deploymentStore, WebhookContext context,
@@ -31,7 +31,7 @@ public class DeployStateService
     }
 
     /// <summary>
-    /// Synchronizes the requested value with the current source of truth.
+    /// Synchronizes the stored values with the current source of truth.
     /// </summary>
     /// <param name="environment">Deployment environment involved in the operation.</param>
     public async Task SyncAsync(string environment)
@@ -46,7 +46,7 @@ public class DeployStateService
     /// <param name="environment">Deployment environment involved in the operation.</param>
     /// <param name="pullNumber">Number identifying the pull request.</param>
     /// <param name="services">Services to include in the operation.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The value after it has been stored or updated.</returns>
     public async Task<DeployState> UpdateAsync(string environment, int pullNumber,
         IReadOnlyCollection<DeployedService> services)
     {
@@ -72,7 +72,7 @@ public class DeployStateService
     /// </summary>
     /// <param name="environment">Deployment environment involved in the operation.</param>
     /// <param name="historical">Number of revisions to move back from the latest value; zero selects the latest revision.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     public async Task<DeployState> GetAsync(string environment, int historical = 0)
     {
         var name = GetVariableName(environment);
@@ -98,12 +98,12 @@ public class DeployStateService
     }
 
     /// <summary>
-    /// Compares the requested value and returns the differences.
+    /// Compares the supplied values and returns their differences.
     /// </summary>
     /// <param name="sourceEnvironment">Source environment or value for the operation.</param>
     /// <param name="targetEnvironment">Target environment or value for the operation.</param>
-    /// <param name="sourceHistorical">Value supplied for source Historical.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="sourceHistorical">Revision offset to use when reading the source deployment state.</param>
+    /// <returns>The deploy state produced by the operation.</returns>
     public async Task<DeployState> DiffAsync(string sourceEnvironment, string targetEnvironment,
         int sourceHistorical = 0)
     {
@@ -126,7 +126,7 @@ public class DeployStateService
     /// Stores or updates the supplied value.
     /// </summary>
     /// <param name="environment">Deployment environment involved in the operation.</param>
-    /// <param name="state">Value supplied for state.</param>
+    /// <param name="state">Deployment state snapshot to persist for the environment.</param>
     private async Task SetAsync(string environment, DeployState state)
     {
         var name = GetVariableName(environment);
@@ -134,10 +134,10 @@ public class DeployStateService
     }
 
     /// <summary>
-    /// Retrieves the Variable Name.
+    /// Builds the storage key used to locate deployment state for an environment.
     /// </summary>
     /// <param name="environment">Deployment environment involved in the operation.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The normalized storage key used to locate deployment state for an environment.</returns>
     private static string GetVariableName(string environment) =>
         $"{DeployStatePrefix}{environment.ToUpperInvariant()}";
 }

@@ -7,7 +7,7 @@ using PrDeploy.Api.Webhooks.Services;
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
 /// <summary>
-/// Contains tests that verify the behavior of the slack Service Test.
+/// Contains tests that verify Slack service behavior.
 /// </summary>
 public class SlackServiceTest : IDisposable
 {
@@ -29,7 +29,7 @@ public class SlackServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: posts Message To Channel.
+    /// Verifies the expected behavior for this scenario: posts message to channel.
     /// </summary>
     [Fact]
     public async Task PostMessageAsync_PostsMessageToChannel()
@@ -44,7 +44,7 @@ public class SlackServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: does Not Post When Disabled.
+    /// Verifies the expected behavior for this scenario: does not post when disabled.
     /// </summary>
     [Fact]
     public async Task PostMessageAsync_DoesNotPostWhenDisabled()
@@ -56,7 +56,7 @@ public class SlackServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: gets Slack User By Built Email From Name.
+    /// Verifies the expected behavior for this scenario: gets Slack user by built email from name.
     /// </summary>
     [Fact]
     public async Task LookupUserAsync_GetsSlackUserByBuiltEmailFromName()
@@ -73,7 +73,7 @@ public class SlackServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: gets Slack User Using Email Alias.
+    /// Verifies the expected behavior for this scenario: gets Slack user using email alias.
     /// </summary>
     [Fact]
     public async Task LookupUserAsync_GetsSlackUserUsingEmailAlias()
@@ -85,7 +85,7 @@ public class SlackServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: returns Null If Name And Email Are Empty.
+    /// Verifies the expected behavior for this scenario: returns null if name and email are empty.
     /// </summary>
     [Fact]
     public async Task LookupUserAsync_ReturnsNullIfNameAndEmailAreEmpty()
@@ -97,7 +97,7 @@ public class SlackServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: converts Html Tables To Text.
+    /// Verifies the expected behavior for this scenario: converts HTML tables to text.
     /// </summary>
     [Fact]
     public void TranslateGitHubMarkdown_ConvertsHtmlTablesToText()
@@ -121,7 +121,7 @@ public class SlackServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: converts Br Tags To Newlines.
+    /// Verifies the expected behavior for this scenario: converts br tags to newlines.
     /// </summary>
     [Fact]
     public void TranslateGitHubMarkdown_ConvertsBrTagsToNewlines()
@@ -130,7 +130,7 @@ public class SlackServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: removes Html Comments.
+    /// Verifies the expected behavior for this scenario: removes HTML comments.
     /// </summary>
     [Fact]
     public void TranslateGitHubMarkdown_RemovesHtmlComments()
@@ -140,7 +140,7 @@ public class SlackServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: strips Other Html Tags But Preserves Content.
+    /// Verifies the expected behavior for this scenario: strips other HTML tags but preserves content.
     /// </summary>
     [Fact]
     public void TranslateGitHubMarkdown_StripsOtherHtmlTagsButPreservesContent()
@@ -150,7 +150,7 @@ public class SlackServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: handles Empty Markdown.
+    /// Verifies the expected behavior for this scenario: handles empty markdown.
     /// </summary>
     [Fact]
     public void TranslateGitHubMarkdown_HandlesEmptyMarkdown()
@@ -160,7 +160,7 @@ public class SlackServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: handles Mixed Html And Markdown.
+    /// Verifies the expected behavior for this scenario: handles mixed HTML and markdown.
     /// </summary>
     [Fact]
     public void TranslateGitHubMarkdown_HandlesMixedHtmlAndMarkdown()
@@ -187,10 +187,10 @@ public class SlackServiceTest : IDisposable
     /// <summary>
     /// Performs the user operation and returns its result.
     /// </summary>
-    /// <param name="login">Value supplied for login.</param>
+    /// <param name="login">Text used as the login.</param>
     /// <param name="name">Name used to identify the value or resource.</param>
-    /// <param name="email">Value supplied for email.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="email">Text used as the email.</param>
+    /// <returns>The user produced by the operation.</returns>
     private static User User(string login = "dselvam", string? name = null, string? email = null) =>
         GitHubModels.FromJson<User>(System.Text.Json.JsonSerializer.Serialize(new { login, name, email }));
 

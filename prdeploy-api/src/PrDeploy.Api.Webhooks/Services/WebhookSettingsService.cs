@@ -41,11 +41,11 @@ public class WebhookSettingsService
     private readonly ILogger<WebhookSettingsService> _logger;
 
     /// <summary>
-    /// Initializes a webhook Settings Service with the supplied dependencies.
+    /// Initializes the instance with its required dependencies.
     /// </summary>
     /// <param name="context">Request or application context used by the operation.</param>
-    /// <param name="deploymentStore">Value supplied for deployment Store.</param>
-    /// <param name="cache">Value supplied for cache.</param>
+    /// <param name="deploymentStore">Object containing the deployment store data used by the operation.</param>
+    /// <param name="cache">Object containing the cache data used by the operation.</param>
     /// <param name="logger">Logger used to report operational information and errors.</param>
     public WebhookSettingsService(WebhookContext context, IDeploymentStore deploymentStore, IMemoryCache cache,
         ILogger<WebhookSettingsService> logger)
@@ -59,7 +59,7 @@ public class WebhookSettingsService
     /// <summary>
     /// Retrieves the requested value.
     /// </summary>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     public async Task<RepoSettings> GetAsync()
     {
         var cacheKey = DeploySettingsService.GetWebhookSettingsCacheKey(_context.Owner, _context.Repo);
@@ -97,7 +97,7 @@ public class WebhookSettingsService
     }
 
     /// <summary>
-    /// Normalizes the Defaults for consistent processing.
+    /// Normalizes the defaults for consistent processing.
     /// </summary>
     /// <param name="settings">Settings used to configure the operation.</param>
     internal static void NormalizeDefaults(DeploySettings settings)
@@ -137,9 +137,9 @@ public class WebhookSettingsService
     }
 
     /// <summary>
-    /// Retrieves the Owner Settings.
+    /// Retrieves the owner settings.
     /// </summary>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     private async Task<DeploySettings?> GetOwnerSettingsAsync()
     {
         var settings = await _deploymentStore.GetAsync<DeploySettings?>(_context.Owner, DeploySettingsKey);
@@ -154,9 +154,9 @@ public class WebhookSettingsService
     }
 
     /// <summary>
-    /// Retrieves the Repo Settings.
+    /// Retrieves the repo settings.
     /// </summary>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     private async Task<DeploySettings> GetRepoSettingsAsync()
     {
         var settings =
@@ -173,9 +173,9 @@ public class WebhookSettingsService
     }
 
     /// <summary>
-    /// Retrieves the Default Branch.
+    /// Retrieves the default branch.
     /// </summary>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     private async Task<string> GetDefaultBranchAsync()
     {
         try
@@ -191,7 +191,7 @@ public class WebhookSettingsService
     }
 
     /// <summary>
-    /// Performs the apply Environment Colors operation.
+    /// Performs the apply environment colors operation.
     /// </summary>
     /// <param name="settings">Settings used to configure the operation.</param>
     private async Task ApplyEnvironmentColorsAsync(DeploySettings settings)
@@ -246,10 +246,10 @@ public class WebhookSettingsService
     }
 
     /// <summary>
-    /// Retrieves the Default Color.
+    /// Retrieves the default color.
     /// </summary>
-    /// <param name="label">Value supplied for label.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="label">Text used as the label.</param>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     private static string GetDefaultColor(string label)
     {
         if (label.EndsWith(LockSuffix, StringComparison.Ordinal))

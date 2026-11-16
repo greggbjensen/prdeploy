@@ -10,10 +10,10 @@ namespace PrDeploy.Api.Schema.Queries;
 public class OwnerRepoQuery
 {
     /// <summary>
-    /// Performs the enabled Owner Repos operation and returns its result.
+    /// Performs the enabled owner repos operation and returns its result.
     /// </summary>
-    /// <param name="service">Value supplied for service.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="service">Object containing the service data used by the operation.</param>
+    /// <returns>The collection of items produced by the operation.</returns>
     [GraphQLName("enabledOwnerRepos")]
     public async Task<List<OwnerRepos>> EnabledOwnerRepos(IOwnerRepoService service) =>
         await service.ListEnabledAsync();

@@ -1,19 +1,19 @@
 namespace PrDeploy.Api.Models.DeployEnvironments.Inputs
 {
     /// <summary>
-    /// Carries input values for the environment Deploy Input.
+    /// Carries input values for environment deploy operations.
     /// </summary>
     public class EnvironmentDeployInput : PullDeployInput
     {
         /// <summary>
-        /// Gets or sets the Force.
+        /// Gets or sets the force.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current force value.</value>
         public bool? Force { get; set; } = null;
         /// <summary>
-        /// Gets or sets the Retain.
+        /// Gets or sets the retain.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current retain value.</value>
         public bool? Retain { get; set; } = null;
     }
 }

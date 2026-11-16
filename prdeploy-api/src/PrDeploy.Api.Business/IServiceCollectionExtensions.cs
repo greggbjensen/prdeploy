@@ -25,7 +25,7 @@ using RestSharp;
 namespace PrDeploy.Api.Business;
 
 /// <summary>
-/// Adds the business services and document-storage provider used by PrDeploy.
+/// Defines the contract for service collection extensions operations.
 /// </summary>
 public static class IServiceCollectionExtensions
 {
@@ -173,8 +173,10 @@ public static class IServiceCollectionExtensions
     }
 
     /// <summary>
-    /// Determines whether AWS Data Protection keys are explicitly configured for Systems Manager.
+    /// Performs the uses legacy systems manager for data protection operation and returns its result.
     /// </summary>
+    /// <param name="configuration">Object containing the configuration data used by the operation.</param>
+    /// <returns>True when the requested condition is met; otherwise, false.</returns>
     private static bool UsesLegacySystemsManagerForDataProtection(IConfiguration configuration)
     {
         var keyStorage = configuration.GetSection("DataProtection:KeyStorage");

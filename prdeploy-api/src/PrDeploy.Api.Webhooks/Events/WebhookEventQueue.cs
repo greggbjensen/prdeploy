@@ -12,9 +12,9 @@ public class WebhookEventQueue
     private readonly Channel<WebhookEvent> _channel;
 
     /// <summary>
-    /// Initializes a webhook Event Queue with the supplied dependencies.
+    /// Initializes the instance with its required dependencies.
     /// </summary>
-    /// <param name="options">Value supplied for options.</param>
+    /// <param name="options">Object containing the options data used by the operation.</param>
     public WebhookEventQueue(IOptions<GitHubAppOptions> options)
     {
         _channel = Channel.CreateBounded<WebhookEvent>(new BoundedChannelOptions(options.Value.QueueCapacity)
@@ -27,10 +27,10 @@ public class WebhookEventQueue
     public bool TryEnqueue(WebhookEvent webhookEvent) => _channel.Writer.TryWrite(webhookEvent);
 
     /// <summary>
-    /// Performs the read All operation and returns its result.
+    /// Performs the read all operation and returns its result.
     /// </summary>
-    /// <param name="cancellationToken">Value supplied for cancellation Token.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="cancellationToken">Object containing the cancellation token data used by the operation.</param>
+    /// <returns>The i async enumerable&lt;webhook event&gt; produced by the operation.</returns>
     public IAsyncEnumerable<WebhookEvent> ReadAllAsync(CancellationToken cancellationToken) =>
         _channel.Reader.ReadAllAsync(cancellationToken);
 }

@@ -60,8 +60,12 @@ public sealed class LiteDbDeploymentStore : IDeploymentStore
     }
 
     /// <summary>
-    /// Builds the normalized path used to isolate a value within a repository.
+    /// Performs the repository path operation and returns its result.
     /// </summary>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <param name="repo">Repository whose values are addressed.</param>
+    /// <param name="name">Name used to identify the value or resource.</param>
+    /// <returns>Text produced or selected by the operation.</returns>
     private string RepositoryPath(string owner, string repo, string name) =>
         $"{_storageOptions.DeploymentValuePathPrefix}/{owner}/{repo}/{name.ToUpperInvariant()}";
 
@@ -112,24 +116,28 @@ public sealed class LiteDbDeploymentStore : IDeploymentStore
     private sealed class DeploymentRevision
     {
         /// <summary>
-        /// Gets or sets the LiteDB-generated document identifier.
+        /// Gets or sets the id.
         /// </summary>
+        /// <value>Current id value.</value>
         [BsonId]
         public ObjectId Id { get; set; } = ObjectId.NewObjectId();
 
         /// <summary>
-        /// Gets or sets the normalized deployment-value path.
+        /// Gets or sets the path.
         /// </summary>
+        /// <value>Current path value.</value>
         public string Path { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the monotonically increasing revision for this path.
+        /// Gets or sets the revision.
         /// </summary>
+        /// <value>Current revision value.</value>
         public long Revision { get; set; }
 
         /// <summary>
-        /// Gets or sets the serialized value payload.
+        /// Gets or sets the value.
         /// </summary>
+        /// <value>Current value value.</value>
         public string Value { get; set; } = string.Empty;
 
         /// <summary>

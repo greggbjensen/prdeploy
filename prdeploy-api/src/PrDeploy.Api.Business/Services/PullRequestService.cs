@@ -10,26 +10,26 @@ using PullRequest = PrDeploy.Api.Models.PullRequests.PullRequest;
 namespace PrDeploy.Api.Business.Services;
 
 /// <summary>
-/// Coordinates operations for the pull Request Service and its collaborators.
+/// Coordinates pull request operations and their collaborators.
 /// </summary>
 public class PullRequestService : IPullRequestService
 {
     private readonly IGitHubClient _client;
 
     /// <summary>
-    /// Initializes a pull Request Service with the supplied dependencies.
+    /// Initializes the instance with its required dependencies.
     /// </summary>
-    /// <param name="client">Value supplied for client.</param>
+    /// <param name="client">Object containing the client data used by the operation.</param>
     public PullRequestService(IGitHubClient client)
     {
         _client = client;
     }
 
     /// <summary>
-    /// Finds and returns the Open Pull Requests.
+    /// Finds and returns the open pull requests.
     /// </summary>
     /// <param name="input">Input object containing the operation's arguments.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>Items matching the supplied criteria.</returns>
     public async Task<List<PullRequest>> ListOpenPullRequestsAsync(OpenPullRequestInput input)
     {
         // Cannot search with this API, so we do it locally.
@@ -58,10 +58,10 @@ public class PullRequestService : IPullRequestService
     }
 
     /// <summary>
-    /// Adds the Services to the associated collection.
+    /// Adds the services to the associated collection.
     /// </summary>
     /// <param name="input">Input object containing the operation's arguments.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The status response produced by the operation.</returns>
     public async Task<StatusResponse> AddServicesAsync(PullRequestAddServicesInput input)
     {
         var serviceList = string.Join(' ', input.Services);
@@ -69,13 +69,13 @@ public class PullRequestService : IPullRequestService
     }
 
     /// <summary>
-    /// Adds the Comment Command to the associated collection.
+    /// Adds the comment command to the associated collection.
     /// </summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <param name="pullNumber">Number identifying the pull request.</param>
-    /// <param name="command">Value supplied for command.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="command">Text used as the command.</param>
+    /// <returns>The status response produced by the operation.</returns>
     public async Task<StatusResponse> AddCommentCommandAsync(string owner, string repo, int pullNumber,
         string command)
     {

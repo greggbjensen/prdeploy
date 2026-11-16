@@ -1,4 +1,4 @@
-﻿namespace PrDeploy.Api.Business.Stores.Interfaces;
+namespace PrDeploy.Api.Business.Stores.Interfaces;
 
 /// <summary>
 /// Reads and writes deployment configuration values and their historical revisions.
@@ -6,12 +6,13 @@
 public interface IDeploymentStore
 {
     /// <summary>
-    /// Gets the latest value scoped to an owner and repository, or the default value when it is absent.
+    /// Retrieves the requested value.
     /// </summary>
-    /// <param name="owner">Repository owner or organization name.</param>
-    /// <param name="repo">Repository name.</param>
-    /// <param name="name">Deployment-value name.</param>
-    /// <returns>The deserialized latest value, or the type's default value when no revision exists.</returns>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <param name="repo">Repository whose values are addressed.</param>
+    /// <param name="name">Name used to identify the value or resource.</param>
+    /// <typeparam name="T">Type of value consumed or produced by this operation.</typeparam>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     Task<T> GetAsync<T>(string owner, string repo, string name);
 
     /// <summary>
@@ -25,11 +26,12 @@ public interface IDeploymentStore
     Task<T> GetHistoricalAsync<T>(string owner, string repo, string name, int historical);
 
     /// <summary>
-    /// Gets the latest value scoped to an owner, or the default value when it is absent.
+    /// Retrieves the requested value.
     /// </summary>
-    /// <param name="owner">Owner or organization name.</param>
-    /// <param name="name">Deployment-value name.</param>
-    /// <returns>The deserialized latest value, or the type's default value when no revision exists.</returns>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <param name="name">Name used to identify the value or resource.</param>
+    /// <typeparam name="T">Type of value consumed or produced by this operation.</typeparam>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     Task<T> GetAsync<T>(string owner, string name);
 
     /// <summary>
@@ -52,10 +54,11 @@ public interface IDeploymentStore
     Task SetAsync<T>(string owner, string name, T value, bool isSecure = false);
 
     /// <summary>
-    /// Gets the latest global value, or the default value when it is absent.
+    /// Retrieves the requested value.
     /// </summary>
-    /// <param name="name">Deployment-value name.</param>
-    /// <returns>The deserialized latest value, or the type's default value when no revision exists.</returns>
+    /// <param name="name">Name used to identify the value or resource.</param>
+    /// <typeparam name="T">Type of value consumed or produced by this operation.</typeparam>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     Task<T> GetAsync<T>(string name);
 
     /// <summary>

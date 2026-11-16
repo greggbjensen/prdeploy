@@ -1,19 +1,19 @@
 namespace PrDeploy.Api.Models.Settings.Compare
 {
     /// <summary>
-    /// Represents the owner Repo Value used by the application.
+    /// Represents owner repo value data used by the application.
     /// </summary>
     public class OwnerRepoValue<T>
     {
         /// <summary>
-        /// Gets or sets the Owner.
+        /// Gets or sets the owner.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current owner value.</value>
         public T? Owner { get; set; }
         /// <summary>
-        /// Gets or sets the Repo.
+        /// Gets or sets the repo.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current repo value.</value>
         public T? Repo { get; set; }
     }
 }

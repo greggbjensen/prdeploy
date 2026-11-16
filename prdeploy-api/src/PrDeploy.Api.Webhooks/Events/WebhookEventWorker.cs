@@ -16,11 +16,11 @@ public class WebhookEventWorker : BackgroundService
     private readonly ILogger<WebhookEventWorker> _logger;
 
     /// <summary>
-    /// Initializes a webhook Event Worker with the supplied dependencies.
+    /// Initializes the instance with its required dependencies.
     /// </summary>
-    /// <param name="queue">Value supplied for queue.</param>
-    /// <param name="dispatcher">Value supplied for dispatcher.</param>
-    /// <param name="options">Value supplied for options.</param>
+    /// <param name="queue">Object containing the queue data used by the operation.</param>
+    /// <param name="dispatcher">Object containing the dispatcher data used by the operation.</param>
+    /// <param name="options">Object containing the options data used by the operation.</param>
     /// <param name="logger">Logger used to report operational information and errors.</param>
     public WebhookEventWorker(WebhookEventQueue queue, WebhookEventDispatcher dispatcher,
         IOptions<GitHubAppOptions> options, ILogger<WebhookEventWorker> logger)
@@ -34,7 +34,7 @@ public class WebhookEventWorker : BackgroundService
     /// <summary>
     /// Performs the execute operation.
     /// </summary>
-    /// <param name="stoppingToken">Value supplied for stopping Token.</param>
+    /// <param name="stoppingToken">Object containing the stopping token data used by the operation.</param>
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var concurrency = Math.Max(1, _options.MaxConcurrency);
@@ -47,7 +47,7 @@ public class WebhookEventWorker : BackgroundService
     /// <summary>
     /// Performs the consume operation.
     /// </summary>
-    /// <param name="stoppingToken">Value supplied for stopping Token.</param>
+    /// <param name="stoppingToken">Object containing the stopping token data used by the operation.</param>
     private async Task ConsumeAsync(CancellationToken stoppingToken)
     {
         try

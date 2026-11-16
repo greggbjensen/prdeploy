@@ -15,10 +15,10 @@ namespace PrDeploy.Api.Models
     public static class IServiceCollectionExtensions
     {
         /// <summary>
-        /// Adds the Pr Deploy Api Model Validation to the associated collection.
+        /// Adds the pr deploy API model validation to the associated collection.
         /// </summary>
         /// <param name="services">Services to include in the operation.</param>
-        /// <returns>The value produced by this operation.</returns>
+        /// <returns>The i service collection produced by the operation.</returns>
         public static IServiceCollection AddPrDeployApiModelValidation(this IServiceCollection services)
         {
             services

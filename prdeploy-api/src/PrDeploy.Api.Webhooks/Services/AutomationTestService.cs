@@ -17,11 +17,11 @@ public partial class AutomationTestService
     private readonly ILogger<AutomationTestService> _logger;
 
     /// <summary>
-    /// Initializes a automation Test Service with the supplied dependencies.
+    /// Initializes the instance with its required dependencies.
     /// </summary>
     /// <param name="context">Request or application context used by the operation.</param>
-    /// <param name="pullRequestService">Value supplied for pull Request Service.</param>
-    /// <param name="environmentUtil">Value supplied for environment Util.</param>
+    /// <param name="pullRequestService">Object containing the pull request service data used by the operation.</param>
+    /// <param name="environmentUtil">Object containing the environment util data used by the operation.</param>
     /// <param name="logger">Logger used to report operational information and errors.</param>
     public AutomationTestService(WebhookContext context, PullRequestService pullRequestService,
         EnvironmentUtil environmentUtil, ILogger<AutomationTestService> logger)
@@ -33,10 +33,10 @@ public partial class AutomationTestService
     }
 
     /// <summary>
-    /// Performs the trigger Test Run operation.
+    /// Performs the trigger test run operation.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
-    /// <param name="run">Value supplied for run.</param>
+    /// <param name="run">Object containing the run data used by the operation.</param>
     public async Task TriggerTestRunAsync(PullRequest pullRequest, WorkflowRun run)
     {
         _logger.LogDebug("Evaluating automation test dispatch for pull #{PullNumber}.", pullRequest.Number);
@@ -62,11 +62,11 @@ public partial class AutomationTestService
     }
 
     /// <summary>
-    /// Performs the replace Automation Tokens operation and returns its result.
+    /// Performs the replace automation tokens operation and returns its result.
     /// </summary>
-    /// <param name="inputs">Value supplied for inputs.</param>
+    /// <param name="inputs">Object containing the inputs data used by the operation.</param>
     /// <param name="context">Request or application context used by the operation.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The dictionary&lt;string, object&gt; produced by the operation.</returns>
     internal Dictionary<string, object> ReplaceAutomationTokens(IDictionary<string, object> inputs,
         IReadOnlyDictionary<string, object?> context)
     {
@@ -85,9 +85,9 @@ public partial class AutomationTestService
     }
 
     /// <summary>
-    /// Converts the supplied value to the Token Regex.
+    /// Converts the supplied value to the token regex.
     /// </summary>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"\$\{(.*?)\}")]
     private static partial Regex TokenRegex();
 }

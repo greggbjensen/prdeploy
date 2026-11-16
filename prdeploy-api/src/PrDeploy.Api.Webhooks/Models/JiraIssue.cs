@@ -1,28 +1,28 @@
 namespace PrDeploy.Api.Webhooks.Models;
 
 /// <summary>
-/// Represents the jira Issue used by the application.
+/// Represents Jira issue data used by the application.
 /// </summary>
 public class JiraIssue
 {
     /// <summary>
-    /// Gets or sets the Key.
+    /// Gets or sets the key.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current key value.</value>
     public string Key { get; set; } = string.Empty;
     /// <summary>
-    /// Gets or sets the Summary.
+    /// Gets or sets the summary.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current summary value.</value>
     public string Summary { get; set; } = string.Empty;
     /// <summary>
-    /// Gets or sets the Type.
+    /// Gets or sets the type.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current type value.</value>
     public string Type { get; set; } = string.Empty;
     /// <summary>
-    /// Gets or sets the Url.
+    /// Gets or sets the URL.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current URL value.</value>
     public string Url { get; set; } = string.Empty;
 }

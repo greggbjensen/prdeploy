@@ -6,7 +6,7 @@ using PrDeploy.Api.Webhooks.Services;
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
 /// <summary>
-/// Contains tests that verify the behavior of the pull Request Service Test.
+/// Contains tests that verify pull request service behavior.
 /// </summary>
 public class PullRequestServiceTest : IDisposable
 {
@@ -22,7 +22,7 @@ public class PullRequestServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: gets Pull Request By Number.
+    /// Verifies the expected behavior for this scenario: gets pull request by number.
     /// </summary>
     [Fact]
     public async Task GetAsync_GetsPullRequestByNumber()
@@ -37,10 +37,10 @@ public class PullRequestServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: gets Environment From Workflow Run Name.
+    /// Verifies the expected behavior for this scenario: gets environment from workflow run name.
     /// </summary>
-    /// <param name="runName">Value supplied for run Name.</param>
-    /// <param name="expected">Value supplied for expected.</param>
+    /// <param name="runName">Text used as the run name.</param>
+    /// <param name="expected">Text used as the expected.</param>
     [Theory]
     [InlineData("[stage] SCRUM-12345-my-feature: This is a test commit message.", "stage")]
     [InlineData("[prod ROLLBACK] SCRUM-12345-my-feature: This is a test commit message.", "prod")]
@@ -52,7 +52,7 @@ public class PullRequestServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: gets Environment From Pull Request When In Single Environment.
+    /// Verifies the expected behavior for this scenario: gets environment from pull request when in single environment.
     /// </summary>
     [Fact]
     public void GetEnvironment_GetsEnvironmentFromPullRequestWhenInSingleEnvironment()
@@ -62,7 +62,7 @@ public class PullRequestServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: gets Environment By Priority When In Multiple Environments.
+    /// Verifies the expected behavior for this scenario: gets environment by priority when in multiple environments.
     /// </summary>
     [Fact]
     public void GetEnvironment_GetsEnvironmentByPriorityWhenInMultipleEnvironments()
@@ -76,7 +76,7 @@ public class PullRequestServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: returns Empty When No Labels.
+    /// Verifies the expected behavior for this scenario: returns empty when no labels.
     /// </summary>
     [Fact]
     public void GetEnvironment_ReturnsEmptyWhenNoLabels()
@@ -85,10 +85,10 @@ public class PullRequestServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: gets Rollback Status From Workflow Run Name.
+    /// Verifies the expected behavior for this scenario: gets rollback status from workflow run name.
     /// </summary>
-    /// <param name="runName">Value supplied for run Name.</param>
-    /// <param name="expected">Value supplied for expected.</param>
+    /// <param name="runName">Text used as the run name.</param>
+    /// <param name="expected">Whether the expected option is enabled.</param>
     [Theory]
     [InlineData("[prod ROLLBACK] SCRUM-12345-my-feature: This is a test commit message.", true)]
     [InlineData("[prod] SCRUM-12345-my-feature: This is a test commit message.", false)]
@@ -98,10 +98,10 @@ public class PullRequestServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: gets Count From Workflow Run Name.
+    /// Verifies the expected behavior for this scenario: gets count from workflow run name.
     /// </summary>
-    /// <param name="runName">Value supplied for run Name.</param>
-    /// <param name="expected">Value supplied for expected.</param>
+    /// <param name="runName">Text used as the run name.</param>
+    /// <param name="expected">Numeric value used for the expected.</param>
     [Theory]
     [InlineData("[prod ROLLBACK] SCRUM-12345-my-feature: message.", 1)]
     [InlineData("[prod ROLLBACK 3] SCRUM-12345-my-feature: message.", 3)]
@@ -112,7 +112,7 @@ public class PullRequestServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: gets Pull Number From Workflow Run Name.
+    /// Verifies the expected behavior for this scenario: gets pull number from workflow run name.
     /// </summary>
     [Fact]
     public void GetRollbackPullNumber_GetsPullNumberFromWorkflowRunName()
@@ -122,7 +122,7 @@ public class PullRequestServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: uses Assigned Dev Environment.
+    /// Verifies the expected behavior for this scenario: uses assigned dev environment.
     /// </summary>
     [Fact]
     public void GetDefaultedEnvironment_UsesAssignedDevEnvironment()
@@ -134,7 +134,7 @@ public class PullRequestServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: lists Locked Environments For Other Pull Requests.
+    /// Verifies the expected behavior for this scenario: lists locked environments for other pull requests.
     /// </summary>
     [Fact]
     public void GetUsedEnvironments_ListsLockedEnvironmentsForOtherPullRequests()
@@ -151,7 +151,7 @@ public class PullRequestServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: removes Lock Labels And Returns Available Environments.
+    /// Verifies the expected behavior for this scenario: removes lock labels and returns available environments.
     /// </summary>
     [Fact]
     public async Task FreeAsync_RemovesLockLabelsAndReturnsAvailableEnvironments()
@@ -169,7 +169,7 @@ public class PullRequestServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: adds Environment And Removes Other Locks.
+    /// Verifies the expected behavior for this scenario: adds environment and removes other locks.
     /// </summary>
     [Fact]
     public async Task ProgressEnvironmentAsync_AddsEnvironmentAndRemovesOtherLocks()

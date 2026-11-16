@@ -11,11 +11,11 @@ namespace PrDeploy.Api.Schema.Queries;
 public class DeployQueueQuery
 {
     /// <summary>
-    /// Performs the deploy Queues operation and returns its result.
+    /// Performs the deploy queues operation and returns its result.
     /// </summary>
-    /// <param name="service">Value supplied for service.</param>
+    /// <param name="service">Object containing the service data used by the operation.</param>
     /// <param name="input">Input object containing the operation's arguments.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The collection of items produced by the operation.</returns>
     [GraphQLName("deployQueues")]
     public async Task<List<DeployQueue>> DeployQueues(IDeployQueueService service, RepoQueryInput input) =>
         await service.ListAsync(input);

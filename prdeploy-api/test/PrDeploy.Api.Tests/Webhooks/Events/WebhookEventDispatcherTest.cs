@@ -12,7 +12,7 @@ using PrDeploy.Api.Webhooks.Events;
 namespace PrDeploy.Api.Tests.Webhooks.Events;
 
 /// <summary>
-/// Contains tests that verify the behavior of the webhook Event Dispatcher Test.
+/// Contains tests that verify webhook event dispatcher behavior.
 /// </summary>
 public class WebhookEventDispatcherTest
 {
@@ -39,7 +39,7 @@ public class WebhookEventDispatcherTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: loads Settings And Runs Comment Command.
+    /// Verifies the expected behavior for this scenario: loads settings and runs comment command.
     /// </summary>
     [Fact]
     public async Task DispatchAsync_LoadsSettingsAndRunsCommentCommand()
@@ -74,7 +74,7 @@ public class WebhookEventDispatcherTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: deserializes Pull Request Payload.
+    /// Verifies the expected behavior for this scenario: deserializes pull request payload.
     /// </summary>
     [Fact]
     public async Task DispatchAsync_DeserializesPullRequestPayload()
@@ -93,7 +93,7 @@ public class WebhookEventDispatcherTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: logs And Continues When Flow Fails.
+    /// Verifies the expected behavior for this scenario: logs and continues when flow fails.
     /// </summary>
     [Fact]
     public async Task DispatchAsync_LogsAndContinuesWhenFlowFails()
@@ -112,9 +112,9 @@ public class WebhookEventDispatcherTest
     /// Performs the event operation and returns its result.
     /// </summary>
     /// <param name="name">Name used to identify the value or resource.</param>
-    /// <param name="action">Value supplied for action.</param>
-    /// <param name="properties">Value supplied for properties.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="action">Text used as the action.</param>
+    /// <param name="properties">Text used as the properties.</param>
+    /// <returns>The webhook event produced by the operation.</returns>
     private static WebhookEvent Event(string name, string action, string properties)
     {
         using var document = JsonDocument.Parse($$"""

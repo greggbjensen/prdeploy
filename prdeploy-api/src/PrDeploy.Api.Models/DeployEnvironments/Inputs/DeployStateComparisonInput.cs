@@ -4,39 +4,39 @@ using HotChocolate.Types;
 namespace PrDeploy.Api.Models.DeployEnvironments.Inputs
 {
     /// <summary>
-    /// Carries input values for the deploy State Comparison Input.
+    /// Carries input values for deploy state comparison operations.
     /// </summary>
     [GraphQLDescription("Input for retrieving the deploy state comparison.")]
     public class DeployStateComparisonInput
     {
         /// <summary>
-        /// Gets or sets the Owner.
+        /// Gets or sets the owner.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current owner value.</value>
         [GraphQLType(typeof(IdType))]
         [GraphQLDescription("Repository owner or organization.")]
         public string Owner { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the Repo.
+        /// Gets or sets the repo.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current repo value.</value>
         [GraphQLType(typeof(IdType))]
         [GraphQLDescription("Repository being accessed within the owner.")]
         public string Repo { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the Source Environment.
+        /// Gets or sets the source environment.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current source environment value.</value>
         [GraphQLType(typeof(IdType))]
         [GraphQLDescription("Environment to compare from.")]
         public string SourceEnvironment { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the Target Environment.
+        /// Gets or sets the target environment.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current target environment value.</value>
         [GraphQLType(typeof(IdType))]
         [GraphQLDescription("Environment to compare to.")]
         public string TargetEnvironment { get; set; } = string.Empty;

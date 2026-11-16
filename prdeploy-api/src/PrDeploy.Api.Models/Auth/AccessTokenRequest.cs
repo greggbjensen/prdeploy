@@ -2,34 +2,34 @@ namespace PrDeploy.Api.Models.Auth
 {
     //// SourceRef: https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps
     /// <summary>
-    /// Represents the access Token Request used by the application.
+    /// Represents access token request data used by the application.
     /// </summary>
     public class AccessTokenRequest
     {
         /// <summary>
-        /// Gets or sets the Grant Type.
+        /// Gets or sets the grant type.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current grant type value.</value>
         public string GrantType { get; set; } = string.Empty;
         /// <summary>
-        /// Gets or sets the Code.
+        /// Gets or sets the code.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current code value.</value>
         public string Code { get; set; } = string.Empty;
         /// <summary>
-        /// Gets or sets the Redirect Url.
+        /// Gets or sets the redirect URL.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current redirect URL value.</value>
         public string RedirectUrl { get; set; } = string.Empty;
         /// <summary>
-        /// Gets or sets the Code Verifier.
+        /// Gets or sets the code verifier.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current code verifier value.</value>
         public string CodeVerifier { get; set; } = string.Empty;
         /// <summary>
-        /// Gets or sets the Client Id.
+        /// Gets or sets the client id.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current client id value.</value>
         public string ClientId { get; set; } = string.Empty;
     }
 }

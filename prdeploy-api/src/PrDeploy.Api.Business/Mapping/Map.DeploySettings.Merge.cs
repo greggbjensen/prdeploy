@@ -2,7 +2,7 @@ using PrDeploy.Api.Models.Settings;
 
 namespace PrDeploy.Api.Business.Mapping;
 /// <summary>
-/// Represents the map used by the application.
+/// Represents map data used by the application.
 /// </summary>
 public static partial class Map
 {

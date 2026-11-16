@@ -4,16 +4,16 @@ using PrDeploy.Api.Models.Settings.Compare;
 namespace PrDeploy.Api.Business.Mapping;
 
 /// <summary>
-/// Represents the map used by the application.
+/// Represents map data used by the application.
 /// </summary>
 public static partial class Map
 {
     /// <summary>
-    /// Compares the requested value and returns the differences.
+    /// Compares the supplied values and returns their differences.
     /// </summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The deploy settings compare produced by the operation.</returns>
     public static DeploySettingsCompare? Compare(DeploySettings? owner, DeploySettings? repo)
     {
         if (owner == null || repo == null)
@@ -66,11 +66,11 @@ public static partial class Map
     }
 
     /// <summary>
-    /// Compares the requested value and returns the differences.
+    /// Compares the supplied values and returns their differences.
     /// </summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The builds settings compare produced by the operation.</returns>
     public static BuildsSettingsCompare Compare(BuildsSettings? owner, BuildsSettings? repo)
     {
         return new()
@@ -89,11 +89,11 @@ public static partial class Map
     }
 
     /// <summary>
-    /// Compares the requested value and returns the differences.
+    /// Compares the supplied values and returns their differences.
     /// </summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The Jira settings compare produced by the operation.</returns>
     public static JiraSettingsCompare Compare(JiraSettings? owner, JiraSettings? repo)
     {
         return new()
@@ -122,11 +122,11 @@ public static partial class Map
     }
 
     /// <summary>
-    /// Compares the requested value and returns the differences.
+    /// Compares the supplied values and returns their differences.
     /// </summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The Slack settings compare produced by the operation.</returns>
     public static SlackSettingsCompare Compare(SlackSettings? owner, SlackSettings? repo)
     {
         return new()
@@ -157,11 +157,11 @@ public static partial class Map
     }
 
     /// <summary>
-    /// Compares the requested value and returns the differences.
+    /// Compares the supplied values and returns their differences.
     /// </summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The Slack web hooks settings compare produced by the operation.</returns>
     public static SlackWebHooksSettingsCompare Compare(SlackWebHooksSettings? owner, SlackWebHooksSettings? repo)
     {
         return new()
@@ -180,11 +180,11 @@ public static partial class Map
     }
 
     /// <summary>
-    /// Compares the requested value and returns the differences.
+    /// Compares the supplied values and returns their differences.
     /// </summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The badge settings compare produced by the operation.</returns>
     public static BadgeSettingsCompare Compare(BadgeSettings? owner, BadgeSettings? repo)
     {
         return new()

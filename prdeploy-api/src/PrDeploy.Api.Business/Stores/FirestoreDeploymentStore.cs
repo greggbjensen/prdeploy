@@ -8,6 +8,8 @@ namespace PrDeploy.Api.Business.Stores;
 /// <summary>
 /// Stores deployment values in the configured Google Cloud Firestore collection.
 /// </summary>
+/// <param name="storage">Firestore document adapter used to read and append deployment-value revisions.</param>
+/// <param name="storageOptions">Options containing the path prefix shared by deployment-value keys.</param>
 public sealed class FirestoreDeploymentStore(
     FirestoreDocumentStorage storage,
     IOptions<DeploymentStoreOptions> storageOptions) : IDeploymentStore
@@ -41,8 +43,12 @@ public sealed class FirestoreDeploymentStore(
         SetDeploymentValueAsync($"{storageOptions.Value.DeploymentValuePathPrefix}/{name.ToUpperInvariant()}", value, isSecure);
 
     /// <summary>
-    /// Builds the normalized path used to isolate a value within a repository.
+    /// Performs the repository path operation and returns its result.
     /// </summary>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <param name="repo">Repository whose values are addressed.</param>
+    /// <param name="name">Name used to identify the value or resource.</param>
+    /// <returns>Text produced or selected by the operation.</returns>
     private string RepositoryPath(string owner, string repo, string name) =>
         $"{storageOptions.Value.DeploymentValuePathPrefix}/{owner}/{repo}/{name.ToUpperInvariant()}";
 

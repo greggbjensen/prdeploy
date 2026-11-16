@@ -4,7 +4,7 @@ using PrDeploy.Api.Webhooks.Services;
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
 /// <summary>
-/// Contains tests that verify the behavior of the check Service Test.
+/// Contains tests that verify check service behavior.
 /// </summary>
 public class CheckServiceTest : IDisposable
 {
@@ -20,7 +20,7 @@ public class CheckServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: lists Builds And Versions From Reference.
+    /// Verifies the expected behavior for this scenario: lists builds and versions from reference.
     /// </summary>
     [Fact]
     public async Task ListBuildsAsync_ListsBuildsAndVersionsFromReference()
@@ -39,7 +39,7 @@ public class CheckServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: lists Builds From Override Run Ids.
+    /// Verifies the expected behavior for this scenario: lists builds from override run ids.
     /// </summary>
     [Fact]
     public async Task ListBuildsAsync_ListsBuildsFromOverrideRunIds()
@@ -54,7 +54,7 @@ public class CheckServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: excludes Deploy Workflow Checks.
+    /// Verifies the expected behavior for this scenario: excludes deploy workflow checks.
     /// </summary>
     [Fact]
     public async Task ListIncompletePullChecksAsync_ExcludesDeployWorkflowChecks()

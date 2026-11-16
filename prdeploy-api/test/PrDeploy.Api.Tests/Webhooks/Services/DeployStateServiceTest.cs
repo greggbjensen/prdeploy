@@ -5,7 +5,7 @@ using PrDeploy.Api.Webhooks.Services;
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
 /// <summary>
-/// Contains tests that verify the behavior of the deploy State Service Test.
+/// Contains tests that verify deploy state service behavior.
 /// </summary>
 public class DeployStateServiceTest : IDisposable
 {
@@ -21,7 +21,7 @@ public class DeployStateServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: adds Services To Deploy State.
+    /// Verifies the expected behavior for this scenario: adds services to deploy state.
     /// </summary>
     [Fact]
     public async Task UpdateAsync_AddsServicesToDeployState()
@@ -46,7 +46,7 @@ public class DeployStateServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: creates Default Deploy State When None Is Available.
+    /// Verifies the expected behavior for this scenario: creates default deploy state when none is available.
     /// </summary>
     [Fact]
     public async Task GetAsync_CreatesDefaultDeployStateWhenNoneIsAvailable()
@@ -60,7 +60,7 @@ public class DeployStateServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: returns Historical State Without Overwriting Current.
+    /// Verifies the expected behavior for this scenario: returns historical state without overwriting current.
     /// </summary>
     [Fact]
     public async Task GetAsync_ReturnsHistoricalStateWithoutOverwritingCurrent()
@@ -75,7 +75,7 @@ public class DeployStateServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: determines Difference Between Environments.
+    /// Verifies the expected behavior for this scenario: determines difference between environments.
     /// </summary>
     [Fact]
     public async Task DiffAsync_DeterminesDifferenceBetweenEnvironments()

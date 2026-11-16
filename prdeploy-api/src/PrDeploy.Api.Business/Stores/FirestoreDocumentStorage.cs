@@ -5,6 +5,9 @@ namespace PrDeploy.Api.Business.Stores;
 /// <summary>
 /// Provides document operations for deployment values and Data Protection keys in Firestore.
 /// </summary>
+/// <param name="firestore">Firestore client used to access the configured collections.</param>
+/// <param name="deploymentCollectionName">Collection used to store deployment-value revisions.</param>
+/// <param name="dataProtectionCollectionName">Collection used to store Data Protection key documents.</param>
 public sealed class FirestoreDocumentStorage(
     FirestoreDb firestore,
     string deploymentCollectionName,

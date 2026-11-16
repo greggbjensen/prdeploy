@@ -3,23 +3,23 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 namespace PrDeploy.Api
 {
     /// <summary>
-    /// Represents the health Check used by the application.
+    /// Represents health check data used by the application.
     /// </summary>
     internal class HealthCheck : IHealthCheck
     {
         /// <summary>
-        /// Gets the Build Number.
+        /// Gets the build number.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current build number value.</value>
         public static string BuildNumber { get; }
         /// <summary>
-        /// Gets the Code Version.
+        /// Gets the code version.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current code version value.</value>
         public static string CodeVersion { get; }
 
         /// <summary>
-        /// Initializes a health Check with the supplied dependencies.
+        /// Initializes the instance with its required dependencies.
         /// </summary>
         static HealthCheck()
         {
@@ -41,8 +41,8 @@ namespace PrDeploy.Api
         /// Checks whether the health condition is satisfied.
         /// </summary>
         /// <param name="context">Request or application context used by the operation.</param>
-        /// <param name="cancellationToken">Value supplied for cancellation Token.</param>
-        /// <returns>The value produced by this operation.</returns>
+        /// <param name="cancellationToken">Object containing the cancellation token data used by the operation.</param>
+        /// <returns>The health check result produced by the operation.</returns>
         public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken)
         {
             var data = new Dictionary<string, object>

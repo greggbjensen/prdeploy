@@ -1,29 +1,29 @@
 namespace PrDeploy.Api.Business.Options
 {
     /// <summary>
-    /// Defines configuration options for the jwt Options.
+    /// Defines configuration options for JWT.
     /// </summary>
     public class JwtOptions
     {
         /// <summary>
-        /// Gets or sets the Issuer.
+        /// Gets or sets the issuer.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current issuer value.</value>
         public string Issuer { get; set; } = string.Empty;
         /// <summary>
-        /// Gets or sets the Audience.
+        /// Gets or sets the audience.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current audience value.</value>
         public string Audience { get; set; } = string.Empty;
         /// <summary>
-        /// Gets or sets the Key.
+        /// Gets or sets the key.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current key value.</value>
         public string Key { get; set; } = string.Empty;
         /// <summary>
-        /// Gets or sets the Token Encryption Key.
+        /// Gets or sets the token encryption key.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current token encryption key value.</value>
         public string TokenEncryptionKey { get; set; } = string.Empty;
     }
 }

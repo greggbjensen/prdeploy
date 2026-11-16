@@ -1,18 +1,18 @@
 namespace PrDeploy.Api.Models.PullRequests;
 /// <summary>
-/// Represents the deploy User used by the application.
+/// Represents deploy user data used by the application.
 /// </summary>
 public class DeployUser
 {
     /// <summary>
-    /// Gets or sets the Name.
+    /// Gets or sets the name.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current name value.</value>
     public string? Name { get; set; }
 
     /// <summary>
-    /// Gets or sets the Username.
+    /// Gets or sets the username.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current username value.</value>
     public string? Username { get; set; }
 }

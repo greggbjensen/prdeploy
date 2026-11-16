@@ -1,7 +1,7 @@
 namespace PrDeploy.Api.Business.Auth
 {
     /// <summary>
-    /// Represents the pr Deploy Claim Names used by the application.
+    /// Represents pr deploy claim names data used by the application.
     /// </summary>
     public static class PrDeployClaimNames
     {

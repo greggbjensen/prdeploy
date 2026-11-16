@@ -9,7 +9,7 @@ using PrDeploy.Api.Webhooks.Services;
 namespace PrDeploy.Api.Tests.Webhooks.Framework;
 
 /// <summary>
-/// Builds the webhook services for a single event with a mocked GitHub client, deployment store and HTTP calls.
+/// Represents webhook test host data used by the application.
 /// </summary>
 public sealed class WebhookTestHost : IDisposable
 {
@@ -21,7 +21,7 @@ public sealed class WebhookTestHost : IDisposable
     private readonly IServiceScope _scope;
 
     /// <summary>
-    /// Initializes a webhook Test Host with the supplied dependencies.
+    /// Initializes the instance with its required dependencies.
     /// </summary>
     /// <param name="settings">Settings used to configure the operation.</param>
     public WebhookTestHost(DeploySettings? settings = null)
@@ -51,42 +51,42 @@ public sealed class WebhookTestHost : IDisposable
     }
 
     /// <summary>
-    /// Gets the Git Hub.
+    /// Gets the git hub.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current git hub value.</value>
     public Mock<IGitHubClient> GitHub { get; }
 
     /// <summary>
-    /// Gets the Deployment Store.
+    /// Gets the deployment store.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current deployment store value.</value>
     public InMemoryDeploymentStore DeploymentStore { get; } = new();
 
     /// <summary>
-    /// Gets the Http.
+    /// Gets the HTTP.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current HTTP value.</value>
     public FakeHttpMessageHandler Http { get; } = new();
 
     /// <summary>
-    /// Gets the Context.
+    /// Gets the context.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current context value.</value>
     public WebhookContext Context { get; }
 
     /// <summary>
     /// Retrieves the requested value.
     /// </summary>
-    /// <typeparam name="T">Type used by this operation.</typeparam>
-    /// <returns>The value produced by this operation.</returns>
+    /// <typeparam name="T">Type of value consumed or produced by this operation.</typeparam>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     public T Get<T>() where T : notnull => _scope.ServiceProvider.GetRequiredService<T>();
 
     /// <summary>
-    /// Performs the mock Of operation and returns its result.
+    /// Performs the mock of operation and returns its result.
     /// </summary>
-    /// <param name="client">Value supplied for client.</param>
-    /// <typeparam name="T">Type used by this operation.</typeparam>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="client">Object containing the client data used by the operation.</param>
+    /// <typeparam name="T">Type of value consumed or produced by this operation.</typeparam>
+    /// <returns>The mock&lt;t&gt; produced by the operation.</returns>
     public Mock<T> MockOf<T>(T client) where T : class => Mock.Get(client);
 
     /// <summary>
@@ -151,10 +151,10 @@ public sealed class WebhookTestHost : IDisposable
     /// Performs the environment operation and returns its result.
     /// </summary>
     /// <param name="name">Name used to identify the value or resource.</param>
-    /// <param name="queue">Value supplied for queue.</param>
-    /// <param name="color">Value supplied for color.</param>
-    /// <param name="requireApproval">Value supplied for require Approval.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="queue">Text used as the queue.</param>
+    /// <param name="color">Text used as the color.</param>
+    /// <param name="requireApproval">Whether the require approval option is enabled.</param>
+    /// <returns>The environment settings produced by the operation.</returns>
     private static EnvironmentSettings Environment(string name, string queue, string color,
         bool requireApproval = false) => new()
     {

@@ -10,11 +10,11 @@ namespace PrDeploy.Api.Schema.Queries;
 public class RepositoryQuery
 {
     /// <summary>
-    /// Performs the repository Services operation and returns its result.
+    /// Performs the repository services operation and returns its result.
     /// </summary>
-    /// <param name="service">Value supplied for service.</param>
+    /// <param name="service">Object containing the service data used by the operation.</param>
     /// <param name="input">Input object containing the operation's arguments.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The collection of items produced by the operation.</returns>
     [GraphQLName("repositoryServices")]
     public async Task<List<string>> RepositoryServices(IDeploySettingsService service, RepoQueryInput input) =>
         await service.ListServicesAsync(input);

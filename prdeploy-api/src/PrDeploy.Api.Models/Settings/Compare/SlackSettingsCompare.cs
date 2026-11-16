@@ -1,32 +1,32 @@
 namespace PrDeploy.Api.Models.Settings.Compare;
 /// <summary>
-/// Represents the slack Settings Compare used by the application.
+/// Represents Slack settings compare data used by the application.
 /// </summary>
 public class SlackSettingsCompare
 {
     /// <summary>
-    /// Gets or sets the Token.
+    /// Gets or sets the token.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current token value.</value>
     public OwnerRepoValue<string> Token { get; set; } = null!;
     /// <summary>
-    /// Gets or sets the Email Domain.
+    /// Gets or sets the email domain.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current email domain value.</value>
     public OwnerRepoValue<string> EmailDomain { get; set; } = null!;
     /// <summary>
-    /// Gets or sets the Email Aliases.
+    /// Gets or sets the email aliases.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current email aliases value.</value>
     public OwnerRepoDictionary EmailAliases { get; set; } = null!;
     /// <summary>
-    /// Gets or sets the Webhooks.
+    /// Gets or sets the webhooks.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current webhooks value.</value>
     public SlackWebHooksSettingsCompare Webhooks { get; set; } = null!;
     /// <summary>
-    /// Gets or sets the Notifications Enabled.
+    /// Gets or sets the notifications enabled.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current notifications enabled value.</value>
     public OwnerRepoValue<bool?> NotificationsEnabled { get; set; } = null!;
 }

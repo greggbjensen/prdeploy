@@ -24,8 +24,9 @@ public class InMemoryDeploymentStore : IDeploymentStore
     private readonly Dictionary<string, List<string>> _deploymentValues = new();
 
     /// <summary>
-    /// Gets the stored serialized values, keyed by their normalized path.
+    /// Gets the deployment values.
     /// </summary>
+    /// <value>Current deployment values value.</value>
     public IReadOnlyDictionary<string, List<string>> DeploymentValues => _deploymentValues;
 
     /// <inheritdoc />

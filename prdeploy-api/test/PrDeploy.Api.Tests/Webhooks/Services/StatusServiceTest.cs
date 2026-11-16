@@ -6,7 +6,7 @@ using PrDeploy.Api.Webhooks.Services;
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
 /// <summary>
-/// Contains tests that verify the behavior of the status Service Test.
+/// Contains tests that verify status service behavior.
 /// </summary>
 public class StatusServiceTest : IDisposable
 {
@@ -26,7 +26,7 @@ public class StatusServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: posts Pull Request Comment For Deployment Started.
+    /// Verifies the expected behavior for this scenario: posts pull request comment for deployment started.
     /// </summary>
     [Fact]
     public async Task PostDeployStartedAsync_PostsPullRequestCommentForDeploymentStarted()
@@ -46,7 +46,7 @@ public class StatusServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: posts Pull Request Comment For Rollback Started.
+    /// Verifies the expected behavior for this scenario: posts pull request comment for rollback started.
     /// </summary>
     [Fact]
     public async Task PostDeployStartedAsync_PostsPullRequestCommentForRollbackStarted()
@@ -70,7 +70,7 @@ public class StatusServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: updates Deploy State And Posts Messages.
+    /// Verifies the expected behavior for this scenario: updates deploy state and posts messages.
     /// </summary>
     [Fact]
     public async Task PostDeployCompletedAsync_UpdatesDeployStateAndPostsMessages()
@@ -95,7 +95,7 @@ public class StatusServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: ignores Cancelled Runs.
+    /// Verifies the expected behavior for this scenario: ignores cancelled runs.
     /// </summary>
     [Fact]
     public async Task PostDeployCompletedAsync_IgnoresCancelledRuns()
@@ -108,9 +108,9 @@ public class StatusServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Stores or updates the Setup Run.
+    /// Stores or updates the setup run.
     /// </summary>
-    /// <param name="run">Value supplied for run.</param>
+    /// <param name="run">Object containing the run data used by the operation.</param>
     private void SetupRun(Octokit.WorkflowRun run)
     {
         _host.MockOf(_host.GitHub.Object.Actions.Workflows.Runs)

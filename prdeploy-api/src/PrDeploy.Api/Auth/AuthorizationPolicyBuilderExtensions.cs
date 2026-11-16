@@ -3,15 +3,15 @@ using Microsoft.AspNetCore.Authorization;
 namespace PrDeploy.Api.Auth
 {
     /// <summary>
-    /// Represents the authorization Policy Builder Extensions used by the application.
+    /// Represents authorization policy builder extensions data used by the application.
     /// </summary>
     public static class AuthorizationPolicyBuilderExtensions
     {
         /// <summary>
-        /// Performs the require Git Hub Repo Access operation and returns its result.
+        /// Performs the require git hub repo access operation and returns its result.
         /// </summary>
-        /// <param name="builder">Value supplied for builder.</param>
-        /// <returns>The value produced by this operation.</returns>
+        /// <param name="builder">Object containing the builder data used by the operation.</param>
+        /// <returns>The authorization policy builder produced by the operation.</returns>
         public static AuthorizationPolicyBuilder RequireGitHubRepoAccess(this AuthorizationPolicyBuilder builder)
         {
             builder.Requirements.Add(new GitHubRepoAccessRequirement());

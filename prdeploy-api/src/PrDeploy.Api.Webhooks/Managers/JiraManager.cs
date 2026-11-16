@@ -16,11 +16,11 @@ public partial class JiraManager
     private readonly ILogger<JiraManager> _logger;
 
     /// <summary>
-    /// Initializes a jira Manager with the supplied dependencies.
+    /// Initializes the instance with its required dependencies.
     /// </summary>
-    /// <param name="jiraService">Value supplied for jira Service.</param>
-    /// <param name="pullRequestService">Value supplied for pull Request Service.</param>
-    /// <param name="templateService">Value supplied for template Service.</param>
+    /// <param name="jiraService">Object containing the Jira service data used by the operation.</param>
+    /// <param name="pullRequestService">Object containing the pull request service data used by the operation.</param>
+    /// <param name="templateService">Object containing the template service data used by the operation.</param>
     /// <param name="logger">Logger used to report operational information and errors.</param>
     public JiraManager(JiraService jiraService, PullRequestService pullRequestService,
         TemplateService templateService, ILogger<JiraManager> logger)
@@ -32,7 +32,7 @@ public partial class JiraManager
     }
 
     /// <summary>
-    /// Adds the Jira Issues To Pull Request to the associated collection.
+    /// Adds the Jira issues to pull request to the associated collection.
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     public async Task AddJiraIssuesToPullRequestAsync(PullRequest pullRequest)
@@ -61,9 +61,9 @@ public partial class JiraManager
     }
 
     /// <summary>
-    /// Determines whether the issues Text Regex condition holds.
+    /// Determines whether the issues text regex condition holds.
     /// </summary>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"<!-- ISSUES_START(?::(?<branchName>.*?))? .*? ISSUES_END -->", RegexOptions.Singleline | RegexOptions.Multiline)]
     private static partial Regex IssuesTextRegex();
 }

@@ -3,34 +3,34 @@ using HotChocolate;
 
 namespace PrDeploy.Api.Models.Settings;
 /// <summary>
-/// Stores configuration values for the slack Settings.
+/// Stores configuration values for Slack.
 /// </summary>
 public class SlackSettings
 {
     /// <summary>
-    /// Gets or sets the Token.
+    /// Gets or sets the token.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current token value.</value>
     public string? Token { get; set; }
     /// <summary>
-    /// Gets or sets the Email Domain.
+    /// Gets or sets the email domain.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current email domain value.</value>
     public string? EmailDomain { get; set; }
     /// <summary>
-    /// Gets or sets the Email Aliases.
+    /// Gets or sets the email aliases.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current email aliases value.</value>
     [GraphQLType(typeof(AnyType))]
     public Dictionary<string, object>? EmailAliases { get; set; }
     /// <summary>
-    /// Gets or sets the Webhooks.
+    /// Gets or sets the webhooks.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current webhooks value.</value>
     public SlackWebHooksSettings? Webhooks { get; set; }
     /// <summary>
-    /// Gets or sets the Notifications Enabled.
+    /// Gets or sets the notifications enabled.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current notifications enabled value.</value>
     public bool? NotificationsEnabled { get; set; }
 }

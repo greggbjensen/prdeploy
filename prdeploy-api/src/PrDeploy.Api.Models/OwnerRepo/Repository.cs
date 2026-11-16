@@ -3,22 +3,22 @@ using HotChocolate;
 namespace PrDeploy.Api.Models.OwnerRepo;
 
 /// <summary>
-/// Represents the repository used by the application.
+/// Represents repository data used by the application.
 /// </summary>
 [GraphQLDescription("Owner and repo name of a repository.")]
 public class Repository
 {
     /// <summary>
-    /// Gets or sets the Owner.
+    /// Gets or sets the owner.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current owner value.</value>
     [GraphQLDescription("Owner or organization of a repo.")]
     public string Owner { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the Repo.
+    /// Gets or sets the repo.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current repo value.</value>
     [GraphQLDescription("Name of the repository.")]
     public string Repo { get; set; } = string.Empty;
 }

@@ -9,9 +9,9 @@ namespace PrDeploy.Api.Models.General;
 public class StatusResponse
 {
     /// <summary>
-    /// Gets or sets the Success.
+    /// Gets or sets the success.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current success value.</value>
     [GraphQLDescription("True if the mutation was successful; otherwise false.")]
     public bool Success { get; set; } = true;
 }

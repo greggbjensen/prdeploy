@@ -1,27 +1,27 @@
 namespace PrDeploy.Api.Models.Settings;
 /// <summary>
-/// Stores configuration values for the badge Status Colors Settings.
+/// Stores configuration values for badge status colors.
 /// </summary>
 public class BadgeStatusColorsSettings
 {
     /// <summary>
-    /// Gets or sets the Error.
+    /// Gets or sets the error.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current error value.</value>
     public string? Error { get; set; }
     /// <summary>
-    /// Gets or sets the Warn.
+    /// Gets or sets the warn.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current warn value.</value>
     public string? Warn { get; set; }
     /// <summary>
-    /// Gets or sets the Success.
+    /// Gets or sets the success.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current success value.</value>
     public string? Success { get; set; }
     /// <summary>
-    /// Gets or sets the Info.
+    /// Gets or sets the info.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current info value.</value>
     public string? Info { get; set; }
 }

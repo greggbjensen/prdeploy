@@ -11,11 +11,11 @@ namespace PrDeploy.Api.Schema.Queries;
 public class PullRequestQuery
 {
     /// <summary>
-    /// Performs the open Pull Requests operation and returns its result.
+    /// Performs the open pull requests operation and returns its result.
     /// </summary>
-    /// <param name="service">Value supplied for service.</param>
+    /// <param name="service">Object containing the service data used by the operation.</param>
     /// <param name="input">Input object containing the operation's arguments.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The collection of items produced by the operation.</returns>
     [GraphQLName("openPullRequests")]
     public async Task<List<PullRequest>> OpenPullRequests(IPullRequestService service, OpenPullRequestInput input) =>
         await service.ListOpenPullRequestsAsync(input);

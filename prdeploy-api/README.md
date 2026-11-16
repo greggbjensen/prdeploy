@@ -48,9 +48,9 @@ Because the queue and some caches are in memory, the API runs as a single replic
 
 ### Storage providers
 
-`Storage:Provider` defaults to `Local`. Supported values are `Local`, `Azure`, `AWS`, and `GCP` (the old `SQLite` name is accepted as a Local alias). Provider settings and connection details are configured in the `Storage` section of `appsettings.json`. `Storage:DeploymentValuePathPrefix` defaults to `/prdeploy` and scopes owner/repository values; the old `Aws:SecretPathPrefix` remains a compatibility fallback. Only the selected backend is registered; Local does not initialize cloud SDK clients or resolve cloud credentials.
+`Storage:Provider` defaults to `Local` (LiteDB). Supported values are `Local`, `Azure`, `AWS`, and `GCP`. Provider settings and connection details are configured in the `Storage` section of `appsettings.json`. `Storage:DeploymentValuePathPrefix` defaults to `/prdeploy` and scopes owner/repository values; the old `Aws:SecretPathPrefix` remains a compatibility fallback. Only the selected backend is registered; Local does not initialize cloud SDK clients or resolve cloud credentials.
 
-- **Local / LiteDB:** deployment values (YAML text plus every historical revision) and Data Protection key XML are stored in one LiteDB file. By default it is `${LocalApplicationData}/prdeploy/deployment-storage.db`; override with `Storage:Local:DatabasePath`. Set `Storage:Local:Password` to encrypt the local database. Protect the file and backups; `isSecure` is metadata and does not independently encrypt values.
+- **Local / LiteDB:** deployment values (YAML text plus every historical revision) and Data Protection key XML are stored in one LiteDB file. By default it is `${LocalApplicationData}/prdeploy/deployment-storage.db`; override with `Storage:Local:DatabasePath`. Set `Storage:Local:Password` to encrypt the local database. If the file does not exist at startup, the API creates it (and any missing parent directories). Protect the file and backups; `isSecure` is metadata and does not independently encrypt values.
 - **Azure / Cosmos DB:** configure `Storage:Azure:ConnectionString`, or `Storage:Azure:Endpoint` and `Storage:Azure:Key`. Optional `Storage:Azure:DatabaseName` and `Storage:Azure:ContainerName` default to `prdeploy` and `storage`. The service creates the database and container if missing. The container uses `/partitionKey`, with each deployment-value path as a partition key and a dedicated partition for Data Protection keys.
 - **AWS / DynamoDB:** configure `Storage:AWS:Region` and optional `Storage:AWS:TableName` (default `PrDeployStorage`); credentials use the normal AWS SDK credential chain. Pre-create a table with string partition key `PK` and string sort key `SK`, on-demand capacity, and grant the service role `dynamodb:PutItem` and `dynamodb:Query` for that table. Deployment values are versioned items and Data Protection key XML is persisted in the same table. The chart retains the existing AWS Systems Manager Parameter Store Data Protection key path under `Storage:AWS:DataProtectionParameterPath` for continuity, but application deployment values use DynamoDB.
 - **GCP / Firestore:** configure `Storage:GCP:ProjectId` and use Application Default Credentials. Firestore must be enabled and its default database provisioned. Optional `Storage:GCP:CollectionName` defaults to `prdeploy_storage`; key XML is kept in a companion collection. Create the Firestore composite index for `path` (ascending) and `revision` (descending) used to read revision history.
@@ -77,5 +77,10 @@ dotnet test --filter "FullyQualifiedName~Webhooks"
 ```
 
 ## Deployment
+
+### Persistent storage for the Local provider
+
+- **Docker:** the image sets `Storage__Local__DatabasePath=/app/data/deployment-storage.db` and declares `/app/data` as a volume. `docker-compose.yaml` mounts the named volume `prdeploy-data` there, so data survives container replacement. An empty volume gets a new database on first start.
+- **Helm:** set `persistence.enabled=true` (with `storage` provider `Local`) in the `prdeploy-api` values to create a PersistentVolumeClaim (`persistence.size`, `persistence.storageClass`, `persistence.accessMode`, `persistence.mountPath`). The deployment then uses the `Recreate` strategy because the volume and LiteDB file lock allow a single pod. The chart's default provider is AWS, so persistence is disabled by default.
 
 This application is deployed to a kubernetes cluster using the `prdeploy` helm chart, which routes `/webhooks`, `/api`, and `/graphql` to it.

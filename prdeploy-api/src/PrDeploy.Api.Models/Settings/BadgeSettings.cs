@@ -1,12 +1,12 @@
 namespace PrDeploy.Api.Models.Settings;
 /// <summary>
-/// Stores configuration values for the badge Settings.
+/// Stores configuration values for badge.
 /// </summary>
 public class BadgeSettings
 {
     /// <summary>
-    /// Gets or sets the Status Colors.
+    /// Gets or sets the status colors.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current status colors value.</value>
     public BadgeStatusColorsSettings? StatusColors { get; set; }
 }

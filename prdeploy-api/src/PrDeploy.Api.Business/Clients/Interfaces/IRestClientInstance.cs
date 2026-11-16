@@ -9,14 +9,14 @@ namespace PrDeploy.Api.Business.Clients.Interfaces
         where TOptions : class
     {
         /// <summary>
-        /// Gets or sets the Options.
+        /// Gets or sets the options.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current options value.</value>
         public TOptions Options { get; set; }
         /// <summary>
-        /// Gets or sets the Rest Client.
+        /// Gets or sets the rest client.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current rest client value.</value>
         public IRestClient RestClient { get; set; }
     }
 }

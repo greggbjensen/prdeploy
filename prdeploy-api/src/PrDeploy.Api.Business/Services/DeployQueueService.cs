@@ -12,7 +12,7 @@ using PrDeploy.Api.Models.Settings;
 namespace PrDeploy.Api.Business.Services;
 
 /// <summary>
-/// Coordinates operations for the deploy Queue Service and its collaborators.
+/// Coordinates deploy queue operations and their collaborators.
 /// </summary>
 public class DeployQueueService : IDeployQueueService
 {
@@ -21,11 +21,11 @@ public class DeployQueueService : IDeployQueueService
     private readonly IDeploymentStore _deploymentStore;
 
     /// <summary>
-    /// Initializes a deploy Queue Service with the supplied dependencies.
+    /// Initializes the instance with its required dependencies.
     /// </summary>
-    /// <param name="gitHubClient">Value supplied for git Hub Client.</param>
-    /// <param name="deploySettingsService">Value supplied for deploy Settings Service.</param>
-    /// <param name="deploymentStore">Value supplied for deployment Store.</param>
+    /// <param name="gitHubClient">Object containing the git hub client data used by the operation.</param>
+    /// <param name="deploySettingsService">Object containing the deploy settings service data used by the operation.</param>
+    /// <param name="deploymentStore">Object containing the deployment store data used by the operation.</param>
     public DeployQueueService(IGitHubClient gitHubClient, IDeploySettingsService deploySettingsService, IDeploymentStore deploymentStore)
     {
         _gitHubClient = gitHubClient;
@@ -37,7 +37,7 @@ public class DeployQueueService : IDeployQueueService
     /// Updates the target value using the supplied inputs.
     /// </summary>
     /// <param name="input">Input object containing the operation's arguments.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The value after it has been stored or updated.</returns>
     public async Task<DeployQueue> UpdateAsync(DeployQueueUpdateInput input)
     {
         var value = new List<int>();
@@ -58,7 +58,7 @@ public class DeployQueueService : IDeployQueueService
     /// Finds and returns the matching items.
     /// </summary>
     /// <param name="input">Input object containing the operation's arguments.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>Items matching the supplied criteria.</returns>
     public async Task<List<DeployQueue>> ListAsync(RepoQueryInput input)
     {
         // Get queues in parallel.
@@ -70,12 +70,12 @@ public class DeployQueueService : IDeployQueueService
     }
 
     /// <summary>
-    /// Adds the Comment For New Entries to the associated collection.
+    /// Adds the comment for new entries to the associated collection.
     /// </summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <param name="environment">Deployment environment involved in the operation.</param>
-    /// <param name="pullNumbers">Value supplied for pull Numbers.</param>
+    /// <param name="pullNumbers">Object containing the pull numbers data used by the operation.</param>
     private async Task AddCommentForNewEntriesAsync(string owner, string repo, string environment,
         List<int> pullNumbers)
     {
@@ -96,12 +96,12 @@ public class DeployQueueService : IDeployQueueService
     }
 
     /// <summary>
-    /// Retrieves the Queue.
+    /// Retrieves the queue.
     /// </summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
-    /// <param name="environmentSettings">Value supplied for environment Settings.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="environmentSettings">Object containing the environment settings data used by the operation.</param>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     private async Task<DeployQueue> GetQueueAsync(string owner, string repo, EnvironmentSettings environmentSettings)
     {
         var queue = new DeployQueue
@@ -125,12 +125,12 @@ public class DeployQueueService : IDeployQueueService
     }
 
     /// <summary>
-    /// Retrieves the Pull Numbers.
+    /// Retrieves the pull numbers.
     /// </summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
-    /// <param name="queueName">Value supplied for queue Name.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="queueName">Text used as the queue name.</param>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     private async Task<List<int>> GetPullNumbersAsync(string owner, string repo, string queueName)
     {
         var pullNumbers = await _deploymentStore.GetAsync<List<int>?>(owner, repo, queueName);
@@ -146,11 +146,11 @@ public class DeployQueueService : IDeployQueueService
     }
 
     /// <summary>
-    /// Stores or updates the Pull Numbers.
+    /// Stores or updates the pull numbers.
     /// </summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
-    /// <param name="queueName">Value supplied for queue Name.</param>
+    /// <param name="queueName">Text used as the queue name.</param>
     /// <param name="value">Value to store or process.</param>
     private async Task SetPullNumbersAsync(string owner, string repo, string queueName, List<int> value)
     {
@@ -158,13 +158,13 @@ public class DeployQueueService : IDeployQueueService
     }
 
     /// <summary>
-    /// Adds the Pull Request Command to the associated collection.
+    /// Adds the pull request command to the associated collection.
     /// </summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <param name="pullNumber">Number identifying the pull request.</param>
-    /// <param name="command">Value supplied for command.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="command">Text used as the command.</param>
+    /// <returns>The status response produced by the operation.</returns>
     private async Task<StatusResponse> AddPullRequestCommand(string owner, string repo, int pullNumber,
         string command)
     {

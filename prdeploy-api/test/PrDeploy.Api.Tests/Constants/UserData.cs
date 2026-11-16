@@ -3,7 +3,7 @@ using PrDeploy.Api.Models.PullRequests;
 
 namespace PrDeploy.Api.Tests.Constants;
 /// <summary>
-/// Represents the deploy User Data used by the application.
+/// Represents deploy user data data used by the application.
 /// </summary>
 public class DeployUserData
 {

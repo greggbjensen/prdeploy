@@ -7,7 +7,7 @@ using PrDeploy.Api.Webhooks.Managers;
 namespace PrDeploy.Api.Tests.Webhooks.Managers;
 
 /// <summary>
-/// Contains tests that verify the behavior of the jira Manager Test.
+/// Contains tests that verify Jira manager behavior.
 /// </summary>
 public class JiraManagerTest : IDisposable
 {
@@ -35,7 +35,7 @@ public class JiraManagerTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: adds Issues To Top Of Body.
+    /// Verifies the expected behavior for this scenario: adds issues to top of body.
     /// </summary>
     [Fact]
     public async Task AddJiraIssuesToPullRequestAsync_AddsIssuesToTopOfBody()
@@ -53,7 +53,7 @@ public class JiraManagerTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: does Nothing When Issues Already Added For Branch.
+    /// Verifies the expected behavior for this scenario: does nothing when issues already added for branch.
     /// </summary>
     [Fact]
     public async Task AddJiraIssuesToPullRequestAsync_DoesNothingWhenIssuesAlreadyAddedForBranch()
@@ -66,7 +66,7 @@ public class JiraManagerTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: replaces Issues When Branch Changed.
+    /// Verifies the expected behavior for this scenario: replaces issues when branch changed.
     /// </summary>
     [Fact]
     public async Task AddJiraIssuesToPullRequestAsync_ReplacesIssuesWhenBranchChanged()

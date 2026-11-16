@@ -5,25 +5,25 @@ using PrDeploy.Api.Models.OwnerRepo;
 namespace PrDeploy.Api.Business.Services.Interfaces;
 
 /// <summary>
-/// Coordinates operations for the i Owner Repo Service and its collaborators.
+/// Coordinates i owner repo operations and their collaborators.
 /// </summary>
 public interface IOwnerRepoService
 {
     /// <summary>
-    /// Finds and returns the Enabled.
+    /// Finds and returns the enabled.
     /// </summary>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>Items matching the supplied criteria.</returns>
     Task<List<OwnerRepos>> ListEnabledAsync();
     /// <summary>
-    /// Adds the Enabled to the associated collection.
+    /// Adds the enabled to the associated collection.
     /// </summary>
     /// <param name="repository">Repository whose values are addressed.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The status response produced by the operation.</returns>
     Task<StatusResponse> AddEnabledAsync(Repository repository);
     /// <summary>
-    /// Removes the Enabled from the associated collection.
+    /// Removes the enabled from the associated collection.
     /// </summary>
     /// <param name="repository">Repository whose values are addressed.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The status response produced by the operation.</returns>
     Task<StatusResponse> RemoveEnabledAsync(Repository repository);
 }

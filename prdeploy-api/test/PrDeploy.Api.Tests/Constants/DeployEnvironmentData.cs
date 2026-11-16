@@ -4,7 +4,7 @@ using PrDeploy.Api.Models.DeployEnvironments;
 namespace PrDeploy.Api.Tests.Constants;
 
 /// <summary>
-/// Represents the deploy Environment Data used by the application.
+/// Represents deploy environment data data used by the application.
 /// </summary>
 public class DeployEnvironmentData
 {
@@ -12,6 +12,6 @@ public class DeployEnvironmentData
     {
         Name = "dev",
         Url = "https://dev.myorg.com",
-        Color = "d4ac0d"
+        Color = "#d4ac0d"
     };
 }

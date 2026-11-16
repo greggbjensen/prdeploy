@@ -2,28 +2,28 @@ using PrDeploy.Api.Business.Options;
 
 namespace PrDeploy.Api.Tests.Constants;
 /// <summary>
-/// Represents the git Hub Data used by the application.
+/// Represents git hub data data used by the application.
 /// </summary>
 public class GitHubData
 {
     /// <summary>
-    /// Gets the Owner.
+    /// Gets the owner.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current owner value.</value>
     public string Owner => "greggbjensen";
     /// <summary>
-    /// Gets the Repo.
+    /// Gets the repo.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current repo value.</value>
     public string Repo => "prdeploy-example-repo";
     /// <summary>
-    /// Gets the Mock Default Settings Path.
+    /// Gets the mock default settings path.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current mock default settings path value.</value>
     public string MockDefaultSettingsPath => "Mocks/.default-prdeploy.yaml";
     /// <summary>
-    /// Gets the Mock Repo Settings Path.
+    /// Gets the mock repo settings path.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current mock repo settings path value.</value>
     public string MockRepoSettingsPath => "Mocks/.prdeploy.yaml";
 }

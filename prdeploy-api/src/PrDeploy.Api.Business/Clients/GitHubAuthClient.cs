@@ -30,13 +30,13 @@ namespace PrDeploy.Api.Business.Clients
         private readonly JwtOptions _jwtOptions;    
 
         /// <summary>
-        /// Initializes a git Hub Auth Client with the supplied dependencies.
+        /// Initializes the instance with its required dependencies.
         /// </summary>
-        /// <param name="restClientInstance">Value supplied for rest Client Instance.</param>
-        /// <param name="jwtOptions">Value supplied for jwt Options.</param>
-        /// <param name="cipherService">Value supplied for cipher Service.</param>
-        /// <param name="serviceProvider">Value supplied for service Provider.</param>
-        /// <param name="validator">Value supplied for validator.</param>
+        /// <param name="restClientInstance">Object containing the rest client instance data used by the operation.</param>
+        /// <param name="jwtOptions">JWT issuer, audience, signing-key, and token-protection configuration.</param>
+        /// <param name="cipherService">Object containing the cipher service data used by the operation.</param>
+        /// <param name="serviceProvider">Object containing the service provider data used by the operation.</param>
+        /// <param name="validator">Object containing the validator data used by the operation.</param>
         public GitHubAuthClient(IRestClientInstance<GitHubAuthOptions> restClientInstance,
             IOptions<JwtOptions> jwtOptions,
             ICipherService cipherService,
@@ -52,10 +52,10 @@ namespace PrDeploy.Api.Business.Clients
         }
 
         /// <summary>
-        /// Retrieves the Access Token.
+        /// Retrieves the access token.
         /// </summary>
-        /// <param name="accessTokenRequest">Value supplied for access Token Request.</param>
-        /// <returns>The value produced by this operation.</returns>
+        /// <param name="accessTokenRequest">Object containing the access token request data used by the operation.</param>
+        /// <returns>Requested value, or its default when no value is available.</returns>
         public async Task<AccessTokenResponse> GetAccessTokenAsync(AccessTokenRequest accessTokenRequest)
         {
             await _validator.ValidateAndThrowAsync(accessTokenRequest);
@@ -87,10 +87,10 @@ namespace PrDeploy.Api.Business.Clients
         }
 
         /// <summary>
-        /// Retrieves the User Info.
+        /// Retrieves the user info.
         /// </summary>
-        /// <param name="accessToken">Value supplied for access Token.</param>
-        /// <returns>The value produced by this operation.</returns>
+        /// <param name="accessToken">Text used as the access token.</param>
+        /// <returns>Requested value, or its default when no value is available.</returns>
         public async Task<UserInfo> GetUserInfoAsync(string? accessToken = null)
         {
             // We have to resolve this here to make sure there is a token.
@@ -112,11 +112,11 @@ namespace PrDeploy.Api.Business.Clients
         }
 
         /// <summary>
-        /// Creates the Jwt from the supplied inputs.
+        /// Creates the JWT from the supplied inputs.
         /// </summary>
-        /// <param name="gitHubToken">Value supplied for git Hub Token.</param>
-        /// <param name="userInfo">Value supplied for user Info.</param>
-        /// <returns>The value produced by this operation.</returns>
+        /// <param name="gitHubToken">Text used as the git hub token.</param>
+        /// <param name="userInfo">Object containing the user info data used by the operation.</param>
+        /// <returns>The object created from the supplied inputs.</returns>
         private string CreateJwt(string gitHubToken, UserInfo userInfo)
         {
             var encryptedToken = _cipherService.Encrypt(gitHubToken);

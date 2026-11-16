@@ -5,7 +5,7 @@ using PrDeploy.Api.Tests.Client;
 namespace PrDeploy.Api.Tests.Framework;
 
 /// <summary>
-/// Contains tests that verify the behavior of the deploy Api Test.
+/// Contains tests that verify deploy API behavior.
 /// </summary>
 public class DeployApiTest : IClassFixture<DeployApiApplicationFactory>
 {
@@ -18,21 +18,21 @@ public class DeployApiTest : IClassFixture<DeployApiApplicationFactory>
 
     //// SourceRef: https://graphql-aspnet.github.io/docs/development/unit-testing
     /// <summary>
-    /// Gets or sets the Factory.
+    /// Gets or sets the factory.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current factory value.</value>
     protected DeployApiApplicationFactory Factory { get; set; }
 
     /// <summary>
-    /// Gets the Client.
+    /// Gets the client.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current client value.</value>
     protected IDeployApiClient Client => _client.Value;
 
     /// <summary>
     /// Initializes the test fixture and prepares its dependencies.
     /// </summary>
-    /// <param name="factory">Value supplied for factory.</param>
+    /// <param name="factory">Object containing the factory data used by the operation.</param>
     public DeployApiTest(DeployApiApplicationFactory factory)
     {
         Factory = factory;
@@ -44,7 +44,7 @@ public class DeployApiTest : IClassFixture<DeployApiApplicationFactory>
     }
 
     /// <summary>
-    /// Performs the configure Services operation.
+    /// Configures the services for the current application or test.
     /// </summary>
     /// <param name="services">Services to include in the operation.</param>
     public virtual void ConfigureServices(IServiceCollection services)
@@ -52,7 +52,7 @@ public class DeployApiTest : IClassFixture<DeployApiApplicationFactory>
     }
 
     /// <summary>
-    /// Performs the configure Test Services operation.
+    /// Configures dependency injection services for the test application.
     /// </summary>
     /// <param name="services">Services to include in the operation.</param>
     public virtual void ConfigureTestServices(IServiceCollection services)
@@ -60,9 +60,9 @@ public class DeployApiTest : IClassFixture<DeployApiApplicationFactory>
     }
 
     /// <summary>
-    /// Performs the initialize Test operation and returns its result.
+    /// Performs the initialize test operation and returns its result.
     /// </summary>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The i deploy API client produced by the operation.</returns>
     private IDeployApiClient InitializeTest()
     {
         var serviceProvider = Factory.Services;

@@ -6,7 +6,7 @@ using PrDeploy.Api.Webhooks.Services;
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
 /// <summary>
-/// Contains tests that verify the behavior of the jira Service Test.
+/// Contains tests that verify Jira service behavior.
 /// </summary>
 public class JiraServiceTest : IDisposable
 {
@@ -39,7 +39,7 @@ public class JiraServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: handles No Associated Issues.
+    /// Verifies the expected behavior for this scenario: handles no associated issues.
     /// </summary>
     [Fact]
     public async Task ListAssociatedIssuesAsync_HandlesNoAssociatedIssues()
@@ -51,7 +51,7 @@ public class JiraServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: lists Associated Issues.
+    /// Verifies the expected behavior for this scenario: lists associated issues.
     /// </summary>
     [Fact]
     public async Task ListAssociatedIssuesAsync_ListsAssociatedIssues()
@@ -71,7 +71,7 @@ public class JiraServiceTest : IDisposable
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: returns Empty When Jira Fails.
+    /// Verifies the expected behavior for this scenario: returns empty when Jira fails.
     /// </summary>
     [Fact]
     public async Task ListAssociatedIssuesAsync_ReturnsEmptyWhenJiraFails()

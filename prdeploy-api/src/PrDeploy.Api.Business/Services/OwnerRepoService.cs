@@ -7,7 +7,7 @@ using PrDeploy.Api.Models.OwnerRepo;
 
 namespace PrDeploy.Api.Business.Services;
 /// <summary>
-/// Coordinates operations for the owner Repo Service and its collaborators.
+/// Coordinates owner repo operations and their collaborators.
 /// </summary>
 public class OwnerRepoService : IOwnerRepoService
 {
@@ -16,10 +16,10 @@ public class OwnerRepoService : IOwnerRepoService
     private readonly IGitHubSecurity _gitHubSecurity;
 
     /// <summary>
-    /// Initializes a owner Repo Service with the supplied dependencies.
+    /// Initializes the instance with its required dependencies.
     /// </summary>
-    /// <param name="deploymentStore">Value supplied for deployment Store.</param>
-    /// <param name="gitHubSecurity">Value supplied for git Hub Security.</param>
+    /// <param name="deploymentStore">Object containing the deployment store data used by the operation.</param>
+    /// <param name="gitHubSecurity">Object containing the git hub security data used by the operation.</param>
     public OwnerRepoService(IDeploymentStore deploymentStore, IGitHubSecurity gitHubSecurity)
     {
         _deploymentStore = deploymentStore;
@@ -27,10 +27,10 @@ public class OwnerRepoService : IOwnerRepoService
     }
 
     /// <summary>
-    /// Adds the Enabled to the associated collection.
+    /// Adds the enabled to the associated collection.
     /// </summary>
     /// <param name="repository">Repository whose values are addressed.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The status response produced by the operation.</returns>
     public async Task<StatusResponse> AddEnabledAsync(Repository repository)
     {
         await _gitHubSecurity.GuardRepoAsync(repository.Owner, repository.Repo);
@@ -64,10 +64,10 @@ public class OwnerRepoService : IOwnerRepoService
     }
 
     /// <summary>
-    /// Removes the Enabled from the associated collection.
+    /// Removes the enabled from the associated collection.
     /// </summary>
     /// <param name="repository">Repository whose values are addressed.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The status response produced by the operation.</returns>
     public async Task<StatusResponse> RemoveEnabledAsync(Repository repository)
     {
         await _gitHubSecurity.GuardRepoAsync(repository.Owner, repository.Repo);
@@ -92,9 +92,9 @@ public class OwnerRepoService : IOwnerRepoService
     }
 
     /// <summary>
-    /// Finds and returns the Enabled.
+    /// Finds and returns the enabled.
     /// </summary>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>Items matching the supplied criteria.</returns>
     public async Task<List<OwnerRepos>> ListEnabledAsync()
     {
         // TODO GBJ: Use _githubAppClient.GitHubApps.GetAllInstallationsForCurrent() once issue is fixed:

@@ -25,4 +25,10 @@ RUN dotnet publish "PrDeploy.Api.csproj" --no-build --no-restore -c Release -o /
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# Default LiteDB location for the Local storage provider. Mount a volume here so data survives container replacement;
+# the API creates the database file on startup when none exists.
+ENV Storage__Local__DatabasePath=/app/data/deployment-storage.db
+RUN mkdir -p /app/data
+VOLUME ["/app/data"]
 ENTRYPOINT ["dotnet", "PrDeploy.Api.dll"]

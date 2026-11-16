@@ -3,7 +3,7 @@ using StrawberryShake;
 namespace PrDeploy.Api.Tests.Framework.Client
 {
     /// <summary>
-    /// Represents the operation Result Extensions used by the application.
+    /// Represents operation result extensions data used by the application.
     /// </summary>
     public static class OperationResultExtensions
     {

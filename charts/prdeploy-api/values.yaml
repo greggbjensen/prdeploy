@@ -22,6 +22,17 @@ storage:
   aws:
     tableName: PrDeployStorage
 
+# Persistent volume for the LiteDB database used by the Local storage provider (Storage:Provider=Local).
+# The chart ships with the AWS provider, so this is off by default.
+persistence:
+  enabled: false
+  mountPath: /app/data
+  size: 1Gi
+  accessMode: ReadWriteOnce
+  # Leave empty to use the cluster default storage class.
+  storageClass: ""
+  annotations: {}
+
 aspnetcore_environment: production
 apollo_sandbox_enabled: false
 

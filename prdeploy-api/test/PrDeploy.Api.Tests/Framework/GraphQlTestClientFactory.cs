@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 namespace PrDeploy.Api.Tests.Framework
 {
     /// <summary>
-    /// Represents the graph Ql Test Client Factory used by the application.
+    /// Represents graph ql test client factory data used by the application.
     /// </summary>
     public class GraphQlTestClientFactory<TEntryPoint> : IHttpClientFactory
         where TEntryPoint : class
@@ -12,10 +12,10 @@ namespace PrDeploy.Api.Tests.Framework
         private readonly WebApplicationFactoryClientOptions _options;
 
         /// <summary>
-        /// Initializes a graph Ql Test Client Factory with the supplied dependencies.
+        /// Initializes the instance with its required dependencies.
         /// </summary>
-        /// <param name="factory">Value supplied for factory.</param>
-        /// <param name="options">Value supplied for options.</param>
+        /// <param name="factory">Object containing the factory data used by the operation.</param>
+        /// <param name="options">Object containing the options data used by the operation.</param>
         public GraphQlTestClientFactory(WebApplicationFactory<TEntryPoint> factory, WebApplicationFactoryClientOptions options)
         {
             _factory = factory;
@@ -23,10 +23,10 @@ namespace PrDeploy.Api.Tests.Framework
         }
 
         /// <summary>
-        /// Creates the Client from the supplied inputs.
+        /// Creates the client from the supplied inputs.
         /// </summary>
         /// <param name="name">Name used to identify the value or resource.</param>
-        /// <returns>The value produced by this operation.</returns>
+        /// <returns>The object created from the supplied inputs.</returns>
         public HttpClient CreateClient(string name)
         {
             var client = _factory.CreateClient(_options);

@@ -6,8 +6,8 @@ namespace PrDeploy.Api.Business.Services.Interfaces;
 public interface IGitHubAppDependency<T>
 {
     /// <summary>
-    /// Gets or sets the Value.
+    /// Gets or sets the value.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current value value.</value>
     T Value { get; set; }
 }

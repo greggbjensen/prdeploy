@@ -1,47 +1,47 @@
 namespace PrDeploy.Api.Models.Settings;
 /// <summary>
-/// Stores configuration values for the environment Settings.
+/// Stores configuration values for environment.
 /// </summary>
 public class EnvironmentSettings
 {
     /// <summary>
-    /// Gets or sets the Name.
+    /// Gets or sets the name.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current name value.</value>
     public string Name { get; set; } = string.Empty;
     /// <summary>
-    /// Gets or sets the Queue.
+    /// Gets or sets the queue.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current queue value.</value>
     public string Queue { get; set; } = string.Empty;
     /// <summary>
-    /// Gets or sets the Color.
+    /// Gets or sets the color.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current color value.</value>
     public string Color { get; set; } = string.Empty;
     /// <summary>
-    /// Gets or sets the Url.
+    /// Gets or sets the URL.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current URL value.</value>
     public string? Url { get; set; }
     /// <summary>
-    /// Gets or sets the Require Approval.
+    /// Gets or sets the require approval.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current require approval value.</value>
     public bool RequireApproval { get; set; }
     /// <summary>
-    /// Gets or sets the Require Branch Up To Date.
+    /// Gets or sets the require branch up to date.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current require branch up to date value.</value>
     public bool RequireBranchUpToDate { get; set; }
     /// <summary>
-    /// Gets or sets the Automation Test.
+    /// Gets or sets the automation test.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current automation test value.</value>
     public AutomationTestSettings? AutomationTest { get; set; }
     /// <summary>
-    /// Gets or sets the Exclude From Rollback.
+    /// Gets or sets the exclude from rollback.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current exclude from rollback value.</value>
     public List<string>? ExcludeFromRollback { get; set; }
 }

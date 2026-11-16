@@ -1,28 +1,28 @@
 namespace PrDeploy.Api.Webhooks.Models;
 
 /// <summary>
-/// Represents the slack User used by the application.
+/// Represents Slack user data used by the application.
 /// </summary>
 public class SlackUser
 {
     /// <summary>
-    /// Gets or sets the Name.
+    /// Gets or sets the name.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current name value.</value>
     public string? Name { get; set; }
     /// <summary>
-    /// Gets or sets the Email.
+    /// Gets or sets the email.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current email value.</value>
     public string? Email { get; set; }
     /// <summary>
-    /// Gets or sets the Id.
+    /// Gets or sets the id.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current id value.</value>
     public string? Id { get; set; }
     /// <summary>
-    /// Gets or sets the Username.
+    /// Gets or sets the username.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current username value.</value>
     public string? Username { get; set; }
 }

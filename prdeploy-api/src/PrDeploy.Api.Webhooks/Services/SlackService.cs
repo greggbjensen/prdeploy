@@ -12,7 +12,7 @@ using PrDeploy.Api.Webhooks.Utils;
 namespace PrDeploy.Api.Webhooks.Services;
 
 /// <summary>
-/// Coordinates operations for the slack Service and its collaborators.
+/// Coordinates Slack operations and their collaborators.
 /// </summary>
 public partial class SlackService
 {
@@ -24,10 +24,10 @@ public partial class SlackService
     private readonly ILogger<SlackService> _logger;
 
     /// <summary>
-    /// Initializes a slack Service with the supplied dependencies.
+    /// Initializes the instance with its required dependencies.
     /// </summary>
     /// <param name="context">Request or application context used by the operation.</param>
-    /// <param name="httpClientFactory">Value supplied for http Client Factory.</param>
+    /// <param name="httpClientFactory">Object containing the HTTP client factory data used by the operation.</param>
     /// <param name="logger">Logger used to report operational information and errors.</param>
     public SlackService(WebhookContext context, IHttpClientFactory httpClientFactory, ILogger<SlackService> logger)
     {
@@ -37,10 +37,10 @@ public partial class SlackService
     }
 
     /// <summary>
-    /// Posts the Message to the configured destination.
+    /// Posts the message to the configured destination.
     /// </summary>
-    /// <param name="channel">Value supplied for channel.</param>
-    /// <param name="json">Value supplied for json.</param>
+    /// <param name="channel">Object containing the channel data used by the operation.</param>
+    /// <param name="json">Text used as the JSON.</param>
     public async Task PostMessageAsync(SlackChannel channel, string json)
     {
         var slack = _context.Settings.Slack;
@@ -86,10 +86,10 @@ public partial class SlackService
     }
 
     /// <summary>
-    /// Performs the lookup User operation and returns its result.
+    /// Performs the lookup user operation and returns its result.
     /// </summary>
-    /// <param name="user">Value supplied for user.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="user">Object containing the user data used by the operation.</param>
+    /// <returns>The Slack user produced by the operation.</returns>
     public async Task<SlackUser?> LookupUserAsync(User user)
     {
         var slack = _context.Settings.Slack;
@@ -162,10 +162,10 @@ public partial class SlackService
     }
 
     /// <summary>
-    /// Performs the translate Git Hub Markdown operation and returns its result.
+    /// Performs the translate git hub markdown operation and returns its result.
     /// </summary>
-    /// <param name="markdown">Value supplied for markdown.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="markdown">Text used as the markdown.</param>
+    /// <returns>Text produced or selected by the operation.</returns>
     public string TranslateGitHubMarkdown(string? markdown)
     {
         // Preprocess HTML content (tables, br tags, etc.) before converting markdown.
@@ -174,11 +174,11 @@ public partial class SlackService
     }
 
     /// <summary>
-    /// Builds the Email From Name from the supplied inputs.
+    /// Builds the email from name from the supplied inputs.
     /// </summary>
     /// <param name="name">Name used to identify the value or resource.</param>
-    /// <param name="emailDomain">Value supplied for email Domain.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="emailDomain">Text used as the email domain.</param>
+    /// <returns>The object created from the supplied inputs.</returns>
     private string BuildEmailFromName(string name, string? emailDomain)
     {
         // Get only first and last name, skipping middle if present.
@@ -195,9 +195,9 @@ public partial class SlackService
     }
 
     /// <summary>
-    /// Performs the whitespace Regex operation and returns its result.
+    /// Performs the whitespace regex operation and returns its result.
     /// </summary>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"\s+")]
     private static partial Regex WhitespaceRegex();
 
@@ -207,43 +207,43 @@ public partial class SlackService
     private class SlackLookupResponse
     {
         /// <summary>
-        /// Gets or sets the Ok.
+        /// Gets or sets the ok.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current ok value.</value>
         [JsonPropertyName("ok")]
         public bool Ok { get; set; }
 
         /// <summary>
-        /// Gets or sets the Error.
+        /// Gets or sets the error.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current error value.</value>
         [JsonPropertyName("error")]
         public string? Error { get; set; }
 
         /// <summary>
-        /// Gets or sets the User.
+        /// Gets or sets the user.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current user value.</value>
         [JsonPropertyName("user")]
         public SlackLookupUser? User { get; set; }
     }
 
     /// <summary>
-    /// Represents the slack Lookup User used by the application.
+    /// Represents Slack lookup user data used by the application.
     /// </summary>
     private class SlackLookupUser
     {
         /// <summary>
-        /// Gets or sets the Id.
+        /// Gets or sets the id.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current id value.</value>
         [JsonPropertyName("id")]
         public string? Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the Name.
+        /// Gets or sets the name.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current name value.</value>
         [JsonPropertyName("name")]
         public string? Name { get; set; }
     }

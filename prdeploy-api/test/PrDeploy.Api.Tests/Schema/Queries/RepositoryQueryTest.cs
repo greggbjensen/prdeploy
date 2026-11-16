@@ -1,35 +1,48 @@
 using Microsoft.Extensions.DependencyInjection;
+using PrDeploy.Api.Business.Stores.Interfaces;
+using PrDeploy.Api.Models.OwnerRepo;
 using PrDeploy.Api.Tests.Client;
+using PrDeploy.Api.Tests.Constants;
 using PrDeploy.Api.Tests.Framework;
 using PrDeploy.Api.Tests.Framework.Client;
+using PrDeploy.Api.Tests.Webhooks.Framework;
 
 namespace PrDeploy.Api.Tests.Schema.Queries;
 
 /// <summary>
-/// Contains tests that verify the behavior of the repository Query Test.
+/// Contains tests that verify repository query behavior.
 /// </summary>
 public class RepositoryQueryTest : DeployApiTest
 {
     /// <summary>
     /// Initializes the test fixture and prepares its dependencies.
     /// </summary>
-    /// <param name="factory">Value supplied for factory.</param>
+    /// <param name="factory">Object containing the factory data used by the operation.</param>
     public RepositoryQueryTest(DeployApiApplicationFactory factory)
         : base(factory)
     {
     }
 
     /// <summary>
-    /// Performs the configure Services operation.
+    /// Configures the services for the current application or test.
     /// </summary>
     /// <param name="services">Services to include in the operation.</param>
     public override void ConfigureServices(IServiceCollection services)
     {
-        // TODO Add SSM mocks.
+        var deploymentStore = new InMemoryDeploymentStore();
+        var defaultSettings = WebhookTestHost.CreateDefaultSettings();
+        deploymentStore.SetAsync(GitHub.Owner, "DEPLOY_SETTINGS", defaultSettings).GetAwaiter().GetResult();
+        deploymentStore.SetAsync(GitHub.Owner, GitHub.Repo, "DEPLOY_SETTINGS", defaultSettings)
+            .GetAwaiter().GetResult();
+        deploymentStore.SetAsync("OWNER_REPOS", new List<OwnerRepos>
+        {
+            new() { Owner = GitHub.Owner, Repos = [GitHub.Repo] }
+        }).GetAwaiter().GetResult();
+        services.AddSingleton<IDeploymentStore>(deploymentStore);
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: searches Open Pull Requests.
+    /// Verifies the expected behavior for this scenario: searches open pull requests.
     /// </summary>
     [Fact]
     public async Task OpenPullRequests_SearchesOpenPullRequests()
@@ -50,7 +63,7 @@ public class RepositoryQueryTest : DeployApiTest
     }
 
     /// <summary>
-    /// Verifies the expected behavior for this scenario: lists Configured Services.
+    /// Verifies the expected behavior for this scenario: lists configured services.
     /// </summary>
     [Fact]
     public async Task RepositoryServices_ListsConfiguredServices()

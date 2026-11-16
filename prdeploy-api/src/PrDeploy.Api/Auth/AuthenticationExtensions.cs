@@ -6,17 +6,17 @@ using System.Text;
 namespace PrDeploy.Api.Auth
 {
     /// <summary>
-    /// Represents the authentication Extensions used by the application.
+    /// Represents authentication extensions data used by the application.
     /// </summary>
     public static class AuthenticationExtensions
     {
         /// <summary>
-        /// Adds the Git Hub Authentication to the associated collection.
+        /// Adds the git hub authentication to the associated collection.
         /// </summary>
         /// <param name="services">Services to include in the operation.</param>
-        /// <param name="configureGitHub">Value supplied for configure Git Hub.</param>
-        /// <param name="configureJwt">Value supplied for configure Jwt.</param>
-        /// <returns>The value produced by this operation.</returns>
+        /// <param name="configureGitHub">Object containing the configure git hub data used by the operation.</param>
+        /// <param name="configureJwt">Object containing the configure JWT data used by the operation.</param>
+        /// <returns>The i service collection produced by the operation.</returns>
         public static IServiceCollection AddGitHubAuthentication(this IServiceCollection services, 
             Action<GitHubAuthOptions> configureGitHub, Action<JwtOptions> configureJwt)
         {

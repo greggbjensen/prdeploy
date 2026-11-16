@@ -1,12 +1,12 @@
 namespace PrDeploy.Api.Models.Settings.Compare;
 /// <summary>
-/// Represents the badge Settings Compare used by the application.
+/// Represents badge settings compare data used by the application.
 /// </summary>
 public class BadgeSettingsCompare
 {
     /// <summary>
-    /// Gets or sets the Status Colors.
+    /// Gets or sets the status colors.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current status colors value.</value>
     public BadgeStatusColorsSettingsCompare StatusColors { get; set; } = null!;
 }

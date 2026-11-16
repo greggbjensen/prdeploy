@@ -9,15 +9,15 @@ namespace PrDeploy.Api.Business.Clients.Interfaces;
 public interface IGitHubAuthClient
 {
     /// <summary>
-    /// Retrieves the Access Token.
+    /// Retrieves the access token.
     /// </summary>
-    /// <param name="accessTokenRequest">Value supplied for access Token Request.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="accessTokenRequest">Object containing the access token request data used by the operation.</param>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     Task<AccessTokenResponse> GetAccessTokenAsync(AccessTokenRequest accessTokenRequest);
     /// <summary>
-    /// Retrieves the User Info.
+    /// Retrieves the user info.
     /// </summary>
-    /// <param name="accessToken">Value supplied for access Token.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="accessToken">Text used as the access token.</param>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     Task<UserInfo> GetUserInfoAsync(string? accessToken = null);
 }

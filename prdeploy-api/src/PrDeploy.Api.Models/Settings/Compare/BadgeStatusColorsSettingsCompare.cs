@@ -1,27 +1,27 @@
 namespace PrDeploy.Api.Models.Settings.Compare;
 /// <summary>
-/// Represents the badge Status Colors Settings Compare used by the application.
+/// Represents badge status colors settings compare data used by the application.
 /// </summary>
 public class BadgeStatusColorsSettingsCompare
 {
     /// <summary>
-    /// Gets or sets the Error.
+    /// Gets or sets the error.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current error value.</value>
     public OwnerRepoValue<string> Error { get; set; } = null!;
     /// <summary>
-    /// Gets or sets the Warn.
+    /// Gets or sets the warn.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current warn value.</value>
     public OwnerRepoValue<string> Warn { get; set; } = null!;
     /// <summary>
-    /// Gets or sets the Success.
+    /// Gets or sets the success.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current success value.</value>
     public OwnerRepoValue<string> Success { get; set; } = null!;
     /// <summary>
-    /// Gets or sets the Info.
+    /// Gets or sets the info.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current info value.</value>
     public OwnerRepoValue<string> Info { get; set; } = null!;
 }

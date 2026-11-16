@@ -3,12 +3,12 @@ using FluentValidation;
 namespace PrDeploy.Api.Models.Auth.Validators
 {
     /// <summary>
-    /// Validates the access Token Request Validator before it is used.
+    /// Validates access token request before it is used.
     /// </summary>
     public class AccessTokenRequestValidator : AbstractValidator<AccessTokenRequest>
     {
         /// <summary>
-        /// Initializes a access Token Request Validator with the supplied dependencies.
+        /// Initializes the instance with its required dependencies.
         /// </summary>
         public AccessTokenRequestValidator()
         {

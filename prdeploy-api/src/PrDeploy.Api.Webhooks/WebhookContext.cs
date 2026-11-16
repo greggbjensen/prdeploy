@@ -13,33 +13,33 @@ namespace PrDeploy.Api.Webhooks;
 public class WebhookContext
 {
     /// <summary>
-    /// Gets or sets the Git Hub.
+    /// Gets or sets the git hub.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current git hub value.</value>
     public IGitHubClient GitHub { get; set; } = null!;
     /// <summary>
-    /// Gets or sets the Owner.
+    /// Gets or sets the owner.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current owner value.</value>
     public string Owner { get; set; } = string.Empty;
     /// <summary>
-    /// Gets or sets the Repo.
+    /// Gets or sets the repo.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current repo value.</value>
     public string Repo { get; set; } = string.Empty;
     /// <summary>
-    /// Gets or sets the Repository Html Url.
+    /// Gets or sets the repository HTML URL.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current repository HTML URL value.</value>
     public string RepositoryHtmlUrl { get; set; } = string.Empty;
     /// <summary>
-    /// Gets or sets the Default Branch.
+    /// Gets or sets the default branch.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current default branch value.</value>
     public string DefaultBranch { get; set; } = "main";
     /// <summary>
-    /// Gets or sets the Settings.
+    /// Gets or sets the settings.
     /// </summary>
-    /// <returns>The value exposed by this member.</returns>
+    /// <value>Current settings value.</value>
     public DeploySettings Settings { get; set; } = new();
 }

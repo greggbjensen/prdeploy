@@ -4,14 +4,14 @@ using PrDeploy.Api.Models.Settings;
 namespace PrDeploy.Api.Webhooks.Utils;
 
 /// <summary>
-/// Represents the environment Util used by the application.
+/// Represents environment util data used by the application.
 /// </summary>
 public partial class EnvironmentUtil
 {
     private readonly WebhookContext _context;
 
     /// <summary>
-    /// Initializes a environment Util with the supplied dependencies.
+    /// Initializes the instance with its required dependencies.
     /// </summary>
     /// <param name="context">Request or application context used by the operation.</param>
     public EnvironmentUtil(WebhookContext context)
@@ -20,10 +20,10 @@ public partial class EnvironmentUtil
     }
 
     /// <summary>
-    /// Retrieves the Settings.
+    /// Retrieves the settings.
     /// </summary>
     /// <param name="environment">Deployment environment involved in the operation.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     public EnvironmentSettings? GetSettings(string? environment)
     {
         if (string.IsNullOrEmpty(environment))
@@ -36,8 +36,10 @@ public partial class EnvironmentUtil
     }
 
     /// <summary>
-    /// Gets the settings for an environment that is expected to be configured.
+    /// Retrieves the required settings.
     /// </summary>
+    /// <param name="environment">Deployment environment involved in the operation.</param>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     public EnvironmentSettings GetRequiredSettings(string environment)
     {
         return GetSettings(environment)
@@ -58,26 +60,26 @@ public partial class EnvironmentUtil
     }
 
     /// <summary>
-    /// Retrieves the From Lock.
+    /// Retrieves the from lock.
     /// </summary>
-    /// <param name="lockLabel">Value supplied for lock Label.</param>
-    /// <returns>The value produced by this operation.</returns>
+    /// <param name="lockLabel">Text used as the lock label.</param>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     public string GetFromLock(string lockLabel)
     {
         return EnvironmentLockRegex().Replace(lockLabel.ToLowerInvariant(), string.Empty);
     }
 
     /// <summary>
-    /// Normalizes the Environment Regex for consistent processing.
+    /// Normalizes the environment regex for consistent processing.
     /// </summary>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"(\d+)?(-lock)?$", RegexOptions.IgnoreCase)]
     private static partial Regex NormalizeEnvironmentRegex();
 
     /// <summary>
-    /// Performs the environment Lock Regex operation and returns its result.
+    /// Performs the environment lock regex operation and returns its result.
     /// </summary>
-    /// <returns>The value produced by this operation.</returns>
+    /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"(-lock)$", RegexOptions.IgnoreCase)]
     private static partial Regex EnvironmentLockRegex();
 }

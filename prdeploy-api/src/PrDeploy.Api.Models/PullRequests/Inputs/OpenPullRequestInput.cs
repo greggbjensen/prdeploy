@@ -3,14 +3,14 @@ using PrDeploy.Api.Models.General.Inputs;
 namespace PrDeploy.Api.Models.PullRequests.Inputs
 {
     /// <summary>
-    /// Carries input values for the open Pull Request Input.
+    /// Carries input values for open pull request operations.
     /// </summary>
     public class OpenPullRequestInput : RepoQueryInput
     {
         /// <summary>
-        /// Gets or sets the Search.
+        /// Gets or sets the search.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current search value.</value>
         public string? Search { get; set; }
     }
 }

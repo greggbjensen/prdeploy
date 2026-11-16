@@ -3,12 +3,12 @@ using FluentValidation;
 namespace PrDeploy.Api.Business.Options.Validation
 {
     /// <summary>
-    /// Validates the git Hub Auth Options Validator before it is used.
+    /// Validates git hub auth options before it is used.
     /// </summary>
     public class GitHubAuthOptionsValidator : AbstractValidator<GitHubAuthOptions>
     {
         /// <summary>
-        /// Initializes a git Hub Auth Options Validator with the supplied dependencies.
+        /// Initializes the instance with its required dependencies.
         /// </summary>
         public GitHubAuthOptionsValidator()
         {

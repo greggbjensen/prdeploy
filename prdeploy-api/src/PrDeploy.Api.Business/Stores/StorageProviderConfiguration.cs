@@ -34,15 +34,16 @@ public enum StorageProvider
 public static class StorageProviderConfiguration
 {
     /// <summary>
-    /// Gets the selected provider, defaulting to Local when no provider is configured.
+    /// Selects the configured deployment-value provider, defaulting to local storage when none is specified.
     /// </summary>
+    /// <param name="configuration">Configuration containing the selected provider and provider-specific settings.</param>
+    /// <returns>The storage provider selected by the application configuration.</returns>
     public static StorageProvider GetProvider(IConfiguration configuration)
     {
         var provider = configuration["Storage:Provider"];
         if (string.IsNullOrWhiteSpace(provider) ||
             provider.Equals("Local", StringComparison.OrdinalIgnoreCase) ||
-            provider.Equals("LiteDB", StringComparison.OrdinalIgnoreCase) ||
-            provider.Equals("SQLite", StringComparison.OrdinalIgnoreCase))
+            provider.Equals("LiteDB", StringComparison.OrdinalIgnoreCase))
         {
             return StorageProvider.Local;
         }
@@ -67,8 +68,10 @@ public static class StorageProviderConfiguration
     }
 
     /// <summary>
-    /// Gets the absolute path for the local LiteDB database.
+    /// Resolves the local database path from configuration or the per-user application data directory.
     /// </summary>
+    /// <param name="configuration">Configuration containing the optional local database path.</param>
+    /// <returns>An absolute path to the local deployment-value database.</returns>
     public static string GetLocalDatabasePath(IConfiguration configuration)
     {
         var configuredPath = configuration["Storage:Local:DatabasePath"]
@@ -89,26 +92,34 @@ public static class StorageProviderConfiguration
     }
 
     /// <summary>
-    /// Gets the configured DynamoDB table name or its default.
+    /// Retrieves the AWS table name.
     /// </summary>
+    /// <param name="configuration">Object containing the configuration data used by the operation.</param>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     public static string GetAwsTableName(IConfiguration configuration) =>
         GetRequiredOrDefault(configuration["Storage:AWS:TableName"], "PrDeployStorage");
 
     /// <summary>
-    /// Gets the configured Cosmos DB database name or its default.
+    /// Retrieves the cosmos database name.
     /// </summary>
+    /// <param name="configuration">Object containing the configuration data used by the operation.</param>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     public static string GetCosmosDatabaseName(IConfiguration configuration) =>
         GetRequiredOrDefault(configuration["Storage:Azure:DatabaseName"], "prdeploy");
 
     /// <summary>
-    /// Gets the configured Cosmos DB container name or its default.
+    /// Retrieves the cosmos container name.
     /// </summary>
+    /// <param name="configuration">Object containing the configuration data used by the operation.</param>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     public static string GetCosmosContainerName(IConfiguration configuration) =>
         GetRequiredOrDefault(configuration["Storage:Azure:ContainerName"], "storage");
 
     /// <summary>
-    /// Gets the configured Firestore collection name or its default.
+    /// Retrieves the firestore collection name.
     /// </summary>
+    /// <param name="configuration">Object containing the configuration data used by the operation.</param>
+    /// <returns>Requested value, or its default when no value is available.</returns>
     public static string GetFirestoreCollectionName(IConfiguration configuration) =>
         GetRequiredOrDefault(configuration["Storage:GCP:CollectionName"], "prdeploy_storage");
 

@@ -3,12 +3,12 @@ using FluentValidation;
 namespace PrDeploy.Api.Models.General.Inputs.Validators
 {
     /// <summary>
-    /// Validates the repository Query Input Validator before it is used.
+    /// Validates repository query input before it is used.
     /// </summary>
     public class RepositoryQueryInputValidator : AbstractValidator<RepoQueryInput>
     {
         /// <summary>
-        /// Initializes a repository Query Input Validator with the supplied dependencies.
+        /// Initializes the instance with its required dependencies.
         /// </summary>
         public RepositoryQueryInputValidator()
         {

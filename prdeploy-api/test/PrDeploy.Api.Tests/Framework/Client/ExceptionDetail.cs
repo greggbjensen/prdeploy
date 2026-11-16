@@ -1,20 +1,20 @@
 namespace PrDeploy.Api.Tests.Framework.Client
 {
     /// <summary>
-    /// Represents the exception Detail used by the application.
+    /// Represents exception detail data used by the application.
     /// </summary>
     public class ExceptionDetail
     {
         /// <summary>
-        /// Gets or sets the Message.
+        /// Gets or sets the message.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current message value.</value>
         public string? Message { get; set; }
 
         /// <summary>
-        /// Gets or sets the Stack Trace.
+        /// Gets or sets the stack trace.
         /// </summary>
-        /// <returns>The value exposed by this member.</returns>
+        /// <value>Current stack trace value.</value>
         public string? StackTrace { get; set; }
     }
 }

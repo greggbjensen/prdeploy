@@ -7,7 +7,7 @@ namespace PrDeploy.Api.Business.Auth
 {
     //// SourceRef: https://stackoverflow.com/questions/38795103/encrypt-string-in-net-core
     /// <summary>
-    /// Coordinates operations for the cipher Service and its collaborators.
+    /// Coordinates cipher operations and their collaborators.
     /// </summary>
     public class CipherService : ICipherService
     {
@@ -15,10 +15,10 @@ namespace PrDeploy.Api.Business.Auth
         private readonly JwtOptions _jwtOptions;
 
         /// <summary>
-        /// Initializes a cipher Service with the supplied dependencies.
+        /// Initializes the instance with its required dependencies.
         /// </summary>
-        /// <param name="dataProtectionProvider">Value supplied for data Protection Provider.</param>
-        /// <param name="jwtOptions">Value supplied for jwt Options.</param>
+        /// <param name="dataProtectionProvider">Provider used to create data protectors for protecting and unprotecting tokens.</param>
+        /// <param name="jwtOptions">JWT issuer, audience, signing-key, and token-protection configuration.</param>
         public CipherService(IDataProtectionProvider dataProtectionProvider, IOptions<JwtOptions> jwtOptions)
         {
             _dataProtectionProvider = dataProtectionProvider;
@@ -28,8 +28,8 @@ namespace PrDeploy.Api.Business.Auth
         /// <summary>
         /// Encrypts the supplied data before it is stored or transmitted.
         /// </summary>
-        /// <param name="input">Input object containing the operation's arguments.</param>
-        /// <returns>The value produced by this operation.</returns>
+        /// <param name="input">Plaintext text to encrypt with the configured data protector.</param>
+        /// <returns>The protected representation of the plaintext input.</returns>
         public string Encrypt(string input)
         {
             var protector = _dataProtectionProvider.CreateProtector(_jwtOptions.TokenEncryptionKey);
@@ -39,8 +39,8 @@ namespace PrDeploy.Api.Business.Auth
         /// <summary>
         /// Decrypts the supplied data for application use.
         /// </summary>
-        /// <param name="cipherText">Value supplied for cipher Text.</param>
-        /// <returns>The value produced by this operation.</returns>
+        /// <param name="cipherText">Encrypted text to decrypt with the configured data protector.</param>
+        /// <returns>The original plaintext represented by the ciphertext.</returns>
         public string Decrypt(string cipherText)
         {
             var protector = _dataProtectionProvider.CreateProtector(_jwtOptions.TokenEncryptionKey);
