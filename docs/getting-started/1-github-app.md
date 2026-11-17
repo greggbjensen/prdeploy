@@ -26,7 +26,7 @@ In order to be able to listen and respond to pull request events, we need to cre
     node -e "console.log(require('crypto').randomBytes(64).toString('base64'));"
     ```
 
-    Make sure to copy the **Secret** set above into your notes for use with AWS Parameter Store.
+    Make sure to copy the **Secret** set above into your notes.
 
 ## 1. Configure permissions and events
 
@@ -78,14 +78,16 @@ Workflow run
 
 ## 3. Credentials and private key
 
-1. From the top of the page add the following to your notes for use with AWS Parameter Store:
+1. From the top of the page add the following to your notes:
     * App ID
     * Client ID
 
-2. At the bottom of the page click on **Generate a private key**.
-3. A `.pem` file will automatically download, remember this file location for AWS Parameter Store.
+2. Click on **Credentials** on the left nav, then click **New key**.
+3. A `.pem` file will automatically download, remember this file location.
+4. For local development, copy the file to the `prdeploy-api` folder and rename it to `gh-app-key-local.pem`.
 
 ## 4. Install App
+
 1. Click on **Install App** on the left nav.
 2. Click **Install** to the right of your organization.
 3. Select **Only select repositories**.

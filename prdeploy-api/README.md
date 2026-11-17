@@ -41,7 +41,7 @@ Because the queue and some caches are in memory, the API runs as a single replic
 
 ## Development
 
-1. Create a `.env` file in `src/PrDeploy.Api` similar to `.env.sample` and set actual values.
+1. Create a `.env` file in `src/PrDeploy.Api` similar to `.env.sample` and set actual values, including a non-empty `Jwt__Key` (at least 16 characters). The API fails during startup if the signing key is missing.
 2. Download the private key from your organization's GitHub App page and save it as `gh-app-key-local.pem` in this folder, or set `GitHubApp__PrivateKey` to its contents.
 3. BLite is the default local storage provider for deployment values and Data Protection keys; local startup does not require cloud credentials. Use `Storage:Provider` to select a cloud provider.
 4. Start the API with `dotnet run --project src/PrDeploy.Api`, which listens on `http://localhost:4302`.

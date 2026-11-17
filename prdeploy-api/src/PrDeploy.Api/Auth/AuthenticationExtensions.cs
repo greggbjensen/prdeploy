@@ -26,6 +26,12 @@ namespace PrDeploy.Api.Auth
             var jwtOptions = new JwtOptions();
             configureJwt(jwtOptions);
 
+            if (string.IsNullOrWhiteSpace(jwtOptions.Key))
+            {
+                throw new InvalidOperationException(
+                    "JWT signing key is not configured. Set the 'Jwt:Key' configuration value.");
+            }
+
             services
                 .AddAuthentication(options =>
                 {

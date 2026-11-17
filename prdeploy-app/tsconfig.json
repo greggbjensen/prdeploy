@@ -4,6 +4,7 @@
     "paths": {
       "src/*": ["./src/*"]
     },
+    "rootDir": "./src",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
     "strict": true,

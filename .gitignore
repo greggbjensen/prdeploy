@@ -5,3 +5,4 @@ scripts/.env
 charts/**/charts
 scripts/temp/
 .vs/
+*.pem
