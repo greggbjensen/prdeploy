@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "ms-dotnettools.csdevkit",
-    "yzhang.markdown-all-in-one"
+    "yzhang.markdown-all-in-one",
+    "muhammad-sammy.csharp"
   ]
 }
