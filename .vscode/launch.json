@@ -10,6 +10,7 @@
       "args": [],
       "cwd": "${workspaceFolder}/prdeploy-api/src/PrDeploy.Api",
       "stopAtEntry": false,
+      "console": "integratedTerminal",
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_URLS": "http://localhost:4302"

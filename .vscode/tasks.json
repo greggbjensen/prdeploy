@@ -69,8 +69,13 @@
     {
       "label": "Stop App",
       "detail": "Terminates the background Serve App task when the App debug session ends.",
-      "type": "shell",
-      "command": "echo ${input:terminateServeApp}",
+      "type": "process",
+      "command": "echo",
+      "args": ["${input:terminateServeApp}"],
+      "windows": {
+        "command": "cmd",
+        "args": ["/c", "echo", "${input:terminateServeApp}"]
+      },
       "presentation": {
         "reveal": "silent",
         "close": true
