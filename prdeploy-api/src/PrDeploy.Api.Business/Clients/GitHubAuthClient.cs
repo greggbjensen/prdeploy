@@ -65,17 +65,25 @@ namespace PrDeploy.Api.Business.Clients
                 throw new HttpRequestException("Invalid Client ID.", null, HttpStatusCode.Forbidden);
             }
 
-            var request = new RestRequest("login/oauth/access_token");
-            request.AddQueryParameter("client_id", _gitHubOptions.ClientId);
-            request.AddQueryParameter("client_secret", _gitHubOptions.ClientSecret);
-            request.AddQueryParameter("code", accessTokenRequest.Code);
-            request.AddQueryParameter("redirect_uri", accessTokenRequest.RedirectUrl);
+            var formValues = new Dictionary<string, string?>
+            {
+                ["client_id"] = _gitHubOptions.ClientId,
+                ["client_secret"] = _gitHubOptions.ClientSecret,
+                ["code"] = accessTokenRequest.Code,
+                ["redirect_uri"] = accessTokenRequest.RedirectUrl
+            };
             
             // Add code_verifier if provided (required for PKCE flow)
             if (!string.IsNullOrEmpty(accessTokenRequest.CodeVerifier))
             {
-                request.AddQueryParameter("code_verifier", accessTokenRequest.CodeVerifier);
+                formValues["code_verifier"] = accessTokenRequest.CodeVerifier;
             }
+
+            using var formContent = new FormUrlEncodedContent(formValues);
+            var formBody = await formContent.ReadAsStringAsync();
+            var request = new RestRequest("login/oauth/access_token", Method.Post);
+            request.AddHeader("Accept", "application/json");
+            request.AddParameter("application/x-www-form-urlencoded", formBody, ParameterType.RequestBody);
 
             var response = await _client.PostAsync<AccessTokenResponse>(request);
             var userInfo = await GetUserInfoAsync(response!.AccessToken);
