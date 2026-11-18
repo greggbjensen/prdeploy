@@ -25,12 +25,26 @@
       "url": "http://localhost:4301",
       "webRoot": "${workspaceFolder}/prdeploy-app",
       "postDebugTask": "Stop App"
+    },
+    {
+      "name": "Smee Webhooks",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "smee-client",
+        "-u",
+        "https://smee.io/rcBfYvgm20siCtq",
+        "-t",
+        "http://localhost:4302/webhooks"
+      ],
+      "console": "integratedTerminal"
     }
   ],
   "compounds": [
     {
-      "name": "PrDeploy API and App",
-      "configurations": ["PrDeploy API", "PrDeploy App (Chrome)"]
+      "name": "PrDeploy API and App with Smee",
+      "configurations": ["PrDeploy API", "PrDeploy App (Chrome)", "Smee Webhooks"]
     }
   ]
 }
