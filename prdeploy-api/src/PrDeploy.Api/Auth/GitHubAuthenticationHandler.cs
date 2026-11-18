@@ -48,12 +48,14 @@ namespace PrDeploy.Api.Auth
             var subClaim = result.Principal.FindFirst(JwtRegisteredClaimNames.Sub);
             if (subClaim == null)
             {
+                Logger.LogWarning("Rejected token: required claim {Claim} not present.", JwtRegisteredClaimNames.Sub);
                 return AuthenticateResult.Fail($"Required claim {JwtRegisteredClaimNames.Sub} not present.");
             }
 
             var nameClaim = result.Principal.FindFirst(JwtRegisteredClaimNames.Name);
             if (nameClaim == null)
             {
+                Logger.LogWarning("Rejected token: required claim {Claim} not present.", JwtRegisteredClaimNames.Name);
                 return AuthenticateResult.Fail($"Required claim {JwtRegisteredClaimNames.Name} not present.");
             }
 
@@ -63,9 +65,11 @@ namespace PrDeploy.Api.Auth
                 var encryptedToken = subClaim.Value;
                 gitHubToken = _cipherService.Decrypt(encryptedToken);
             }
-            catch
+            catch (Exception ex)
             {
                 // If we are unable to decrypt than it is unauthorized.
+                Logger.LogWarning(ex, "Rejected token for {Login}: unable to decrypt claim {Claim}.",
+                    nameClaim.Value, JwtRegisteredClaimNames.Sub);
                 return AuthenticateResult.Fail($"Unable to process claim {JwtRegisteredClaimNames.Sub}.");
             }
 
@@ -81,6 +85,8 @@ namespace PrDeploy.Api.Auth
             var ticket = new AuthenticationTicket(principal, JwtBearerDefaults.AuthenticationScheme);
             Context.User = principal;
             Context.Items["User"] = principal;
+
+            Logger.LogDebug("Authenticated {Login}.", nameClaim.Value);
 
             // We only need to verify the token is present because we pass it through for auth in GitHub.
             return AuthenticateResult.Success(ticket);

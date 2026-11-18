@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Models;
 using Octokit;
@@ -19,6 +20,7 @@ public class DeployQueueService : IDeployQueueService
     private readonly IGitHubClient _gitHubClient;
     private readonly IDeploySettingsService _deploySettingsService;
     private readonly IDeploymentStore _deploymentStore;
+    private readonly ILogger<DeployQueueService> _logger;
 
     /// <summary>
     /// Initializes the instance with its required dependencies.
@@ -26,11 +28,14 @@ public class DeployQueueService : IDeployQueueService
     /// <param name="gitHubClient">Object containing the git hub client data used by the operation.</param>
     /// <param name="deploySettingsService">Object containing the deploy settings service data used by the operation.</param>
     /// <param name="deploymentStore">Object containing the deployment store data used by the operation.</param>
-    public DeployQueueService(IGitHubClient gitHubClient, IDeploySettingsService deploySettingsService, IDeploymentStore deploymentStore)
+    /// <param name="logger">Logger used to report operational activity.</param>
+    public DeployQueueService(IGitHubClient gitHubClient, IDeploySettingsService deploySettingsService, IDeploymentStore deploymentStore,
+        ILogger<DeployQueueService> logger)
     {
         _gitHubClient = gitHubClient;
         _deploySettingsService = deploySettingsService;
         _deploymentStore = deploymentStore;
+        _logger = logger;
     }
 
     /// <summary>
@@ -40,6 +45,8 @@ public class DeployQueueService : IDeployQueueService
     /// <returns>The value after it has been stored or updated.</returns>
     public async Task<DeployQueue> UpdateAsync(DeployQueueUpdateInput input)
     {
+        _logger.LogInformation("Updating {Environment} deploy queue in {Owner}/{Repo} to {Count} pull requests.",
+            input.Environment, input.Owner, input.Repo, input.PullNumbers?.Count ?? 0);
         var value = new List<int>();
         if (input.PullNumbers?.Any() == true)
         {
@@ -61,6 +68,8 @@ public class DeployQueueService : IDeployQueueService
     /// <returns>Items matching the supplied criteria.</returns>
     public async Task<List<DeployQueue>> ListAsync(RepoQueryInput input)
     {
+        _logger.LogDebug("Listing deploy queues for {Owner}/{Repo}.", input.Owner, input.Repo);
+
         // Get queues in parallel.
         var environmentSettings = await _deploySettingsService.GetQueueEnvironmentsAsync(input.Owner, input.Repo);
         var queueTasks = environmentSettings.Select(e => GetQueueAsync(input.Owner, input.Repo, e));
@@ -87,6 +96,9 @@ public class DeployQueueService : IDeployQueueService
         var newNumbers = pullNumbers.Where(n => !currentNumbers.Contains(n)).ToArray();
         if (newNumbers.Any())
         {
+            _logger.LogInformation(
+                "Queueing {Count} new pull requests for {Environment} in {Owner}/{Repo}: {PullNumbers}.",
+                newNumbers.Length, environment, owner, repo, newNumbers);
             var command = environment.StartsWith(repoSettings.DefaultEnvironment!, StringComparison.OrdinalIgnoreCase)
                 ? @"/deploy"
                 : $@"/deploy {environment}";
@@ -138,6 +150,7 @@ public class DeployQueueService : IDeployQueueService
         // Set a default empty value if not found.
         if (pullNumbers == null)
         {
+            _logger.LogDebug("Creating empty deploy queue {QueueName} for {Owner}/{Repo}.", queueName, owner, repo);
             pullNumbers = new List<int>();
             await SetPullNumbersAsync(owner, repo, queueName, pullNumbers);
         }

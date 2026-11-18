@@ -1,4 +1,5 @@
 using System.Net;
+using Microsoft.Extensions.Logging;
 using PrDeploy.Api.Business.Security.Interfaces;
 using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Business.Stores.Interfaces;
@@ -14,16 +15,19 @@ public class OwnerRepoService : IOwnerRepoService
     private const string OwnerReposKey = "OWNER_REPOS";
     private readonly IDeploymentStore _deploymentStore;
     private readonly IGitHubSecurity _gitHubSecurity;
+    private readonly ILogger<OwnerRepoService> _logger;
 
     /// <summary>
     /// Initializes the instance with its required dependencies.
     /// </summary>
     /// <param name="deploymentStore">Object containing the deployment store data used by the operation.</param>
     /// <param name="gitHubSecurity">Object containing the git hub security data used by the operation.</param>
-    public OwnerRepoService(IDeploymentStore deploymentStore, IGitHubSecurity gitHubSecurity)
+    /// <param name="logger">Logger used to report operational activity.</param>
+    public OwnerRepoService(IDeploymentStore deploymentStore, IGitHubSecurity gitHubSecurity, ILogger<OwnerRepoService> logger)
     {
         _deploymentStore = deploymentStore;
         _gitHubSecurity = gitHubSecurity;
+        _logger = logger;
     }
 
     /// <summary>
@@ -56,6 +60,7 @@ public class OwnerRepoService : IOwnerRepoService
         }
 
         await _deploymentStore.SetAsync(OwnerReposKey, ownerRepos);
+        _logger.LogInformation("Enabled repository {Owner}/{Repo}.", repository.Owner, repository.Repo);
 
         return new StatusResponse
         {
@@ -83,6 +88,12 @@ public class OwnerRepoService : IOwnerRepoService
                 ownerRepos.Remove(ownerRepo);
             }
             await _deploymentStore.SetAsync(OwnerReposKey, ownerRepos);
+            _logger.LogInformation("Disabled repository {Owner}/{Repo}.", repository.Owner, repository.Repo);
+        }
+        else
+        {
+            _logger.LogDebug("Repository {Owner}/{Repo} was not enabled, nothing to remove.",
+                repository.Owner, repository.Repo);
         }
 
         return new StatusResponse
@@ -102,6 +113,7 @@ public class OwnerRepoService : IOwnerRepoService
         var ownerRepos = await _deploymentStore.GetAsync<List<OwnerRepos>?>(OwnerReposKey);
         if (ownerRepos == null)
         {
+            _logger.LogInformation("No enabled repositories stored yet, creating an empty list.");
             ownerRepos = new List<OwnerRepos>();
             await _deploymentStore.SetAsync(OwnerReposKey, ownerRepos);
         }
@@ -142,9 +154,11 @@ public class OwnerRepoService : IOwnerRepoService
         // If no repositories are authorized than access is denied.
         if (!hasAuthorizedRepos)
         {
+            _logger.LogWarning("User has access to none of the {Count} enabled owners.", ownerRepos.Count);
             throw new HttpRequestException("Access denied.", null, HttpStatusCode.Forbidden);
         }
             
+        _logger.LogDebug("Listed {Count} enabled owners with accessible repositories.", ownerReposList.Count);
         return ownerReposList;
     }
 }

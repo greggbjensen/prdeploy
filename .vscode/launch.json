@@ -13,7 +13,8 @@
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_URLS": "http://localhost:4302"
-      }
+      },
+      "postDebugTask": "Stop API Build Servers"
     },
     {
       "name": "PrDeploy App (Chrome)",
@@ -21,7 +22,8 @@
       "request": "launch",
       "preLaunchTask": "Serve App",
       "url": "http://localhost:4301",
-      "webRoot": "${workspaceFolder}/prdeploy-app"
+      "webRoot": "${workspaceFolder}/prdeploy-app",
+      "postDebugTask": "Stop App"
     }
   ],
   "compounds": [

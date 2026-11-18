@@ -36,12 +36,12 @@ namespace PrDeploy.Api.Middleware
             }
 
             string requestAccept = context.Request.Headers.Accept!;
-            _logger.LogInformation($"Request Accept: {requestAccept}");
+            _logger.LogDebug("Request Accept: {RequestAccept}", requestAccept);
 
             context.Response.OnStarting(OnResponseStarting, context);
             await _next(context);
             string responseContentType = context.Response.Headers.ContentType!;
-            _logger.LogInformation($"Response Content-Type: {responseContentType}");
+            _logger.LogDebug("Response Content-Type: {ResponseContentType}", responseContentType);
 
         }
 

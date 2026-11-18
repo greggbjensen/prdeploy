@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PrDeploy.Api.Business.Auth;
 using PrDeploy.Api.Business.Auth.Interfaces;
@@ -89,7 +90,9 @@ public static class IServiceCollectionExtensions
                 var localPassword = configuration["Storage:Local:Password"];
                 services.TryAddSingleton(_ => new BliteStorage(databasePath, localPassword));
                 services.TryAddSingleton<IXmlRepository, BliteDataProtectionXmlRepository>();
-                services.TryAddScoped<IDeploymentStore, BliteDeploymentStore>();
+                services.TryAddScoped<BliteDeploymentStore>();
+                services.TryAddScoped<IDeploymentStore>(serviceProvider => WithLogging(
+                    serviceProvider.GetRequiredService<BliteDeploymentStore>(), serviceProvider));
                 break;
 
             case StorageProvider.Azure:
@@ -99,7 +102,9 @@ public static class IServiceCollectionExtensions
                     StorageProviderConfiguration.GetCosmosDatabaseName(configuration),
                     StorageProviderConfiguration.GetCosmosContainerName(configuration)));
                 services.TryAddSingleton<IXmlRepository, CosmosDataProtectionXmlRepository>();
-                services.TryAddScoped<IDeploymentStore, CosmosDeploymentStore>();
+                services.TryAddScoped<CosmosDeploymentStore>();
+                services.TryAddScoped<IDeploymentStore>(serviceProvider => WithLogging(
+                    serviceProvider.GetRequiredService<CosmosDeploymentStore>(), serviceProvider));
                 break;
 
             case StorageProvider.AWS:
@@ -114,7 +119,9 @@ public static class IServiceCollectionExtensions
                     serviceProvider.GetRequiredService<IAmazonDynamoDB>(),
                     StorageProviderConfiguration.GetAwsTableName(configuration)));
                 services.TryAddSingleton<IXmlRepository, DynamoDbDataProtectionXmlRepository>();
-                services.TryAddScoped<IDeploymentStore, DynamoDbDeploymentStore>();
+                services.TryAddScoped<DynamoDbDeploymentStore>();
+                services.TryAddScoped<IDeploymentStore>(serviceProvider => WithLogging(
+                    serviceProvider.GetRequiredService<DynamoDbDeploymentStore>(), serviceProvider));
                 break;
 
             case StorageProvider.GCP:
@@ -124,7 +131,9 @@ public static class IServiceCollectionExtensions
                     StorageProviderConfiguration.GetFirestoreCollectionName(configuration),
                     $"{StorageProviderConfiguration.GetFirestoreCollectionName(configuration)}_data_protection"));
                 services.TryAddSingleton<IXmlRepository, FirestoreDataProtectionXmlRepository>();
-                services.TryAddScoped<IDeploymentStore, FirestoreDeploymentStore>();
+                services.TryAddScoped<FirestoreDeploymentStore>();
+                services.TryAddScoped<IDeploymentStore>(serviceProvider => WithLogging(
+                    serviceProvider.GetRequiredService<FirestoreDeploymentStore>(), serviceProvider));
                 break;
 
             default:
@@ -133,6 +142,12 @@ public static class IServiceCollectionExtensions
 
         return services;
     }
+
+    /// <summary>
+    /// Wraps a provider-specific store with the logging decorator.
+    /// </summary>
+    private static IDeploymentStore WithLogging(IDeploymentStore inner, IServiceProvider serviceProvider) =>
+        new LoggingDeploymentStore(inner, serviceProvider.GetRequiredService<ILogger<LoggingDeploymentStore>>());
 
     /// <summary>
     /// Creates a Cosmos client from the selected Azure provider's connection settings.

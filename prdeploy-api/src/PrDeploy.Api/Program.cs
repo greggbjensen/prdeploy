@@ -8,7 +8,9 @@ using PrDeploy.Api.Auth;
 using PrDeploy.Api.Builder;
 using PrDeploy.Api.Business;
 using PrDeploy.Api.Business.Clients.Interfaces;
+using PrDeploy.Api.Business.Stores;
 using PrDeploy.Api.Configuration;
+using PrDeploy.Api.Middleware;
 using PrDeploy.Api.Models;
 using PrDeploy.Api.Models.Auth;
 using PrDeploy.Api.Options;
@@ -79,6 +81,8 @@ try
 
     builder.Host.UseSerilog();
     var app = builder.Build();
+    Log.Information("Starting PrDeploy API in {Environment} using {StorageProvider} storage.",
+        app.Environment.EnvironmentName, StorageProviderConfiguration.GetProvider(configuration));
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
@@ -87,11 +91,23 @@ try
     }
 
     app.UseForwardedHeaders();
-    app.UseSerilogRequestLogging();
+    app.UseSerilogRequestLogging(options =>
+    {
+        // Tag the request summary line with the caller, which is only known after authentication.
+        options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+        {
+            var login = UserLogScopeMiddleware.GetLogin(httpContext);
+            if (login != null)
+            {
+                diagnosticContext.Set(UserLogScopeMiddleware.UserProperty, login);
+            }
+        };
+    });
     app.UseGraphQlStandards(); // Must be here for context.Request.EnableBuffering().
     app.UseRouting();
     app.UseCors();
     app.UseAuthentication();
+    app.UseMiddleware<UserLogScopeMiddleware>();
     app.UseAuthorization();
 
     // Simple GitHub Access Token proxy.
@@ -101,7 +117,7 @@ try
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
-    app.MapPost("/api/oauth/access_token", async (HttpRequest request, IGitHubAuthClient authClient) =>
+    app.MapPost("/api/oauth/access_token", async (HttpRequest request, IGitHubAuthClient authClient, ILogger<Program> logger) =>
     {
         var form = await request.ReadFormAsync();
         var accessTokenRequest = new AccessTokenRequest
@@ -121,12 +137,12 @@ try
         }
         catch (HttpRequestException e)
         {
-            Log.Logger.Error(e, $"Error getting access token ({e.StatusCode}).");
+            logger.LogWarning(e, "Error getting access token ({StatusCode}).", e.StatusCode);
             result = Results.StatusCode((int)e.StatusCode!);
         }
         catch (Exception e)
         {
-            Log.Logger.Error(e, $"Internal Server error getting access token.");
+            logger.LogError(e, "Internal server error getting access token.");
             result = Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
 
@@ -140,7 +156,7 @@ try
         .AllowAnonymous();
 
     // User info endpoint since GitHub does not provide one for OAuth.
-    app.MapGet("/api/oauth/userinfo", async (HttpRequest request, IGitHubAuthClient authClient) =>
+    app.MapGet("/api/oauth/userinfo", async (HttpRequest request, IGitHubAuthClient authClient, ILogger<Program> logger) =>
         {
             IResult result;
             try
@@ -150,7 +166,7 @@ try
             }
             catch (HttpRequestException e)
             {
-                Log.Logger.Error(e, $"Error getting user info ({e.StatusCode}).");
+                logger.LogWarning(e, "Error getting user info ({StatusCode}).", e.StatusCode);
                 result = Results.StatusCode((int)e.StatusCode!);
             }
 

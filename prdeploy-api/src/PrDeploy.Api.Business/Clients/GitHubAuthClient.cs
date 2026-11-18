@@ -2,8 +2,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Octokit;
@@ -27,7 +29,8 @@ namespace PrDeploy.Api.Business.Clients
         private readonly IValidator<AccessTokenRequest> _validator;
         private readonly IRestClient _client;
         private readonly GitHubAuthOptions _gitHubOptions;
-        private readonly JwtOptions _jwtOptions;    
+        private readonly JwtOptions _jwtOptions;
+        private readonly ILogger<GitHubAuthClient> _logger;
 
         /// <summary>
         /// Initializes the instance with its required dependencies.
@@ -37,16 +40,19 @@ namespace PrDeploy.Api.Business.Clients
         /// <param name="cipherService">Object containing the cipher service data used by the operation.</param>
         /// <param name="serviceProvider">Object containing the service provider data used by the operation.</param>
         /// <param name="validator">Object containing the validator data used by the operation.</param>
+        /// <param name="logger">Logger used to report authentication activity without logging tokens or secrets.</param>
         public GitHubAuthClient(IRestClientInstance<GitHubAuthOptions> restClientInstance,
             IOptions<JwtOptions> jwtOptions,
             ICipherService cipherService,
             IServiceProvider serviceProvider,
-            IValidator<AccessTokenRequest> validator)
+            IValidator<AccessTokenRequest> validator,
+            ILogger<GitHubAuthClient> logger)
         {
             _jwtOptions = jwtOptions.Value;
             _cipherService = cipherService;
             _serviceProvider = serviceProvider;
             _validator = validator;
+            _logger = logger;
             _client = restClientInstance.RestClient;
             _gitHubOptions = restClientInstance.Options;
         }
@@ -62,6 +68,7 @@ namespace PrDeploy.Api.Business.Clients
 
             if (accessTokenRequest.ClientId != _gitHubOptions.ClientId)
             {
+                _logger.LogWarning("Rejected access token request with a client ID that does not match the configured client.");
                 throw new HttpRequestException("Invalid Client ID.", null, HttpStatusCode.Forbidden);
             }
 
@@ -85,13 +92,23 @@ namespace PrDeploy.Api.Business.Clients
             request.AddHeader("Accept", "application/json");
             request.AddParameter("application/x-www-form-urlencoded", formBody, ParameterType.RequestBody);
 
-            var response = await _client.PostAsync<AccessTokenResponse>(request);
-            var userInfo = await GetUserInfoAsync(response!.AccessToken);
+            var responseValue = await _client.PostAsync(request);
+            var response =JsonSerializer.Deserialize<AccessTokenResponse>(responseValue.Content!);
+            var accessTokenResponse = (AccessTokenResponse?)null;
+            if (String.IsNullOrWhiteSpace(response?.AccessToken))
+            {
+                _logger.LogWarning("GitHub did not return an access token (HTTP status {StatusCode}): {ResponseContent}",
+                    (int)responseValue.StatusCode, responseValue.Content);
+                throw new HttpRequestException("Error getting access token", null, HttpStatusCode.InternalServerError);
+            }
+            
+            var userInfo = await GetUserInfoAsync(accessTokenResponse!.AccessToken);
 
             // Swap GitHub access token for full signed JWT.
-            response!.AccessToken = CreateJwt(response!.AccessToken, userInfo);
+            accessTokenResponse.AccessToken = CreateJwt(accessTokenResponse.AccessToken, userInfo);
+            _logger.LogInformation("Issued an access token for {Login}.", userInfo.Login);
 
-            return response!;
+            return accessTokenResponse;
         }
 
         /// <summary>
@@ -115,6 +132,7 @@ namespace PrDeploy.Api.Business.Clients
             }
 
             var user = await gitHubClient.User.Current();
+            _logger.LogDebug("Retrieved GitHub user info for {Login}.", user.Login);
             var userInfo = Map.UserInfo(user);
             return userInfo ?? new UserInfo();
         }

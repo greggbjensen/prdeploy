@@ -68,6 +68,15 @@ The GitHub App Webhook must be configured to send events to a URL that is access
    npx smee-client -u https://smee.io/<channel> -t http://localhost:4302/webhooks
    ```
 
+## Logging
+
+The API uses Serilog (configured in `Program.cs` and the `Serilog` section of `appsettings.json`) and writes JSON to the console. All application code logs through `ILogger<T>` using **message templates** with named placeholders (`"Updated repo settings for {Owner}/{Repo}."`), never string interpolation, so every value is a queryable property.
+
+- **Levels:** `Information` for state changes and business events (deploys, settings changes, tokens issued), `Warning` for denied or rejected requests and expected client errors, `Error` for unexpected failures, and `Debug` for reads, cache hits, and timings. The default minimum level is `Information`; raise verbosity with `Serilog:MinimumLevel:Default` (for example `Debug`).
+- **Context:** authenticated requests run inside a scope with the `User` property (the GitHub login), and the request summary line includes it. Webhook processing adds `Owner`, `Repo`, and `PullNumber` scopes.
+- **Storage:** every `IDeploymentStore` provider is wrapped by `LoggingDeploymentStore`, which logs the owner, repo, value name, revision offset, and duration at `Debug` and failures at `Error`.
+- **Never logged:** GitHub or JWT tokens, client secrets, and stored values (they may be secure). Log identifiers, counts, and statuses only.
+
 ## Testing
 
 Run all tests with `dotnet test`, or only the webhook tests with:

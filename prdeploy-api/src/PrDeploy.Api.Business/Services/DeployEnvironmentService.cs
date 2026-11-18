@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 using PrDeploy.Api.Business.Services.Interfaces;
 using Octokit;
 using PrDeploy.Api.Business.Mapping;
@@ -26,6 +27,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
     private readonly IDeploymentStore _deploymentStore;
     private readonly IValidator<DeployStateComparisonInput> _deployStateComparisonInputValidator;
     private readonly IValidator<RepoQueryInput> _environmentsInputValidator;
+    private readonly ILogger<DeployEnvironmentService> _logger;
 
     /// <summary>
     /// Initializes the instance with its required dependencies.
@@ -37,12 +39,15 @@ public class DeployEnvironmentService : IDeployEnvironmentService
     /// <param name="deploymentStore">Object containing the deployment store data used by the operation.</param>
     /// <param name="deployStateComparisonInputValidator">Object containing the deploy state comparison input validator data used by the operation.</param>
     /// <param name="environmentsInputValidator">Object containing the environments input validator data used by the operation.</param>
+    /// <param name="logger">Logger used to report operational activity.</param>
     public DeployEnvironmentService(IGitHubClient gitHubClient, IDeploySettingsService deploySettingsService,
         IPullRequestService pullRequestService, IGitHubSecurity gitHubSecurity,
         IDeploymentStore deploymentStore, IValidator<DeployStateComparisonInput> deployStateComparisonInputValidator,
-        IValidator<RepoQueryInput> environmentsInputValidator)
+        IValidator<RepoQueryInput> environmentsInputValidator,
+        ILogger<DeployEnvironmentService> logger)
     {
         _environmentsInputValidator = environmentsInputValidator;
+        _logger = logger;
         _gitHubClient = gitHubClient;
         _deploySettingsService = deploySettingsService;
         _pullRequestService = pullRequestService;
@@ -58,6 +63,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
     /// <returns>Items matching the supplied criteria.</returns>
     public async Task<List<DeployEnvironment>> ListAsync(RepoQueryInput input)
     {
+        _logger.LogDebug("Listing deploy environments for {Owner}/{Repo}.", input.Owner, input.Repo);
         var deployEnvironments = new List<DeployEnvironment>();
 
         var repoSettings = await _deploySettingsService.GetMergedAsync(input.Owner, input.Repo);
@@ -99,6 +105,8 @@ public class DeployEnvironmentService : IDeployEnvironmentService
             deployEnvironments.Add(deployEnvironment);
         }
 
+        _logger.LogDebug("Listed {Count} deploy environments for {Owner}/{Repo}.",
+            deployEnvironments.Count, input.Owner, input.Repo);
         return deployEnvironments;
     }
 
@@ -119,6 +127,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
             Url = e.Url
         }).ToList();
 
+        _logger.LogDebug("Listed {Count} environments for {Owner}/{Repo}.", environments.Count, input.Owner, input.Repo);
         return environments;
     }
 
@@ -129,6 +138,8 @@ public class DeployEnvironmentService : IDeployEnvironmentService
     /// <returns>The status response produced by the operation.</returns>
     public async Task<StatusResponse> FreeAsync(PullDeployInput input)
     {
+        _logger.LogInformation("Freeing {Environment} from pull request {PullNumber} in {Owner}/{Repo}.",
+            input.Environment, input.PullNumber, input.Owner, input.Repo);
         return await _pullRequestService.AddCommentCommandAsync(input.Owner, input.Repo, input.PullNumber, 
             $"/free {input.Environment.ToLower()}");
     }
@@ -142,6 +153,10 @@ public class DeployEnvironmentService : IDeployEnvironmentService
     {
         var retainString = input.Retain.GetValueOrDefault() ? " --retain" : string.Empty;
         var forceString = input.Force.GetValueOrDefault() ? " --force" : string.Empty;
+        _logger.LogInformation(
+            "Deploying pull request {PullNumber} to {Environment} in {Owner}/{Repo} (force {Force}, retain {Retain}).",
+            input.PullNumber, input.Environment, input.Owner, input.Repo, input.Force.GetValueOrDefault(),
+            input.Retain.GetValueOrDefault());
         return await _pullRequestService.AddCommentCommandAsync(input.Owner, input.Repo, input.PullNumber, 
             $"/deploy {input.Environment.ToLower()}{forceString}{retainString}");
     }
@@ -154,6 +169,9 @@ public class DeployEnvironmentService : IDeployEnvironmentService
     public async Task<StatusResponse> RollbackAsync(RollbackInput input)
     {
         var countString = input.Count > 1 ? $" {input.Count}" : string.Empty;
+        _logger.LogInformation(
+            "Rolling back {Environment} for pull request {PullNumber} in {Owner}/{Repo} (count {Count}).",
+            input.Environment, input.PullNumber, input.Owner, input.Repo, input.Count);
         return await _pullRequestService.AddCommentCommandAsync(input.Owner, input.Repo, input.PullNumber, 
             $"/rollback {input.Environment.ToLower()}{countString}");
     }
@@ -170,6 +188,8 @@ public class DeployEnvironmentService : IDeployEnvironmentService
         // Because we do not make a GitHub call here, we need to secure the repo access.
         await _gitHubSecurity.GuardRepoAsync(input.Owner, input.Repo);
 
+        _logger.LogDebug("Comparing deploy state of {SourceEnvironment} to {TargetEnvironment} in {Owner}/{Repo}.",
+            input.SourceEnvironment, input.TargetEnvironment, input.Owner, input.Repo);
         var sourceStateName = DeployStatePrefix + input.SourceEnvironment.ToUpperInvariant();
         var targetStateName = DeployStatePrefix + input.TargetEnvironment.ToUpperInvariant();
         var sourceState = await GetOrCreateDeployState(input.Owner, input.Repo, sourceStateName);
@@ -234,6 +254,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
         var state = await _deploymentStore.GetAsync<DeployState?>(owner, repo, name);
         if (state == null)
         {
+            _logger.LogInformation("Creating empty deploy state {StateName} for {Owner}/{Repo}.", name, owner, repo);
             state = new DeployState
             {
                 PullNumber = 0,

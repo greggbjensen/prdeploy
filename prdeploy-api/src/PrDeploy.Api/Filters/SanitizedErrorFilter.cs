@@ -79,7 +79,13 @@ namespace PrDeploy.Api.Filters
                     break;
             }
 
-            _logger.LogError(error.Exception, error.Message, error);
+            // Expected client errors are warnings; anything else is an unexpected server error.
+            var level = error.Exception is null or Octokit.NotFoundException or ValidationException
+                        or HttpRequestException { StatusCode: HttpStatusCode.Forbidden or HttpStatusCode.Unauthorized }
+                ? LogLevel.Warning
+                : LogLevel.Error;
+            _logger.Log(level, error.Exception, "GraphQL error {ErrorCode} at {ErrorPath}: {ErrorMessage}",
+                result.Code, error.Path?.Print(), error.Message);
 
             if (!_hostEnvironment.IsDevelopment())
             {

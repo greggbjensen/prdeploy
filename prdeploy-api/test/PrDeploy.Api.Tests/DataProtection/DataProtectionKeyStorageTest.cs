@@ -71,7 +71,9 @@ public class DataProtectionKeyStorageTest
                 Assert.Equal("round-trip", protector.Unprotect(protectedValue));
                 Assert.IsType<BliteDataProtectionXmlRepository>(
                     serviceProvider.GetRequiredService<IOptions<KeyManagementOptions>>().Value.XmlRepository);
-                Assert.IsType<BliteDeploymentStore>(serviceProvider.GetRequiredService<IDeploymentStore>());
+                // The provider store is wrapped by the logging decorator.
+                Assert.IsType<LoggingDeploymentStore>(serviceProvider.GetRequiredService<IDeploymentStore>());
+                Assert.NotNull(serviceProvider.GetRequiredService<BliteDeploymentStore>());
                 Assert.Null(serviceProvider.GetService<IAmazonSimpleSystemsManagement>());
                 Assert.Null(serviceProvider.GetService<IAmazonDynamoDB>());
                 Assert.Null(serviceProvider.GetService<CosmosClient>());
@@ -124,10 +126,9 @@ public class DataProtectionKeyStorageTest
 
         services.AddPrDeployApiBusiness(configuration);
 
-        var storeRegistration = Assert.Single(
-            services,
-            descriptor => descriptor.ServiceType == typeof(IDeploymentStore));
-        Assert.Equal(expectedStoreType, storeRegistration.ImplementationType);
+        // The interface is registered through the logging decorator; the provider store is registered by type.
+        Assert.Single(services, descriptor => descriptor.ServiceType == typeof(IDeploymentStore));
+        Assert.Single(services, descriptor => descriptor.ServiceType == expectedStoreType);
         Assert.Single(services, descriptor => descriptor.ServiceType == typeof(IXmlRepository));
     }
 

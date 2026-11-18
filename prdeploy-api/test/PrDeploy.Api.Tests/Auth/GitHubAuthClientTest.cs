@@ -107,7 +107,8 @@ public class GitHubAuthClientTest
             jwtOptions,
             cipher.Object,
             serviceProvider,
-            validator);
+            validator,
+            Microsoft.Extensions.Logging.Abstractions.NullLogger<GitHubAuthClient>.Instance);
 
         var response = await client.GetAccessTokenAsync(new AccessTokenRequest
         {

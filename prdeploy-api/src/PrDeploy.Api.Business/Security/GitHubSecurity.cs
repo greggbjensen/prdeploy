@@ -45,6 +45,8 @@ namespace PrDeploy.Api.Business.Security
             var hasAccess = await HasRepoAccessAsync(owner, repo);
             if (!hasAccess)
             {
+                _logger.LogWarning("Access denied for {Login} to repository {Owner}/{Repo}.",
+                    _securityContext.Login, owner, repo);
                 throw new HttpRequestException("Access denied", null, HttpStatusCode.Forbidden);
             }
         }
@@ -58,6 +60,7 @@ namespace PrDeploy.Api.Business.Security
             var hasAccess = await HasOwnerAccessAsync(owner);
             if (!hasAccess)
             {
+                _logger.LogWarning("Access denied for {Login} to owner {Owner}.", _securityContext.Login, owner);
                 throw new HttpRequestException("Access denied", null, HttpStatusCode.Forbidden);
             }
         }
@@ -73,6 +76,7 @@ namespace PrDeploy.Api.Business.Security
             var userToken = _securityContext.UserToken;
             if (string.IsNullOrEmpty(userToken))
             {
+                _logger.LogDebug("No user token present while checking access to {Owner}/{Repo}.", owner, repo);
                 return false;
             }
 
@@ -81,6 +85,8 @@ namespace PrDeploy.Api.Business.Security
             var hasAccess = _cache.TryGetValue(authKey, out _);
             if (hasAccess)
             {
+                _logger.LogDebug("Repository access for {Login} to {Owner}/{Repo} served from cache.",
+                    _securityContext.Login, owner, repo);
                 return true;
             }
 
@@ -90,11 +96,14 @@ namespace PrDeploy.Api.Business.Security
                 if (hasAccess)
                 {
                     _cache.Set(authKey, hasAccess, AccessRefreshTimeSpan);
+                    _logger.LogDebug("Verified repository access for {Login} to {Owner}/{Repo}.",
+                        _securityContext.Login, owner, repo);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, $"User did not have access to {owner}/{repo}");
+                _logger.LogWarning(ex, "Unable to verify {Login} access to repository {Owner}/{Repo}.",
+                    _securityContext.Login, owner, repo);
             }
 
             return hasAccess;
@@ -110,6 +119,7 @@ namespace PrDeploy.Api.Business.Security
             var userToken = _securityContext.UserToken;
             if (string.IsNullOrEmpty(userToken))
             {
+                _logger.LogDebug("No user token present while checking access to owner {Owner}.", owner);
                 return false;
             }
 
@@ -118,6 +128,8 @@ namespace PrDeploy.Api.Business.Security
             var hasAccess = _cache.TryGetValue(authKey, out _);
             if (hasAccess)
             {
+                _logger.LogDebug("Owner access for {Login} to {Owner} served from cache.",
+                    _securityContext.Login, owner);
                 return true;
             }
 
@@ -129,7 +141,8 @@ namespace PrDeploy.Api.Business.Security
             }
             catch (Exception ex)
             {
-                _logger.LogWarning($"User did not have access to {owner}, trying user account.\n{ex.Message}");
+                _logger.LogWarning(ex, "{Login} is not an organization member of {Owner}, trying user account.",
+                    _securityContext.Login, owner);
             }
 
             if (!hasAccess)
@@ -140,13 +153,14 @@ namespace PrDeploy.Api.Business.Security
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogWarning($"User did not have access {owner} user account.\n {ex.Message}");
+                    _logger.LogWarning(ex, "Unable to compare {Login} to user account {Owner}.", _securityContext.Login, owner);
                 }
             }
 
             if (hasAccess)
             {
                 _cache.Set(authKey, true, AccessRefreshTimeSpan);
+                _logger.LogDebug("Verified owner access for {Login} to {Owner}.", _securityContext.Login, owner);
             }
 
             return hasAccess;

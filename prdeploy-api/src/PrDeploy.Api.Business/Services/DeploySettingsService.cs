@@ -2,6 +2,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using PrDeploy.Api.Business.Services.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Octokit;
 using PrDeploy.Api.Business.Mapping;
 using PrDeploy.Api.Business.Security.Interfaces;
@@ -28,6 +29,7 @@ public class DeploySettingsService : IDeploySettingsService
 
     private readonly IDeploymentStore _deploymentStore;
     private readonly IGitHubSecurity _gitHubSecurity;
+    private readonly ILogger<DeploySettingsService> _logger;
 
     /// <summary>
     /// Initializes the instance with its required dependencies.
@@ -35,11 +37,14 @@ public class DeploySettingsService : IDeploySettingsService
     /// <param name="deploymentStore">Object containing the deployment store data used by the operation.</param>
     /// <param name="gitHubSecurity">Object containing the git hub security data used by the operation.</param>
     /// <param name="cache">Object containing the cache data used by the operation.</param>
-    public DeploySettingsService(IDeploymentStore deploymentStore, IGitHubSecurity gitHubSecurity, IMemoryCache cache)
+    /// <param name="logger">Logger used to report operational activity.</param>
+    public DeploySettingsService(IDeploymentStore deploymentStore, IGitHubSecurity gitHubSecurity, IMemoryCache cache,
+        ILogger<DeploySettingsService> logger)
     {
         _deploymentStore = deploymentStore;
         _gitHubSecurity = gitHubSecurity;
         _cache = cache;
+        _logger = logger;
     }
 
     /// <summary>
@@ -69,10 +74,12 @@ public class DeploySettingsService : IDeploySettingsService
         var repoSettings = _cache.Get<DeploySettings>(repoKey);
         if (repoSettings != null)
         {
+            _logger.LogDebug("Using cached merged settings for {Owner}/{Repo}.", owner, repo);
             await _gitHubSecurity.GuardRepoAsync(owner, repo);
             return repoSettings;
         }
 
+        _logger.LogDebug("Merging owner and repo settings for {Owner}/{Repo}.", owner, repo);
         var ownerSettings = await GetOwnerSettingsAsync(owner);
         repoSettings = await GetRepoSettingsAsync(owner, repo);
 
@@ -112,6 +119,8 @@ public class DeploySettingsService : IDeploySettingsService
             .Find(e => string.Equals(e.Name, environment, StringComparison.OrdinalIgnoreCase));
         if (result == null)
         {
+            _logger.LogWarning("Environment {Environment} has no settings entry in {Owner}/{Repo}.",
+                environment, owner, repo);
             throw new NotFoundException(
                 $"Environment {environment} did not have a settings entry in repository {owner}/{repo}.",
                 HttpStatusCode.NotFound);
@@ -171,6 +180,7 @@ public class DeploySettingsService : IDeploySettingsService
         var deploySettings = await _deploymentStore.GetAsync<DeploySettings?>(owner, DeploySettingsKey);
         if (deploySettings == null)
         {
+            _logger.LogInformation("No settings stored for owner {Owner}, saving the defaults.", owner);
             _defaultOwnerSettings ??= await LoadDefaultOwnerSettingsAsync();
             deploySettings = _defaultOwnerSettings;
             await _deploymentStore.SetAsync(owner, DeploySettingsKey, deploySettings, true);
@@ -189,6 +199,7 @@ public class DeploySettingsService : IDeploySettingsService
         await _gitHubSecurity.GuardOwnerAsync(input.Owner);
 
         await _deploymentStore.SetAsync(input.Owner, DeploySettingsKey, input.Settings, true);
+        _logger.LogInformation("Updated owner settings for {Owner}.", input.Owner);
 
         return new StatusResponse
         {
@@ -210,6 +221,7 @@ public class DeploySettingsService : IDeploySettingsService
         var deploySettings = await _deploymentStore.GetAsync<DeploySettings?>(owner, repo, DeploySettingsKey);
         if (deploySettings == null)
         {
+            _logger.LogInformation("No settings stored for {Owner}/{Repo}, saving empty settings.", owner, repo);
             deploySettings = new DeploySettings();
             await _deploymentStore.SetAsync(owner, repo, DeploySettingsKey, deploySettings, true);
         }
@@ -227,6 +239,8 @@ public class DeploySettingsService : IDeploySettingsService
         await _gitHubSecurity.GuardRepoAsync(input.Owner, input.Repo);
 
         await _deploymentStore.SetAsync(input.Owner, input.Repo, DeploySettingsKey, input.Settings, true);
+
+        _logger.LogInformation("Updated repo settings for {Owner}/{Repo}.", input.Owner, input.Repo);
 
         // Clear cache so it can update, including the settings used by webhooks.
         _cache.Remove(GetSettingsCacheKey(input.Owner, input.Repo));
@@ -254,6 +268,7 @@ public class DeploySettingsService : IDeploySettingsService
     /// <returns>The deploy settings produced by the operation.</returns>
     private async Task<DeploySettings> LoadDefaultOwnerSettingsAsync()
     {
+        _logger.LogDebug("Loading default owner settings from default-owner-settings.yaml.");
         var yaml = await File.ReadAllTextAsync("default-owner-settings.yaml");
         var deserializer = new DeserializerBuilder()
             .WithNamingConvention(CamelCaseNamingConvention.Instance)

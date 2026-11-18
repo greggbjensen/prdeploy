@@ -1,4 +1,5 @@
 using LinqKit;
+using Microsoft.Extensions.Logging;
 using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Models;
 using Octokit;
@@ -15,14 +16,17 @@ namespace PrDeploy.Api.Business.Services;
 public class PullRequestService : IPullRequestService
 {
     private readonly IGitHubClient _client;
+    private readonly ILogger<PullRequestService> _logger;
 
     /// <summary>
     /// Initializes the instance with its required dependencies.
     /// </summary>
     /// <param name="client">Object containing the client data used by the operation.</param>
-    public PullRequestService(IGitHubClient client)
+    /// <param name="logger">Logger used to report operational activity.</param>
+    public PullRequestService(IGitHubClient client, ILogger<PullRequestService> logger)
     {
         _client = client;
+        _logger = logger;
     }
 
     /// <summary>
@@ -32,6 +36,9 @@ public class PullRequestService : IPullRequestService
     /// <returns>Items matching the supplied criteria.</returns>
     public async Task<List<PullRequest>> ListOpenPullRequestsAsync(OpenPullRequestInput input)
     {
+        _logger.LogDebug("Listing open pull requests for {Owner}/{Repo} (search provided {HasSearch}).",
+            input.Owner, input.Repo, !string.IsNullOrWhiteSpace(input.Search));
+
         // Cannot search with this API, so we do it locally.
         var results = await _client.PullRequest.GetAllForRepository(
             input.Owner,
@@ -52,6 +59,9 @@ public class PullRequestService : IPullRequestService
             .Select(Map.PullRequest)
             .ToList();
 
+        _logger.LogDebug("Found {Count} of {Total} open pull requests for {Owner}/{Repo}.",
+            pullRequests.Count, results.Count, input.Owner, input.Repo);
+
 #pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
         return pullRequests;
 #pragma warning restore CS8619
@@ -65,6 +75,8 @@ public class PullRequestService : IPullRequestService
     public async Task<StatusResponse> AddServicesAsync(PullRequestAddServicesInput input)
     {
         var serviceList = string.Join(' ', input.Services);
+        _logger.LogInformation("Adding services {Services} to pull request {PullNumber} in {Owner}/{Repo}.",
+            input.Services, input.PullNumber, input.Owner, input.Repo);
         return await AddCommentCommandAsync(input.Owner, input.Repo, input.PullNumber, $"/add {serviceList}");
     }
 
@@ -79,6 +91,8 @@ public class PullRequestService : IPullRequestService
     public async Task<StatusResponse> AddCommentCommandAsync(string owner, string repo, int pullNumber,
         string command)
     {
+        _logger.LogInformation("Posting command {Command} to pull request {PullNumber} in {Owner}/{Repo}.",
+            command, pullNumber, owner, repo);
         var comment = $@"
 {command}
 ";

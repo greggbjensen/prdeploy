@@ -50,6 +50,40 @@
           "endsPattern": ".*http://localhost:4301/.*"
         }
       }
+    },
+    {
+      "label": "Stop API Build Servers",
+      "detail": "Shuts down the MSBuild and compiler server processes left running by Build API.",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["build-server", "shutdown"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "silent",
+        "close": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Stop App",
+      "detail": "Terminates the background Serve App task when the App debug session ends.",
+      "type": "shell",
+      "command": "echo ${input:terminateServeApp}",
+      "presentation": {
+        "reveal": "silent",
+        "close": true
+      },
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "terminateServeApp",
+      "type": "command",
+      "command": "workbench.action.tasks.terminate",
+      "args": "Serve App"
     }
   ]
 }

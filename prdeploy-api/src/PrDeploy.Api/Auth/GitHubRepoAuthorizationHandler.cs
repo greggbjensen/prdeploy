@@ -8,6 +8,17 @@ namespace PrDeploy.Api.Auth
     /// </summary>
     public class GitHubRepoAuthorizationHandler : AuthorizationHandler<GitHubRepoAccessRequirement>
     {
+        private readonly ILogger<GitHubRepoAuthorizationHandler> _logger;
+
+        /// <summary>
+        /// Initializes the instance with its required dependencies.
+        /// </summary>
+        /// <param name="logger">Logger used to report authorization decisions.</param>
+        public GitHubRepoAuthorizationHandler(ILogger<GitHubRepoAuthorizationHandler> logger)
+        {
+            _logger = logger;
+        }
+
         /// <summary>
         /// Handles the requirement according to the application's workflow.
         /// </summary>
@@ -21,6 +32,7 @@ namespace PrDeploy.Api.Auth
             }
             else
             {
+                _logger.LogInformation("Authorization failed: user is not authenticated.");
                 context.Fail(new AuthorizationFailureReason(this, "User not authenticated."));
             }
 
