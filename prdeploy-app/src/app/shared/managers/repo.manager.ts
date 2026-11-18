@@ -70,19 +70,17 @@ export class RepoManager {
   }
 
   updateOwnerRepos(ownerRepos: OwnerRepos[]) {
-    // Clean out empty owners.
-    const emptyOwners = ownerRepos.filter(o => !o.repos || o.repos.length === 0);
-    for (const empty of emptyOwners) {
-      const index = ownerRepos.findIndex(o => o.owner === empty.owner);
-      ownerRepos.splice(index, 1);
-    }
+    this._isLoaded = true;
 
-    if (!_.isNil(ownerRepos) && ownerRepos.length === 0) {
+    // Clean out empty owners without mutating frozen Apollo cache arrays.
+    const filteredOwnerRepos = (ownerRepos || []).filter(o => o.repos && o.repos.length > 0);
+
+    if (filteredOwnerRepos.length === 0) {
       this.updateValueChanged('', '');
     }
 
-    this._ownerReposChangedSubject.next(ownerRepos);
-    return this.guardHasRepos(ownerRepos);
+    this._ownerReposChangedSubject.next(filteredOwnerRepos);
+    return this.guardHasRepos(filteredOwnerRepos);
   }
 
   private updateValueChanged(owner: string, repo: string) {

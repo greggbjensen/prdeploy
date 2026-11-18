@@ -137,8 +137,9 @@ try
         }
         catch (HttpRequestException e)
         {
-            logger.LogWarning(e, "Error getting access token ({StatusCode}).", e.StatusCode);
-            result = Results.StatusCode((int)e.StatusCode!);
+            var statusCode = (int)(e.StatusCode ?? System.Net.HttpStatusCode.InternalServerError);
+            logger.LogWarning(e, "Error getting access token ({StatusCode}).", statusCode);
+            result = Results.StatusCode(statusCode);
         }
         catch (Exception e)
         {
@@ -166,8 +167,9 @@ try
             }
             catch (HttpRequestException e)
             {
-                logger.LogWarning(e, "Error getting user info ({StatusCode}).", e.StatusCode);
-                result = Results.StatusCode((int)e.StatusCode!);
+                var statusCode = (int)(e.StatusCode ?? System.Net.HttpStatusCode.InternalServerError);
+                logger.LogWarning(e, "Error getting user info ({StatusCode}).", statusCode);
+                result = Results.StatusCode(statusCode);
             }
 
             return result;

@@ -93,22 +93,74 @@ namespace PrDeploy.Api.Business.Clients
             request.AddParameter("application/x-www-form-urlencoded", formBody, ParameterType.RequestBody);
 
             var responseValue = await _client.PostAsync(request);
-            var response =JsonSerializer.Deserialize<AccessTokenResponse>(responseValue.Content!);
-            var accessTokenResponse = (AccessTokenResponse?)null;
-            if (String.IsNullOrWhiteSpace(response?.AccessToken))
+            AccessTokenResponse? accessTokenResponse = null;
+            if (!string.IsNullOrWhiteSpace(responseValue?.Content))
             {
-                _logger.LogWarning("GitHub did not return an access token (HTTP status {StatusCode}): {ResponseContent}",
-                    (int)responseValue.StatusCode, responseValue.Content);
+                try
+                {
+                    accessTokenResponse = JsonSerializer.Deserialize<AccessTokenResponse>(responseValue.Content);
+                }
+                catch (JsonException)
+                {
+                    accessTokenResponse = null;
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(accessTokenResponse?.AccessToken))
+            {
+                var (oauthError, oauthErrorDescription) = ExtractOAuthError(responseValue?.Content);
+                _logger.LogWarning(
+                    "GitHub did not return an access token (HTTP status {StatusCode}, error {OAuthError}: {OAuthErrorDescription}).",
+                    (int)(responseValue?.StatusCode ?? 0),
+                    oauthError ?? "unknown",
+                    oauthErrorDescription ?? "none");
                 throw new HttpRequestException("Error getting access token", null, HttpStatusCode.InternalServerError);
             }
-            
-            var userInfo = await GetUserInfoAsync(accessTokenResponse!.AccessToken);
+
+            var userInfo = await GetUserInfoAsync(accessTokenResponse.AccessToken);
 
             // Swap GitHub access token for full signed JWT.
             accessTokenResponse.AccessToken = CreateJwt(accessTokenResponse.AccessToken, userInfo);
             _logger.LogInformation("Issued an access token for {Login}.", userInfo.Login);
 
             return accessTokenResponse;
+        }
+
+        /// <summary>
+        /// Extracts non-sensitive OAuth error fields from a GitHub token endpoint response body.
+        /// </summary>
+        /// <param name="content">Raw JSON payload returned by the token endpoint.</param>
+        /// <returns>The OAuth <c>error</c> code and <c>error_description</c> message when present.</returns>
+        private static (string? Error, string? ErrorDescription) ExtractOAuthError(string? content)
+        {
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                return (null, null);
+            }
+
+            try
+            {
+                using var document = JsonDocument.Parse(content);
+                if (document.RootElement.ValueKind != JsonValueKind.Object)
+                {
+                    return (null, null);
+                }
+
+                var error = document.RootElement.TryGetProperty("error", out var errorProp) &&
+                            errorProp.ValueKind == JsonValueKind.String
+                    ? errorProp.GetString()
+                    : null;
+                var errorDescription = document.RootElement.TryGetProperty("error_description", out var descProp) &&
+                                       descProp.ValueKind == JsonValueKind.String
+                    ? descProp.GetString()
+                    : null;
+
+                return (error, errorDescription);
+            }
+            catch (JsonException)
+            {
+                return (null, null);
+            }
         }
 
         /// <summary>
@@ -124,6 +176,11 @@ namespace PrDeploy.Api.Business.Clients
             {
                 gitHubClient = _serviceProvider.GetRequiredService<IGitHubClient>();
             }
+            else if (_serviceProvider.GetService<ISecurityContext>() == null &&
+                     _serviceProvider.GetService<IGitHubClient>() is { } registeredClient)
+            {
+                gitHubClient = registeredClient;
+            }
             else
             {
                 var credentials = new Credentials(accessToken);
@@ -131,10 +188,18 @@ namespace PrDeploy.Api.Business.Clients
                     new ProductHeaderValue("prdeploy"), new InMemoryCredentialStore(credentials));
             }
 
-            var user = await gitHubClient.User.Current();
-            _logger.LogDebug("Retrieved GitHub user info for {Login}.", user.Login);
-            var userInfo = Map.UserInfo(user);
-            return userInfo ?? new UserInfo();
+            try
+            {
+                var user = await gitHubClient.User.Current();
+                _logger.LogDebug("Retrieved GitHub user info for {Login}.", user.Login);
+                var userInfo = Map.UserInfo(user);
+                return userInfo ?? new UserInfo();
+            }
+            catch (ApiException ex)
+            {
+                _logger.LogWarning(ex, "GitHub API error retrieving user info (HTTP status {StatusCode}).", (int)ex.StatusCode);
+                throw new HttpRequestException("Error getting user info from GitHub.", ex, ex.StatusCode);
+            }
         }
 
         /// <summary>
@@ -146,7 +211,7 @@ namespace PrDeploy.Api.Business.Clients
         private string CreateJwt(string gitHubToken, UserInfo userInfo)
         {
             var encryptedToken = _cipherService.Encrypt(gitHubToken);
-            var key = Encoding.ASCII.GetBytes(_jwtOptions.Key);
+            var key = Encoding.UTF8.GetBytes(_jwtOptions.Key);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]

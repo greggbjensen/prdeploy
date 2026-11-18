@@ -76,6 +76,24 @@ public class ApiLoggingTest
     }
 
     /// <summary>
+    /// Confirms Octokit authorization failures map to UNAUTHORIZED and log as a warning.
+    /// </summary>
+    [Fact]
+    public void OnError_OctokitAuthorizationException_MapsToUnauthorizedWarning()
+    {
+        var filter = CreateFilter(out var logger);
+        var error = ErrorBuilder.New().SetMessage("Bad credentials")
+            .SetException(new Octokit.AuthorizationException()).Build();
+
+        var result = filter.OnError(error);
+
+        Assert.Equal("UNAUTHORIZED", result.Code);
+        var entry = Assert.Single(logger.Entries);
+        Assert.Equal(LogLevel.Warning, entry.Level);
+        Assert.Equal("UNAUTHORIZED", entry.Properties["ErrorCode"]);
+    }
+
+    /// <summary>
     /// Confirms validation failures are warnings.
     /// </summary>
     [Fact]

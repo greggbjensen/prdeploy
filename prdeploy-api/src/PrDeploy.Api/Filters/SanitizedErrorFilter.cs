@@ -33,14 +33,25 @@ namespace PrDeploy.Api.Filters
             var result = error;
             switch (error.Exception)
             {
-                // GitHub not found is a forbidden.
+                // GitHub not found or forbidden is a forbidden.
                 case Octokit.NotFoundException:
+                case Octokit.ForbiddenException:
                     result = ErrorBuilder.FromError(error)
                         .SetCode("FORBIDDEN")
                         .SetMessage("Access denied.")
                         .SetException(
                             new HttpRequestException("Access denied.",
                                 null, HttpStatusCode.Forbidden))
+                        .Build();
+                    break;
+
+                case Octokit.AuthorizationException:
+                    result = ErrorBuilder.FromError(error)
+                        .SetCode("UNAUTHORIZED")
+                        .SetMessage("Authentication required.")
+                        .SetException(
+                            new HttpRequestException("Authentication required.",
+                                null, HttpStatusCode.Unauthorized))
                         .Build();
                     break;
 
@@ -80,7 +91,8 @@ namespace PrDeploy.Api.Filters
             }
 
             // Expected client errors are warnings; anything else is an unexpected server error.
-            var level = error.Exception is null or Octokit.NotFoundException or ValidationException
+            var level = error.Exception is null or Octokit.NotFoundException or Octokit.ForbiddenException
+                        or Octokit.AuthorizationException or ValidationException
                         or HttpRequestException { StatusCode: HttpStatusCode.Forbidden or HttpStatusCode.Unauthorized }
                 ? LogLevel.Warning
                 : LogLevel.Error;

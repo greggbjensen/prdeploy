@@ -44,6 +44,19 @@ public class DeployApiApplicationFactory : WebApplicationFactory<Program>
     /// </summary>
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("Jwt__Key")))
+        {
+            Environment.SetEnvironmentVariable(
+                "Jwt__Key",
+                "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef");
+        }
+        if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("Jwt__TokenEncryptionKey")))
+        {
+            Environment.SetEnvironmentVariable(
+                "Jwt__TokenEncryptionKey",
+                "test-token-encryption-key-0123456789abcdef");
+        }
+
         builder.ConfigureTestServices(services =>
         {
             services.AddAuthentication("Test")
