@@ -16,7 +16,6 @@ using PrDeploy.Api.Models.Auth;
 using PrDeploy.Api.Options;
 using PrDeploy.Api.Webhooks;
 using Serilog;
-using Serilog.Formatting.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Path = System.IO.Path;
@@ -37,10 +36,7 @@ try
         .Build();
 
     //initial logger without env running
-    Log.Logger = new LoggerConfiguration()
-        .ReadFrom.Configuration(configuration)
-        .Enrich.FromLogContext() // Includes webhook scopes such as Owner, Repo and PullNumber.
-        .WriteTo.Console(new JsonFormatter(renderMessage: true))
+    Log.Logger = SerilogConfiguration.Configure(new LoggerConfiguration(), configuration)
         .CreateBootstrapLogger();
 
     builder.Services
@@ -79,7 +75,9 @@ try
         .AddHealthChecks()
         .AddCheck<HealthCheck>("Running", null, new[] { "live", "ready" });
 
-    builder.Host.UseSerilog();
+    // Replaces the bootstrap logger so the host logger honors the final configuration and DI-registered sinks.
+    builder.Host.UseSerilog((context, services, loggerConfiguration) =>
+        SerilogConfiguration.Configure(loggerConfiguration, context.Configuration, services));
     var app = builder.Build();
     Log.Information("Starting PrDeploy API in {Environment} using {StorageProvider} storage.",
         app.Environment.EnvironmentName, StorageProviderConfiguration.GetProvider(configuration));

@@ -36,6 +36,7 @@ public static class IServiceCollectionExtensions
         services
             .AddGraphQLServer()
             .AddAuthorization()
+            .AddJsonTypeConverter()
             .AddQueryType(q => q.Name("DeployQuery"))
             .AddType<DeployQueueQuery>()
             .AddType<DeploySettingsQuery>()
