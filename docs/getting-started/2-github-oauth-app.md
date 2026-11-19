@@ -28,7 +28,19 @@ For authorization of the portal to view deployments, we need to create an GitHub
 3. Download and select the file from `https://github.com/greggbjensen/prdeploy/blob/main/docs/assets/images/logo-128x128.png`.
 4. Click **Update application**.
 
-## 3. Application configuration (local development)
+## 3. Approve the app for organizations with access restrictions
+
+If an organization listed in `GitHubAuth__AllowedOrganizations` has **OAuth App access restrictions** enabled, GitHub blocks prdeploy from reading that organization's membership. Users who belong only to that organization are then rejected at sign-in, and the API logs `the <org> organization has enabled OAuth App access restrictions`.
+
+An organization owner must approve the app:
+
+1. Go to `https://github.com/organizations/<org>/settings/oauth_application_policy`.
+2. Find the OAuth app you created above. If it is not listed, ask a member to click **Request** next to the organization on the app's authorization page after signing in.
+3. Click **Review**, then **Grant access**.
+
+Alternatively, remove the restrictions from the same page. Repeat for each allowed organization that has them enabled. Members must sign in again after approval.
+
+## 4. Application configuration (local development)
 
 1. Make a copy of **prdeploy-api/src/PrDeploy.Api/.env.sample** as **.env**
 2. Fill in the following:
