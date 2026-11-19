@@ -65,6 +65,47 @@ jobs:
           sync_run_ids: ${{ inputs.sync_run_ids }}
 ```
 
+## Build Workflow
+
+Builds need to publish information for the combined deploy to pull from, see the **Details** step below.
+
+```yaml
+name: deploy-api-test - Build
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+    branches:
+      - main
+    paths:
+      - "deploy-api-test/**"
+      - ".github/workflows/deploy-api-test-build.yml"
+  workflow_dispatch:
+
+jobs:
+  details:
+      name: Details
+      runs-on: ubuntu-latest
+      concurrency:
+        group: details-${{ github.workflow }}-${{ github.ref }}
+        cancel-in-progress: true
+      outputs:
+        version: ${{ env.VERSION }}
+      steps:
+        - name: Version
+          uses: greggbjensen/prdeploy/.github/actions/date-version@main
+
+        - name: Build details
+          uses: greggbjensen/prdeploy/.github/actions/build-details@main
+          with:
+            version: ${{ env.VERSION }}
+            token: ${{ secrets.GITHUB_TOKEN }}
+```
+
 ## GitHub Actions
 
 Actions that apply and retrieve the information needed for builds and deployments.
