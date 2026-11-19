@@ -1,29 +1,16 @@
-{
-  "Storage": {
-    "DeploymentValuePathPrefix": "/prdeploy",
-    "AWS": {
-      "Region": "us-west-2",
-      "Profile": "prdeploy"
-    }
-  },
-  "ApolloSandbox": {
-    "Enabled": true
-  },
-  "Serilog": {
-    "MinimumLevel": {
-      "Default": "Debug",
-      "Override": {
-        "Microsoft.AspNetCore": "Information",
-        "Microsoft.AspNetCore.Hosting.Diagnostics": "Warning"
-      }
-    },
-    "WriteTo": [
-      {
-        "Name": "Console"
-      },
-      {
-        "Name": "Debug"
-      }
-    ]
-  }
-}
+Storage:
+  DeploymentValuePathPrefix: /prdeploy
+  AWS:
+    Region: us-west-2
+    Profile: prdeploy
+ApolloSandbox:
+  Enabled: true
+Serilog:
+  MinimumLevel:
+    Default: Debug
+    Override:
+      Microsoft.AspNetCore: Information
+      Microsoft.AspNetCore.Hosting.Diagnostics: Warning
+  WriteTo:
+    - Name: Console
+    - Name: Debug

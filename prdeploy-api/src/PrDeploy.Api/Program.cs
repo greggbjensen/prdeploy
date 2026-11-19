@@ -30,8 +30,10 @@ try
     builder.Services.AddOpenApi();
 
     var configuration = builder.Configuration
+        // Swap the default appsettings JSON sources for their YAML equivalents.
+        .UseYamlAppSettings(builder.Environment.EnvironmentName)
         // This is loaded in the Kubernetes cluster as a mounted secret.
-        .AddJsonFile("secrets/appsettings.secret.json", optional: true, reloadOnChange: true)
+        .AddYamlFile("secrets/appsettings.secret.yaml", optional: true, reloadOnChange: true)
         .AddEnvironmentVariables()
         .Build();
 

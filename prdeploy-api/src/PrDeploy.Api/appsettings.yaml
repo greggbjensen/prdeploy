@@ -1,83 +1,61 @@
-{
-  "GitHubAuth": {
-    "Authority": "https://github.com",
-    "ClientId": "",
-    "ClientSecret": "",
-    "AllowedOrganizations": []
-  },
-  "Jwt": {
-    "Issuer": "http://localhost:4302",
-    "Audience": "http://localhost:4301",
-    "Key": "",
-    "TokenEncryptionKey": ""
-  },
-  "GitHubApp": {
-    "AppId": "",
-    "PrivateKey": "",
-    "PrivateKeyPath": "",
-    "WebhookSecret": "",
-    "MaxConcurrency": 4,
-    "QueueCapacity": 1000
-  },
-  "Storage": {
-    "Provider": "Local",
-    "DeploymentValuePathPrefix": "/prdeploy",
-    "Local": {
-      "DatabasePath": "",
-      "Password": ""
-    },
-    "AWS": {
-      "Region": "us-west-2",
-      "TableName": "PrDeployStorage"
-    },
-    "Azure": {
-      "ConnectionString": "",
-      "Endpoint": "",
-      "Key": "",
-      "DatabaseName": "prdeploy",
-      "ContainerName": "storage"
-    },
-    "GCP": {
-      "ProjectId": "",
-      "CollectionName": "prdeploy_storage"
-    }
-  },
-  "Serilog": {
-    "Using": ["Serilog.Expressions"],
-    "Filter": [
-      {
-        "Name": "ByExcluding",
-        "Args": {
-          "expression": "RequestPath like '/error%' ci"
-        }
-      },
-      {
-        "Name": "ByExcluding",
-        "Args": {
-          "expression": "@l='Error' and SourceContext='Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware' and @mt='An unhandled exception has occurred while executing the request.'"
-        }
-      }
-    ],
-    "MinimumLevel": {
-      "Default": "Information",
-      "Override": {
-        "Microsoft": "Warning",
-        "Microsoft.AspNetCore": "Warning",
-        "Microsoft.Hosting.Lifetime": "Information",
-        "Microsoft.EntityFrameworkCore": "Warning",
-        "System": "Warning"
-      }
-    }
-  },
-  "AllowedHosts": "*",
-  "ApolloSandbox": {
-    "Enabled": false
-  },
-  "Cors": {
-    "AllowedOrigins": [
-      "http://localhost:4300",
-      "http://localhost:4301",
-      "https://studio.apollographql.com"
-    ]
-  }
-}
+GitHubAuth:
+  Authority: https://github.com
+  ClientId: ""
+  ClientSecret: ""
+  AllowedOrganizations: []
+Jwt:
+  Issuer: http://localhost:4302
+  Audience: http://localhost:4301
+  Key: ""
+  TokenEncryptionKey: ""
+GitHubApp:
+  AppId: ""
+  PrivateKey: ""
+  PrivateKeyPath: ""
+  WebhookSecret: ""
+  MaxConcurrency: 4
+  QueueCapacity: 1000
+Storage:
+  Provider: Local
+  DeploymentValuePathPrefix: /prdeploy
+  Local:
+    DatabasePath: ""
+    Password: ""
+  AWS:
+    Region: us-west-2
+    TableName: PrDeployStorage
+  Azure:
+    ConnectionString: ""
+    Endpoint: ""
+    Key: ""
+    DatabaseName: prdeploy
+    ContainerName: storage
+  GCP:
+    ProjectId: ""
+    CollectionName: prdeploy_storage
+Serilog:
+  Using:
+    - Serilog.Expressions
+  Filter:
+    - Name: ByExcluding
+      Args:
+        expression: "RequestPath like '/error%' ci"
+    - Name: ByExcluding
+      Args:
+        expression: "@l='Error' and SourceContext='Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware' and @mt='An unhandled exception has occurred while executing the request.'"
+  MinimumLevel:
+    Default: Information
+    Override:
+      Microsoft: Warning
+      Microsoft.AspNetCore: Warning
+      Microsoft.Hosting.Lifetime: Information
+      Microsoft.EntityFrameworkCore: Warning
+      System: Warning
+AllowedHosts: "*"
+ApolloSandbox:
+  Enabled: false
+Cors:
+  AllowedOrigins:
+    - http://localhost:4300
+    - http://localhost:4301
+    - https://studio.apollographql.com
