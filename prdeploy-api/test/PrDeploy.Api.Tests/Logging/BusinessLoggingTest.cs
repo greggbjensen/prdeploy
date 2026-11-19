@@ -45,16 +45,30 @@ public class BusinessLoggingTest
     }
 
     /// <summary>
+    /// Creates an organization access double that treats the user as a member of every owner.
+    /// </summary>
+    /// <returns>Organization access that always allows the owner.</returns>
+    private static IOrganizationAccess AllowAllOrganizations()
+    {
+        var access = new Mock<IOrganizationAccess>();
+        access.Setup(a => a.IsMemberAsync(It.IsAny<IGitHubClient>(), It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync(true);
+        access.Setup(a => a.IsMemberOfAnyAllowedAsync(It.IsAny<IGitHubClient>(), It.IsAny<string>())).ReturnsAsync(true);
+        return access.Object;
+    }
+
+    /// <summary>
     /// Confirms a repo access denial logs a structured warning and throws Forbidden.
     /// </summary>
     [Fact]
     public async Task GuardRepoAsync_Denied_LogsStructuredWarning()
     {
         var github = new Mock<IGitHubClient>();
-        github.Setup(g => g.Repository.Collaborator.IsCollaborator("o", "r", "octocat")).ReturnsAsync(false);
+        github.Setup(g => g.Repository.Get("o", "r")).ThrowsAsync(new NotFoundException("Not Found", HttpStatusCode.NotFound));
         var logger = new CapturingLogger<GitHubSecurity>();
         using var cache = new MemoryCache(new MemoryCacheOptions());
-        var security = new GitHubSecurity(github.Object, logger, cache, Context("gh-token-123", "octocat").Object);
+        var security = new GitHubSecurity(github.Object, logger, cache, Context("gh-token-123", "octocat").Object,
+            AllowAllOrganizations());
 
         var ex = await Assert.ThrowsAsync<HttpRequestException>(() => security.GuardRepoAsync("o", "r"));
 
@@ -75,10 +89,11 @@ public class BusinessLoggingTest
     {
         var failure = new ApiException("nope", HttpStatusCode.InternalServerError);
         var github = new Mock<IGitHubClient>();
-        github.Setup(g => g.Repository.Collaborator.IsCollaborator("o", "r", "octocat")).ThrowsAsync(failure);
+        github.Setup(g => g.Repository.Get("o", "r")).ThrowsAsync(failure);
         var logger = new CapturingLogger<GitHubSecurity>();
         using var cache = new MemoryCache(new MemoryCacheOptions());
-        var security = new GitHubSecurity(github.Object, logger, cache, Context("t", "octocat").Object);
+        var security = new GitHubSecurity(github.Object, logger, cache, Context("t", "octocat").Object,
+            AllowAllOrganizations());
 
         Assert.False(await security.HasRepoAccessAsync("o", "r"));
 
@@ -96,7 +111,8 @@ public class BusinessLoggingTest
         var logger = new CapturingLogger<GitHubSecurity>();
         using var cache = new MemoryCache(new MemoryCacheOptions());
         var security = new GitHubSecurity(
-            new Mock<IGitHubClient>().Object, logger, cache, Context(string.Empty, string.Empty).Object);
+            new Mock<IGitHubClient>().Object, logger, cache, Context(string.Empty, string.Empty).Object,
+            AllowAllOrganizations());
 
         Assert.False(await security.HasRepoAccessAsync("o", "r"));
 
@@ -121,6 +137,7 @@ public class BusinessLoggingTest
             new Mock<ICipherService>().Object,
             new Mock<IServiceProvider>().Object,
             new InlineValidator<AccessTokenRequest>(),
+            AllowAllOrganizations(),
             logger);
 
         var ex = await Assert.ThrowsAsync<HttpRequestException>(
@@ -191,10 +208,11 @@ public class BusinessLoggingTest
     }
 
     /// <summary>
-    /// Confirms a user with no authorized repositories is logged as a warning and denied.
+    /// Confirms a user with no authorized repositories gets an empty list and an Information entry,
+    /// so they can enable a repository of their own instead of being locked out.
     /// </summary>
     [Fact]
-    public async Task ListEnabledAsync_NoAccess_LogsWarningAndThrowsForbidden()
+    public async Task ListEnabledAsync_NoAccess_LogsInformationAndReturnsEmpty()
     {
         var store = new Mock<IDeploymentStore>();
         store.Setup(s => s.GetAsync<List<OwnerRepos>?>("OWNER_REPOS")).ReturnsAsync(
@@ -204,10 +222,12 @@ public class BusinessLoggingTest
         var logger = new CapturingLogger<OwnerRepoService>();
         var service = new OwnerRepoService(store.Object, security.Object, logger);
 
-        var ex = await Assert.ThrowsAsync<HttpRequestException>(() => service.ListEnabledAsync());
+        var result = await service.ListEnabledAsync();
 
-        Assert.Equal(HttpStatusCode.Forbidden, ex.StatusCode);
-        Assert.Contains(logger.Entries, e => e.Level == LogLevel.Warning);
+        Assert.Empty(result);
+        var entry = Assert.Single(logger.Entries, e => e.Level == LogLevel.Information);
+        Assert.Equal(1, entry.Properties["Count"]);
+        Assert.DoesNotContain(logger.Entries, e => e.Level >= LogLevel.Warning);
     }
 
     /// <summary>

@@ -14,6 +14,7 @@ using PrDeploy.Api.Business.Auth.Interfaces;
 using PrDeploy.Api.Business.Clients.Interfaces;
 using PrDeploy.Api.Business.Mapping;
 using PrDeploy.Api.Business.Options;
+using PrDeploy.Api.Business.Security.Interfaces;
 using PrDeploy.Api.Models.Auth;
 using RestSharp;
 
@@ -31,6 +32,7 @@ namespace PrDeploy.Api.Business.Clients
         private readonly GitHubAuthOptions _gitHubOptions;
         private readonly JwtOptions _jwtOptions;
         private readonly ILogger<GitHubAuthClient> _logger;
+        private readonly IOrganizationAccess _organizationAccess;
 
         /// <summary>
         /// Initializes the instance with its required dependencies.
@@ -40,14 +42,17 @@ namespace PrDeploy.Api.Business.Clients
         /// <param name="cipherService">Object containing the cipher service data used by the operation.</param>
         /// <param name="serviceProvider">Object containing the service provider data used by the operation.</param>
         /// <param name="validator">Object containing the validator data used by the operation.</param>
+        /// <param name="organizationAccess">Checks that the user belongs to an allowed organization before a JWT is issued.</param>
         /// <param name="logger">Logger used to report authentication activity without logging tokens or secrets.</param>
         public GitHubAuthClient(IRestClientInstance<GitHubAuthOptions> restClientInstance,
             IOptions<JwtOptions> jwtOptions,
             ICipherService cipherService,
             IServiceProvider serviceProvider,
             IValidator<AccessTokenRequest> validator,
+            IOrganizationAccess organizationAccess,
             ILogger<GitHubAuthClient> logger)
         {
+            _organizationAccess = organizationAccess;
             _jwtOptions = jwtOptions.Value;
             _cipherService = cipherService;
             _serviceProvider = serviceProvider;
@@ -117,7 +122,15 @@ namespace PrDeploy.Api.Business.Clients
                 throw new HttpRequestException("Error getting access token", null, HttpStatusCode.InternalServerError);
             }
 
-            var userInfo = await GetUserInfoAsync(accessTokenResponse.AccessToken);
+            var userClient = ResolveClient(accessTokenResponse.AccessToken);
+            var userInfo = await GetUserInfoAsync(userClient);
+
+            // Only members of an allowed organization may sign in; no JWT is issued otherwise.
+            if (!await _organizationAccess.IsMemberOfAnyAllowedAsync(userClient, userInfo.Login))
+            {
+                _logger.LogWarning("Rejected sign in for {Login}: not a member of an allowed organization.", userInfo.Login);
+                throw new HttpRequestException("Not a member of an allowed organization.", null, HttpStatusCode.Forbidden);
+            }
 
             // Swap GitHub access token for full signed JWT.
             accessTokenResponse.AccessToken = CreateJwt(accessTokenResponse.AccessToken, userInfo);
@@ -168,7 +181,18 @@ namespace PrDeploy.Api.Business.Clients
         /// </summary>
         /// <param name="accessToken">Text used as the access token.</param>
         /// <returns>Requested value, or its default when no value is available.</returns>
-        public async Task<UserInfo> GetUserInfoAsync(string? accessToken = null)
+        public Task<UserInfo> GetUserInfoAsync(string? accessToken = null)
+        {
+            return GetUserInfoAsync(ResolveClient(accessToken));
+        }
+
+        /// <summary>
+        /// Resolves the GitHub client for a user token: the request scoped client when no token is supplied,
+        /// otherwise a client authenticated with the supplied token.
+        /// </summary>
+        /// <param name="accessToken">GitHub access token of the user, or null to use the signed in user.</param>
+        /// <returns>GitHub client authenticated as the user.</returns>
+        private IGitHubClient ResolveClient(string? accessToken)
         {
             // We have to resolve this here to make sure there is a token.
             IGitHubClient gitHubClient;
@@ -188,6 +212,16 @@ namespace PrDeploy.Api.Business.Clients
                     new ProductHeaderValue("prdeploy"), new InMemoryCredentialStore(credentials));
             }
 
+            return gitHubClient;
+        }
+
+        /// <summary>
+        /// Retrieves the profile of the user the client is authenticated as.
+        /// </summary>
+        /// <param name="gitHubClient">GitHub client authenticated as the user.</param>
+        /// <returns>The user's profile information.</returns>
+        private async Task<UserInfo> GetUserInfoAsync(IGitHubClient gitHubClient)
+        {
             try
             {
                 var user = await gitHubClient.User.Current();

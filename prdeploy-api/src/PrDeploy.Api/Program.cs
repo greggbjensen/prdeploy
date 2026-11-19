@@ -149,8 +149,9 @@ try
     })
         .WithName("OAuthAccessToken")
         .WithSummary("Exchange an OAuth code for an access token")
-        .WithDescription("Accepts form-urlencoded OAuth fields. Upstream OAuth errors retain their status code.")
+        .WithDescription("Accepts form-urlencoded OAuth fields. Returns 403 when the user is not an active member of an allowed organization. Upstream OAuth errors retain their status code.")
         .Produces<AccessTokenResponse>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status403Forbidden)
         .Produces(StatusCodes.Status500InternalServerError)
         .AllowAnonymous();
 

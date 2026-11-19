@@ -23,6 +23,21 @@ When running in the Development environment, the generated OpenAPI document is a
 | `PrDeploy.Api.Models`    | Models shared by the GraphQL API and webhooks, including deploy settings and deploy state.    |
 | `PrDeploy.Api.Webhooks`  | GitHub App webhook processing for comment commands, deploy status, queues, Slack, and Jira.   |
 
+### Access control
+
+Access is limited to the organizations listed in `GitHubAuth:AllowedOrganizations`. Set it in `appsettings.json`, as `GitHubAuth__AllowedOrganizations__0`, `__1`, … in `.env`, or as `allowedOrganizations` in the Helm chart. Matching ignores case. A listed personal account (rather than an organization) is only available to that user. **While the list is empty, nobody can sign in.**
+
+| Check      | Requirement                                                                                                                         | Enforced by                                    | On failure                                    |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------- |
+| Sign in    | The user is an **active** member of at least one allowed organization.                                                              | `GitHubAuthClient` via `OrganizationAccess`    | `403`; no JWT is issued and the portal shows "Access denied". |
+| Owner      | The owner is allowed and the user is an active member of it.                                                                        | `GitHubSecurity.HasOwnerAccessAsync`           | `403` (owner-level settings).                 |
+| Repository | Owner check, plus `GET /repos/{owner}/{repo}` reports `push`, `maintain`, or `admin` for the user (a contributor).                  | `GitHubSecurity.HasRepoAccessAsync`            | `403` for deployments, queues, and settings.  |
+
+- `enabledOwnerRepos` returns only the enabled repositories the user has repository access to. An empty list is not an error: the portal keeps the user signed in and opens **Repositories** so they can add one.
+- `ownerRepoAddEnabled` rejects a repository the user is not a contributor on (or whose owner they are not an allowed member of) with `success: false` and a `message`, and saves nothing. The add dialog shows that message and stays open.
+- Enabling or disabling a repository updates the full stored list, so repositories other users enabled are kept.
+- Granted checks are cached per token for 10 minutes. Denials are logged at `Information`; a failed GitHub call is logged at `Warning`, for example when an organization restricts OAuth app access.
+
 ### Webhooks
 
 1. `POST /webhooks` verifies the `X-Hub-Signature-256` signature, queues handled events, and returns `202 Accepted` right away.

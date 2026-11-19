@@ -19,16 +19,20 @@ namespace PrDeploy.Api.Business.Security
         private readonly ILogger<GitHubSecurity> _logger;
         private readonly IMemoryCache _cache;
         private readonly ISecurityContext _securityContext;
+        private readonly IOrganizationAccess _organizationAccess;
 
         /// <summary>
         /// Initializes the instance with its required dependencies.
         /// </summary>
-        /// <param name="client">Object containing the client data used by the operation.</param>
+        /// <param name="client">GitHub client authenticated as the signed in user.</param>
         /// <param name="logger">Logger used to report operational information and errors.</param>
-        /// <param name="cache">Object containing the cache data used by the operation.</param>
-        /// <param name="securityContext">Object containing the security context data used by the operation.</param>
-        public GitHubSecurity(IGitHubClient client, ILogger<GitHubSecurity> logger, IMemoryCache cache, ISecurityContext securityContext)
+        /// <param name="cache">Cache holding granted access decisions per token.</param>
+        /// <param name="securityContext">Signed in user's login and GitHub token.</param>
+        /// <param name="organizationAccess">Checks membership in the configured allowed organizations.</param>
+        public GitHubSecurity(IGitHubClient client, ILogger<GitHubSecurity> logger, IMemoryCache cache,
+            ISecurityContext securityContext, IOrganizationAccess organizationAccess)
         {
+            _organizationAccess = organizationAccess;
             _cache = cache;
             _securityContext = securityContext;
             _client = client;
@@ -66,11 +70,21 @@ namespace PrDeploy.Api.Business.Security
         }
 
         /// <summary>
-        /// Determines whether the repo access is available.
+        /// Determines whether the signed in user is a contributor (can push) on a repository owned by an allowed
+        /// organization they belong to.
         /// </summary>
+        /// <remarks>
+        /// The owner must first pass <see cref="HasOwnerAccessAsync"/>. Then the code reads the repository with the user's own token and inspects the <c>permissions</c> block GitHub returns
+        /// for the authenticated user. This reflects every way the user can hold access (direct collaborator,
+        /// outside collaborator, team membership, organization base permission, or owner) and only needs the
+        /// repository to be visible to the token. Push (write) access is required so that read-only users, and
+        /// everyone on a public repository, cannot change deployments or settings. Positive results are cached
+        /// per token for <see cref="AccessRefreshTimeSpan"/>.
+        /// </remarks>
         /// <param name="owner">Repository owner or organization whose values are addressed.</param>
         /// <param name="repo">Repository whose values are addressed.</param>
-        /// <returns>True when the requested condition is met; otherwise, false.</returns>
+        /// <returns>True when the owner is allowed for the user and the user has push, maintain, or admin
+        /// permission on the repository; otherwise, false.</returns>
         public async Task<bool> HasRepoAccessAsync(string owner, string repo)
         {
             var userToken = _securityContext.UserToken;
@@ -81,24 +95,41 @@ namespace PrDeploy.Api.Business.Security
             }
 
             var userHash = HashToken(userToken);
-            var authKey = $"auth/{owner}/{repo}/{userHash}";
-            var hasAccess = _cache.TryGetValue(authKey, out _);
-            if (hasAccess)
+            var authKey = $"auth/{owner}/{repo}/{userHash}".ToLowerInvariant();
+            if (_cache.TryGetValue(authKey, out _))
             {
                 _logger.LogDebug("Repository access for {Login} to {Owner}/{Repo} served from cache.",
                     _securityContext.Login, owner, repo);
                 return true;
             }
 
+            if (!await HasOwnerAccessAsync(owner))
+            {
+                return false;
+            }
+
+            var hasAccess = false;
             try
             {
-                hasAccess = await _client.Repository.Collaborator.IsCollaborator(owner, repo, _securityContext.Login);
+                var repository = await _client.Repository.Get(owner, repo);
+                hasAccess = HasWriteAccess(repository?.Permissions);
                 if (hasAccess)
                 {
-                    _cache.Set(authKey, hasAccess, AccessRefreshTimeSpan);
+                    _cache.Set(authKey, true, AccessRefreshTimeSpan);
                     _logger.LogDebug("Verified repository access for {Login} to {Owner}/{Repo}.",
                         _securityContext.Login, owner, repo);
                 }
+                else
+                {
+                    _logger.LogInformation("{Login} does not have push access to repository {Owner}/{Repo}.",
+                        _securityContext.Login, owner, repo);
+                }
+            }
+            catch (NotFoundException)
+            {
+                // GitHub returns 404 when the token cannot see the repository at all.
+                _logger.LogInformation("Repository {Owner}/{Repo} is not visible to {Login}.",
+                    owner, repo, _securityContext.Login);
             }
             catch (Exception ex)
             {
@@ -110,10 +141,15 @@ namespace PrDeploy.Api.Business.Security
         }
 
         /// <summary>
-        /// Determines whether the owner access is available.
+        /// Determines whether the owner is in the configured allowed organizations and the signed in user belongs to it.
         /// </summary>
+        /// <remarks>
+        /// Delegates to <see cref="IOrganizationAccess.IsMemberAsync"/>: the owner must be listed in
+        /// <c>GitHubAuth:AllowedOrganizations</c> and be either the user's own account or an organization where the
+        /// user's membership is active. Granted decisions are cached per token for <see cref="AccessRefreshTimeSpan"/>.
+        /// </remarks>
         /// <param name="owner">Repository owner or organization whose values are addressed.</param>
-        /// <returns>True when the requested condition is met; otherwise, false.</returns>
+        /// <returns>True when the owner is allowed and the user belongs to it; otherwise, false.</returns>
         public async Task<bool> HasOwnerAccessAsync(string owner)
         {
             var userToken = _securityContext.UserToken;
@@ -124,38 +160,15 @@ namespace PrDeploy.Api.Business.Security
             }
 
             var userHash = HashToken(userToken);
-            var authKey = $"auth/{owner}/{userHash}";
-            var hasAccess = _cache.TryGetValue(authKey, out _);
-            if (hasAccess)
+            var authKey = $"auth/{owner}/{userHash}".ToLowerInvariant();
+            if (_cache.TryGetValue(authKey, out _))
             {
                 _logger.LogDebug("Owner access for {Login} to {Owner} served from cache.",
                     _securityContext.Login, owner);
                 return true;
             }
 
-            try
-            {
-                var membership =
-                    await _client.Organization.Member.GetOrganizationMembership(owner, _securityContext.Login);
-                hasAccess = membership.State.Value == MembershipState.Active;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "{Login} is not an organization member of {Owner}, trying user account.",
-                    _securityContext.Login, owner);
-            }
-
-            if (!hasAccess)
-            {
-                try
-                {
-                    hasAccess = string.Equals(owner, _securityContext.Login, StringComparison.OrdinalIgnoreCase);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Unable to compare {Login} to user account {Owner}.", _securityContext.Login, owner);
-                }
-            }
+            var hasAccess = await _organizationAccess.IsMemberAsync(_client, _securityContext.Login, owner);
 
             if (hasAccess)
             {
@@ -167,41 +180,25 @@ namespace PrDeploy.Api.Business.Security
         }
 
         /// <summary>
-        /// Determines whether the hash token is available.
+        /// Determines whether GitHub reports write level permission for the authenticated user.
         /// </summary>
-        /// <param name="userToken">Text used as the user token.</param>
-        /// <returns>Text produced or selected by the operation.</returns>
+        /// <param name="permissions">Permissions GitHub returned for the authenticated user, if any.</param>
+        /// <returns>True when push, maintain, or admin permission is present; otherwise, false.</returns>
+        private static bool HasWriteAccess(RepositoryPermissions? permissions)
+        {
+            return permissions != null && (permissions.Push || permissions.Maintain || permissions.Admin);
+        }
+
+        /// <summary>
+        /// Produces a stable, non reversible cache key fragment for the user's token so that cached access
+        /// decisions are scoped to a single token and the raw token is never stored as a key.
+        /// </summary>
+        /// <param name="userToken">GitHub token of the signed in user.</param>
+        /// <returns>Uppercase hexadecimal SHA-256 hash of the token.</returns>
         private static string HashToken(string userToken)
         {
-            var md5 = MD5.Create();
-            var hashBytes = md5.ComputeHash(Encoding.Default.GetBytes(userToken));
-            var hash = ByteArrayToString(hashBytes);
-            return hash;
-        }
-
-        //// SourceRef: https://learn.microsoft.com/en-us/troubleshoot/developer/visualstudio/csharp/language-compilers/compute-hash-values
-        /// <summary>
-        /// Performs the byte array to string operation and returns its result.
-        /// </summary>
-        /// <param name="arrInput">Object containing the arr input data used by the operation.</param>
-        /// <returns>Text produced or selected by the operation.</returns>
-        private static string ByteArrayToString(byte[] arrInput)
-        {
-            int i;
-            StringBuilder sOutput = new StringBuilder(arrInput.Length);
-            for (i = 0; i < arrInput.Length; i++)
-            {
-                sOutput.Append(arrInput[i].ToString("X2"));
-            }
-            return sOutput.ToString();
-        }
-
-        /// <summary>
-        /// Throws an exception when access Denied is encountered.
-        /// </summary>
-        private static void ThrowAccessDenied()
-        {
-            throw new HttpRequestException("Access denied", null, HttpStatusCode.Forbidden);
+            var hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(userToken));
+            return Convert.ToHexString(hashBytes);
         }
     }
 }

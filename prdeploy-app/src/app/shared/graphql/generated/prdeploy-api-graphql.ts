@@ -588,6 +588,8 @@ export type SlackWebHooksSettingsInput = {
 /** Simple status response from a mutation. */
 export type StatusResponse = {
   __typename?: 'StatusResponse';
+  /** User facing reason the mutation was rejected; null when successful. */
+  message?: Maybe<Scalars['String']['output']>;
   /** True if the mutation was successful; otherwise false. */
   success: Scalars['Boolean']['output'];
 };
@@ -633,7 +635,7 @@ export type OwnerRepoAddEnabledMutationVariables = Exact<{
 }>;
 
 
-export type OwnerRepoAddEnabledMutation = { __typename?: 'DeployMutation', ownerRepoAddEnabled: { __typename?: 'StatusResponse', success: boolean } };
+export type OwnerRepoAddEnabledMutation = { __typename?: 'DeployMutation', ownerRepoAddEnabled: { __typename?: 'StatusResponse', success: boolean, message?: string | null } };
 
 export type OwnerRepoRemoveEnabledMutationVariables = Exact<{
   input: RepositoryInput;
@@ -793,6 +795,7 @@ export const OwnerRepoAddEnabledDocument = gql`
     mutation OwnerRepoAddEnabled($input: RepositoryInput!) {
   ownerRepoAddEnabled(input: $input) {
     success
+    message
   }
 }
     `;

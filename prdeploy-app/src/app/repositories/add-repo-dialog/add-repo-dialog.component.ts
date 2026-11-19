@@ -38,6 +38,9 @@ import { MtxButtonModule } from '@ng-matero/extensions/button';
 export class AddRepoDialogComponent {
   processing = false;
 
+  /** Reason the last add attempt was rejected by the API, shown in the dialog until the form changes. */
+  errorMessage: string | null = null;
+
   form = new FormGroup({
     owner: new FormControl('', Validators.required),
     repo: new FormControl('', Validators.required)
@@ -56,9 +59,14 @@ export class AddRepoDialogComponent {
       .subscribe(() => {
         this.clearFields();
       });
+
+    this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
+      this.errorMessage = null;
+    });
   }
 
   clearFields() {
+    this.errorMessage = null;
     this.form.reset();
     this.form.patchValue({
       owner: this.data.owner || ''
@@ -71,6 +79,7 @@ export class AddRepoDialogComponent {
     }
 
     this.processing = true;
+    this.errorMessage = null;
 
     try {
       const owner = this.form.value.owner;
@@ -79,13 +88,22 @@ export class AddRepoDialogComponent {
         owner,
         repo
       };
-      await firstValueFrom(
+      const response = await firstValueFrom(
         this._ownerRepoAddEnabledGQL.mutate({
           variables: {
             input: repository
           }
         })
       );
+
+      // The API rejects repositories the user is not a contributor on with a reason; keep the dialog open.
+      const result = response.data?.ownerRepoAddEnabled;
+      if (!result?.success) {
+        this.errorMessage = result?.message || `Unable to add repository ${owner}/${repo}.`;
+        this._notificationManager.show(this.errorMessage, 'danger');
+        this.processing = false;
+        return;
+      }
 
       this._notificationManager.show(`Repository ${owner}/${repo} added.`);
       this._dialogRef.close(repository);

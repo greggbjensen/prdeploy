@@ -20,5 +20,15 @@ namespace PrDeploy.Api.Business.Options
         /// </summary>
         /// <value>Current client secret value.</value>
         public string ClientSecret { get; set; } = string.Empty;
+        /// <summary>
+        /// Gets or sets the GitHub organizations (or personal account logins) whose members may use prdeploy.
+        /// </summary>
+        /// <remarks>
+        /// Users must be an active member of at least one listed organization to sign in, and can only reach
+        /// repositories owned by a listed organization they belong to. A listed personal account is only
+        /// available to that user. Matching is case-insensitive. When the list is empty nobody can sign in.
+        /// </remarks>
+        /// <value>Allowed organization logins, for example <c>["my-org"]</c>.</value>
+        public List<string> AllowedOrganizations { get; set; } = new();
     }
 }

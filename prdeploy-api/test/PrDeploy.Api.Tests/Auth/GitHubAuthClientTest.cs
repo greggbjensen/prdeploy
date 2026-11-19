@@ -9,6 +9,7 @@ using PrDeploy.Api.Business.Auth.Interfaces;
 using PrDeploy.Api.Business.Clients;
 using PrDeploy.Api.Business.Clients.Interfaces;
 using PrDeploy.Api.Business.Options;
+using PrDeploy.Api.Business.Security.Interfaces;
 using PrDeploy.Api.Models.Auth;
 using PrDeploy.Api.Tests.Webhooks.Framework;
 using RestSharp;
@@ -20,6 +21,17 @@ namespace PrDeploy.Api.Tests.Auth;
 /// </summary>
 public class GitHubAuthClientTest
 {
+    /// <summary>
+    /// Creates an organization access double that treats every user as a member of an allowed organization.
+    /// </summary>
+    /// <returns>Organization access that always allows sign in.</returns>
+    private static IOrganizationAccess AllowAllOrganizations()
+    {
+        var access = new Mock<IOrganizationAccess>();
+        access.Setup(a => a.IsMemberOfAnyAllowedAsync(It.IsAny<IGitHubClient>(), It.IsAny<string>())).ReturnsAsync(true);
+        return access.Object;
+    }
+
     /// <summary>
     /// Verifies that RestSharp maps GitHub's JSON token field names.
     /// </summary>
@@ -109,6 +121,7 @@ public class GitHubAuthClientTest
             cipher.Object,
             serviceProvider,
             validator,
+            AllowAllOrganizations(),
             Microsoft.Extensions.Logging.Abstractions.NullLogger<GitHubAuthClient>.Instance);
 
         var response = await client.GetAccessTokenAsync(new AccessTokenRequest
@@ -187,6 +200,7 @@ public class GitHubAuthClientTest
             cipher.Object,
             serviceProvider,
             validator,
+            AllowAllOrganizations(),
             logger);
 
         var exception = await Assert.ThrowsAsync<HttpRequestException>(() =>
@@ -230,6 +244,7 @@ public class GitHubAuthClientTest
             new Mock<ICipherService>(MockBehavior.Strict).Object,
             serviceProvider,
             new InlineValidator<AccessTokenRequest>(),
+            AllowAllOrganizations(),
             logger);
 
         var exception = await Assert.ThrowsAsync<HttpRequestException>(() => client.GetUserInfoAsync());
@@ -238,6 +253,52 @@ public class GitHubAuthClientTest
         var entry = Assert.Single(logger.Entries);
         Assert.Equal(LogLevel.Warning, entry.Level);
         Assert.Equal(401, entry.Properties["StatusCode"]);
+    }
+
+    /// <summary>
+    /// Verifies that a user who is not a member of any allowed organization is rejected with Forbidden
+    /// and no JWT is issued.
+    /// </summary>
+    [Fact]
+    public async Task GetAccessTokenAsync_NotMemberOfAllowedOrganization_ThrowsForbidden()
+    {
+        var handler = new FakeHttpMessageHandler
+        {
+            Respond = _ => new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(
+                    """{"access_token":"ghu_test","scope":"repo read:org","token_type":"bearer"}""",
+                    System.Text.Encoding.UTF8,
+                    "application/json")
+            }
+        };
+        using var httpClient = new HttpClient(handler) { BaseAddress = new Uri("https://github.com/") };
+        var options = new GitHubAuthOptions { Authority = "https://github.com/", ClientId = "id", ClientSecret = "s" };
+
+        var gitHub = new Mock<IGitHubClient>();
+        gitHub.Setup(x => x.User.Current()).ReturnsAsync(
+            GitHubModels.FromJson<User>("""{"login":"outsider","name":"Out Sider","email":"","id":2}"""));
+        var services = new ServiceCollection();
+        services.AddSingleton(gitHub.Object);
+        using var serviceProvider = services.BuildServiceProvider();
+
+        var organizationAccess = new Mock<IOrganizationAccess>();
+        organizationAccess.Setup(a => a.IsMemberOfAnyAllowedAsync(gitHub.Object, "outsider")).ReturnsAsync(false);
+        var cipher = new Mock<ICipherService>(MockBehavior.Strict);
+        var client = new GitHubAuthClient(
+            new RestClientInstance<GitHubAuthOptions> { Options = options, RestClient = new RestClient(httpClient) },
+            Microsoft.Extensions.Options.Options.Create(new JwtOptions { Key = new string('k', 64) }),
+            cipher.Object,
+            serviceProvider,
+            new InlineValidator<AccessTokenRequest>(),
+            organizationAccess.Object,
+            Microsoft.Extensions.Logging.Abstractions.NullLogger<GitHubAuthClient>.Instance);
+
+        var exception = await Assert.ThrowsAsync<HttpRequestException>(() =>
+            client.GetAccessTokenAsync(new AccessTokenRequest { ClientId = "id", Code = "code" }));
+
+        Assert.Equal(HttpStatusCode.Forbidden, exception.StatusCode);
+        cipher.Verify(x => x.Encrypt(It.IsAny<string>()), Times.Never);
     }
 
     /// <summary>
@@ -323,6 +384,7 @@ public class GitHubAuthClientTest
             cipherService,
             tokenExchangeProvider,
             new PrDeploy.Api.Models.Auth.Validators.AccessTokenRequestValidator(),
+            AllowAllOrganizations(),
             Microsoft.Extensions.Logging.Abstractions.NullLogger<GitHubAuthClient>.Instance);
 
         var tokenResponse = await authClient.GetAccessTokenAsync(new AccessTokenRequest

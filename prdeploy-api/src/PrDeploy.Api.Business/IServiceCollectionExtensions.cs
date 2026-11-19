@@ -56,6 +56,7 @@ public static class IServiceCollectionExtensions
             .AddScoped<IOwnerRepoService, OwnerRepoService>()
             .AddScoped<IGitHubAuthClient, GitHubAuthClient>()
             .AddScoped<IGitHubSecurity, GitHubSecurity>()
+            .AddSingleton<IOrganizationAccess, OrganizationAccess>()
             .AddScoped<ICipherService, CipherService>();
 
         services.AddPrDeployStorage(configuration);

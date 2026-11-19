@@ -54,9 +54,10 @@ public class DeploySettingsService : IDeploySettingsService
     /// <returns>The deploy settings compare produced by the operation.</returns>
     public async Task<DeploySettingsCompare> CompareAsync(RepoQueryInput input)
     {
-        // Add validation.
-        var ownerSettings = await GetOwnerSettingsAsync(input.Owner);
+        // Repository access is the requirement here; the owner defaults are only read for comparison,
+        // so outside collaborators who are not organization members can still compare settings.
         var repoSettings = await GetRepoSettingsAsync(input.Owner, input.Repo);
+        var ownerSettings = await LoadOwnerSettingsAsync(input.Owner);
 
         var settingsCompare = Map.Compare(ownerSettings, repoSettings);
         return settingsCompare!;
@@ -70,17 +71,20 @@ public class DeploySettingsService : IDeploySettingsService
     /// <returns>Requested value, or its default when no value is available.</returns>
     public async Task<DeploySettings> GetMergedAsync(string owner, string repo)
     {
+        // Merged settings are repository scoped, so only repository access is required. Guarding the owner
+        // here would reject outside collaborators, who are not members of the owning organization.
+        await _gitHubSecurity.GuardRepoAsync(owner, repo);
+
         var repoKey = GetSettingsCacheKey(owner, repo);
         var repoSettings = _cache.Get<DeploySettings>(repoKey);
         if (repoSettings != null)
         {
             _logger.LogDebug("Using cached merged settings for {Owner}/{Repo}.", owner, repo);
-            await _gitHubSecurity.GuardRepoAsync(owner, repo);
             return repoSettings;
         }
 
         _logger.LogDebug("Merging owner and repo settings for {Owner}/{Repo}.", owner, repo);
-        var ownerSettings = await GetOwnerSettingsAsync(owner);
+        var ownerSettings = await LoadOwnerSettingsAsync(owner);
         repoSettings = await GetRepoSettingsAsync(owner, repo);
 
         // Override default with repo.
@@ -175,8 +179,20 @@ public class DeploySettingsService : IDeploySettingsService
     public async Task<DeploySettings> GetOwnerSettingsAsync(string owner)
     {
         await _gitHubSecurity.GuardOwnerAsync(owner);
+        return await LoadOwnerSettingsAsync(owner);
+    }
 
-        // Repo specific settings, which are optional.
+    /// <summary>
+    /// Loads the owner level settings without an access check, saving the defaults when none exist yet.
+    /// </summary>
+    /// <remarks>
+    /// Callers must have already guarded access, either to the owner or to a repository under the owner.
+    /// </remarks>
+    /// <param name="owner">Repository owner or organization whose settings are loaded.</param>
+    /// <returns>The stored owner settings, or the defaults when none were stored.</returns>
+    private async Task<DeploySettings> LoadOwnerSettingsAsync(string owner)
+    {
+        // Owner settings, which fall back to the defaults.
         var deploySettings = await _deploymentStore.GetAsync<DeploySettings?>(owner, DeploySettingsKey);
         if (deploySettings == null)
         {

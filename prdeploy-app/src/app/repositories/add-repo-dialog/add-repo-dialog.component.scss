@@ -2,3 +2,8 @@
   display: flex;
   flex-direction: column;
 }
+
+.error-message {
+  margin: 0;
+  color: var(--mat-sys-error, #d32f2f);
+}

@@ -29,6 +29,8 @@ settings:
 docs: |-
   Exchanges a GitHub OAuth authorization code for the prdeploy signed JWT. Supply a fresh authorization code, the registered client ID and redirect URI, and the PKCE verifier when used. Authorization codes are single-use; do not save real codes or credentials in this collection.
 
+  Responses: `200` with the JWT. `403` when the client ID does not match, or when the GitHub user is not an active member of any organization in `GitHubAuth:AllowedOrganizations` (no JWT is issued).
+
   Swagger/OpenAPI: [POST /api/oauth/access_token](http://localhost:4302/openapi/v1.json#/paths/~1api~1oauth~1access_token/post)
 
   Implementation: `prdeploy-api/src/PrDeploy.Api/Program.cs` and `prdeploy-api/src/PrDeploy.Api.Business/Clients/GitHubAuthClient.cs`.

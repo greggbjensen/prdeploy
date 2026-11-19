@@ -10,6 +10,9 @@
       <input matInput type="text" formControlName="repo" />
     </mat-form-field>
   </form>
+  @if (errorMessage) {
+    <p class="error-message" role="alert">{{ errorMessage }}</p>
+  }
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-stroked-button class="mat-primary" (click)="cancel()">Cancel</button>

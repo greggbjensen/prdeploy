@@ -18,6 +18,11 @@ global:
       annotations: {}
       name: "prdeploy-backend"
 
+# GitHub organizations (or personal account logins) whose members may sign in to prdeploy.
+# Users must be an active member of one of these, and can only use repositories they contribute to
+# within them. Nobody can sign in while this list is empty.
+allowedOrganizations: []
+
 storage:
   aws:
     tableName: PrDeployStorage

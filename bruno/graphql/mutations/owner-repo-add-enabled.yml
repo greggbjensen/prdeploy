@@ -18,6 +18,7 @@ graphql:
       mutation OwnerRepoAddEnabled($input: RepositoryInput!) {
         ownerRepoAddEnabled(input: $input) {
           success
+          message
         }
       }
     variables: |-
@@ -35,6 +36,14 @@ runtime:
           expect(res.status).to.equal(200);
           expect(res.body.errors).to.be.undefined;
         });
+
+        test("returns a message only when the add is rejected", function () {
+          const result = res.body.data.ownerRepoAddEnabled;
+          expect(result.success).to.be.a("boolean");
+          if (!result.success) {
+            expect(result.message).to.be.a("string");
+          }
+        });
 settings:
   encodeUrl: true
 docs: >-
@@ -49,3 +58,8 @@ docs: >-
   [OwnerRepoMutation.cs](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-api/src/PrDeploy.Api/Schema/Mutations/OwnerRepoMutation.cs).
 
   Required environment: `owner`, `repo`, and a valid `jwt`.
+
+
+  Responses: `success: true` once saved. `success: false` with a `message` (and nothing saved) when `owner`
+  is not in `GitHubAuth:AllowedOrganizations`, the user is not an active member of it, or the user is not a
+  contributor (push access) on the repository.

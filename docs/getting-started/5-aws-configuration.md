@@ -72,6 +72,8 @@ The **prdeploy** app loads external secrets, saves settings, and tracks deployme
 | /prdeploy/Jwt\_\_Key                 | Generated JWT validation key.                                           |
 | /prdeploy/Jwt\_\_TokenEncryptionKey  | Generated JWT token encryption key.<br>Should not be the same as above. |
 
+The organizations allowed to sign in are not secret. Set them with the chart's `allowedOrganizations` value, for example `--set 'allowedOrganizations={my-org}'`. Nobody can sign in while the list is empty.
+
 `NOTE:` To generate a unique JWT and encryption key, you can run the following:
 
 ```bash

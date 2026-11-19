@@ -165,6 +165,8 @@ type OwnerRepos {
 type StatusResponse {
   "True if the mutation was successful; otherwise false."
   success: Boolean!
+  "User facing reason the mutation was rejected; null when successful."
+  message: String
 }
 
 input PullDeployInput {
