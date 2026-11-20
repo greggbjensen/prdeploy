@@ -88,15 +88,33 @@ public static class GitHubModels
     /// <returns>The check runs response produced by the operation.</returns>
     public static CheckRunsResponse CheckRuns(params (string Name, string Status, string? Conclusion, long RunId)[] checks)
     {
-        var json = string.Join(",", checks.Select(c => $$"""
-            {
-              "name": "{{c.Name}}",
-              "status": "{{c.Status}}",
-              "conclusion": {{(c.Conclusion != null ? $"\"{c.Conclusion}\"" : "null")}},
-              "details_url": "https://github.com/{{WebhookTestHost.Owner}}/{{WebhookTestHost.Repo}}/actions/runs/{{c.RunId}}/job/27684771116",
-              "html_url": "https://github.com/{{WebhookTestHost.Owner}}/{{WebhookTestHost.Repo}}/runs/{{c.RunId}}"
-            }
-            """));
+        return CheckRuns(checks.Select(c => (c.Name, c.Status, c.Conclusion, c.RunId, (string?)null)).ToArray());
+    }
+
+    /// <summary>
+    /// Builds a check runs response whose runs may carry output text, such as the build marker written by the
+    /// build-details action.
+    /// </summary>
+    /// <param name="checks">Check runs to include; a null output text omits the <c>output</c> object entirely.</param>
+    /// <returns>The check runs response produced by the operation.</returns>
+    public static CheckRunsResponse CheckRuns(
+        params (string Name, string Status, string? Conclusion, long RunId, string? OutputText)[] checks)
+    {
+        var json = string.Join(",", checks.Select(c =>
+        {
+            var output = c.OutputText != null
+                ? $$""", "output": { "text": {{System.Text.Json.JsonSerializer.Serialize(c.OutputText)}} }"""
+                : string.Empty;
+            return $$"""
+                {
+                  "name": "{{c.Name}}",
+                  "status": "{{c.Status}}",
+                  "conclusion": {{(c.Conclusion != null ? $"\"{c.Conclusion}\"" : "null")}},
+                  "details_url": "https://github.com/{{WebhookTestHost.Owner}}/{{WebhookTestHost.Repo}}/actions/runs/{{c.RunId}}/job/27684771116",
+                  "html_url": "https://github.com/{{WebhookTestHost.Owner}}/{{WebhookTestHost.Repo}}/runs/{{c.RunId}}"{{output}}
+                }
+                """;
+        }));
         return FromJson<CheckRunsResponse>($$"""{ "total_count": {{checks.Length}}, "check_runs": [{{json}}] }""");
     }
 }

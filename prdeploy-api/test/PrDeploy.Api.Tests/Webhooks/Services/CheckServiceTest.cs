@@ -9,6 +9,11 @@ namespace PrDeploy.Api.Tests.Webhooks.Services;
 /// </summary>
 public class CheckServiceTest : IDisposable
 {
+    /// <summary>
+    /// Output text the build-details action writes to the check runs it reports.
+    /// </summary>
+    private const string BuildMarker = "PR_DEPLOY_BUILD";
+
     private readonly WebhookTestHost _host = new();
     private readonly CheckService _service;
 
@@ -27,8 +32,8 @@ public class CheckServiceTest : IDisposable
     public async Task ListBuildsAsync_ListsBuildsAndVersionsFromReference()
     {
         _host.SetupChecks("SCRUM-16750-my-new-feature",
-            ("[Bb]uild", "completed", "success", 10014663490),
-            ("Lint", "completed", "success", 10014663491));
+            ("Build details", "completed", "success", 10014663490, BuildMarker),
+            ("Lint", "completed", "success", 10014663491, null));
         _host.SetupBuildRun(10014663490, ".github/workflows/myorg-app-main-build.yml");
 
         var builds = await _service.ListBuildsAsync(GitHubModels.PullRequest(1, "SCRUM-16750-my-new-feature"));
@@ -37,6 +42,41 @@ public class CheckServiceTest : IDisposable
         Assert.Equal("myorg-app-main", build.Name);
         Assert.Equal("2024.2.26-r8055221191", build.Version);
         Assert.Equal(10014663490, build.RunId);
+    }
+
+    /// <summary>
+    /// Verifies only check runs whose output text is exactly the build marker and whose details URL names a workflow
+    /// run become builds; runs without output, with other text, or with a zero run ID are skipped.
+    /// </summary>
+    [Fact]
+    public async Task ListBuildsAsync_OnlyMarkedChecksWithRunIds_BecomeBuilds()
+    {
+        _host.SetupChecks("feature-branch",
+            ("Build details", "in_progress", null, 1, BuildMarker),
+            ("No output", "completed", "success", 2, null),
+            ("Other output", "completed", "success", 3, "Some summary"),
+            ("Marker prefix", "completed", "success", 4, BuildMarker + " extra"),
+            ("Zero run", "completed", "success", 0, BuildMarker));
+        _host.SetupBuildRun(1, ".github/workflows/app-build.yml");
+
+        var builds = await _service.ListBuildsAsync(GitHubModels.PullRequest(1, "feature-branch"));
+
+        var build = Assert.Single(builds);
+        Assert.Equal(1, build.RunId);
+        Assert.Equal("app", build.Name);
+    }
+
+    /// <summary>
+    /// Verifies a ref with no marked build checks yields no builds rather than failing.
+    /// </summary>
+    [Fact]
+    public async Task ListBuildsAsync_NoMarkedChecks_ReturnsEmpty()
+    {
+        _host.SetupChecks("feature-branch", ("Lint", "completed", "success", 5));
+
+        var builds = await _service.ListBuildsAsync(GitHubModels.PullRequest(1, "feature-branch"));
+
+        Assert.Empty(builds);
     }
 
     /// <summary>

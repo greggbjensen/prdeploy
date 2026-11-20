@@ -47,6 +47,20 @@ public static class GitHubMockExtensions
     }
 
     /// <summary>
+    /// Sets up the check runs returned for a ref, where each run may carry output text such as the build marker.
+    /// </summary>
+    /// <param name="host">Test host whose GitHub client is configured.</param>
+    /// <param name="reference">Git ref the check runs are listed for.</param>
+    /// <param name="checks">Check runs to return; a null output text omits the run's output.</param>
+    public static void SetupChecks(this WebhookTestHost host, string reference,
+        params (string Name, string Status, string? Conclusion, long RunId, string? OutputText)[] checks)
+    {
+        host.MockOf(host.GitHub.Object.Check.Run)
+            .Setup(c => c.GetAllForReference(Owner, Repo, reference, It.IsAny<CheckRunRequest>(), It.IsAny<ApiOptions>()))
+            .ReturnsAsync(GitHubModels.CheckRuns(checks));
+    }
+
+    /// <summary>
     /// Stores or updates the setup pull request.
     /// </summary>
     /// <param name="host">Object containing the host data used by the operation.</param>

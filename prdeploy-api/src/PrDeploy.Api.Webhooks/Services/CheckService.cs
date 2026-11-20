@@ -98,19 +98,14 @@ public partial class CheckService
         _logger.LogInformation("Listing checks for ref: {Ref}", pullRequest.Head.Ref);
         var result = await GetChecksForRefAsync(pullRequest.Head.Ref);
 
-        var buildChecks = result.CheckRuns.Where(c => c.Output.Text == BuildMarker)
-          .Select(c => new {
-              RunId = ParseRunId(c.DetailsUrl),
-              Status = c.Status.StringValue,
-              CheckName = $"{c.Name} ({c.Status.StringValue})"
-          })
-          .Where(c => c.RunId != 0).ToList();
+        var buildChecks = ListBuildChecks(result.CheckRuns);
         var incompleteChecks = buildChecks
             .Where(c => c.Status != "completed")
             .ToList();
         if (incompleteChecks.Count > 0)
         {
-            _logger.LogWarning("The following checks are incomplete: {Checks}", string.Join(", ", incompleteChecks));
+            _logger.LogWarning("The following checks are incomplete: {Checks}",
+                string.Join(", ", incompleteChecks.Select(c => c.CheckName)));
             _logger.LogWarning("Please wait for the checks to pass and try again.");
         }
 
@@ -128,13 +123,13 @@ public partial class CheckService
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <returns>Items matching the supplied criteria.</returns>
-    public async Task<List<CheckRun>> ListIncompletePullChecksAsync(PullRequest pullRequest)
+    public async Task<List<BuildCheck>> ListIncompletePullChecksAsync(PullRequest pullRequest)
     {
         _logger.LogInformation("Listing checks for ref: {Ref}", pullRequest.Head.Ref);
         var result = await GetChecksForRefAsync(pullRequest.Head.Ref);
 
-        var incompleteChecks = result.CheckRuns
-            .Where(c => c.Status.StringValue != "completed" || c.Conclusion?.StringValue == "failure")
+        var incompleteChecks = ListBuildChecks(result.CheckRuns)
+            .Where(c => c.Status != "completed" || c.Conclusion == "failure")
             .ToList();
 
         if (incompleteChecks.Count == 0)
@@ -143,7 +138,7 @@ public partial class CheckService
             return incompleteChecks;
         }
 
-        _logger.LogDebug("Incomplete checks: {Checks}", string.Join(", ", incompleteChecks.Select(c => c.Name)));
+        _logger.LogDebug("Incomplete checks: {Checks}", string.Join(", ", incompleteChecks.Select(c => c.CheckName)));
 
         // We need to exclude any workflows that could be triggered by PR Deploy directly.
         var excludedWorkflows = GetExcludedWorkflows(Settings);
@@ -154,22 +149,21 @@ public partial class CheckService
         {
             try
             {
-                var run = await _context.GitHub.Actions.Workflows.Runs.Get(_context.Owner, _context.Repo,
-                    ParseRunId(c.DetailsUrl));
+                var run = await _context.GitHub.Actions.Workflows.Runs.Get(_context.Owner, _context.Repo, c.RunId);
                 var checkWorkflow = Path.GetFileName(run.Path).ToLowerInvariant();
                 var keepCheck = !excludedWorkflows.Contains(checkWorkflow);
-                _logger.LogDebug("Keep {Check} ({Workflow}): {Keep}", c.Name, checkWorkflow, keepCheck);
+                _logger.LogDebug("Keep {Check} ({Workflow}): {Keep}", c.CheckName, checkWorkflow, keepCheck);
                 return keepCheck;
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "Unable to retrieve workflow for check {Check}: {Url}", c.Name, c.HtmlUrl);
+                _logger.LogWarning(ex, "Unable to retrieve workflow for check {Check}: {Url}", c.CheckName, c.HtmlUrl);
                 return true;
             }
         }));
 
         var retainedChecks = incompleteChecks.Where((_, i) => keep[i]).ToList();
-        _logger.LogDebug("Filtered checks: {Checks}", string.Join(", ", retainedChecks.Select(c => c.Name)));
+        _logger.LogDebug("Filtered checks: {Checks}", string.Join(", ", retainedChecks.Select(c => c.CheckName)));
 
         return retainedChecks;
     }
@@ -198,6 +192,38 @@ public partial class CheckService
         return await _context.GitHub.Check.Run.GetAllForReference(_context.Owner, _context.Repo, reference,
             new CheckRunRequest(), new ApiOptions { PageSize = MaxPageSize, PageCount = 1, StartPage = 1 });
     }
+
+    /// <summary>
+    /// Selects the check runs reported by the build-details action, identified by the build marker in their output
+    /// text, and pairs each with the workflow run it came from.
+    /// </summary>
+    /// <param name="checkRuns">Check runs reported for a ref.</param>
+    /// <returns>The marked build checks; checks without output or whose details URL has no workflow run ID are
+    /// skipped.</returns>
+    private static List<BuildCheck> ListBuildChecks(IEnumerable<CheckRun> checkRuns)
+    {
+        var buildChecks = checkRuns
+            .Where(c => c.Output?.Text == BuildMarker)
+            .Select(c => new BuildCheck(
+                ParseRunId(c.DetailsUrl),
+                c.Status.StringValue,
+                c.Conclusion?.StringValue ?? string.Empty,
+                $"{c.Name} ({c.Status.StringValue})",
+                c.HtmlUrl))
+            .Where(c => c.RunId != 0)
+            .ToList();
+        return buildChecks;
+    }
+
+    /// <summary>
+    /// A check run that reports a build, reduced to the details needed to locate and describe it.
+    /// </summary>
+    /// <param name="RunId">ID of the workflow run that produced the build.</param>
+    /// <param name="Status">Check run status, such as <c>completed</c> or <c>in_progress</c>.</param>
+    /// <param name="Conclusion">Check run conclusion, such as <c>success</c> or <c>failure</c>.</param>
+    /// <param name="CheckName">Check name with its status, for logging.</param>
+    /// <param name="HtmlUrl">HTML URL of the check run, for logging.</param>
+    public sealed record BuildCheck(long RunId, string Status, string Conclusion, string CheckName, string HtmlUrl);
 
     /// <summary>
     /// Parses the supplied input as the run id.

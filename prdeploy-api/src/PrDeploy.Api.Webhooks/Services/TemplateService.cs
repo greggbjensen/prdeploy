@@ -4,6 +4,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using HandlebarsDotNet;
 using Octokit;
+using static PrDeploy.Api.Webhooks.Services.CheckService;
 
 namespace PrDeploy.Api.Webhooks.Services;
 
@@ -137,6 +138,19 @@ public class TemplateService
         status = check.Status.StringValue,
         conclusion = check.Conclusion?.StringValue
     };
+
+    /// <summary>
+    /// Checks whether the condition condition is satisfied.
+    /// </summary>
+    /// <param name="check">Object containing the check data used by the operation.</param>
+    /// <returns>The object produced by the operation.</returns>
+    public static object Check(BuildCheck check) => new
+    {
+        name = check.CheckName,
+        html_url = check.HtmlUrl,
+        status = check.Status,
+        conclusion = check.Conclusion
+    };    
 
     /// <summary>
     /// Converts the supplied value to the template context.
