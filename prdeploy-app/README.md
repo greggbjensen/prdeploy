@@ -19,6 +19,12 @@ The selected workflow's file name (for example `api-build.yaml`) is saved on the
 the first column of the Services table, before Name. Services typed by hand, and those saved before this column
 existed, have no workflow and show a blank cell.
 
+# Settings: Microsoft Teams
+
+The **Microsoft Teams** tab (after Slack) holds a **Notifications enabled** checkbox and a **Webhooks** section with
+**Deploy URL** and **Release URL**. They are saved under `teams` in the deploy settings at owner or repo level, like the
+Slack webhooks. The values are only stored for now; no Teams notifications are sent yet.
+
 # Testing
 
 Specs live next to their components as `*.spec.ts` and run with `npm test`. The Karma and Jasmine packages are not

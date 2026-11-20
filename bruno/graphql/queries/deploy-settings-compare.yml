@@ -123,6 +123,22 @@ graphql:
               repo
             }
           }
+          teams {
+            webhooks {
+              deployUrl {
+                owner
+                repo
+              }
+              releaseUrl {
+                owner
+                repo
+              }
+            }
+            notificationsEnabled {
+              owner
+              repo
+            }
+          }
           badge {
             statusColors {
               error {

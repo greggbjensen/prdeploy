@@ -85,7 +85,24 @@ _NOTE: You must click **Save** in the top right before leaving the **Settings** 
    1. This will be the path from the root of your repository to where the code for that service is.
    2. Do this for each service you want to deploy.
 
-## 5. Slack
+## 5. Deployment
+
+![prdeploy settings Deployment](../assets/images/screenshots/prdeploy-portal-settings-deployment.png)
+{: style="margin: 30px 0 40px 0;"}
+
+1. The defaults here will generall be correct, verify the **Release Environment** and the **Default Environment**.
+2. Make sure the **prdeploy portal URL** reflects the current site (https://prdeploy.myorg.com).
+    1. This is used in pull request comment links.
+3. Make sure to click **Save** in the top right before leaving the **Settings** page.
+
+
+_NOTES:_
+
+_Build workflows are matched to **Services** by the workflow file name set on each service in the **Services** tab; a workflow that is not mapped uses its file name without the extension and any `-ci` or `-build` suffix._
+
+_**Builds check pattern** is the regular expression used to recognize the job within the matched **Build workflow** that produce a Docker image for your services._
+
+## 6. Slack
 
 ![prdeploy settings Slack](../assets/images/screenshots/prdeploy-portal-settings-slack.png)
 {: style="margin: 30px 0 60px 0;"}
@@ -102,7 +119,20 @@ _NOTE: You must click **Save** in the top right before leaving the **Settings** 
 
 _NOTE: As necessary, you can fill in email aliases if **prdeploy** finds the incorrect match for the email used by a team member._
 
-## 6. JIRA
+## 7. Microsoft Teams
+
+1. Go to the **Microsoft Teams** link on the left panel.
+2. Check the **Notifications enabled** box.
+3. Fill in the **Webhooks** fields as follows:
+
+| Field       | Value                                                          |
+| ----------- | -------------------------------------------------------------- |
+| Deploy URL  | The Microsoft Teams webhook URL used for deploy notifications. |
+| Release URL | The Microsoft Teams webhook URL used for release notifications.|
+
+_NOTE: These values are saved with the repository or owner settings; sending Teams notifications is not implemented yet._
+
+## 8. JIRA
 
 ![prdeploy settings JIRA](../assets/images/screenshots/prdeploy-portal-settings-jira.png)
 {: style="margin: 30px 0 40px 0;"}
@@ -115,22 +145,5 @@ _NOTE: As necessary, you can fill in email aliases if **prdeploy** finds the inc
 | Host     | The host name from the [4. Jira Integration](./4-jira-integration.md) step (https://myorg.atlassian.net).                       |
 | Username | The email address of the user you created the API token for in the [4. Jira Integration](./4-jira-integration.md) step. |
 | Token    | The **API token** you created under that user in the [4. Jira Integration](./4-jira-integration.md) step.               |
-
-## 7. Deployment
-
-![prdeploy settings Deployment](../assets/images/screenshots/prdeploy-portal-settings-deployment.png)
-{: style="margin: 30px 0 40px 0;"}
-
-1. The defaults here will generall be correct, verify the **Release Environment** and the **Default Environment**.
-2. Make sure the **prdeploy portal URL** reflects the current site (https://prdeploy.myorg.com).
-    1. This is used in pull request comment links.
-3. Make sure to click **Save** in the top right before leaving the **Settings** page.
-
-
-_NOTES:_
-
-_Build workflows are matched to **Services** by the workflow file name set on each service in the **Services** tab; a workflow that is not mapped uses its file name without the extension and any `-ci` or `-build` suffix._
-
-_**Builds check pattern** is the regular expression used to recognize the job within the matched **Build workflow** that produce a Docker image for your services._
 
 [Next step - 7. GitHub Actions](./7-github-actions.md)

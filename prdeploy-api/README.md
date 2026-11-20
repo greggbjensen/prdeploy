@@ -87,6 +87,10 @@ The GitHub App Webhook must be configured to send events to a URL that is access
 
 Settings live in YAML, not JSON: `appsettings.yaml` and `appsettings.{Environment}.yaml` in `src/PrDeploy.Api`, plus the optional `secrets/appsettings.secret.yaml` mounted by the Helm chart (`charts/prdeploy-api/secrets/`). `YamlConfigurationProvider` (in `Configuration/`) flattens mappings and sequences into the usual `Section:Key` / `Section:0` keys, and `UseYamlAppSettings` swaps the default JSON sources in place, so precedence is unchanged: YAML files, then user secrets, environment variables, and the command line. Unquoted empty values and `~` are null; quote values (`""`) that must be empty strings. JSON appsettings files are no longer read.
 
+## Microsoft Teams settings
+
+`DeploySettings.Teams` (`TeamsSettings`) stores `NotificationsEnabled` and `Webhooks.DeployUrl` / `Webhooks.ReleaseUrl`. They are exposed through the same `deploySettingsCompare` query and `deploySettingsSet` mutation as the Slack settings, and merged from owner to repo like them. Only storage is implemented; the API does not post to Teams yet.
+
 ## Logging
 
 The `repositoryWorkflows` GraphQL query lists the files in a repository's `.github/workflows` folder (for the portal's Add Service dialog), using the signed in user's GitHub token after the same repository access check as the other repository queries. Every YAML file is listed, and a repository without the folder returns an empty list.

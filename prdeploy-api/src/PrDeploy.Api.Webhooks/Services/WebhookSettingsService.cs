@@ -132,6 +132,8 @@ public class WebhookSettingsService
         settings.Jira ??= new JiraSettings();
         settings.Slack ??= new SlackSettings();
         settings.Slack.Webhooks ??= new SlackWebHooksSettings();
+        settings.Teams ??= new TeamsSettings();
+        settings.Teams.Webhooks ??= new TeamsWebHooksSettings();
         settings.Badge ??= new BadgeSettings();
         settings.Badge.StatusColors ??= new BadgeStatusColorsSettings();
     }

@@ -27,7 +27,7 @@ public class CheckServiceTest : IDisposable
     public async Task ListBuildsAsync_ListsBuildsAndVersionsFromReference()
     {
         _host.SetupChecks("SCRUM-16750-my-new-feature",
-            ("Build helm chart", "completed", "success", 10014663490),
+            ("[Bb]uild", "completed", "success", 10014663490),
             ("Lint", "completed", "success", 10014663491));
         _host.SetupBuildRun(10014663490, ".github/workflows/myorg-app-main-build.yml");
 

@@ -46,6 +46,11 @@ namespace PrDeploy.Api.Models.Settings.Compare
         /// <value>Current Slack value.</value>
         public SlackSettingsCompare Slack { get; set; } = null!;
         /// <summary>
+        /// Gets or sets the Microsoft Teams.
+        /// </summary>
+        /// <value>Current Microsoft Teams value.</value>
+        public TeamsSettingsCompare Teams { get; set; } = null!;
+        /// <summary>
         /// Gets or sets the PrDeploy portal URL.
         /// </summary>
         /// <value>Current PrDeploy portal URL value.</value>

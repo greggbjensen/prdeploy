@@ -46,6 +46,11 @@ public class DeploySettings
     /// <value>Current Slack value.</value>
     public SlackSettings? Slack { get; set; }
     /// <summary>
+    /// Gets or sets the Microsoft Teams.
+    /// </summary>
+    /// <value>Current Microsoft Teams value.</value>
+    public TeamsSettings? Teams { get; set; }
+    /// <summary>
     /// Gets or sets the PrDeploy portal URL.
     /// </summary>
     /// <value>Current PrDeploy portal URL value.</value>

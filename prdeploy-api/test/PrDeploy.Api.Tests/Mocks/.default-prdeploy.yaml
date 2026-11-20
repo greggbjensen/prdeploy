@@ -27,7 +27,7 @@ jira:
   addIssuesEnabled: false # If JIRA issues should be read from branch and added to PR.
 settingsBranch: 'main' # Branch to retrieve repo settings from.
 builds:
-  checkPattern: 'Build helm chart' # Pattern to know which checks are builds.
+  checkPattern: '[Bb]uild' # Pattern to know which checks are builds.
 slack:
   notificationsEnabled: false # Whether or not to send Slack notifications.
 badge:

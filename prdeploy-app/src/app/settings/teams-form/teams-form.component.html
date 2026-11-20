@@ -1,0 +1,33 @@
+<form>
+  <h2 class="form-title">Microsoft Teams</h2>
+  <mat-checkbox [(ngModel)]="teams.notificationsEnabled[level]" name="notificationsEnabled">
+    Notifications enabled
+  </mat-checkbox>
+
+  <div class="field-section">
+    <div class="field-group">
+      <h2 class="form-group-title">Webhooks</h2>
+      <div class="field-section">
+        <mat-form-field class="form-field-2x">
+          <mat-label>Deploy URL</mat-label>
+          <input
+            matInput
+            type="text"
+            [(ngModel)]="teams.webhooks.deployUrl[level]"
+            [placeholder]="showOwner ? teams.webhooks.deployUrl['owner'] : ''"
+            name="webhooksDeployUrl" />
+        </mat-form-field>
+
+        <mat-form-field class="form-field-2x">
+          <mat-label>Release URL</mat-label>
+          <input
+            matInput
+            type="text"
+            [(ngModel)]="teams.webhooks.releaseUrl[level]"
+            [placeholder]="showOwner ? teams.webhooks.releaseUrl['owner'] : ''"
+            name="webhooksReleaseUrl" />
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+</form>

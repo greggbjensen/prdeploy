@@ -121,6 +121,7 @@ type DeploySettings {
   jira: JiraSettings
   builds: BuildsSettings
   slack: SlackSettings
+  teams: TeamsSettings
   prdeployPortalUrl: String
   badge: BadgeSettings
 }
@@ -134,6 +135,7 @@ type DeploySettingsCompare {
   jira: JiraSettingsCompare!
   builds: BuildsSettingsCompare!
   slack: SlackSettingsCompare!
+  teams: TeamsSettingsCompare!
   prdeployPortalUrl: OwnerRepoValueOfString!
   badge: BadgeSettingsCompare!
 }
@@ -253,6 +255,7 @@ input DeploySettingsInput {
   jira: JiraSettingsInput
   builds: BuildsSettingsInput
   slack: SlackSettingsInput
+  teams: TeamsSettingsInput
   prdeployPortalUrl: String
   badge: BadgeSettingsInput
 }
@@ -458,4 +461,33 @@ input BadgeStatusColorsSettingsInput {
   warn: String
   success: String
   info: String
+}
+type TeamsSettings {
+  webhooks: TeamsWebHooksSettings
+  notificationsEnabled: Boolean
+}
+
+type TeamsWebHooksSettings {
+  deployUrl: String
+  releaseUrl: String
+}
+
+type TeamsSettingsCompare {
+  webhooks: TeamsWebHooksSettingsCompare!
+  notificationsEnabled: OwnerRepoValueOfNullableOfBoolean!
+}
+
+type TeamsWebHooksSettingsCompare {
+  deployUrl: OwnerRepoValueOfString!
+  releaseUrl: OwnerRepoValueOfString!
+}
+
+input TeamsSettingsInput {
+  webhooks: TeamsWebHooksSettingsInput
+  notificationsEnabled: Boolean
+}
+
+input TeamsWebHooksSettingsInput {
+  deployUrl: String
+  releaseUrl: String
 }

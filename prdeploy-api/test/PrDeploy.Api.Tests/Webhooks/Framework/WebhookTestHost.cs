@@ -113,7 +113,7 @@ public sealed class WebhookTestHost : IDisposable
         PrdeployPortalUrl = "https://prdeploy.myorg.com",
         Builds = new BuildsSettings
         {
-            CheckPattern = "Build helm chart"
+            CheckPattern = "[Bb]uild"
         },
         Badge = new BadgeSettings
         {

@@ -59,6 +59,7 @@ public static partial class Map
                 Repo = repo.PrdeployPortalUrl
             },
             Slack = Compare(owner.Slack, repo.Slack),
+            Teams = Compare(owner.Teams, repo.Teams),
             Badge = Compare(owner.Badge, repo.Badge)
         };
 
@@ -148,6 +149,48 @@ public static partial class Map
                 Repo = repo?.NotificationsEnabled
             },
             Webhooks = Compare(owner?.Webhooks, repo?.Webhooks)
+        };
+    }
+
+    /// <summary>
+    /// Compares the supplied values and returns their differences.
+    /// </summary>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <param name="repo">Repository whose values are addressed.</param>
+    /// <returns>The Microsoft Teams settings compare produced by the operation.</returns>
+    public static TeamsSettingsCompare Compare(TeamsSettings? owner, TeamsSettings? repo)
+    {
+        return new()
+        {
+            Webhooks = Compare(owner?.Webhooks, repo?.Webhooks),
+            NotificationsEnabled = new()
+            {
+                Owner = owner?.NotificationsEnabled,
+                Repo = repo?.NotificationsEnabled
+            }
+        };
+    }
+
+    /// <summary>
+    /// Compares the supplied values and returns their differences.
+    /// </summary>
+    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
+    /// <param name="repo">Repository whose values are addressed.</param>
+    /// <returns>The Microsoft Teams web hooks settings compare produced by the operation.</returns>
+    public static TeamsWebHooksSettingsCompare Compare(TeamsWebHooksSettings? owner, TeamsWebHooksSettings? repo)
+    {
+        return new()
+        {
+            DeployUrl = new()
+            {
+                Owner = owner?.DeployUrl,
+                Repo = repo?.DeployUrl
+            },
+            ReleaseUrl = new()
+            {
+                Owner = owner?.ReleaseUrl,
+                Repo = repo?.ReleaseUrl
+            }
         };
     }
 

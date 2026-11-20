@@ -22,6 +22,9 @@
         @case ('slack') {
           <app-slack-form [slack]="settingsCompare.slack" [level]="level"></app-slack-form>
         }
+        @case ('teams') {
+          <app-teams-form [teams]="settingsCompare.teams" [level]="level"></app-teams-form>
+        }
         @case ('jira') {
           <app-jira-form [jira]="settingsCompare.jira" [level]="level"></app-jira-form>
         }

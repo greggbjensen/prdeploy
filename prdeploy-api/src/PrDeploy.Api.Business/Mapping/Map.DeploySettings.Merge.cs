@@ -61,6 +61,15 @@ public static partial class Map
             Merge(target.Slack, source.Slack);
         }
 
+        if (target.Teams == null)
+        {
+            target.Teams = source.Teams;
+        }
+        else
+        {
+            Merge(target.Teams, source.Teams);
+        }
+
         target.PrdeployPortalUrl ??= source.PrdeployPortalUrl;
 
         if (target.Badge == null)
@@ -113,6 +122,46 @@ public static partial class Map
         {
             Merge(target.Webhooks, source.Webhooks);
         }
+    }
+
+    /// <summary>
+    /// Merges Microsoft Teams settings, keeping target values and filling gaps from the source.
+    /// </summary>
+    /// <param name="target">Target environment or value for the operation.</param>
+    /// <param name="source">Source environment or value for the operation.</param>
+    private static void Merge(TeamsSettings? target, TeamsSettings? source)
+    {
+        if (source == null || target == null)
+        {
+            return;
+        }
+
+        target.NotificationsEnabled ??= source.NotificationsEnabled;
+
+        if (target.Webhooks == null)
+        {
+            target.Webhooks = source.Webhooks;
+        }
+        else
+        {
+            Merge(target.Webhooks, source.Webhooks);
+        }
+    }
+
+    /// <summary>
+    /// Merges Microsoft Teams web hook settings, keeping target values and filling gaps from the source.
+    /// </summary>
+    /// <param name="target">Target environment or value for the operation.</param>
+    /// <param name="source">Source environment or value for the operation.</param>
+    private static void Merge(TeamsWebHooksSettings? target, TeamsWebHooksSettings? source)
+    {
+        if (source == null || target == null)
+        {
+            return;
+        }
+
+        target.DeployUrl ??= source.DeployUrl;
+        target.ReleaseUrl ??= source.ReleaseUrl;
     }
 
     /// <summary>

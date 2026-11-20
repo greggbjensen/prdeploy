@@ -29,7 +29,7 @@ jira:
   addIssuesEnabled: false
 settingsBranch: 'main'
 builds:
-  checkPattern: 'Build helm chart'
+  checkPattern: '[Bb]uild'
 slack:
   notificationsEnabled: false
 badge:

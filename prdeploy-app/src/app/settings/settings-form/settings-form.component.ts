@@ -17,13 +17,16 @@ import {
   JiraSettingsInput,
   ServiceSettings,
   SlackSettingsCompare,
-  SlackSettingsInput
+  SlackSettingsInput,
+  TeamsSettingsCompare,
+  TeamsSettingsInput
 } from 'src/app/shared/graphql';
 import { NotificationManager, RepoManager } from 'src/app/shared/managers';
 import { EnvironmentFormComponent } from '../environment-form/environment-form.component';
 import { JiraFormComponent } from '../jira-form/jira-form.component';
 import { SettingsLevel } from '../models';
 import { SlackFormComponent } from '../slack-form/slack-form.component';
+import { TeamsFormComponent } from '../teams-form/teams-form.component';
 import { DeployFormComponent } from '../deploy-form/deploy-form.component';
 import { AddEnvironmentDialogComponent } from './add-environment-dialog/add-environment-dialog.component';
 import _ from 'lodash';
@@ -55,6 +58,7 @@ class SetCompareValue<T> {
     ServicesFormComponent,
     JiraFormComponent,
     SlackFormComponent,
+    TeamsFormComponent,
     MatProgressSpinnerModule,
     MatExpansionModule,
     MatButtonModule,
@@ -94,19 +98,24 @@ export class SettingsFormComponent implements AfterViewInit {
       icon: 'language'
     },
     {
+      id: 'deployment',
+      text: 'Deployment',
+      icon: 'cloud'
+    },
+    {
       id: 'slack',
       text: 'Slack',
       icon: 'webhook'
     },
     {
+      id: 'teams',
+      text: 'Microsoft Teams',
+      icon: 'groups'
+    },
+    {
       id: 'jira',
       text: 'JIRA',
       icon: 'workspaces'
-    },
-    {
-      id: 'deployment',
-      text: 'Deployment',
-      icon: 'cloud'
     }
   ];
 
@@ -313,6 +322,9 @@ export class SettingsFormComponent implements AfterViewInit {
       badge: {},
       slack: {
         webhooks: {}
+      },
+      teams: {
+        webhooks: {}
       }
     } as DeploySettingsInput;
 
@@ -349,6 +361,12 @@ export class SettingsFormComponent implements AfterViewInit {
     this.setSlack(input.slack, slackCompare);
     if (!slackCompare.hasValues) {
       delete input.slack;
+    }
+
+    const teamsCompare = new SetCompareValue(compare.teams, level);
+    this.setTeams(input.teams, teamsCompare);
+    if (!teamsCompare.hasValues) {
+      delete input.teams;
     }
 
     const badgeCompare = new SetCompareValue(compare.badge, level);
@@ -423,6 +441,20 @@ export class SettingsFormComponent implements AfterViewInit {
     if (this.hasValues(compareValue, 'emailAliases')) {
       this.setObjectValue(input, 'emailAliases', compareValue.compare.emailAliases);
     }
+  }
+
+  private setTeams(input: TeamsSettingsInput, compareValue: SetCompareValue<TeamsSettingsCompare>) {
+    const webhooksCompare = new SetCompareValue(compareValue.compare.webhooks, compareValue.level);
+    this.set(input.webhooks, 'deployUrl', webhooksCompare);
+    this.set(input.webhooks, 'releaseUrl', webhooksCompare);
+    if (!webhooksCompare.hasValues) {
+      delete input.webhooks;
+    } else {
+      // Webhook values alone must still be saved with the Teams section.
+      compareValue.hasValues = true;
+    }
+
+    this.set(input, 'notificationsEnabled', compareValue);
   }
 
   private setBadge(input: BadgeSettingsInput, compareValue: SetCompareValue<BadgeSettingsCompare>) {

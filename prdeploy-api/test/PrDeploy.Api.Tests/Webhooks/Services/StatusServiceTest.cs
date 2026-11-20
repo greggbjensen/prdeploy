@@ -77,7 +77,7 @@ public class StatusServiceTest : IDisposable
     {
         var run = GitHubModels.WorkflowRun(7065200437, "[prod] My new feature", conclusion: "success");
         var pullRequest = GitHubModels.PullRequest(PullNumber, labels: ["prod", "prod-lock"], body: "**Release notes**");
-        _host.SetupChecks(pullRequest.Head.Ref, ("Build helm chart", "completed", "success", 10014663490));
+        _host.SetupChecks(pullRequest.Head.Ref, ("[Bb]uild", "completed", "success", 10014663490));
         _host.SetupBuildRun(10014663490, ".github/workflows/myorg-app-main-build.yml");
 
         await _service.PostDeployCompletedAsync(pullRequest, run);
