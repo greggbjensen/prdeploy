@@ -163,9 +163,9 @@ public partial class CheckService
                 _logger.LogDebug("Keep {Check} ({Workflow}): {Keep}", c.Name, checkWorkflow, keepCheck);
                 return keepCheck;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                _logger.LogWarning("Unable to retrieve workflow for check: {Url}", c.HtmlUrl);
+                _logger.LogWarning(ex, "Unable to retrieve workflow for check {Check}: {Url}", c.Name, c.HtmlUrl);
                 return true;
             }
         }));
@@ -411,9 +411,9 @@ public partial class CheckService
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(
-                "The build-details.json file does not exist, make sure your build uses the build-details action");
-            _logger.LogWarning("{Message}", ex.Message);
+            _logger.LogWarning(ex,
+                "Unable to read {File} from the {Artifact} artifact; make sure your build uses the build-details action.",
+                BuildDetailsFile, BuildDetailsArtifact);
             return string.Empty;
         }
     }

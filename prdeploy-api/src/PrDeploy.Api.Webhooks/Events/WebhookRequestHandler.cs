@@ -63,6 +63,8 @@ public class WebhookRequestHandler
 
         if (string.IsNullOrEmpty(eventName))
         {
+            _logger.LogWarning("Rejected webhook ({DeliveryId}) with a missing {Header} header.", deliveryId,
+                EventHeader);
             return Results.BadRequest($"Missing {EventHeader} header.");
         }
 
@@ -77,8 +79,10 @@ public class WebhookRequestHandler
             using var document = JsonDocument.Parse(body);
             payload = document.RootElement.Clone();
         }
-        catch (JsonException)
+        catch (JsonException ex)
         {
+            _logger.LogWarning(ex, "Rejected webhook {Event} ({DeliveryId}): payload is not valid JSON.", eventName,
+                deliveryId);
             return Results.BadRequest("Payload is not valid JSON.");
         }
 

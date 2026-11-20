@@ -291,6 +291,8 @@ public class DeployService
         }
         catch (NotFoundException)
         {
+            _logger.LogDebug("File {Path} not found at {Reference} in {Owner}/{Repo}.", path, reference,
+                _context.Owner, _context.Repo);
             return null;
         }
     }
@@ -485,8 +487,10 @@ public class DeployService
             {
                 await GitHub.Repository.Branch.Get(_context.Owner, _context.Repo, branch);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogWarning(ex, "Unable to find branch {Branch} in {Owner}/{Repo}; using {DefaultBranch}.",
+                    branch, _context.Owner, _context.Repo, _context.DefaultBranch);
                 branch = _context.DefaultBranch;
             }
         }

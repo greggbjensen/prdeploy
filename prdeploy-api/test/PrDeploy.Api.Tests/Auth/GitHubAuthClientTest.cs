@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Net;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -217,6 +218,56 @@ public class GitHubAuthClientTest
         Assert.Equal("bad_verification_code", entry.Properties["OAuthError"]);
         Assert.Equal("The code passed is incorrect or expired.", entry.Properties["OAuthErrorDescription"]);
         Assert.DoesNotContain("do-not-log", entry.Message, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Verifies that a token response that is not valid JSON is logged as a structured warning that carries the
+    /// parse exception and HTTP status but never the response body.
+    /// </summary>
+    [Fact]
+    public async Task GetAccessTokenAsync_InvalidJsonResponse_LogsParseWarningWithoutBody()
+    {
+        var handler = new FakeHttpMessageHandler
+        {
+            Respond = _ => new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("{not-json secret-body", System.Text.Encoding.UTF8, "application/json")
+            }
+        };
+        using var httpClient = new HttpClient(handler) { BaseAddress = new Uri("https://github.com/") };
+        var options = new GitHubAuthOptions
+        {
+            Authority = "https://github.com/",
+            ClientId = "client-id",
+            ClientSecret = "client-secret"
+        };
+        var restClientInstance = new RestClientInstance<GitHubAuthOptions>
+        {
+            Options = options,
+            RestClient = new RestClient(httpClient)
+        };
+        using var serviceProvider = new ServiceCollection().BuildServiceProvider();
+        var logger = new PrDeploy.Api.Tests.Framework.CapturingLogger<GitHubAuthClient>();
+        var client = new GitHubAuthClient(
+            restClientInstance,
+            Microsoft.Extensions.Options.Options.Create(new JwtOptions()),
+            new Mock<ICipherService>(MockBehavior.Strict).Object,
+            serviceProvider,
+            new InlineValidator<AccessTokenRequest>(),
+            AllowAllOrganizations(),
+            logger);
+
+        await Assert.ThrowsAsync<HttpRequestException>(() => client.GetAccessTokenAsync(new AccessTokenRequest
+        {
+            ClientId = options.ClientId,
+            Code = "code",
+            RedirectUrl = "https://example.com/callback"
+        }));
+
+        var parseEntry = Assert.Single(logger.Entries, e => e.Exception is JsonException);
+        Assert.Equal(LogLevel.Warning, parseEntry.Level);
+        Assert.Equal(200, parseEntry.Properties["StatusCode"]);
+        Assert.All(logger.Entries, e => Assert.DoesNotContain("secret-body", e.Message, StringComparison.Ordinal));
     }
 
     /// <summary>

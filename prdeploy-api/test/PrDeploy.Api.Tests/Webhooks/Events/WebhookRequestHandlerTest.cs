@@ -1,4 +1,7 @@
 using System.Text;
+using System.Text.Json;
+using Microsoft.Extensions.Logging;
+using PrDeploy.Api.Tests.Framework;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -117,6 +120,55 @@ public class WebhookRequestHandlerTest
         var result = await handler.HandleAsync(CreateRequest("issue_comment", CommentPayload), CancellationToken.None);
 
         Assert.Equal(StatusCodes.Status503ServiceUnavailable, Assert.IsType<StatusCodeHttpResult>(result).StatusCode);
+    }
+
+    /// <summary>
+    /// Verifies that a signed payload that is not valid JSON is rejected with a structured warning that carries
+    /// the parse exception and delivery identifiers.
+    /// </summary>
+    [Fact]
+    public async Task HandleAsync_InvalidJson_LogsWarningAndReturnsBadRequest()
+    {
+        var logger = new CapturingLogger<WebhookRequestHandler>();
+        var handler = CreateHandler(logger);
+
+        var result = await handler.HandleAsync(CreateRequest("issue_comment", "{not json"), CancellationToken.None);
+
+        Assert.IsType<BadRequest<string>>(result);
+        var entry = Assert.Single(logger.Entries);
+        Assert.Equal(LogLevel.Warning, entry.Level);
+        Assert.IsAssignableFrom<JsonException>(entry.Exception);
+        Assert.Equal("issue_comment", entry.Properties["Event"]);
+        Assert.Equal("delivery-1", entry.Properties["DeliveryId"]);
+    }
+
+    /// <summary>
+    /// Verifies that a signed delivery without the event header is rejected with a structured warning.
+    /// </summary>
+    [Fact]
+    public async Task HandleAsync_MissingEventHeader_LogsWarningAndReturnsBadRequest()
+    {
+        var logger = new CapturingLogger<WebhookRequestHandler>();
+        var handler = CreateHandler(logger);
+
+        var result = await handler.HandleAsync(CreateRequest("", "{}"), CancellationToken.None);
+
+        Assert.IsType<BadRequest<string>>(result);
+        var entry = Assert.Single(logger.Entries);
+        Assert.Equal(LogLevel.Warning, entry.Level);
+        Assert.Equal("delivery-1", entry.Properties["DeliveryId"]);
+        Assert.Equal(WebhookRequestHandler.EventHeader, entry.Properties["Header"]);
+    }
+
+    /// <summary>
+    /// Creates a handler that reports to the supplied logger.
+    /// </summary>
+    /// <param name="logger">Logger that captures the handler's entries.</param>
+    /// <returns>A handler using a fresh queue and the shared test secret.</returns>
+    private static WebhookRequestHandler CreateHandler(ILogger<WebhookRequestHandler> logger)
+    {
+        var options = MsOptions.Create(new GitHubAppOptions { WebhookSecret = Secret, QueueCapacity = 1 });
+        return new WebhookRequestHandler(new WebhookEventQueue(options), options, logger);
     }
 
     /// <summary>

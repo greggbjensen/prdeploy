@@ -105,8 +105,11 @@ namespace PrDeploy.Api.Business.Clients
                 {
                     accessTokenResponse = JsonSerializer.Deserialize<AccessTokenResponse>(responseValue.Content);
                 }
-                catch (JsonException)
+                catch (JsonException ex)
                 {
+                    // The body is intentionally not logged because it can contain tokens.
+                    _logger.LogWarning(ex, "GitHub returned an access token response that is not valid JSON (HTTP status {StatusCode}).",
+                        (int)responseValue.StatusCode);
                     accessTokenResponse = null;
                 }
             }
@@ -172,6 +175,7 @@ namespace PrDeploy.Api.Business.Clients
             }
             catch (JsonException)
             {
+                // Not an OAuth error document; the caller logs the failed response.
                 return (null, null);
             }
         }
