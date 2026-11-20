@@ -98,9 +98,9 @@ public partial class CheckService
         _logger.LogInformation("Listing checks for ref: {Ref}", pullRequest.Head.Ref);
         var result = await GetChecksForRefAsync(pullRequest.Head.Ref);
 
-        var buildChecks = ListBuildChecks(result.CheckRuns);
-        var incompleteChecks = buildChecks
-            .Where(c => c.Status != "completed")
+        var checkSummaries = ListCheckSummaries(result.CheckRuns);
+        var incompleteChecks = checkSummaries
+            .Where(c => c.Status != "completed" || c.Conclusion == "failure")
             .ToList();
         if (incompleteChecks.Count > 0)
         {
@@ -109,7 +109,9 @@ public partial class CheckService
             _logger.LogWarning("Please wait for the checks to pass and try again.");
         }
 
-        var builds = await Task.WhenAll(buildChecks.Select(c => ExtractBuildAsync(c.RunId)));
+        var builds = await Task.WhenAll(checkSummaries
+          .Where(c => c.IsBuild)
+          .Select(c => ExtractBuildAsync(c.RunId)));
 
         // Remove any duplicate builds.
         var uniqueBuilds = builds.DistinctBy(b => b.Name).ToList();
@@ -123,12 +125,12 @@ public partial class CheckService
     /// </summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <returns>Items matching the supplied criteria.</returns>
-    public async Task<List<BuildCheck>> ListIncompletePullChecksAsync(PullRequest pullRequest)
+    public async Task<List<CheckSummary>> ListIncompletePullChecksAsync(PullRequest pullRequest)
     {
         _logger.LogInformation("Listing checks for ref: {Ref}", pullRequest.Head.Ref);
         var result = await GetChecksForRefAsync(pullRequest.Head.Ref);
 
-        var incompleteChecks = ListBuildChecks(result.CheckRuns)
+        var incompleteChecks = ListCheckSummaries(result.CheckRuns)
             .Where(c => c.Status != "completed" || c.Conclusion == "failure")
             .ToList();
 
@@ -200,30 +202,32 @@ public partial class CheckService
     /// <param name="checkRuns">Check runs reported for a ref.</param>
     /// <returns>The marked build checks; checks without output or whose details URL has no workflow run ID are
     /// skipped.</returns>
-    private static List<BuildCheck> ListBuildChecks(IEnumerable<CheckRun> checkRuns)
+    private static List<CheckSummary> ListCheckSummaries(IEnumerable<CheckRun> checkRuns)
     {
-        var buildChecks = checkRuns
-            .Where(c => c.Output?.Text == BuildMarker)
-            .Select(c => new BuildCheck(
+        var checkSummaries = checkRuns
+            .Select(c => new CheckSummary(
                 ParseRunId(c.DetailsUrl),
+                c.Output?.Text == BuildMarker,
                 c.Status.StringValue,
                 c.Conclusion?.StringValue ?? string.Empty,
                 $"{c.Name} ({c.Status.StringValue})",
                 c.HtmlUrl))
             .Where(c => c.RunId != 0)
             .ToList();
-        return buildChecks;
+
+        return checkSummaries;
     }
 
     /// <summary>
     /// A check run that reports a build, reduced to the details needed to locate and describe it.
     /// </summary>
     /// <param name="RunId">ID of the workflow run that produced the build.</param>
+    /// <param name="IsBuild">True when the check run is a build; otherwise, false.</param>
     /// <param name="Status">Check run status, such as <c>completed</c> or <c>in_progress</c>.</param>
     /// <param name="Conclusion">Check run conclusion, such as <c>success</c> or <c>failure</c>.</param>
     /// <param name="CheckName">Check name with its status, for logging.</param>
     /// <param name="HtmlUrl">HTML URL of the check run, for logging.</param>
-    public sealed record BuildCheck(long RunId, string Status, string Conclusion, string CheckName, string HtmlUrl);
+    public sealed record CheckSummary(long RunId, bool IsBuild, string Status, string Conclusion, string CheckName, string HtmlUrl);
 
     /// <summary>
     /// Parses the supplied input as the run id.

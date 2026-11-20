@@ -144,7 +144,7 @@ public class TemplateService
     /// </summary>
     /// <param name="check">Object containing the check data used by the operation.</param>
     /// <returns>The object produced by the operation.</returns>
-    public static object Check(BuildCheck check) => new
+    public static object Check(CheckSummary check) => new
     {
         name = check.CheckName,
         html_url = check.HtmlUrl,
