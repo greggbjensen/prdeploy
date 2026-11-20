@@ -119,7 +119,6 @@ type DeploySettings {
   defaultEnvironment: String
   releaseEnvironment: String
   jira: JiraSettings
-  builds: BuildsSettings
   slack: SlackSettings
   teams: TeamsSettings
   prdeployPortalUrl: String
@@ -133,7 +132,6 @@ type DeploySettingsCompare {
   defaultEnvironment: OwnerRepoValueOfString!
   releaseEnvironment: OwnerRepoValueOfString!
   jira: JiraSettingsCompare!
-  builds: BuildsSettingsCompare!
   slack: SlackSettingsCompare!
   teams: TeamsSettingsCompare!
   prdeployPortalUrl: OwnerRepoValueOfString!
@@ -253,7 +251,6 @@ input DeploySettingsInput {
   defaultEnvironment: String
   releaseEnvironment: String
   jira: JiraSettingsInput
-  builds: BuildsSettingsInput
   slack: SlackSettingsInput
   teams: TeamsSettingsInput
   prdeployPortalUrl: String
@@ -270,10 +267,6 @@ type SlackSettingsCompare {
   emailAliases: OwnerRepoDictionary!
   webhooks: SlackWebHooksSettingsCompare!
   notificationsEnabled: OwnerRepoValueOfNullableOfBoolean!
-}
-
-type BuildsSettingsCompare {
-  checkPattern: OwnerRepoValueOfString!
 }
 
 type JiraSettingsCompare {
@@ -308,10 +301,6 @@ type SlackSettings {
   emailAliases: Any
   webhooks: SlackWebHooksSettings
   notificationsEnabled: Boolean
-}
-
-type BuildsSettings {
-  checkPattern: String
 }
 
 type JiraSettings {
@@ -415,10 +404,6 @@ input SlackSettingsInput {
   emailAliases: Any
   webhooks: SlackWebHooksSettingsInput
   notificationsEnabled: Boolean
-}
-
-input BuildsSettingsInput {
-  checkPattern: String
 }
 
 input JiraSettingsInput {

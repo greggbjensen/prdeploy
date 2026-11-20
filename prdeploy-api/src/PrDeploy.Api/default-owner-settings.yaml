@@ -28,8 +28,6 @@ releaseEnvironment: prod
 jira:
   addIssuesEnabled: false
 settingsBranch: 'main'
-builds:
-  checkPattern: '[Bb]uild'
 slack:
   notificationsEnabled: false
 badge:

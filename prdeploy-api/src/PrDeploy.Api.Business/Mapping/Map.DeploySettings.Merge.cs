@@ -34,15 +34,6 @@ public static partial class Map
         target.DefaultEnvironment ??= source.DefaultEnvironment;
         target.ReleaseEnvironment ??= source.ReleaseEnvironment;
 
-        if (target.Builds == null)
-        {
-            target.Builds = source.Builds;
-        }
-        else
-        {
-            Merge(target.Builds, source.Builds); 
-        }
-
         if (target.Jira == null)
         {
             target.Jira = source.Jira;
@@ -80,21 +71,6 @@ public static partial class Map
         {
             Merge(target.Badge, source.Badge);
         }
-    }
-
-    /// <summary>
-    /// Performs the merge operation.
-    /// </summary>
-    /// <param name="target">Target environment or value for the operation.</param>
-    /// <param name="source">Source environment or value for the operation.</param>
-    private static void Merge(BuildsSettings? target, BuildsSettings? source)
-    {
-        if (source == null || target == null)
-        {
-            return;
-        }
-
-        target.CheckPattern ??= source.CheckPattern;
     }
 
     /// <summary>

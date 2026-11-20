@@ -97,11 +97,15 @@ public partial class CheckService
         _logger.LogInformation("Listing checks for ref: {Ref}", pullRequest.Head.Ref);
         var result = await GetChecksForRefAsync(pullRequest.Head.Ref);
 
-        var checkRegex = new Regex(Settings.Builds?.CheckPattern ?? string.Empty, RegexOptions.IgnoreCase);
-        var buildChecks = result.CheckRuns.Where(c => checkRegex.IsMatch(c.Name)).ToList();
+        var buildChecks = result.CheckRuns.Where(c => c.App.Slug == "github-actions")
+          .Select(c => new {
+              RunId = ParseRunId(c.DetailsUrl),
+              Status = c.Status.StringValue,
+              CheckName = $"{c.Name} ({c.Status.StringValue})"
+          })
+          .Where(c => c.RunId != 0).ToList();
         var incompleteChecks = buildChecks
-            .Where(c => c.Status.StringValue != "completed")
-            .Select(c => $"{c.Name} ({c.Status.StringValue})")
+            .Where(c => c.Status != "completed")
             .ToList();
         if (incompleteChecks.Count > 0)
         {
@@ -109,7 +113,7 @@ public partial class CheckService
             _logger.LogWarning("Please wait for the checks to pass and try again.");
         }
 
-        var builds = await Task.WhenAll(buildChecks.Select(c => ExtractBuildAsync(ParseRunId(c.DetailsUrl))));
+        var builds = await Task.WhenAll(buildChecks.Select(c => ExtractBuildAsync(c.RunId)));
 
         // Remove any duplicate builds.
         var uniqueBuilds = builds.DistinctBy(b => b.Name).ToList();

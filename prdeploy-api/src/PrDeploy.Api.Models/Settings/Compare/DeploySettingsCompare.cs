@@ -36,11 +36,6 @@ namespace PrDeploy.Api.Models.Settings.Compare
         /// <value>Current Jira value.</value>
         public JiraSettingsCompare Jira { get; set; } = null!;
         /// <summary>
-        /// Gets or sets the builds.
-        /// </summary>
-        /// <value>Current builds value.</value>
-        public BuildsSettingsCompare Builds { get; set; } = null!;
-        /// <summary>
         /// Gets or sets the Slack.
         /// </summary>
         /// <value>Current Slack value.</value>

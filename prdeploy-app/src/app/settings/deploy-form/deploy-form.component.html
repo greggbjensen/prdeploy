@@ -45,16 +45,6 @@
         }
       </mat-select>
     </mat-form-field>
-
-    <mat-form-field>
-      <mat-label>Builds check pattern</mat-label>
-      <input
-        matInput
-        type="text"
-        [(ngModel)]="settingsCompare.builds.checkPattern[level]"
-        [placeholder]="showOwner ? settingsCompare.builds.checkPattern['owner'] : ''"
-        name="buildsCheckPattern" />
-    </mat-form-field>
   </div>
 </form>
 <app-badge-form [badge]="settingsCompare.badge" [level]="level"></app-badge-form>

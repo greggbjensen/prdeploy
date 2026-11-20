@@ -50,7 +50,6 @@ public static partial class Map
                 Owner = owner.Services,
                 Repo = repo.Services
             },
-            Builds = Compare(owner.Builds, repo.Builds),
             Jira = Compare(owner.Jira, repo.Jira),
             // TODO GBJ: Change to PrdeployPortalUrl.
             PrdeployPortalUrl = new()
@@ -64,24 +63,6 @@ public static partial class Map
         };
 
         return compare;
-    }
-
-    /// <summary>
-    /// Compares the supplied values and returns their differences.
-    /// </summary>
-    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
-    /// <param name="repo">Repository whose values are addressed.</param>
-    /// <returns>The builds settings compare produced by the operation.</returns>
-    public static BuildsSettingsCompare Compare(BuildsSettings? owner, BuildsSettings? repo)
-    {
-        return new()
-        {
-            CheckPattern = new()
-            {
-                Owner = owner?.CheckPattern,
-                Repo = repo?.CheckPattern
-            }
-        };
     }
 
     /// <summary>

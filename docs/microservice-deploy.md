@@ -46,11 +46,6 @@ As you modify code within your **monorepo** your pull request will automatically
 ![GitHub Actions build checks](./assets/images/screenshots/getting-started/github-actions-build-checks.png)
 {: style="margin: 30px 0 30px 0;"}
 
-Using the **Builds check pattern** in **Settings**, **prdeploy** determines which checks are builds, rather than scans, linting, etc.
-
-![Builds check pattern](./assets/images/screenshots/getting-started/builds-check-pattern.png)
-{: style="margin: 30px 0 30px 0;"}
-
 ## Combined deployment
 
 Now that **prdeploy** has identified which services have changed by these checks, it can use one GitHub Actions `combined-deploy.yaml` workflow to deploy them.

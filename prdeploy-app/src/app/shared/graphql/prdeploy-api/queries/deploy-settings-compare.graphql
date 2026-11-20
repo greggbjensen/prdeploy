@@ -72,12 +72,6 @@ query DeploySettingsCompare($input: RepoQueryInput!) {
         repo
       }
     }
-    builds {
-      checkPattern {
-        owner
-        repo
-      }
-    }
     slack {
       token {
         owner

@@ -111,10 +111,6 @@ public sealed class WebhookTestHost : IDisposable
         DefaultEnvironment = "dev",
         ReleaseEnvironment = "prod",
         PrdeployPortalUrl = "https://prdeploy.myorg.com",
-        Builds = new BuildsSettings
-        {
-            CheckPattern = "[Bb]uild"
-        },
         Badge = new BadgeSettings
         {
             StatusColors = new BadgeStatusColorsSettings

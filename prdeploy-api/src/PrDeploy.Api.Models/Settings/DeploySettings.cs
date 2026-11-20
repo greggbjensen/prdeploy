@@ -36,11 +36,6 @@ public class DeploySettings
     /// <value>Current Jira value.</value>
     public JiraSettings? Jira { get; set; }
     /// <summary>
-    /// Gets or sets the builds.
-    /// </summary>
-    /// <value>Current builds value.</value>
-    public BuildsSettings? Builds { get; set; }
-    /// <summary>
     /// Gets or sets the Slack.
     /// </summary>
     /// <value>Current Slack value.</value>

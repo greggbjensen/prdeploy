@@ -5,8 +5,6 @@ import {
   BadgeSettingsInput,
   BadgeStatusColorsSettings,
   BadgeStatusColorsSettingsCompare,
-  BuildsSettingsCompare,
-  BuildsSettingsInput,
   DeploySettingsCompare,
   DeploySettingsCompareGQL,
   DeploySettingsInput,
@@ -318,7 +316,6 @@ export class SettingsFormComponent implements AfterViewInit {
   private gatherSettings(compareValue: SetCompareValue<DeploySettingsCompare>): DeploySettingsInput {
     const input = {
       jira: {},
-      builds: {},
       badge: {},
       slack: {
         webhooks: {}
@@ -349,12 +346,6 @@ export class SettingsFormComponent implements AfterViewInit {
     this.setJira(input.jira, jiraCompare);
     if (!jiraCompare.hasValues) {
       delete input.jira;
-    }
-
-    const buildsCompare = new SetCompareValue(compare.builds, level);
-    this.setBuilds(input.builds, buildsCompare);
-    if (!buildsCompare.hasValues) {
-      delete input.builds;
     }
 
     const slackCompare = new SetCompareValue(compare.slack, level);
@@ -420,10 +411,6 @@ export class SettingsFormComponent implements AfterViewInit {
     this.set(input, 'host', compareValue);
     this.set(input, 'username', compareValue);
     this.set(input, 'password', compareValue);
-  }
-
-  private setBuilds(input: BuildsSettingsInput, compareValue: SetCompareValue<BuildsSettingsCompare>) {
-    this.set(input, 'checkPattern', compareValue);
   }
 
   private setSlack(input: SlackSettingsInput, compareValue: SetCompareValue<SlackSettingsCompare>) {

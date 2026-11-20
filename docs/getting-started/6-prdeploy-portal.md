@@ -100,8 +100,6 @@ _NOTES:_
 
 _Build workflows are matched to **Services** by the workflow file name set on each service in the **Services** tab; a workflow that is not mapped uses its file name without the extension and any `-ci` or `-build` suffix._
 
-_**Builds check pattern** is the regular expression used to recognize the job within the matched **Build workflow** that produce a Docker image for your services._
-
 ## 6. Slack
 
 ![prdeploy settings Slack](../assets/images/screenshots/prdeploy-portal-settings-slack.png)
