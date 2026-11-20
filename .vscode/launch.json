@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_URLS": "http://localhost:4302"
       },
-      "postDebugTask": "Stop API Build Servers"
+      "postDebugTask": "Stop API"
     },
     {
       "name": "PrDeploy App (Chrome)",
@@ -34,11 +34,12 @@
       "runtimeArgs": [
         "smee-client",
         "-u",
-        "https://smee.io/rcBfYvgm20siCtq",
+        "https://smee.io/pnb8EvkSEICtW2R",
         "-t",
         "http://localhost:4302/webhooks"
       ],
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "postDebugTask": "Stop Smee"
     }
   ],
   "compounds": [

@@ -1,0 +1,57 @@
+info:
+  name: List repository workflows
+  type: graphql
+  seq: 8
+  tags:
+    - query
+graphql:
+  method: POST
+  url: '{{baseUrl}}/graphql'
+  auth:
+    type: bearer
+    token: '{{jwt}}'
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    query: |-
+      query RepositoryWorkflows($input: RepoQueryInput!) {
+        repositoryWorkflows(input: $input)
+      }
+    variables: |-
+      {
+        "input": {
+          "owner": "{{owner}}",
+          "repo": "{{repo}}"
+        }
+      }
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("returns GraphQL data without errors", function () {
+          expect(res.status).to.equal(200);
+          expect(res.body.errors).to.be.undefined;
+        });
+
+        test("returns workflow file paths", function () {
+          expect(res.body.data.repositoryWorkflows).to.be.an("array");
+        });
+settings:
+  encodeUrl: true
+docs: >-
+  Lists the files in a repository's `.github/workflows` folder that match the merged builds workflow pattern, as
+  paths such as `.github/workflows/api-build.yaml` (all YAML files when no valid pattern is set). The Add Service dialog uses it to offer a workflow dropdown and derives the
+  service name by applying the builds workflow pattern to the selected path. Read only.
+
+
+  Client operation:
+  [repository-workflows.graphql](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-app/src/app/shared/graphql/prdeploy-api/queries/repository-workflows.graphql).
+
+  Server schema:
+  [RepositoryQuery.cs](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-api/src/PrDeploy.Api/Schema/Queries/RepositoryQuery.cs).
+
+  Required environment: `owner`, `repo`, and a valid `jwt` for a user with access to the repository.
+
+  Expected response: `200` with `data.repositoryWorkflows` as an array of workflow file paths. Access denied returns
+  a GraphQL error.

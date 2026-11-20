@@ -54,6 +54,7 @@ public static class IServiceCollectionExtensions
             .AddScoped<IPullRequestService, PullRequestService>()
             .AddScoped<IDeploySettingsService, DeploySettingsService>()
             .AddScoped<IOwnerRepoService, OwnerRepoService>()
+            .AddScoped<IRepositoryService, RepositoryService>()
             .AddScoped<IGitHubAuthClient, GitHubAuthClient>()
             .AddScoped<IGitHubSecurity, GitHubSecurity>()
             .AddSingleton<IOrganizationAccess, OrganizationAccess>()

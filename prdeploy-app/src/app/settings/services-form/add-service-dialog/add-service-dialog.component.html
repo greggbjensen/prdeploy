@@ -2,6 +2,14 @@
 <mat-dialog-content>
   <form [formGroup]="form">
     <mat-form-field class="fill-width">
+      <mat-label>Workflow</mat-label>
+      <mat-select formControlName="workflow" [disabled]="loadingWorkflows">
+        @for (workflow of workflows; track workflow) {
+          <mat-option [value]="workflow">{{ workflowFileName(workflow) }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="fill-width">
       <mat-label>Service Name</mat-label>
       <input matInput type="text" formControlName="name" />
     </mat-form-field>

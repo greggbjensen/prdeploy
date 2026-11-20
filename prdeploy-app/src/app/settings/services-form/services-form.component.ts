@@ -1,12 +1,16 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { OwnerRepoValueOfListOfServiceSettings, ServiceSettings } from 'src/app/shared/graphql';
+import { OwnerRepoValueOfListOfServiceSettings, OwnerRepoValueOfString, ServiceSettings } from 'src/app/shared/graphql';
 import { SettingsLevel } from '../models';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
-import { AddServiceDialogComponent } from './add-service-dialog/add-service-dialog.component';
+import {
+  AddServiceDialogComponent,
+  AddServiceDialogData,
+  AddServiceDialogResult
+} from './add-service-dialog/add-service-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
 import _ from 'lodash';
@@ -19,7 +23,7 @@ import _ from 'lodash';
   styleUrl: './services-form.component.scss'
 })
 export class ServicesFormComponent {
-  displayColumns = ['name', 'path', 'remove'];
+  displayColumns = ['workflow', 'name', 'path', 'remove'];
   hasServices = false;
   showOwner = false;
   bindingServiceList: ServiceSettings[] = [];
@@ -37,6 +41,9 @@ export class ServicesFormComponent {
     return this._services;
   }
 
+  /** Builds workflow pattern from owner and repo settings, used to name services from workflow files. */
+  @Input() workflowPattern: OwnerRepoValueOfString;
+
   private _level: SettingsLevel;
   @Input() set level(value: SettingsLevel) {
     this._level = value;
@@ -51,24 +58,38 @@ export class ServicesFormComponent {
   constructor(private _dialog: MatDialog) {}
 
   async showAddDialog() {
-    const dialogRef = this._dialog.open<AddServiceDialogComponent, void, string>(AddServiceDialogComponent, {
-      width: '450px',
-      height: '220px'
-    });
+    const dialogRef = this._dialog.open<AddServiceDialogComponent, AddServiceDialogData, AddServiceDialogResult>(
+      AddServiceDialogComponent,
+      {
+        width: '450px',
+        height: '300px',
+        data: { workflowPattern: this.effectiveWorkflowPattern() }
+      }
+    );
     const service = await firstValueFrom(dialogRef.afterClosed());
-    if (service) {
-      this.add(service);
+    if (service?.name) {
+      this.add(service.name, service.workflow);
     }
   }
 
-  add(serviceName: string) {
+  /** Resolves the pattern in effect for the current level, falling back to the owner value for repo level. */
+  effectiveWorkflowPattern(): string | null {
+    const pattern = this.workflowPattern;
+    if (!pattern) {
+      return null;
+    }
+
+    return (this._level === 'repo' ? pattern.repo || pattern.owner : pattern.owner) ?? null;
+  }
+
+  add(serviceName: string, workflow?: string) {
     // Do not add multiple of the same.
     if (this.actingServiceList.find(s => s.name === serviceName)) {
       return;
     }
 
     this.actingServiceList = _.sortBy(
-      [{ name: serviceName, path: serviceName }, ...this.actingServiceList],
+      [{ name: serviceName, path: serviceName, workflow }, ...this.actingServiceList],
       s => s.name
     );
 

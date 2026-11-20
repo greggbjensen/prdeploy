@@ -89,6 +89,8 @@ Settings live in YAML, not JSON: `appsettings.yaml` and `appsettings.{Environmen
 
 ## Logging
 
+The `repositoryWorkflows` GraphQL query lists the files in a repository's `.github/workflows` folder that match the merged builds workflow pattern (for the portal's Add Service dialog), using the signed in user's GitHub token after the same repository access check as the other repository queries. When no valid pattern is configured every YAML file is listed, and a repository without the folder returns an empty list.
+
 The API uses Serilog (built by `SerilogConfiguration`, which both the bootstrap logger and the host logger in `Program.cs` use to read the `Serilog` section of the `appsettings.yaml` files) and writes JSON to the console. All application code logs through `ILogger<T>` using **message templates** with named placeholders (`"Updated repo settings for {Owner}/{Repo}."`), never string interpolation, so every value is a queryable property.
 
 - **Levels:** `Information` for state changes and business events (deploys, settings changes, tokens issued), `Warning` for denied or rejected requests and expected client errors, `Error` for unexpected failures, and `Debug` for reads, cache hits, and timings. The default minimum level is `Information`; raise verbosity with `Serilog:MinimumLevel:Default` (for example `Debug`). Framework namespaces (`Microsoft`, `System`) are limited to `Warning` by `Serilog:MinimumLevel:Override`, except `Microsoft.Hosting.Lifetime` (startup and listening addresses). `appsettings.Development.yaml` also enables `Information` for `Microsoft.AspNetCore`; to see more framework logs elsewhere, add an override such as `Serilog__MinimumLevel__Override__Microsoft.AspNetCore=Information`.

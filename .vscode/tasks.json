@@ -67,8 +67,64 @@
       "problemMatcher": []
     },
     {
+      "label": "Kill API Process",
+      "detail": "Kills any process still listening on the API port (4302).",
+      "type": "shell",
+      "command": "lsof -ti tcp:4302 | xargs kill 2>/dev/null || true",
+      "windows": {
+        "command": "powershell -NoProfile -Command \"Get-NetTCPConnection -LocalPort 4302 -State Listen -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }\""
+      },
+      "presentation": {
+        "reveal": "silent",
+        "close": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Stop API",
+      "detail": "Stops the API process and shuts down the build servers when the API debug session ends.",
+      "dependsOn": ["Kill API Process", "Stop API Build Servers"],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "Stop Smee",
+      "detail": "Kills the smee-client webhook forwarder when the Smee debug session ends.",
+      "type": "shell",
+      "command": "pkill -f smee-client || true",
+      "windows": {
+        "command": "powershell -NoProfile -Command \"Get-CimInstance Win32_Process -Filter \\\"CommandLine like '%smee-client%'\\\" | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }\""
+      },
+      "presentation": {
+        "reveal": "silent",
+        "close": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Kill App Server",
+      "detail": "Kills any process still listening on the App dev server port (4301).",
+      "type": "shell",
+      "command": "lsof -ti tcp:4301 | xargs kill 2>/dev/null || true",
+      "windows": {
+        "command": "powershell -NoProfile -Command \"Get-NetTCPConnection -LocalPort 4301 -State Listen -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }\""
+      },
+      "presentation": {
+        "reveal": "silent",
+        "close": true
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Stop App",
-      "detail": "Terminates the background Serve App task when the App debug session ends.",
+      "detail": "Stops the Serve App task and any dev server left on its port when the App debug session ends.",
+      "dependsOn": ["Terminate Serve App", "Kill App Server"],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "Terminate Serve App",
+      "detail": "Terminates the background Serve App task.",
       "type": "process",
       "command": "echo",
       "args": ["${input:terminateServeApp}"],

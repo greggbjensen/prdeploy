@@ -1,0 +1,3 @@
+query RepositoryWorkflows($input: RepoQueryInput!) {
+  repositoryWorkflows(input: $input)
+}

@@ -392,6 +392,7 @@ export class SettingsFormComponent implements AfterViewInit {
 
     this.setObjectValue(input, 'name', compare);
     this.setObjectValue(input, 'path', compare);
+    this.setObjectValue(input, 'workflow', compare);
 
     return input;
   }

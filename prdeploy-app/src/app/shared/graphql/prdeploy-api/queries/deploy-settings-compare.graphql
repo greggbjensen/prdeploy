@@ -38,10 +38,12 @@ query DeploySettingsCompare($input: RepoQueryInput!) {
       owner {
         name
         path
+        workflow
       }
       repo {
         name
         path
+        workflow
       }
     }
     defaultEnvironment {

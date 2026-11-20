@@ -14,6 +14,7 @@ type DeployQuery {
   openPullRequests(input: OpenPullRequestInput!): [PullRequest!]!
   enabledOwnerRepos: [OwnerRepos!]!
   repositoryServices(input: RepoQueryInput!): [String!]!
+  repositoryWorkflows(input: RepoQueryInput!): [String!]!
 }
 
 type DeployMutation {
@@ -322,6 +323,7 @@ type JiraSettings {
 type ServiceSettings {
   name: String!
   path: String
+  workflow: String
 }
 
 type EnvironmentSettings {
@@ -429,6 +431,7 @@ input JiraSettingsInput {
 input ServiceSettingsInput {
   name: String!
   path: String
+  workflow: String
 }
 
 input EnvironmentSettingsInput {

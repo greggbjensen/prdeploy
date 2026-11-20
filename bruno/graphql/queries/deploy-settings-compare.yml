@@ -55,10 +55,12 @@ graphql:
             owner {
               name
               path
+              workflow
             }
             repo {
               name
               path
+              workflow
             }
           }
           defaultEnvironment {

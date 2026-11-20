@@ -180,6 +180,7 @@ export type DeployQuery = {
   ownerSettings: DeploySettings;
   repoSettings: DeploySettings;
   repositoryServices: Array<Scalars['String']['output']>;
+  repositoryWorkflows: Array<Scalars['String']['output']>;
 };
 
 
@@ -224,6 +225,11 @@ export type DeployQueryRepoSettingsArgs = {
 
 
 export type DeployQueryRepositoryServicesArgs = {
+  input: RepoQueryInput;
+};
+
+
+export type DeployQueryRepositoryWorkflowsArgs = {
   input: RepoQueryInput;
 };
 
@@ -517,11 +523,13 @@ export type ServiceSettings = {
   __typename?: 'ServiceSettings';
   name: Scalars['String']['output'];
   path?: Maybe<Scalars['String']['output']>;
+  workflow?: Maybe<Scalars['String']['output']>;
 };
 
 export type ServiceSettingsInput = {
   name: Scalars['String']['input'];
   path?: InputMaybe<Scalars['String']['input']>;
+  workflow?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** Input for updating repo settings. */
@@ -663,7 +671,7 @@ export type DeploySettingsCompareQueryVariables = Exact<{
 }>;
 
 
-export type DeploySettingsCompareQuery = { __typename?: 'DeployQuery', deploySettingsCompare: { __typename?: 'DeploySettingsCompare', deployWorkflow: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, environments: { __typename?: 'OwnerRepoValueOfListOfEnvironmentSettings', owner?: Array<{ __typename?: 'EnvironmentSettings', name: string, queue: string, color: string, url?: string | null, requireApproval: boolean, requireBranchUpToDate: boolean, excludeFromRollback?: Array<string> | null, automationTest?: { __typename?: 'AutomationTestSettings', enabled?: boolean | null, workflow?: string | null, inputs?: any | null } | null } | null> | null, repo?: Array<{ __typename?: 'EnvironmentSettings', name: string, queue: string, color: string, url?: string | null, requireApproval: boolean, requireBranchUpToDate: boolean, excludeFromRollback?: Array<string> | null, automationTest?: { __typename?: 'AutomationTestSettings', enabled?: boolean | null, workflow?: string | null, inputs?: any | null } | null } | null> | null }, services: { __typename?: 'OwnerRepoValueOfListOfServiceSettings', owner?: Array<{ __typename?: 'ServiceSettings', name: string, path?: string | null } | null> | null, repo?: Array<{ __typename?: 'ServiceSettings', name: string, path?: string | null } | null> | null }, defaultEnvironment: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, releaseEnvironment: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, jira: { __typename?: 'JiraSettingsCompare', addIssuesEnabled: { __typename?: 'OwnerRepoValueOfNullableOfBoolean', owner?: boolean | null, repo?: boolean | null }, host: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, username: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, password: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null } }, builds: { __typename?: 'BuildsSettingsCompare', checkPattern: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, workflowPattern: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null } }, slack: { __typename?: 'SlackSettingsCompare', token: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, emailDomain: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, emailAliases: { __typename?: 'OwnerRepoDictionary', owner?: any | null, repo?: any | null }, webhooks: { __typename?: 'SlackWebHooksSettingsCompare', deployUrl: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, releaseUrl: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null } }, notificationsEnabled: { __typename?: 'OwnerRepoValueOfNullableOfBoolean', owner?: boolean | null, repo?: boolean | null } }, badge: { __typename?: 'BadgeSettingsCompare', statusColors: { __typename?: 'BadgeStatusColorsSettingsCompare', error: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, warn: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, success: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, info: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null } } }, prdeployPortalUrl: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null } } };
+export type DeploySettingsCompareQuery = { __typename?: 'DeployQuery', deploySettingsCompare: { __typename?: 'DeploySettingsCompare', deployWorkflow: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, environments: { __typename?: 'OwnerRepoValueOfListOfEnvironmentSettings', owner?: Array<{ __typename?: 'EnvironmentSettings', name: string, queue: string, color: string, url?: string | null, requireApproval: boolean, requireBranchUpToDate: boolean, excludeFromRollback?: Array<string> | null, automationTest?: { __typename?: 'AutomationTestSettings', enabled?: boolean | null, workflow?: string | null, inputs?: any | null } | null } | null> | null, repo?: Array<{ __typename?: 'EnvironmentSettings', name: string, queue: string, color: string, url?: string | null, requireApproval: boolean, requireBranchUpToDate: boolean, excludeFromRollback?: Array<string> | null, automationTest?: { __typename?: 'AutomationTestSettings', enabled?: boolean | null, workflow?: string | null, inputs?: any | null } | null } | null> | null }, services: { __typename?: 'OwnerRepoValueOfListOfServiceSettings', owner?: Array<{ __typename?: 'ServiceSettings', name: string, path?: string | null, workflow?: string | null } | null> | null, repo?: Array<{ __typename?: 'ServiceSettings', name: string, path?: string | null, workflow?: string | null } | null> | null }, defaultEnvironment: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, releaseEnvironment: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, jira: { __typename?: 'JiraSettingsCompare', addIssuesEnabled: { __typename?: 'OwnerRepoValueOfNullableOfBoolean', owner?: boolean | null, repo?: boolean | null }, host: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, username: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, password: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null } }, builds: { __typename?: 'BuildsSettingsCompare', checkPattern: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, workflowPattern: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null } }, slack: { __typename?: 'SlackSettingsCompare', token: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, emailDomain: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, emailAliases: { __typename?: 'OwnerRepoDictionary', owner?: any | null, repo?: any | null }, webhooks: { __typename?: 'SlackWebHooksSettingsCompare', deployUrl: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, releaseUrl: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null } }, notificationsEnabled: { __typename?: 'OwnerRepoValueOfNullableOfBoolean', owner?: boolean | null, repo?: boolean | null } }, badge: { __typename?: 'BadgeSettingsCompare', statusColors: { __typename?: 'BadgeStatusColorsSettingsCompare', error: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, warn: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, success: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, info: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null } } }, prdeployPortalUrl: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null } } };
 
 export type DeployStateComparisonQueryVariables = Exact<{
   input: DeployStateComparisonInput;
@@ -697,6 +705,13 @@ export type RepositoryServicesQueryVariables = Exact<{
 
 
 export type RepositoryServicesQuery = { __typename?: 'DeployQuery', repositoryServices: Array<string> };
+
+export type RepositoryWorkflowsQueryVariables = Exact<{
+  input: RepoQueryInput;
+}>;
+
+
+export type RepositoryWorkflowsQuery = { __typename?: 'DeployQuery', repositoryWorkflows: Array<string> };
 
 export const DeployEnvironmentDeployDocument = gql`
     mutation DeployEnvironmentDeploy($input: EnvironmentDeployInput!) {
@@ -933,10 +948,12 @@ export const DeploySettingsCompareDocument = gql`
       owner {
         name
         path
+        workflow
       }
       repo {
         name
         path
+        workflow
       }
     }
     defaultEnvironment {
@@ -1140,6 +1157,22 @@ export const RepositoryServicesDocument = gql`
   })
   export class RepositoryServicesGQL extends Apollo.Query<RepositoryServicesQuery, RepositoryServicesQueryVariables> {
     override document = RepositoryServicesDocument;
+    override client = 'deploy';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const RepositoryWorkflowsDocument = gql`
+    query RepositoryWorkflows($input: RepoQueryInput!) {
+  repositoryWorkflows(input: $input)
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class RepositoryWorkflowsGQL extends Apollo.Query<RepositoryWorkflowsQuery, RepositoryWorkflowsQueryVariables> {
+    override document = RepositoryWorkflowsDocument;
     override client = 'deploy';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
