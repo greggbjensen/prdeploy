@@ -38,7 +38,8 @@ try
         .Build();
 
     //initial logger without env running
-    Log.Logger = SerilogConfiguration.Configure(new LoggerConfiguration(), configuration)
+    Log.Logger = SerilogConfiguration.Configure(
+            new LoggerConfiguration(), configuration, prettyConsole: builder.Environment.IsDevelopment())
         .CreateBootstrapLogger();
 
     builder.Services
@@ -79,7 +80,8 @@ try
 
     // Replaces the bootstrap logger so the host logger honors the final configuration and DI-registered sinks.
     builder.Host.UseSerilog((context, services, loggerConfiguration) =>
-        SerilogConfiguration.Configure(loggerConfiguration, context.Configuration, services));
+        SerilogConfiguration.Configure(
+            loggerConfiguration, context.Configuration, services, context.HostingEnvironment.IsDevelopment()));
     var app = builder.Build();
     Log.Information("Starting PrDeploy API in {Environment} using {StorageProvider} storage.",
         app.Environment.EnvironmentName, StorageProviderConfiguration.GetProvider(configuration));

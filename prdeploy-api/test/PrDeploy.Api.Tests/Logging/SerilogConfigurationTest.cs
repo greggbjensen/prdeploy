@@ -112,4 +112,58 @@ public class SerilogConfigurationTest
 
         Assert.Equal("\"octocat\"", sink.Events.Single().Properties["User"].ToString());
     }
+
+    /// <summary>
+    /// Runs the real console sink against a captured <see cref="Console.Out"/> and returns what it wrote.
+    /// </summary>
+    /// <param name="prettyConsole">Whether to use the development formatting.</param>
+    /// <returns>The raw console text, including any ANSI escape codes.</returns>
+    private static string WriteToConsole(bool prettyConsole)
+    {
+        var original = Console.Out;
+        var writer = new StringWriter();
+        Console.SetOut(writer);
+        try
+        {
+            var configuration = new ConfigurationBuilder().Build();
+            using (var logger = SerilogConfiguration.Configure(
+                       new LoggerConfiguration(), configuration, prettyConsole: prettyConsole).CreateLogger())
+            {
+                logger.ForContext("SourceContext", "Test").Information("Hello {Owner}", "octocat");
+            }
+        }
+        finally
+        {
+            Console.SetOut(original);
+        }
+
+        return writer.ToString();
+    }
+
+    /// <summary>
+    /// Production output must be a single structured JSON document with the rendered message and properties.
+    /// </summary>
+    [Fact]
+    public void Configure_NonDevelopment_WritesStructuredJson()
+    {
+        var output = WriteToConsole(prettyConsole: false);
+
+        using var json = System.Text.Json.JsonDocument.Parse(output.Trim());
+        Assert.Equal("Hello \"octocat\"", json.RootElement.GetProperty("RenderedMessage").GetString());
+        Assert.Equal("octocat", json.RootElement.GetProperty("Properties").GetProperty("Owner").GetString());
+    }
+
+    /// <summary>
+    /// Development output must be colorized (ANSI codes) readable text rather than JSON.
+    /// </summary>
+    [Fact]
+    public void Configure_Development_WritesColoredReadableText()
+    {
+        var output = WriteToConsole(prettyConsole: true);
+
+        Assert.Contains("\u001b[", output);
+        Assert.Contains("INF", output);
+        Assert.Contains("octocat", output);
+        Assert.DoesNotContain("\"RenderedMessage\"", output);
+    }
 }
