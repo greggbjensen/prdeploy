@@ -30,7 +30,6 @@ jira:
 settingsBranch: 'main'
 builds:
   checkPattern: 'Build helm chart'
-  workflowPattern: '/([^/]+?)-build.ya?ml'
 slack:
   notificationsEnabled: false
 badge:

@@ -68,19 +68,4 @@ describe('ServicesFormComponent', () => {
 
     expect(component.actingServiceList).toEqual([]);
   });
-
-  it('uses the repo pattern at repo level and falls back to the owner pattern', () => {
-    component.workflowPattern = { owner: 'owner-pattern', repo: null } as never;
-    expect(component.effectiveWorkflowPattern()).toBe('owner-pattern');
-
-    component.workflowPattern = { owner: 'owner-pattern', repo: 'repo-pattern' } as never;
-    expect(component.effectiveWorkflowPattern()).toBe('repo-pattern');
-  });
-
-  it('uses only the owner pattern at owner level', () => {
-    component.level = 'owner';
-    component.workflowPattern = { owner: 'owner-pattern', repo: 'repo-pattern' } as never;
-
-    expect(component.effectiveWorkflowPattern()).toBe('owner-pattern');
-  });
 });

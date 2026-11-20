@@ -88,23 +88,16 @@ public partial class CheckService
     /// <returns>Items matching the supplied criteria.</returns>
     public async Task<List<Build>> ListBuildsAsync(PullRequest pullRequest, IReadOnlyCollection<long>? overrideBuildRunIds = null)
     {
-        if (string.IsNullOrEmpty(Settings.Builds?.WorkflowPattern))
-        {
-            return [];
-        }
-
-        var workflowRegex = new Regex(Settings.Builds.WorkflowPattern, RegexOptions.IgnoreCase);
-
         if (overrideBuildRunIds is { Count: > 0 })
         {
-            var overrideBuilds = await Task.WhenAll(overrideBuildRunIds.Select(r => ExtractBuildAsync(workflowRegex, r)));
+            var overrideBuilds = await Task.WhenAll(overrideBuildRunIds.Select(r => ExtractBuildAsync(r)));
             return overrideBuilds.ToList();
         }
 
         _logger.LogInformation("Listing checks for ref: {Ref}", pullRequest.Head.Ref);
         var result = await GetChecksForRefAsync(pullRequest.Head.Ref);
 
-        var checkRegex = new Regex(Settings.Builds.CheckPattern ?? string.Empty, RegexOptions.IgnoreCase);
+        var checkRegex = new Regex(Settings.Builds?.CheckPattern ?? string.Empty, RegexOptions.IgnoreCase);
         var buildChecks = result.CheckRuns.Where(c => checkRegex.IsMatch(c.Name)).ToList();
         var incompleteChecks = buildChecks
             .Where(c => c.Status.StringValue != "completed")
@@ -116,7 +109,7 @@ public partial class CheckService
             _logger.LogWarning("Please wait for the checks to pass and try again.");
         }
 
-        var builds = await Task.WhenAll(buildChecks.Select(c => ExtractBuildAsync(workflowRegex, ParseRunId(c.DetailsUrl))));
+        var builds = await Task.WhenAll(buildChecks.Select(c => ExtractBuildAsync(ParseRunId(c.DetailsUrl))));
 
         // Remove any duplicate builds.
         var uniqueBuilds = builds.DistinctBy(b => b.Name).ToList();
@@ -347,23 +340,15 @@ public partial class CheckService
     /// <summary>
     /// Performs the extract build operation and returns its result.
     /// </summary>
-    /// <param name="workflowRegex">Object containing the workflow regex data used by the operation.</param>
     /// <param name="runId">Numeric value used for the run id.</param>
     /// <returns>The build produced by the operation.</returns>
-    private async Task<Build> ExtractBuildAsync(Regex workflowRegex, long runId)
+    private async Task<Build> ExtractBuildAsync(long runId)
     {
         _logger.LogDebug("Getting the workflow run with ID: {RunId}", runId);
         var run = await _context.GitHub.Actions.Workflows.Runs.Get(_context.Owner, _context.Repo, runId);
 
         var workflowPath = run.Path ?? string.Empty;
-        var match = workflowRegex.Match(workflowPath);
-        var name = match.Success && match.Groups.Count > 1 ? match.Groups[1].Value : string.Empty;
-        if (string.IsNullOrEmpty(name))
-        {
-            name = workflowPath;
-            _logger.LogWarning("workflow_regex {Regex} did not match workflow path: {Path}", workflowRegex,
-                workflowPath);
-        }
+        var name = GetBuildName(Settings, workflowPath);
 
         var version = await ExtractVersionAsync(runId);
         _logger.LogDebug("Found version: {Version}", version);
@@ -377,6 +362,34 @@ public partial class CheckService
             Url = run.HtmlUrl
         };
     }
+
+    /// <summary>
+    /// Resolves the service name a build workflow produces.
+    /// </summary>
+    /// <param name="settings">Merged settings whose mapped services are searched.</param>
+    /// <param name="workflowPath">Workflow file path of the run, such as <c>.github/workflows/api-build.yaml</c>.</param>
+    /// <returns>The name of the service mapped to the workflow file; when none is mapped, the file name without its
+    /// extension and without a trailing <c>-ci</c> or <c>-build</c> suffix.</returns>
+    public static string GetBuildName(DeploySettings settings, string workflowPath)
+    {
+        var fileName = Path.GetFileName(workflowPath);
+        var service = (settings.Services ?? [])
+            .FirstOrDefault(s => !string.IsNullOrEmpty(s.Workflow)
+                                 && string.Equals(s.Workflow, fileName, StringComparison.OrdinalIgnoreCase));
+        if (service != null)
+        {
+            return service.Name;
+        }
+
+        return WorkflowSuffixRegex().Replace(Path.GetFileNameWithoutExtension(fileName), string.Empty);
+    }
+
+    /// <summary>
+    /// Matches a trailing <c>-ci</c> or <c>-build</c> suffix on a workflow file name.
+    /// </summary>
+    /// <returns>The compiled expression.</returns>
+    [GeneratedRegex(@"-(ci|build)$", RegexOptions.IgnoreCase)]
+    private static partial Regex WorkflowSuffixRegex();
 
     /// <summary>
     /// Performs the extract version operation and returns its result.

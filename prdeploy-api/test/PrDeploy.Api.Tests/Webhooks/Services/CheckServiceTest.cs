@@ -1,3 +1,4 @@
+using PrDeploy.Api.Models.Settings;
 using PrDeploy.Api.Tests.Webhooks.Framework;
 using PrDeploy.Api.Webhooks.Services;
 
@@ -71,6 +72,49 @@ public class CheckServiceTest : IDisposable
         var checks = await _service.ListIncompletePullChecksAsync(GitHubModels.PullRequest(1));
 
         Assert.Equal(["Build", "Tests"], checks.Select(c => c.Name));
+    }
+
+    /// <summary>
+    /// Verifies a build takes the name of the service mapped to its workflow file, ignoring case and folder.
+    /// </summary>
+    [Fact]
+    public void GetBuildName_WorkflowMappedToService_ReturnsServiceName()
+    {
+        var settings = new DeploySettings
+        {
+            Services = [new ServiceSettings { Name = "api", Path = "src/api", Workflow = "Backend-Build.yaml" }]
+        };
+
+        var name = CheckService.GetBuildName(settings, ".github/workflows/backend-build.yaml");
+
+        Assert.Equal("api", name);
+    }
+
+    /// <summary>
+    /// Verifies an unmapped workflow falls back to its file name without extension and -ci or -build suffix.
+    /// </summary>
+    [Theory]
+    [InlineData(".github/workflows/web-build.yml", "web")]
+    [InlineData(".github/workflows/web-CI.yaml", "web")]
+    [InlineData(".github/workflows/web.yaml", "web")]
+    [InlineData(".github/workflows/build-web.yaml", "build-web")]
+    public void GetBuildName_WorkflowNotMapped_ReturnsFileNameWithoutSuffix(string path, string expected)
+    {
+        var settings = new DeploySettings
+        {
+            Services = [new ServiceSettings { Name = "other", Workflow = "other-build.yaml" }, new ServiceSettings { Name = "nowf" }]
+        };
+
+        Assert.Equal(expected, CheckService.GetBuildName(settings, path));
+    }
+
+    /// <summary>
+    /// Verifies a settings object without services still produces a name.
+    /// </summary>
+    [Fact]
+    public void GetBuildName_NoServices_ReturnsFileNameWithoutSuffix()
+    {
+        Assert.Equal("app", CheckService.GetBuildName(new DeploySettings { Services = null! }, ".github/workflows/app-ci.yml"));
     }
 
     /// <summary>

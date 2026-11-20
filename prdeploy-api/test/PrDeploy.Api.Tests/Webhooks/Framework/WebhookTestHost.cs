@@ -113,8 +113,7 @@ public sealed class WebhookTestHost : IDisposable
         PrdeployPortalUrl = "https://prdeploy.myorg.com",
         Builds = new BuildsSettings
         {
-            CheckPattern = "Build helm chart",
-            WorkflowPattern = "/([^/]+?)-build.ya?ml"
+            CheckPattern = "Build helm chart"
         },
         Badge = new BadgeSettings
         {

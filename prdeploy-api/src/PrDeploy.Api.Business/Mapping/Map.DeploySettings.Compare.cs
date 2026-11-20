@@ -79,11 +79,6 @@ public static partial class Map
             {
                 Owner = owner?.CheckPattern,
                 Repo = repo?.CheckPattern
-            },
-            WorkflowPattern = new()
-            {
-                Owner = owner?.WorkflowPattern,
-                Repo = repo?.WorkflowPattern
             }
         };
     }

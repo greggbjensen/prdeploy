@@ -40,9 +40,9 @@ runtime:
 settings:
   encodeUrl: true
 docs: >-
-  Lists the files in a repository's `.github/workflows` folder that match the merged builds workflow pattern, as
-  paths such as `.github/workflows/api-build.yaml` (all YAML files when no valid pattern is set). The Add Service dialog uses it to offer a workflow dropdown and derives the
-  service name by applying the builds workflow pattern to the selected path. Read only.
+  Lists the YAML files in a repository's `.github/workflows` folder as paths such as
+  `.github/workflows/api-build.yaml`. The Add Service dialog uses it to offer a workflow dropdown and derives the
+  service name and path from the selected file name minus its extension and any `-ci` or `-build` suffix. Read only.
 
 
   Client operation:

@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, Subject, throwError } from 'rxjs';
 import { RepositoryWorkflowsGQL } from 'src/app/shared/graphql';
@@ -13,16 +13,15 @@ describe('AddServiceDialogComponent', () => {
   let loggingService: jasmine.SpyObj<LoggingService>;
   let dialogRef: jasmine.SpyObj<MatDialogRef<AddServiceDialogComponent>>;
 
-  /** Creates the component with the supplied dialog data. */
-  function create(data: unknown = { workflowPattern: '/([^/]+?)-build.ya?ml' }): AddServiceDialogComponent {
+  /** Creates the component with mocked dependencies. */
+  function create(): AddServiceDialogComponent {
     TestBed.configureTestingModule({
       imports: [AddServiceDialogComponent, NoopAnimationsModule],
       providers: [
         { provide: RepositoryWorkflowsGQL, useValue: workflowsGql },
         { provide: RepoManager, useValue: { owner: 'o', repo: 'r' } },
         { provide: LoggingService, useValue: loggingService },
-        { provide: MatDialogRef, useValue: dialogRef },
-        { provide: MAT_DIALOG_DATA, useValue: data }
+        { provide: MatDialogRef, useValue: dialogRef }
       ]
     });
     return TestBed.createComponent(AddServiceDialogComponent).componentInstance;
@@ -64,8 +63,8 @@ describe('AddServiceDialogComponent', () => {
     expect(component.form.controls.path.value).toBe('prdeploy-api');
   });
 
-  it('strips -ci and -build suffixes when the dialog has no pattern', () => {
-    const component = create(null);
+  it('strips -ci and -build suffixes', () => {
+    const component = create();
 
     component.form.controls.workflow.setValue('.github/workflows/web-build.yml');
     expect(component.form.controls.name.value).toBe('web');

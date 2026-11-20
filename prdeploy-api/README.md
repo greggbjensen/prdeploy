@@ -89,7 +89,9 @@ Settings live in YAML, not JSON: `appsettings.yaml` and `appsettings.{Environmen
 
 ## Logging
 
-The `repositoryWorkflows` GraphQL query lists the files in a repository's `.github/workflows` folder that match the merged builds workflow pattern (for the portal's Add Service dialog), using the signed in user's GitHub token after the same repository access check as the other repository queries. When no valid pattern is configured every YAML file is listed, and a repository without the folder returns an empty list.
+The `repositoryWorkflows` GraphQL query lists the files in a repository's `.github/workflows` folder (for the portal's Add Service dialog), using the signed in user's GitHub token after the same repository access check as the other repository queries. Every YAML file is listed, and a repository without the folder returns an empty list.
+
+Build names come from the mapped **Services**: a build's workflow file name is matched (case-insensitively) to a service's `workflow`, and that service's name is used. A workflow that is not mapped falls back to its file name without the extension and without a trailing `-ci` or `-build`. The old `builds.workflowPattern` setting no longer exists; leftover values in stored settings are ignored.
 
 The API uses Serilog (built by `SerilogConfiguration`, which both the bootstrap logger and the host logger in `Program.cs` use to read the `Serilog` section of the `appsettings.yaml` files) and writes to the console: colorized, human-readable text in the `Development` environment and structured JSON (one document per event) in every other environment, selected in code by `SerilogConfiguration.Configure(..., prettyConsole)` rather than by configuration. All application code logs through `ILogger<T>` using **message templates** with named placeholders (`"Updated repo settings for {Owner}/{Repo}."`), never string interpolation, so every value is a queryable property.
 

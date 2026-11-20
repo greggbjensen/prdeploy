@@ -4,44 +4,31 @@ using Moq;
 using Octokit;
 using PrDeploy.Api.Business.Security.Interfaces;
 using PrDeploy.Api.Business.Services;
-using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Models.General.Inputs;
-using PrDeploy.Api.Models.Settings;
 
 namespace PrDeploy.Api.Tests.Security;
 
 /// <summary>
-/// Verifies <see cref="RepositoryService"/> guards repository access and lists only build workflow files.
+/// Verifies <see cref="RepositoryService"/> guards repository access and lists its YAML workflow files.
 /// </summary>
 public class RepositoryServiceTest
 {
-    private const string Pattern = "/([^/]+?)-build.ya?ml";
     private readonly Mock<IGitHubClient> _client = new();
     private readonly Mock<IRepositoryContentsClient> _contents = new();
     private readonly Mock<IGitHubSecurity> _security = new();
-    private readonly Mock<IDeploySettingsService> _settings = new();
     private readonly RepositoryService _service;
 
     /// <summary>
-    /// Wires the service with a mocked GitHub contents client, security guard and merged settings.
+    /// Wires the service with a mocked GitHub contents client and security guard.
     /// </summary>
     public RepositoryServiceTest()
     {
         var repository = new Mock<IRepositoriesClient>();
         repository.SetupGet(r => r.Content).Returns(_contents.Object);
         _client.SetupGet(c => c.Repository).Returns(repository.Object);
-        SetupPattern(Pattern);
-        _service = new RepositoryService(_client.Object, _security.Object, _settings.Object,
+        _service = new RepositoryService(_client.Object, _security.Object,
             NullLogger<RepositoryService>.Instance);
     }
-
-    /// <summary>
-    /// Stubs the merged settings with the given builds workflow pattern.
-    /// </summary>
-    /// <param name="pattern">Builds workflow pattern, or <c>null</c> for none.</param>
-    private void SetupPattern(string? pattern) =>
-        _settings.Setup(s => s.GetMergedAsync("o", "r"))
-            .ReturnsAsync(new DeploySettings { Builds = new BuildsSettings { WorkflowPattern = pattern } });
 
     /// <summary>
     /// Stubs the workflows folder listing with the given entries.
@@ -64,42 +51,24 @@ public class RepositoryServiceTest
         _service.ListWorkflowsAsync(new RepoQueryInput { Owner = "o", Repo = "r" });
 
     /// <summary>
-    /// Confirms only files matching the builds pattern are returned, sorted and limited to YAML files.
+    /// Confirms every YAML file is returned, sorted, while folders and other file types are skipped.
     /// </summary>
     [Fact]
-    public async Task ListWorkflowsAsync_PatternConfigured_ReturnsSortedMatchingFiles()
+    public async Task ListWorkflowsAsync_ReturnsSortedYamlFiles()
     {
         SetupFolder(
             (".github/workflows/web-build.yaml", ContentType.File),
-            (".github/workflows/Api-BUILD.yml", ContentType.File),
-            (".github/workflows/combined-deploy.yaml", ContentType.File),
-            (".github/workflows/nested-build.yaml", ContentType.Dir),
-            (".github/workflows/readme-build.md", ContentType.File));
-
-        var result = await ListAsync();
-
-        Assert.Equal([".github/workflows/Api-BUILD.yml", ".github/workflows/web-build.yaml"], result);
-        _security.Verify(s => s.GuardRepoAsync("o", "r"), Times.Once);
-    }
-
-    /// <summary>
-    /// Confirms every YAML file is returned when no builds pattern is configured.
-    /// </summary>
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("([unclosed")]
-    public async Task ListWorkflowsAsync_NoUsablePattern_ReturnsAllYamlFiles(string? pattern)
-    {
-        SetupPattern(pattern);
-        SetupFolder(
-            (".github/workflows/web-build.yaml", ContentType.File),
+            (".github/workflows/Api-ci.yml", ContentType.File),
             (".github/workflows/deploy.yml", ContentType.File),
+            (".github/workflows/nested.yaml", ContentType.Dir),
             (".github/workflows/notes.txt", ContentType.File));
 
         var result = await ListAsync();
 
-        Assert.Equal([".github/workflows/deploy.yml", ".github/workflows/web-build.yaml"], result);
+        Assert.Equal(
+            [".github/workflows/Api-ci.yml", ".github/workflows/deploy.yml", ".github/workflows/web-build.yaml"],
+            result);
+        _security.Verify(s => s.GuardRepoAsync("o", "r"), Times.Once);
     }
 
     /// <summary>

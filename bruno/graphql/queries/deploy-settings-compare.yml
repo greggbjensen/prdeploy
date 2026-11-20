@@ -94,10 +94,6 @@ graphql:
               owner
               repo
             }
-            workflowPattern {
-              owner
-              repo
-            }
           }
           slack {
             token {

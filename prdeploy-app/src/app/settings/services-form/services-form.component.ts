@@ -1,16 +1,12 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { OwnerRepoValueOfListOfServiceSettings, OwnerRepoValueOfString, ServiceSettings } from 'src/app/shared/graphql';
+import { OwnerRepoValueOfListOfServiceSettings, ServiceSettings } from 'src/app/shared/graphql';
 import { SettingsLevel } from '../models';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
-import {
-  AddServiceDialogComponent,
-  AddServiceDialogData,
-  AddServiceDialogResult
-} from './add-service-dialog/add-service-dialog.component';
+import { AddServiceDialogComponent, AddServiceDialogResult } from './add-service-dialog/add-service-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
 import _ from 'lodash';
@@ -41,9 +37,6 @@ export class ServicesFormComponent {
     return this._services;
   }
 
-  /** Builds workflow pattern from owner and repo settings, used to name services from workflow files. */
-  @Input() workflowPattern: OwnerRepoValueOfString;
-
   private _level: SettingsLevel;
   @Input() set level(value: SettingsLevel) {
     this._level = value;
@@ -58,28 +51,17 @@ export class ServicesFormComponent {
   constructor(private _dialog: MatDialog) {}
 
   async showAddDialog() {
-    const dialogRef = this._dialog.open<AddServiceDialogComponent, AddServiceDialogData, AddServiceDialogResult>(
+    const dialogRef = this._dialog.open<AddServiceDialogComponent, void, AddServiceDialogResult>(
       AddServiceDialogComponent,
       {
         width: '450px',
-        height: '370px',
-        data: { workflowPattern: this.effectiveWorkflowPattern() }
+        height: '370px'
       }
     );
     const service = await firstValueFrom(dialogRef.afterClosed());
     if (service?.name) {
       this.add(service.name, service.workflow, service.path);
     }
-  }
-
-  /** Resolves the pattern in effect for the current level, falling back to the owner value for repo level. */
-  effectiveWorkflowPattern(): string | null {
-    const pattern = this.workflowPattern;
-    if (!pattern) {
-      return null;
-    }
-
-    return (this._level === 'repo' ? pattern.repo || pattern.owner : pattern.owner) ?? null;
   }
 
   /** Adds a service; the path defaults to the name when not supplied. */

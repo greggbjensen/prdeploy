@@ -86,7 +86,6 @@ public static partial class Map
         }
 
         target.CheckPattern ??= source.CheckPattern;
-        target.WorkflowPattern ??= source.WorkflowPattern;
     }
 
     /// <summary>

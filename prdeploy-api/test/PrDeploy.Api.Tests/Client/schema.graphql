@@ -271,7 +271,6 @@ type SlackSettingsCompare {
 
 type BuildsSettingsCompare {
   checkPattern: OwnerRepoValueOfString!
-  workflowPattern: OwnerRepoValueOfString!
 }
 
 type JiraSettingsCompare {
@@ -310,7 +309,6 @@ type SlackSettings {
 
 type BuildsSettings {
   checkPattern: String
-  workflowPattern: String
 }
 
 type JiraSettings {
@@ -418,7 +416,6 @@ input SlackSettingsInput {
 
 input BuildsSettingsInput {
   checkPattern: String
-  workflowPattern: String
 }
 
 input JiraSettingsInput {

@@ -406,7 +406,6 @@ export class SettingsFormComponent implements AfterViewInit {
 
   private setBuilds(input: BuildsSettingsInput, compareValue: SetCompareValue<BuildsSettingsCompare>) {
     this.set(input, 'checkPattern', compareValue);
-    this.set(input, 'workflowPattern', compareValue);
   }
 
   private setSlack(input: SlackSettingsInput, compareValue: SetCompareValue<SlackSettingsCompare>) {

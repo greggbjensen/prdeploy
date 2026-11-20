@@ -1,14 +1,8 @@
-import { Component, ChangeDetectionStrategy, Inject, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle
-} from '@angular/material/dialog';
+import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -18,12 +12,6 @@ import { RepositoryWorkflowsGQL } from 'src/app/shared/graphql';
 import { RepoManager } from 'src/app/shared/managers';
 import { LoggingService } from 'src/app/shared/services';
 import { workflowServiceName } from './workflow-service-name';
-
-/** Data passed to the add service dialog. */
-export interface AddServiceDialogData {
-  /** Builds workflow pattern used to derive the service name from a workflow file. */
-  workflowPattern?: string | null;
-}
 
 /** Service chosen in the add service dialog. */
 export interface AddServiceDialogResult {
@@ -68,8 +56,7 @@ export class AddServiceDialogComponent implements OnInit {
     private _dialogRef: MatDialogRef<AddServiceDialogComponent>,
     private _repoManager: RepoManager,
     private _repositoryWorkflowsGQL: RepositoryWorkflowsGQL,
-    private _loggingService: LoggingService,
-    @Inject(MAT_DIALOG_DATA) private _data: AddServiceDialogData | null
+    private _loggingService: LoggingService
   ) {
     this._dialogRef
       .afterOpened()
@@ -81,7 +68,7 @@ export class AddServiceDialogComponent implements OnInit {
     // Selecting a workflow fills in the service name and path, which can still be edited afterward.
     this.form.controls.workflow.valueChanges.pipe(takeUntilDestroyed()).subscribe(workflow => {
       if (workflow) {
-        const name = workflowServiceName(workflow, this._data?.workflowPattern);
+        const name = workflowServiceName(workflow);
         this.form.controls.name.setValue(name);
         this.form.controls.path.setValue(name);
       }

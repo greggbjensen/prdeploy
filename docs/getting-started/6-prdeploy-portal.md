@@ -129,7 +129,7 @@ _NOTE: As necessary, you can fill in email aliases if **prdeploy** finds the inc
 
 _NOTES:_
 
-_**Builds workflow pattern** is the regular expression used to extract the service name to match with **Services** from your **GitHub Action** build workflow._
+_Build workflows are matched to **Services** by the workflow file name set on each service in the **Services** tab; a workflow that is not mapped uses its file name without the extension and any `-ci` or `-build` suffix._
 
 _**Builds check pattern** is the regular expression used to recognize the job within the matched **Build workflow** that produce a Docker image for your services._
 

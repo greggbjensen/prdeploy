@@ -28,7 +28,6 @@ jira:
 settingsBranch: 'main' # Branch to retrieve repo settings from.
 builds:
   checkPattern: 'Build helm chart' # Pattern to know which checks are builds.
-  workflowPattern: '/([^/]+?)-build.ya?ml' # Pattern to know how to extract the build name from the workflow file.
 slack:
   notificationsEnabled: false # Whether or not to send Slack notifications.
 badge:

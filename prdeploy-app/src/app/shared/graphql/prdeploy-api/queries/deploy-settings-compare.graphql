@@ -77,10 +77,6 @@ query DeploySettingsCompare($input: RepoQueryInput!) {
         owner
         repo
       }
-      workflowPattern {
-        owner
-        repo
-      }
     }
     slack {
       token {
