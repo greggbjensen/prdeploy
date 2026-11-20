@@ -32,7 +32,7 @@ public class CommentCommandManagerTest : IDisposable
         _comments = _host.CaptureComments();
         _labels = _host.CaptureLabels();
         _host.SetupDeployedPullRequests();
-        _host.SetupChecks(Branch, ("[Bb]uild", "completed", "success", 10014663490));
+        _host.SetupChecks(Branch, ("Build details", "completed", "success", 10014663490, "PR_DEPLOY_BUILD"));
         _host.SetupBuildRun(10014663490, ".github/workflows/deploy-app-test-build.yml");
         _host.SetupUser("greggbjensen");
 
@@ -135,7 +135,7 @@ public class CommentCommandManagerTest : IDisposable
         _host.SetupPullRequest(GitHubModels.PullRequest(PullNumber, Branch, labels: ["stage", "stage-lock"]));
         var next = GitHubModels.PullRequest(9, "next-branch");
         _host.SetupPullRequest(next);
-        _host.SetupChecks("next-branch", ("[Bb]uild", "completed", "success", 10014663490));
+        _host.SetupChecks("next-branch", ("Build details", "completed", "success", 10014663490, "PR_DEPLOY_BUILD"));
         await _host.DeploymentStore.SetAsync(WebhookTestHost.Owner, WebhookTestHost.Repo, "STAGE_PR_QUEUE", new List<int> { 9 });
 
         await _manager.ProcessCommentAsync(CommentId, "/free stage", IssueUrl);

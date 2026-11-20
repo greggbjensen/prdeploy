@@ -111,7 +111,41 @@ public class CheckServiceTest : IDisposable
 
         var checks = await _service.ListIncompletePullChecksAsync(GitHubModels.PullRequest(1));
 
-        Assert.Equal(["Build", "Tests"], checks.Select(c => c.Name));
+        Assert.Equal(["Build (in_progress)", "Tests (completed)"], checks.Select(c => c.CheckName));
+    }
+
+    /// <summary>
+    /// Verifies a failed check that is not a workflow job, such as one a test reporter creates through the Checks
+    /// API, still counts as incomplete without looking up a workflow run.
+    /// </summary>
+    [Fact]
+    public async Task ListIncompletePullChecksAsync_FailedCheckWithoutWorkflowRun_IsIncluded()
+    {
+        _host.SetupChecks("feature-branch",
+            ("Test results", "completed", "failure", 0),
+            ("Lint", "completed", "success", 4));
+
+        var checks = await _service.ListIncompletePullChecksAsync(GitHubModels.PullRequest(1));
+
+        var check = Assert.Single(checks);
+        Assert.Equal("Test results (completed)", check.CheckName);
+        Assert.Equal("failure", check.Conclusion);
+        Assert.Equal(0, check.RunId);
+    }
+
+    /// <summary>
+    /// Verifies a ref whose checks all succeeded has no incomplete checks.
+    /// </summary>
+    [Fact]
+    public async Task ListIncompletePullChecksAsync_AllChecksSucceeded_ReturnsEmpty()
+    {
+        _host.SetupChecks("feature-branch",
+            ("Build", "completed", "success", 1),
+            ("Test results", "completed", "success", 0));
+
+        var checks = await _service.ListIncompletePullChecksAsync(GitHubModels.PullRequest(1));
+
+        Assert.Empty(checks);
     }
 
     /// <summary>

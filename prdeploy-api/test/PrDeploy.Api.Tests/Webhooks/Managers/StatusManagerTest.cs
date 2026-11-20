@@ -48,7 +48,7 @@ public class StatusManagerTest : IDisposable
         _host.SetupDeployedPullRequests();
         var pullRequest = GitHubModels.PullRequest(4, labels: ["stage", "stage-lock"]);
         _host.SetupPullRequest(pullRequest);
-        _host.SetupChecks(pullRequest.Head.Ref, ("[Bb]uild", "completed", "success", 10014663490));
+        _host.SetupChecks(pullRequest.Head.Ref, ("Build details", "completed", "success", 10014663490, "PR_DEPLOY_BUILD"));
         _host.SetupBuildRun(10014663490, ".github/workflows/app-build.yml");
         _host.MockOf(_host.GitHub.Object.PullRequest)
             .Setup(c => c.Commits(WebhookTestHost.Owner, WebhookTestHost.Repo, 4))

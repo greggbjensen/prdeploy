@@ -110,7 +110,7 @@ public partial class CheckService
         }
 
         var builds = await Task.WhenAll(checkSummaries
-          .Where(c => c.IsBuild)
+          .Where(c => c.IsBuild && c.RunId != 0)
           .Select(c => ExtractBuildAsync(c.RunId)));
 
         // Remove any duplicate builds.
@@ -149,6 +149,14 @@ public partial class CheckService
 
         var keep = await Task.WhenAll(incompleteChecks.Select(async c =>
         {
+            if (c.RunId == 0)
+            {
+                // Not a workflow job (for example a check created through the Checks API), so it can't come from
+                // a workflow PR Deploy triggers.
+                _logger.LogDebug("Keep {Check} (not a workflow run): True", c.CheckName);
+                return true;
+            }
+
             try
             {
                 var run = await _context.GitHub.Actions.Workflows.Runs.Get(_context.Owner, _context.Repo, c.RunId);
@@ -196,15 +204,15 @@ public partial class CheckService
     }
 
     /// <summary>
-    /// Selects the check runs reported by the build-details action, identified by the build marker in their output
-    /// text, and pairs each with the workflow run it came from.
+    /// Summarizes every check run reported for a ref, flagging the ones the build-details action marked as builds.
     /// </summary>
     /// <param name="checkRuns">Check runs reported for a ref.</param>
-    /// <returns>The marked build checks; checks without output or whose details URL has no workflow run ID are
-    /// skipped.</returns>
+    /// <returns>One summary per check run. Checks that are not workflow jobs, such as those created through the
+    /// Checks API by test reporters or third-party apps, are kept with a run ID of 0 so their failures still
+    /// count.</returns>
     private static List<CheckSummary> ListCheckSummaries(IEnumerable<CheckRun> checkRuns)
     {
-        var checkSummaries = checkRuns
+        return checkRuns
             .Select(c => new CheckSummary(
                 ParseRunId(c.DetailsUrl),
                 c.Output?.Text == BuildMarker,
@@ -212,16 +220,14 @@ public partial class CheckService
                 c.Conclusion?.StringValue ?? string.Empty,
                 $"{c.Name} ({c.Status.StringValue})",
                 c.HtmlUrl))
-            .Where(c => c.RunId != 0)
             .ToList();
-
-        return checkSummaries;
     }
 
     /// <summary>
-    /// A check run that reports a build, reduced to the details needed to locate and describe it.
+    /// A check run reduced to the details needed to report it and, for builds, locate the workflow run.
     /// </summary>
-    /// <param name="RunId">ID of the workflow run that produced the build.</param>
+    /// <param name="RunId">ID of the workflow run the check belongs to, or 0 when the check is not a workflow
+    /// job.</param>
     /// <param name="IsBuild">True when the check run is a build; otherwise, false.</param>
     /// <param name="Status">Check run status, such as <c>completed</c> or <c>in_progress</c>.</param>
     /// <param name="Conclusion">Check run conclusion, such as <c>success</c> or <c>failure</c>.</param>
