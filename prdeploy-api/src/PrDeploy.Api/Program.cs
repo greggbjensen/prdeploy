@@ -18,14 +18,9 @@ using PrDeploy.Api.Webhooks;
 using Serilog;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Path = System.IO.Path;
 
 try
 {
-    var root = Directory.GetCurrentDirectory();
-    var dotenv = Path.Combine(root, ".env");
-    DotEnv.Load(dotenv);
-
     var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddOpenApi();
 

@@ -18,6 +18,7 @@ namespace PrDeploy.Api.Tests.OpenApi;
 /// Contains tests that verify rest open API document behavior.
 /// </summary>
 /// <param name="factory">Application factory used to start the API under test.</param>
+[Collection(ApiHostCollection.Name)]
 public class RestOpenApiDocumentTest(DeployApiApplicationFactory factory) : DeployApiTest(factory)
 {
     /// <summary>

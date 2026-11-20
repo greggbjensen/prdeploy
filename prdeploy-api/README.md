@@ -25,7 +25,7 @@ When running in the Development environment, the generated OpenAPI document is a
 
 ### Access control
 
-Access is limited to the organizations listed in `GitHubAuth:AllowedOrganizations`. Set it in `appsettings.yaml`, as `GitHubAuth__AllowedOrganizations__0`, `__1`, … in `.env`, or as `allowedOrganizations` in the Helm chart. Matching ignores case. A listed personal account (rather than an organization) is only available to that user. **While the list is empty, nobody can sign in.**
+Access is limited to the organizations listed in `GitHubAuth:AllowedOrganizations`. Set it in `appsettings.yaml` or `appsettings.Development.yaml`, as `GitHubAuth__AllowedOrganizations__0`, `__1`, … environment variables, or as `allowedOrganizations` in the Helm chart. Matching ignores case. A listed personal account (rather than an organization) is only available to that user. **While the list is empty, nobody can sign in.**
 
 | Check      | Requirement                                                                                                                         | Enforced by                                    | On failure                                    |
 | ---------- | ----------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------- |
@@ -56,8 +56,8 @@ Because the queue and some caches are in memory, the API runs as a single replic
 
 ## Development
 
-1. Create a `.env` file in `src/PrDeploy.Api` similar to `.env.sample` and set actual values, including a non-empty `Jwt__Key` (at least 16 characters). The API fails during startup if the signing key is missing.
-2. Download the private key from your organization's GitHub App page and save it as `gh-app-key-local.pem` in this folder, or set `GitHubApp__PrivateKey` to its contents.
+1. Create `src/PrDeploy.Api/appsettings.Development.yaml` (it is gitignored) with your local `GitHubAuth`, `GitHubApp`, and `Jwt` values, including a non-empty `Jwt:Key` (at least 16 characters). The API fails during startup if the signing key is missing. See [Application configuration](../docs/getting-started/2-github-oauth-app.md#4-application-configuration-local-development) for the full set of keys. `.env` files are not read.
+2. Download the private key from your organization's GitHub App page and save it as `gh-app-key-local.pem` in this folder, or set `GitHubApp:PrivateKey` to its contents.
 3. BLite is the default local storage provider for deployment values and Data Protection keys; local startup does not require cloud credentials. Use `Storage:Provider` to select a cloud provider.
 4. Start the API with `dotnet run --project src/PrDeploy.Api`, which listens on `http://localhost:4302`.
 
