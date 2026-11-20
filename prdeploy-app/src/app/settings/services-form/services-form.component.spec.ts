@@ -37,6 +37,12 @@ describe('ServicesFormComponent', () => {
     expect(component.actingServiceList).toEqual([{ name: 'api', path: 'api', workflow: undefined }]);
   });
 
+  it('adds a service with an explicit path', () => {
+    component.add('api', undefined, 'src/api');
+
+    expect(component.actingServiceList[0].path).toBe('src/api');
+  });
+
   it('does not add a duplicate service name', () => {
     component.add('api', 'api-build.yaml');
     component.add('api', 'other-build.yaml');
@@ -46,12 +52,13 @@ describe('ServicesFormComponent', () => {
 
   it('adds the service chosen in the dialog', async () => {
     dialog.open.and.returnValue({
-      afterClosed: () => of({ name: 'web', workflow: 'web-build.yml' })
+      afterClosed: () => of({ name: 'web', path: 'web-path', workflow: 'web-build.yml' })
     } as never);
 
     await component.showAddDialog();
 
     expect(component.actingServiceList[0].workflow).toBe('web-build.yml');
+    expect(component.actingServiceList[0].path).toBe('web-path');
   });
 
   it('ignores a cancelled dialog', async () => {

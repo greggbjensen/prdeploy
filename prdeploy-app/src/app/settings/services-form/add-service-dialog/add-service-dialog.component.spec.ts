@@ -56,12 +56,23 @@ describe('AddServiceDialogComponent', () => {
     expect(component.form.controls.name.value).toBe('prdeploy-api');
   });
 
-  it('falls back to the file name when the dialog has no pattern', () => {
+  it('fills the path with the same value as the name', () => {
+    const component = create();
+
+    component.form.controls.workflow.setValue('.github/workflows/prdeploy-api-build.yaml');
+
+    expect(component.form.controls.path.value).toBe('prdeploy-api');
+  });
+
+  it('strips -ci and -build suffixes when the dialog has no pattern', () => {
     const component = create(null);
 
     component.form.controls.workflow.setValue('.github/workflows/web-build.yml');
+    expect(component.form.controls.name.value).toBe('web');
 
-    expect(component.form.controls.name.value).toBe('web-build');
+    component.form.controls.workflow.setValue('.github/workflows/api-ci.yml');
+    expect(component.form.controls.name.value).toBe('api');
+    expect(component.form.controls.path.value).toBe('api');
   });
 
   it('keeps the name when the workflow selection is cleared', () => {
@@ -88,10 +99,11 @@ describe('AddServiceDialogComponent', () => {
   it('closes with the typed service name and no workflow when none was selected', () => {
     const component = create();
     component.form.controls.name.setValue('custom');
+    component.form.controls.path.setValue('src/custom');
 
     component.add();
 
-    expect(dialogRef.close).toHaveBeenCalledWith({ name: 'custom', workflow: undefined });
+    expect(dialogRef.close).toHaveBeenCalledWith({ name: 'custom', path: 'src/custom', workflow: undefined });
   });
 
   it('closes with the selected workflow file name', () => {
@@ -100,12 +112,29 @@ describe('AddServiceDialogComponent', () => {
 
     component.add();
 
-    expect(dialogRef.close).toHaveBeenCalledWith({ name: 'prdeploy-api', workflow: 'prdeploy-api-build.yaml' });
+    expect(dialogRef.close).toHaveBeenCalledWith({
+      name: 'prdeploy-api',
+      path: 'prdeploy-api',
+      workflow: 'prdeploy-api-build.yaml'
+    });
   });
 
-  it('requires a service name', () => {
+  it('requires a workflow-independent name and path', () => {
+    const component = create();
+    expect(component.form.valid).toBeFalse();
+
+    component.form.controls.name.setValue('api');
+    expect(component.form.valid).toBeFalse();
+
+    component.form.controls.path.setValue('api');
+    expect(component.form.valid).toBeTrue();
+  });
+
+  it('is valid once a workflow is selected', () => {
     const component = create();
 
-    expect(component.form.valid).toBeFalse();
+    component.form.controls.workflow.setValue('.github/workflows/api-ci.yaml');
+
+    expect(component.form.valid).toBeTrue();
   });
 });

@@ -12,8 +12,9 @@ The **Add Service** dialog (Settings > Services) starts with a **Workflow** drop
 files in `.github/workflows` that match the builds workflow pattern, loaded through the `repositoryWorkflows` GraphQL query. Selecting one fills in the **Service Name** by applying
 the builds workflow pattern (Settings > Deployment, repo value falling back to the owner value) to the workflow path
 and using the first capture group, for example `/([^/]+?)-build.ya?ml` turns `.github/workflows/api-build.yaml` into
-`api`. When there is no pattern or it does not match, the file name without its extension is used. The name stays
-editable, and the dropdown can be ignored to type a name directly.
+`api`. When there is no pattern or it does not match, the file name without its extension and without a trailing
+`-ci` or `-build` suffix is used. The **Path** field is filled with the same value. Name and Path are both required,
+stay editable, and the dropdown can be ignored to type them directly.
 
 The selected workflow's file name (for example `api-build.yaml`) is saved on the service as `workflow` and shown in
 the first column of the Services table, before Name. Services typed by hand, and those saved before this column

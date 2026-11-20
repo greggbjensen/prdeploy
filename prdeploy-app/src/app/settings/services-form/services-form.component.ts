@@ -62,13 +62,13 @@ export class ServicesFormComponent {
       AddServiceDialogComponent,
       {
         width: '450px',
-        height: '300px',
+        height: '370px',
         data: { workflowPattern: this.effectiveWorkflowPattern() }
       }
     );
     const service = await firstValueFrom(dialogRef.afterClosed());
     if (service?.name) {
-      this.add(service.name, service.workflow);
+      this.add(service.name, service.workflow, service.path);
     }
   }
 
@@ -82,14 +82,15 @@ export class ServicesFormComponent {
     return (this._level === 'repo' ? pattern.repo || pattern.owner : pattern.owner) ?? null;
   }
 
-  add(serviceName: string, workflow?: string) {
+  /** Adds a service; the path defaults to the name when not supplied. */
+  add(serviceName: string, workflow?: string, path?: string) {
     // Do not add multiple of the same.
     if (this.actingServiceList.find(s => s.name === serviceName)) {
       return;
     }
 
     this.actingServiceList = _.sortBy(
-      [{ name: serviceName, path: serviceName, workflow }, ...this.actingServiceList],
+      [{ name: serviceName, path: path || serviceName, workflow }, ...this.actingServiceList],
       s => s.name
     );
 

@@ -29,6 +29,8 @@ export interface AddServiceDialogData {
 export interface AddServiceDialogResult {
   /** Name of the service. */
   name: string;
+  /** Path of the service within the repository. */
+  path: string;
   /** Workflow file name the service was created from, such as `api-build.yaml`, if one was selected. */
   workflow?: string;
 }
@@ -54,7 +56,8 @@ export interface AddServiceDialogResult {
 export class AddServiceDialogComponent implements OnInit {
   form = new FormGroup({
     workflow: new FormControl<string | null>(null),
-    name: new FormControl('', Validators.required)
+    name: new FormControl('', Validators.required),
+    path: new FormControl('', Validators.required)
   });
 
   /** Workflow file paths available in the repository. */
@@ -75,10 +78,12 @@ export class AddServiceDialogComponent implements OnInit {
         this.clearFields();
       });
 
-    // Selecting a workflow fills in the service name, which can still be edited afterward.
+    // Selecting a workflow fills in the service name and path, which can still be edited afterward.
     this.form.controls.workflow.valueChanges.pipe(takeUntilDestroyed()).subscribe(workflow => {
       if (workflow) {
-        this.form.controls.name.setValue(workflowServiceName(workflow, this._data?.workflowPattern));
+        const name = workflowServiceName(workflow, this._data?.workflowPattern);
+        this.form.controls.name.setValue(name);
+        this.form.controls.path.setValue(name);
       }
     });
   }
@@ -112,6 +117,7 @@ export class AddServiceDialogComponent implements OnInit {
     const workflow = this.form.value.workflow;
     this._dialogRef.close({
       name: this.form.value.name,
+      path: this.form.value.path,
       workflow: workflow ? this.workflowFileName(workflow) : undefined
     });
   }

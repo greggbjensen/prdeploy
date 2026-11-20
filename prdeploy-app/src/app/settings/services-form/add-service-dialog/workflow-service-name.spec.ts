@@ -16,17 +16,26 @@ describe('workflowServiceName', () => {
     expect(workflowServiceName('.github/workflows/combined-deploy.yaml', pattern)).toBe('combined-deploy');
   });
 
-  it('falls back to the file name when no pattern is configured', () => {
-    expect(workflowServiceName('.github/workflows/api-build.yml')).toBe('api-build');
-    expect(workflowServiceName('.github/workflows/api-build.yml', '')).toBe('api-build');
-    expect(workflowServiceName('.github/workflows/api-build.yml', null)).toBe('api-build');
+  it('strips the extension and a -build suffix when no pattern is configured', () => {
+    expect(workflowServiceName('.github/workflows/api-build.yml')).toBe('api');
+    expect(workflowServiceName('.github/workflows/api-build.yml', '')).toBe('api');
+    expect(workflowServiceName('.github/workflows/api-build.yml', null)).toBe('api');
   });
 
-  it('falls back to the file name when the pattern is not a valid expression', () => {
-    expect(workflowServiceName('.github/workflows/api-build.yml', '([unclosed')).toBe('api-build');
+  it('strips a -ci suffix', () => {
+    expect(workflowServiceName('.github/workflows/web-ci.yaml', pattern)).toBe('web');
+  });
+
+  it('keeps -ci or -build when it is not a suffix', () => {
+    expect(workflowServiceName('.github/workflows/ci-tools.yaml')).toBe('ci-tools');
+    expect(workflowServiceName('.github/workflows/build-api.yaml')).toBe('build-api');
+  });
+
+  it('falls back to the stripped file name when the pattern is not a valid expression', () => {
+    expect(workflowServiceName('.github/workflows/api-build.yml', '([unclosed')).toBe('api');
   });
 
   it('falls back when the pattern has no capture group', () => {
-    expect(workflowServiceName('.github/workflows/api-build.yml', '/api-build.yml')).toBe('api-build');
+    expect(workflowServiceName('.github/workflows/api-ci.yml', '/api-ci.yml')).toBe('api');
   });
 });
