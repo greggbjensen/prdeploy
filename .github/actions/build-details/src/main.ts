@@ -4,9 +4,15 @@ import { BuildInfo } from './models/build-info';
 import { DetailsUploader } from './details-uploader';
 import { Octokit } from '@octokit/rest';
 import { PullRequestService } from './services/pull-request-service';
+import { CheckService } from './services/check-service';
 import { SummaryWriter } from './summary-writer';
 import artifact from '@actions/artifact';
 
+/**
+ * Entry point for the action: gathers build and pull request information, then writes the job summary,
+ * uploads the `build-details` artifact, and marks the job's check run output text as `PR_DEPLOY_BUILD`.
+ * Any error fails the action.
+ */
 async function run(): Promise<void> {
   try {
     const version: string = core.getInput('version', { required: true });
@@ -62,8 +68,13 @@ async function run(): Promise<void> {
 
     const writer = new SummaryWriter();
     const uploader = new DetailsUploader(artifact);
+    const checkService = new CheckService(octokit);
 
-    await Promise.all([uploader.upload(buildInfo), writer.write(buildInfo)]);
+    await Promise.all([
+      uploader.upload(buildInfo),
+      writer.write(buildInfo),
+      checkService.markBuild(buildInfo, github.context.runAttempt, process.env.RUNNER_NAME ?? '')
+    ]);
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message);
   }

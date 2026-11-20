@@ -17,6 +17,7 @@ public partial class CheckService
     private const int MaxPageSize = 100;
     private const string BuildDetailsArtifact = "build-details";
     private const string BuildDetailsFile = "build-details.json";
+    static readonly string BuildMarker = "PR_DEPLOY_BUILD";
     private static readonly string[] ValidMergeableStates = ["clean", "behind", "blocked"];
     private static readonly JsonSerializerOptions BuildDetailsSerializerOptions = new(JsonSerializerDefaults.Web);
 
@@ -97,7 +98,7 @@ public partial class CheckService
         _logger.LogInformation("Listing checks for ref: {Ref}", pullRequest.Head.Ref);
         var result = await GetChecksForRefAsync(pullRequest.Head.Ref);
 
-        var buildChecks = result.CheckRuns.Where(c => c.App.Slug == "github-actions")
+        var buildChecks = result.CheckRuns.Where(c => c.Output.Text == BuildMarker)
           .Select(c => new {
               RunId = ParseRunId(c.DetailsUrl),
               Status = c.Status.StringValue,

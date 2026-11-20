@@ -90,6 +90,11 @@ jobs:
   details:
       name: Details
       runs-on: ubuntu-latest
+      permissions:
+        contents: read
+        pull-requests: read
+        actions: read
+        checks: write
       concurrency:
         group: details-${{ github.workflow }}-${{ github.ref }}
         cancel-in-progress: true
@@ -112,7 +117,7 @@ Actions that apply and retrieve the information needed for builds and deployment
 
 | Action                                                                            | Description                                                                      |
 |-----------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
-| [build-details](/.github/actions/build-details/README.md#build-details-action)    | Creates a summary of your build with version and pull request info.              |
+| [build-details](/.github/actions/build-details/README.md#build-details-action)    | Creates a summary of your build with version and pull request info, and marks the job's check run output text as `PR_DEPLOY_BUILD`. |
 | [date-version](/.github/actions/date-version/README.md#date-version-action)       | Creates a version for a build using the current date and run ID of the workflow. |
 | [get-build-info](/.github/actions/get-build-info/README.md#get-build-info-action) | Gets build data and a matrix for a set of deploy and sync run IDs.               |
 

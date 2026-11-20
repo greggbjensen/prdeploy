@@ -143,11 +143,17 @@ const core = __importStar(__nccwpck_require__(37484));
 const github = __importStar(__nccwpck_require__(93228));
 const details_uploader_1 = __nccwpck_require__(45641);
 const pull_request_service_1 = __nccwpck_require__(30136);
+const check_service_1 = __nccwpck_require__(99515);
 const summary_writer_1 = __nccwpck_require__(45722);
 const artifact_1 = __importDefault(__nccwpck_require__(76846));
+/**
+ * Entry point for the action: gathers build and pull request information, then writes the job summary,
+ * uploads the `build-details` artifact, and marks the job's check run output text as `PR_DEPLOY_BUILD`.
+ * Any error fails the action.
+ */
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
-        var _a;
+        var _a, _b;
         try {
             const version = core.getInput('version', { required: true });
             const token = core.getInput('token', { required: true });
@@ -198,7 +204,12 @@ function run() {
             }
             const writer = new summary_writer_1.SummaryWriter();
             const uploader = new details_uploader_1.DetailsUploader(artifact_1.default);
-            yield Promise.all([uploader.upload(buildInfo), writer.write(buildInfo)]);
+            const checkService = new check_service_1.CheckService(octokit);
+            yield Promise.all([
+                uploader.upload(buildInfo),
+                writer.write(buildInfo),
+                checkService.markBuild(buildInfo, github.context.runAttempt, (_b = process.env.RUNNER_NAME) !== null && _b !== void 0 ? _b : '')
+            ]);
         }
         catch (error) {
             if (error instanceof Error)
@@ -208,6 +219,144 @@ function run() {
 }
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 run();
+
+
+/***/ }),
+
+/***/ 99515:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CheckService = void 0;
+const core = __importStar(__nccwpck_require__(37484));
+/**
+ * Marks the check run of the job executing this action as a PR Deploy build,
+ * so PR Deploy can identify build checks by their output text.
+ */
+class CheckService {
+    /**
+     * Creates the service.
+     * @param _octokit Authenticated GitHub client; the token needs `actions: read` and `checks: write`.
+     */
+    constructor(_octokit) {
+        this._octokit = _octokit;
+    }
+    /**
+     * Finds the check run of the current job and sets its output text to {@link CheckService.BuildMarker}.
+     * @param build Build information used for the output summary and to locate the workflow run.
+     * @param runAttempt Attempt number of the current workflow run.
+     * @param runnerName Name of the runner executing the current job (`RUNNER_NAME`).
+     * @returns The ID of the check run that was updated.
+     * @throws Error when the current job's check run cannot be found.
+     */
+    markBuild(build, runAttempt, runnerName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const checkRunId = yield this.findCurrentCheckRunId(build, runAttempt, runnerName);
+            core.info(`Marking check run ${checkRunId} as ${CheckService.BuildMarker}.`);
+            yield this._octokit.rest.checks.update({
+                owner: build.owner,
+                repo: build.repo,
+                check_run_id: checkRunId,
+                output: {
+                    title: CheckService.OutputTitle,
+                    summary: `Version: ${build.version}`,
+                    text: CheckService.BuildMarker
+                }
+            });
+            return checkRunId;
+        });
+    }
+    /**
+     * Locates the check run of the in-progress job that is running on the given runner.
+     * A job's check run ID is taken from the end of its `check_run_url`.
+     * @param build Build information holding the owner, repository, and workflow run ID.
+     * @param runAttempt Attempt number of the current workflow run.
+     * @param runnerName Name of the runner executing the current job.
+     * @returns The ID of the current job's check run.
+     * @throws Error when no in-progress job on this runner exists or its check run URL has no ID.
+     */
+    findCurrentCheckRunId(build, runAttempt, runnerName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!runnerName) {
+                throw new Error('RUNNER_NAME is not set; unable to find the check run for the current job.');
+            }
+            const jobs = yield this._octokit.paginate(this._octokit.rest.actions.listJobsForWorkflowRunAttempt, {
+                owner: build.owner,
+                repo: build.repo,
+                run_id: build.runId,
+                attempt_number: runAttempt,
+                per_page: 100
+            });
+            const job = jobs.find(j => j.status === 'in_progress' && j.runner_name === runnerName);
+            if (!job) {
+                throw new Error(`Unable to find an in-progress job on runner "${runnerName}" for run ${build.runId} attempt ${runAttempt}.`);
+            }
+            const checkRunId = CheckService.parseCheckRunId(job.check_run_url);
+            if (!checkRunId) {
+                throw new Error(`Unable to parse a check run ID from "${job.check_run_url}" for job "${job.name}".`);
+            }
+            return checkRunId;
+        });
+    }
+    /**
+     * Extracts the numeric check run ID from the end of a check run API URL.
+     * @param checkRunUrl URL such as `https://api.github.com/repos/o/r/check-runs/123`.
+     * @returns The check run ID, or 0 when the URL does not end with a positive integer.
+     */
+    static parseCheckRunId(checkRunUrl) {
+        const match = /\/check-runs\/(\d+)\/?$/.exec(checkRunUrl !== null && checkRunUrl !== void 0 ? checkRunUrl : '');
+        return match ? Number(match[1]) : 0;
+    }
+}
+exports.CheckService = CheckService;
+/** Marker written to the check run output text that identifies a PR Deploy build. */
+CheckService.BuildMarker = 'PR_DEPLOY_BUILD';
+/** Title shown on the check run output. */
+CheckService.OutputTitle = 'Build details';
 
 
 /***/ }),
