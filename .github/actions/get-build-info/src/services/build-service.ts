@@ -7,15 +7,14 @@ import AdmZip from 'adm-zip';
 export class BuildService {
   constructor(private _octokit: Octokit) {}
 
-  async list(owner: string, repo: string, workflowPattern: string, runIds: number[]): Promise<Build[]> {
+  async list(owner: string, repo: string, runIds: number[]): Promise<Build[]> {
     core.info(`Listing builds for run IDs: ${runIds.join(', ')}`);
 
-    const workflowRegex = new RegExp(workflowPattern, 'i');
-    const builds = await Promise.all(runIds.map(async r => await this.extractBuild(owner, repo, workflowRegex, r)));
+    const builds = await Promise.all(runIds.map(async r => await this.extractBuild(owner, repo, r)));
     return builds;
   }
 
-  async extractBuild(owner: string, repo: string, workflowRegex: RegExp, runId: number): Promise<Build> {
+  async extractBuild(owner: string, repo: string, runId: number): Promise<Build> {
     core.info(`Getting the workflow run with ID: ${runId}`);
     const result = await this._octokit.rest.actions.getWorkflowRun({
       owner,
@@ -27,11 +26,8 @@ export class BuildService {
     const title = result.data.display_title;
     const url = result.data.html_url;
     const workflow = path.basename(workflowPath);
-    let [, name] = workflowRegex.exec(workflowPath) ?? [null, ''];
-    if (!name) {
-      name = workflowPath;
-      core.warning(`workflow_regex ${workflowRegex} did not match workflow path: ${workflowPath}`);
-    }
+    // The build name is the workflow file name without its extension or a trailing -ci/-build suffix.
+    const name = workflow.replace(/\.ya?ml$/i, '').replace(/-(ci|build)$/i, '') || workflowPath;
 
     const version = await this.extractVersion(owner, repo, runId);
 

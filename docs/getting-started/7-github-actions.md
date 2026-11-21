@@ -47,11 +47,15 @@ jobs:
   deploy_info:
     name: Deploy Info
     runs-on: ubuntu-latest
+    permissions:
+      actions: read        # read build workflow runs and their build-details artifacts
+      contents: read
+      pull-requests: read  # read the pull request being deployed
     concurrency:
       group: deploy-info-${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
     outputs:
-      branch: ${{ steps.build_info.outputs.branch }}
+      branch: ${{ steps.build_info.outputs.pull_branch }}
       builds_matrix_json: ${{ steps.build_info.outputs.builds_matrix_json }}
       builds_json: ${{ steps.build_info.outputs.builds_json }}
     steps:

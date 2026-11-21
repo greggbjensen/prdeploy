@@ -1,7 +1,7 @@
 require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 5915:
+/***/ 8065:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -52,14 +52,44 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.describeError = exports.REQUIRED_PERMISSIONS = exports.getRunIds = void 0;
+exports.run = run;
 const core = __importStar(__nccwpck_require__(7484));
 const github = __importStar(__nccwpck_require__(3228));
 const services_1 = __nccwpck_require__(9001);
 const summary_writer_1 = __nccwpck_require__(5722);
 const lodash_1 = __importDefault(__nccwpck_require__(2356));
+/**
+ * Parses a comma-separated list of workflow run IDs, ignoring blank and non-numeric entries so a trailing comma or
+ * stray space never produces a `NaN` run ID.
+ */
 const getRunIds = (idsValue) => {
-    return idsValue ? idsValue.split(',').map(r => parseInt(r.trim(), 10)) : [];
+    return (idsValue !== null && idsValue !== void 0 ? idsValue : '')
+        .split(',')
+        .map(r => r.trim())
+        .filter(r => /^\d+$/.test(r))
+        .map(r => parseInt(r, 10));
 };
+exports.getRunIds = getRunIds;
+/** Permissions the workflow token needs to read build runs, their artifacts, and the pull request. */
+exports.REQUIRED_PERMISSIONS = 'actions: read, contents: read, and pull-requests: read';
+/**
+ * Describes an error for the action failure message. GitHub reports a token missing a permission as
+ * "Resource not accessible by integration", so that message gets the permissions the job needs.
+ */
+const describeError = (error) => {
+    const status = error.status;
+    if (status === 403 && /Resource not accessible by integration/i.test(error.message)) {
+        return (`${error.message}. The job's GITHUB_TOKEN needs ${exports.REQUIRED_PERMISSIONS} permissions; ` +
+            'add them under the job running this action, since a workflow-level permissions block applies to every job.');
+    }
+    return error.message;
+};
+exports.describeError = describeError;
+/**
+ * Lists the builds for the deploy and sync run IDs, writes the job summary, and sets the action outputs:
+ * `builds_json`, `builds_matrix_json`, `builds_count`, and `pull_branch`. Any error fails the action.
+ */
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -71,20 +101,17 @@ function run() {
             const deployRunIdsValue = core.getInput('deploy_run_ids', {
                 required: false
             });
-            const deployRunIds = getRunIds(deployRunIdsValue);
+            const deployRunIds = (0, exports.getRunIds)(deployRunIdsValue);
             const syncRunIdsValue = core.getInput('sync_run_ids', {
                 required: false
             });
-            const syncRunIds = getRunIds(syncRunIdsValue);
-            const workflowRegex = core.getInput('workflow_regex', {
-                required: true
-            });
+            const syncRunIds = (0, exports.getRunIds)(syncRunIdsValue);
             const allRunIds = lodash_1.default.uniq(deployRunIds.concat(syncRunIds));
             const octokit = github.getOctokit(token);
             const buildService = new services_1.BuildService(octokit);
             const owner = github.context.repo.owner;
             const repo = github.context.repo.repo;
-            const builds = yield buildService.list(owner, repo, workflowRegex, allRunIds);
+            const builds = yield buildService.list(owner, repo, allRunIds);
             core.info('Builds found:');
             for (const build of builds) {
                 core.info(`  ${build.name} (${build.version})`);
@@ -114,13 +141,11 @@ function run() {
         }
         catch (error) {
             if (error instanceof Error) {
-                core.setFailed(error.message);
+                core.setFailed((0, exports.describeError)(error));
             }
         }
     });
 }
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
-run();
 
 
 /***/ }),
@@ -184,17 +209,15 @@ class BuildService {
     constructor(_octokit) {
         this._octokit = _octokit;
     }
-    list(owner, repo, workflowPattern, runIds) {
+    list(owner, repo, runIds) {
         return __awaiter(this, void 0, void 0, function* () {
             core.info(`Listing builds for run IDs: ${runIds.join(', ')}`);
-            const workflowRegex = new RegExp(workflowPattern, 'i');
-            const builds = yield Promise.all(runIds.map((r) => __awaiter(this, void 0, void 0, function* () { return yield this.extractBuild(owner, repo, workflowRegex, r); })));
+            const builds = yield Promise.all(runIds.map((r) => __awaiter(this, void 0, void 0, function* () { return yield this.extractBuild(owner, repo, r); })));
             return builds;
         });
     }
-    extractBuild(owner, repo, workflowRegex, runId) {
+    extractBuild(owner, repo, runId) {
         return __awaiter(this, void 0, void 0, function* () {
-            var _a;
             core.info(`Getting the workflow run with ID: ${runId}`);
             const result = yield this._octokit.rest.actions.getWorkflowRun({
                 owner,
@@ -205,11 +228,8 @@ class BuildService {
             const title = result.data.display_title;
             const url = result.data.html_url;
             const workflow = path.basename(workflowPath);
-            let [, name] = (_a = workflowRegex.exec(workflowPath)) !== null && _a !== void 0 ? _a : [null, ''];
-            if (!name) {
-                name = workflowPath;
-                core.warning(`workflow_regex ${workflowRegex} did not match workflow path: ${workflowPath}`);
-            }
+            // The build name is the workflow file name without its extension or a trailing -ci/-build suffix.
+            const name = workflow.replace(/\.ya?ml$/i, '').replace(/-(ci|build)$/i, '') || workflowPath;
             const version = yield this.extractVersion(owner, repo, runId);
             return {
                 runId,
@@ -58797,13 +58817,21 @@ legacyRestEndpointMethods.VERSION = VERSION;
 /******/ 	})();
 /******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __nccwpck_require__(5915);
-/******/ 	module.exports = __webpack_exports__;
-/******/ 	
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+var exports = __webpack_exports__;
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const run_1 = __nccwpck_require__(8065);
+// Entry point the runner executes; the logic lives in run.ts so it can be tested without running on import.
+// eslint-disable-next-line @typescript-eslint/no-floating-promises
+(0, run_1.run)();
+
+})();
+
+module.exports = __webpack_exports__;
 /******/ })()
 ;
 //# sourceMappingURL=index.js.map

@@ -48,7 +48,7 @@ describe('BuildService.list', () => {
     const zip = artifactZip({ 'build-details.json': JSON.stringify({ version: '2026.11.20.1' }) });
     const { octokit, actions } = createOctokit({ 1: apiRun }, ['other', 'build-details'], zip);
 
-    const builds = await new BuildService(octokit).list('o', 'r', '/([^/]+?)-build.ya?ml', [1]);
+    const builds = await new BuildService(octokit).list('o', 'r', [1]);
 
     expect(builds).toEqual([
       {
@@ -68,23 +68,23 @@ describe('BuildService.list', () => {
     });
   });
 
-  it('falls back to the workflow path and warns when the pattern does not match', async () => {
+  it('uses the workflow file name without a -ci/-build suffix and does not warn', async () => {
     const zip = artifactZip({ 'build-details.json': JSON.stringify({ version: '1.0.0' }) });
     const run = { ...apiRun, path: '.github/workflows/combined-deploy.yaml' };
     const { octokit } = createOctokit({ 2: run }, ['build-details'], zip);
 
-    const [build] = await new BuildService(octokit).list('o', 'r', '/([^/]+?)-build.ya?ml', [2]);
+    const [build] = await new BuildService(octokit).list('o', 'r', [2]);
 
-    expect(build.name).toBe('.github/workflows/combined-deploy.yaml');
-    expect(core.warning).toHaveBeenCalledWith(expect.stringContaining('did not match workflow path'));
+    expect(build.name).toBe('combined-deploy');
+    expect(core.warning).not.toHaveBeenCalled();
   });
 
-  it('matches the workflow pattern case-insensitively', async () => {
+  it('strips the extension and suffix case-insensitively', async () => {
     const zip = artifactZip({ 'build-details.json': JSON.stringify({ version: '1.0.0' }) });
     const run = { ...apiRun, path: '.github/workflows/App-Build.YML' };
     const { octokit } = createOctokit({ 3: run }, ['build-details'], zip);
 
-    const [build] = await new BuildService(octokit).list('o', 'r', '/([^/]+?)-build.ya?ml', [3]);
+    const [build] = await new BuildService(octokit).list('o', 'r', [3]);
 
     expect(build.name).toBe('App');
   });
@@ -92,7 +92,7 @@ describe('BuildService.list', () => {
   it('returns an empty version and warns when the build-details artifact is missing', async () => {
     const { octokit, actions } = createOctokit({ 1: apiRun }, ['coverage'], new ArrayBuffer(0));
 
-    const [build] = await new BuildService(octokit).list('o', 'r', '/([^/]+?)-build.ya?ml', [1]);
+    const [build] = await new BuildService(octokit).list('o', 'r', [1]);
 
     expect(build.version).toBe('');
     expect(actions.downloadArtifact).not.toHaveBeenCalled();
@@ -103,7 +103,7 @@ describe('BuildService.list', () => {
     const zip = artifactZip({ 'other.json': '{}' });
     const { octokit } = createOctokit({ 1: apiRun }, ['build-details'], zip);
 
-    const [build] = await new BuildService(octokit).list('o', 'r', '/([^/]+?)-build.ya?ml', [1]);
+    const [build] = await new BuildService(octokit).list('o', 'r', [1]);
 
     expect(build.version).toBe('');
     expect(core.warning).toHaveBeenCalledWith('Artifact build-details did not contain build-details.json.');
@@ -113,7 +113,7 @@ describe('BuildService.list', () => {
     const zip = artifactZip({ 'build-details.json': '{ not json' });
     const { octokit } = createOctokit({ 1: apiRun }, ['build-details'], zip);
 
-    const [build] = await new BuildService(octokit).list('o', 'r', '/([^/]+?)-build.ya?ml', [1]);
+    const [build] = await new BuildService(octokit).list('o', 'r', [1]);
 
     expect(build.version).toBe('');
   });
@@ -121,7 +121,7 @@ describe('BuildService.list', () => {
   it('returns no builds for no run IDs', async () => {
     const { octokit, actions } = createOctokit({}, [], new ArrayBuffer(0));
 
-    expect(await new BuildService(octokit).list('o', 'r', 'x', [])).toEqual([]);
+    expect(await new BuildService(octokit).list('o', 'r', [])).toEqual([]);
     expect(actions.getWorkflowRun).not.toHaveBeenCalled();
   });
 });

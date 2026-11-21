@@ -20,10 +20,6 @@ Gets build data and a matrix for a set of deploy and sync run IDs.
 
 Run IDs of builds being synced with stable release.
 
-### `workflow_regex`
-
-Regular expression with a single capture group that is the build name, defaults to `/([^/]+?)-build.ya?ml`.
-
 ## Outputs
 
 ### `builds_json`
@@ -42,16 +38,36 @@ Total number of builds that were found.
 
 The branch the pull request is from.
 
+## Permissions
+
+The token reads each build's workflow run and `build-details` artifact, and the pull request, so the job needs:
+
+```yaml
+permissions:
+  actions: read
+  contents: read
+  pull-requests: read
+```
+
+Set these on the job that runs the action. A workflow-level `permissions` block, such as `contents: read` alone, applies to every job without its own block, and the action then fails with `Resource not accessible by integration`; the failure message names the missing permissions.
+
 ## Example usage
 
 ```yaml
-- name: Get build info
-  uses: greggbjensen/prdeploy/.github/actions/get-build-info@main
-  with:
-    token: ${{ secrets.GITHUB_TOKEN }}
-    pull_number: ${{ inputs.pull_number }}
-    deploy_run_ids: '5150198235,4683559959'
-    sync_run_ids: '7921342161'
+deploy_info:
+  runs-on: ubuntu-latest
+  permissions:
+    actions: read
+    contents: read
+    pull-requests: read
+  steps:
+    - name: Get build info
+      uses: greggbjensen/prdeploy/.github/actions/get-build-info@main
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        pull_number: ${{ inputs.pull_number }}
+        deploy_run_ids: '5150198235,4683559959'
+        sync_run_ids: '7921342161'
 ```
 
 ## Development
@@ -60,7 +76,8 @@ The branch the pull request is from.
 npm install
 npm test          # Jest unit tests in __tests__/, with the GitHub API and runner mocked
 npm run lint
-npm run package   # ncc bundle to dist/, which action.yaml runs
+npm run build     # compile to lib/, which the bundle step reads
+npm run package   # ncc bundle of lib/main.js to dist/, which action.yaml runs; commit dist/
 ```
 
 `src/main.ts` only calls `run()` from `src/run.ts`, so tests can import and run the action without it starting on

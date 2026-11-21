@@ -14,10 +14,6 @@ inputs:
   sync_run_ids:
     required: false
     description: 'Run IDs of builds being synced with stable release.'
-  workflow_regex:
-    required: false
-    description: 'Regular expression with a single capture group that is the build name.'
-    default: '/([^/]+?)-build.ya?ml'
 runs:
   using: 'node24'
   main: 'dist/index.js'

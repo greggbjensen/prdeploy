@@ -17,6 +17,25 @@ export const getRunIds = (idsValue: string): number[] => {
     .map(r => parseInt(r, 10));
 };
 
+/** Permissions the workflow token needs to read build runs, their artifacts, and the pull request. */
+export const REQUIRED_PERMISSIONS = 'actions: read, contents: read, and pull-requests: read';
+
+/**
+ * Describes an error for the action failure message. GitHub reports a token missing a permission as
+ * "Resource not accessible by integration", so that message gets the permissions the job needs.
+ */
+export const describeError = (error: Error): string => {
+  const status = (error as Error & { status?: number }).status;
+  if (status === 403 && /Resource not accessible by integration/i.test(error.message)) {
+    return (
+      `${error.message}. The job's GITHUB_TOKEN needs ${REQUIRED_PERMISSIONS} permissions; ` +
+      'add them under the job running this action, since a workflow-level permissions block applies to every job.'
+    );
+  }
+
+  return error.message;
+};
+
 /**
  * Lists the builds for the deploy and sync run IDs, writes the job summary, and sets the action outputs:
  * `builds_json`, `builds_matrix_json`, `builds_count`, and `pull_branch`. Any error fails the action.
@@ -36,9 +55,6 @@ export async function run(): Promise<void> {
       required: false
     });
     const syncRunIds = getRunIds(syncRunIdsValue);
-    const workflowRegex: string = core.getInput('workflow_regex', {
-      required: true
-    });
 
     const allRunIds = _.uniq(deployRunIds.concat(syncRunIds));
 
@@ -46,7 +62,7 @@ export async function run(): Promise<void> {
     const buildService = new BuildService(octokit);
     const owner = github.context.repo.owner;
     const repo = github.context.repo.repo;
-    const builds = await buildService.list(owner, repo, workflowRegex, allRunIds);
+    const builds = await buildService.list(owner, repo, allRunIds);
 
     core.info('Builds found:');
     for (const build of builds) {
@@ -81,7 +97,7 @@ export async function run(): Promise<void> {
     core.setOutput('pull_branch', pullRequest.head);
   } catch (error) {
     if (error instanceof Error) {
-      core.setFailed(error.message);
+      core.setFailed(describeError(error));
     }
   }
 }

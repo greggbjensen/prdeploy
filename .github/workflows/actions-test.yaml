@@ -57,7 +57,8 @@ jobs:
         run: npm test -- --coverage
 
       - name: Bundle
-        run: npm run package
+        # ncc bundles the compiled lib/main.js, so compile first.
+        run: npm run build && npm run package
 
   shell:
     name: Test shell actions

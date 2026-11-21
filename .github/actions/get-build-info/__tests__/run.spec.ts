@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import AdmZip from 'adm-zip';
-import { getRunIds, run } from '../src/run';
+import { describeError, getRunIds, run } from '../src/run';
 
 jest.mock('@actions/core');
 jest.mock('@actions/github', () => ({
@@ -80,8 +80,7 @@ describe('run', () => {
       token: 't',
       pull_number: '8',
       deploy_run_ids: '1,2',
-      sync_run_ids: '2,3',
-      workflow_regex: '/([^/]+?)-build.ya?ml'
+      sync_run_ids: '2,3'
     });
 
     await run();
@@ -108,11 +107,35 @@ describe('run', () => {
   });
 
   it('fails the action when a run cannot be read', async () => {
-    setInputs({ token: 't', pull_number: '8', deploy_run_ids: '99', workflow_regex: 'x' });
+    setInputs({ token: 't', pull_number: '8', deploy_run_ids: '99' });
 
     await run();
 
     expect(core.setFailed).toHaveBeenCalledWith('Run 99 not found');
     expect(core.setOutput).not.toHaveBeenCalled();
+  });
+
+  it('names the required token permissions when GitHub denies access to a run', async () => {
+    setInputs({ token: 't', pull_number: '8', deploy_run_ids: '1' });
+    const denied = Object.assign(new Error('Resource not accessible by integration'), { status: 403 });
+    octokit.rest.actions.getWorkflowRun.mockRejectedValueOnce(denied);
+
+    await run();
+
+    const message = jest.mocked(core.setFailed).mock.calls[0]?.[0] as string;
+    expect(message).toContain('Resource not accessible by integration');
+    expect(message).toContain('actions: read, contents: read, and pull-requests: read');
+    expect(core.setOutput).not.toHaveBeenCalled();
+  });
+});
+
+describe('describeError', () => {
+  it('keeps the message of errors that are not permission denials', () => {
+    const notFound = Object.assign(new Error('Not Found'), { status: 404 });
+
+    expect(describeError(notFound)).toBe('Not Found');
+    expect(describeError(new Error('Resource not accessible by integration'))).toBe(
+      'Resource not accessible by integration'
+    );
   });
 });
