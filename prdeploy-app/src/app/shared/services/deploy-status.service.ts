@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { Observable } from 'rxjs';
 import { DeployWorkflowStatus } from '../models';
+import { AuthService } from './auth/auth.service';
 
 /** A single Server-Sent Event. */
 export interface SseMessage {
@@ -64,12 +65,17 @@ export class SseParser {
 /**
  * Streams deployment workflow status for a repository from the API using Server-Sent Events.
  * Uses fetch rather than EventSource so the bearer token can be sent in the Authorization header.
+ * Because fetch bypasses the HTTP interceptors, a 401 or 403 is handled here the same way:
+ * the stream stops reconnecting and the user is logged out.
  */
 @Injectable({
   providedIn: 'root'
 })
 export class DeployStatusService {
-  constructor(private _oauthService: OAuthService) {}
+  constructor(
+    private _oauthService: OAuthService,
+    private _authService: AuthService
+  ) {}
 
   /**
    * Watches the deploy status of a repository. The stream reconnects after failures and closes when unsubscribed.
@@ -83,13 +89,23 @@ export class DeployStatusService {
 
       const connect = async (): Promise<void> => {
         try {
-          const response = await fetch(`/api/deploy-status/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/events`, {
-            headers: {
-              Accept: 'text/event-stream',
-              Authorization: `Bearer ${this._oauthService.getAccessToken()}`
-            },
-            signal: abort.signal
-          });
+          const response = await fetch(
+            `/api/deploy-status/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/events`,
+            {
+              headers: {
+                Accept: 'text/event-stream',
+                Authorization: `Bearer ${this._oauthService.getAccessToken()}`
+              },
+              signal: abort.signal
+            }
+          );
+
+          if (response.status === 401 || response.status === 403) {
+            // Retrying with the same rejected token would fail forever; send the user to log in instead.
+            subscriber.complete();
+            this._authService.logout(response.status === 403);
+            return;
+          }
 
           if (!response.ok || !response.body) {
             throw new Error(`Deploy status stream failed with ${response.status}.`);

@@ -4,10 +4,7 @@
     <mat-spinner class="loading-spinner" diameter="40"></mat-spinner>
   } @else if (services.length > 0) {
     <p class="services-hint">Checked services are already triggered. Check more to add them to this pull request.</p>
-    <mat-selection-list
-      class="services-list"
-      aria-label="Services"
-      (selectionChange)="onSelectionChange($event)">
+    <mat-selection-list class="services-list" aria-label="Services" (selectionChange)="onSelectionChange($event)">
       @for (service of services; track service.name) {
         <mat-list-option
           [value]="service.name"

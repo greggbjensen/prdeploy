@@ -1,4 +1,5 @@
 import { OAuthService } from 'angular-oauth2-oidc';
+import { AuthService } from './auth/auth.service';
 import { DeployStatusService, SseParser } from './deploy-status.service';
 
 /** Verifies SSE parsing and that the service streams statuses with the bearer token. */
@@ -30,7 +31,7 @@ describe('DeployStatusService', () => {
   const status = { owner: 'o', repo: 'r', environment: 'dev', state: 'Successful', pullNumber: 1, runId: 2 };
 
   /** Builds a streaming fetch response from text chunks. */
-  function streamResponse(chunks: string[], ok = true): Response {
+  function streamResponse(chunks: string[], ok = true, status = ok ? 200 : 500): Response {
     const encoder = new TextEncoder();
     const body = new ReadableStream<Uint8Array>({
       start(controller) {
@@ -38,7 +39,12 @@ describe('DeployStatusService', () => {
         controller.close();
       }
     });
-    return { ok, status: ok ? 200 : 403, body } as Response;
+    return { ok, status, body } as Response;
+  }
+
+  /** Creates an auth service spy so logout calls can be asserted. */
+  function authSpy(): jasmine.SpyObj<AuthService> {
+    return jasmine.createSpyObj<AuthService>('AuthService', ['logout']);
   }
 
   it('sends the bearer token and emits streamed statuses', async () => {
@@ -49,7 +55,7 @@ describe('DeployStatusService', () => {
     );
 
     const received = await new Promise<unknown>(resolve => {
-      const subscription = new DeployStatusService(oauth).watch('o', 'r').subscribe(s => {
+      const subscription = new DeployStatusService(oauth, authSpy()).watch('o', 'r').subscribe(s => {
         subscription.unsubscribe();
         resolve(s);
       });
@@ -65,9 +71,46 @@ describe('DeployStatusService', () => {
     const oauth = jasmine.createSpyObj<OAuthService>('OAuthService', ['getAccessToken']);
     const fetchSpy = spyOn(window, 'fetch').and.resolveTo(streamResponse([], false));
 
-    new DeployStatusService(oauth).watch('o', 'r').subscribe().unsubscribe();
+    new DeployStatusService(oauth, authSpy()).watch('o', 'r').subscribe().unsubscribe();
     await new Promise(resolve => setTimeout(resolve, 20));
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('logs out and completes without reconnecting when the token is rejected (401)', async () => {
+    const oauth = jasmine.createSpyObj<OAuthService>('OAuthService', ['getAccessToken']);
+    const auth = authSpy();
+    const fetchSpy = spyOn(window, 'fetch').and.resolveTo(streamResponse([], false, 401));
+
+    await new Promise<void>(resolve =>
+      new DeployStatusService(oauth, auth).watch('o', 'r').subscribe({ complete: resolve })
+    );
+
+    expect(auth.logout).toHaveBeenCalledOnceWith(false);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('logs out as forbidden when repository access is denied (403)', async () => {
+    const oauth = jasmine.createSpyObj<OAuthService>('OAuthService', ['getAccessToken']);
+    const auth = authSpy();
+    spyOn(window, 'fetch').and.resolveTo(streamResponse([], false, 403));
+
+    await new Promise<void>(resolve =>
+      new DeployStatusService(oauth, auth).watch('o', 'r').subscribe({ complete: resolve })
+    );
+
+    expect(auth.logout).toHaveBeenCalledOnceWith(true);
+  });
+
+  it('does not log out on other failures', async () => {
+    const oauth = jasmine.createSpyObj<OAuthService>('OAuthService', ['getAccessToken']);
+    const auth = authSpy();
+    spyOn(window, 'fetch').and.resolveTo(streamResponse([], false, 500));
+
+    const subscription = new DeployStatusService(oauth, auth).watch('o', 'r').subscribe();
+    await new Promise(resolve => setTimeout(resolve, 20));
+    subscription.unsubscribe();
+
+    expect(auth.logout).not.toHaveBeenCalled();
   });
 });

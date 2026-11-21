@@ -139,6 +139,7 @@ public class PullRequestServiceTest : IDisposable
         var available = await _service.FreeAsync(GitHubModels.PullRequest(5, labels: ["dev2", "dev2-lock", "bug"]));
 
         Assert.Equal(["dev"], available);
+        Assert.NotNull(labels);
         Assert.Equal(["dev2", "bug"], labels);
     }
 
@@ -156,6 +157,7 @@ public class PullRequestServiceTest : IDisposable
             GitHubModels.PullRequest(5, labels: ["dev", "dev-lock"]), "stage", retainLocks: false);
 
         Assert.Equal(["dev"], available);
+        Assert.NotNull(labels);
         Assert.Equal(["dev", "stage", "stage-lock"], labels);
     }
 

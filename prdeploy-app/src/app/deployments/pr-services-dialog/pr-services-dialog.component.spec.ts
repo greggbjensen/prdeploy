@@ -74,7 +74,9 @@ describe('PrServicesDialogComponent', () => {
   it('disables the add button until an extra service is checked', async () => {
     const fixture = await create();
 
-    const button = fixture.nativeElement.querySelector('mat-dialog-actions .mat-mdc-unelevated-button') as HTMLButtonElement;
+    const button = fixture.nativeElement.querySelector(
+      'mat-dialog-actions .mat-mdc-unelevated-button'
+    ) as HTMLButtonElement;
     expect(button.disabled).toBeTrue();
   });
 

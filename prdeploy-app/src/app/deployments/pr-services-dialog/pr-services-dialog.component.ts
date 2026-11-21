@@ -1,6 +1,12 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle
+} from '@angular/material/dialog';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MtxButtonModule } from '@ng-matero/extensions/button';

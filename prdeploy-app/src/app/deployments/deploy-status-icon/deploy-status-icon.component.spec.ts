@@ -7,7 +7,10 @@ describe('DeployStatusIconComponent', () => {
   let fixture: ComponentFixture<DeployStatusIconComponent>;
 
   /** Builds a status in the given state. */
-  function status(state: DeployWorkflowState, runUrl: string | null = 'https://example.test/run'): DeployWorkflowStatus {
+  function status(
+    state: DeployWorkflowState,
+    runUrl: string | null = 'https://example.test/run'
+  ): DeployWorkflowStatus {
     return { owner: 'o', repo: 'r', environment: 'dev', state, pullNumber: 7, runId: 1, runUrl, updatedAt: '' };
   }
 
@@ -31,7 +34,9 @@ describe('DeployStatusIconComponent', () => {
   });
 
   it('shows a check icon when successful', () => {
-    expect(render(status('Successful')).querySelector('.deploy-status-successful')?.textContent).toContain('check_circle');
+    expect(render(status('Successful')).querySelector('.deploy-status-successful')?.textContent).toContain(
+      'check_circle'
+    );
   });
 
   it('shows an error icon on failure and links to the run', () => {

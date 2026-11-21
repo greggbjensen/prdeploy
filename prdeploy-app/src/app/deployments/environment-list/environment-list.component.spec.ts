@@ -3,6 +3,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MtxPopoverTrigger } from '@ng-matero/extensions/popover';
+import { provideMarkdown } from 'ngx-markdown';
 import { DeployEnvironment, DeployEnvironmentDeployGQL, DeployEnvironmentFreeGQL } from 'src/app/shared/graphql';
 import { NotificationManager, RepoManager } from 'src/app/shared/managers';
 import { LoggingService } from 'src/app/shared/services';
@@ -16,6 +17,7 @@ describe('EnvironmentListComponent', () => {
       imports: [EnvironmentListComponent, NoopAnimationsModule],
       providers: [
         provideRouter([]),
+        provideMarkdown(),
         { provide: RepoManager, useValue: {} },
         { provide: DeployEnvironmentDeployGQL, useValue: {} },
         { provide: DeployEnvironmentFreeGQL, useValue: {} },
@@ -152,8 +154,11 @@ describe('EnvironmentListComponent', () => {
     expect(link.textContent?.trim()).toBe('Ada Lovelace');
   });
 
-  it('shows no URL rows when the environment has none', () => {
+  it('shows no URL rows when the environment has an empty URL list', () => {
     expect(renderUrls([]).querySelectorAll('.environment-url').length).toBe(0);
+  });
+
+  it('shows no URL rows when the environment has no URL list', () => {
     expect(renderUrls(undefined).querySelectorAll('.environment-url').length).toBe(0);
   });
 

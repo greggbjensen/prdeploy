@@ -21,7 +21,9 @@ profile (`user.url`); the link is omitted when GitHub returns no profile URL.
 The **Status** column on the Deployments dashboard shows each environment's deploy workflow state (spinner, check,
 error icon). `DeployStatusService` reads the API's `GET /api/deploy-status/{owner}/{repo}/events` Server-Sent Events
 stream with `fetch` (so the bearer token can be sent), reconnects after 3 seconds if the stream drops, and the
-dashboard matches statuses to environments by name, ignoring case. `SseParser` and the icon component have Karma specs;
+dashboard matches statuses to environments by name, ignoring case. Because `fetch` bypasses the HTTP interceptors, the service
+handles a rejected token itself: on 401 (for example, an expired token) or 403 it stops reconnecting and logs the user
+out, as `HttpErrorInterceptor` does. `SseParser`, the service, and the icon component have Karma specs;
 run them with `npm test -- --watch=false --browsers=ChromeHeadless`.
 
 # Deployments: pull request services
@@ -68,9 +70,12 @@ compatible with zone.js, so install these versions without changing `package.jso
 
 ```bash
 npm install --no-save karma@6 karma-jasmine@5 karma-chrome-launcher@3 jasmine-core@5.1 @types/jasmine@5 \
-  karma-jasmine-html-reporter@2 karma-coverage@2
+  karma-jasmine-html-reporter@2 karma-coverage@2 karma-source-map-support
 npm test -- --watch=false --browsers=ChromeHeadless
 ```
+
+`ng test` uses the esbuild-based `@angular/build:karma` builder, matching the application build. The deprecated
+webpack builder cannot resolve `ngx-markdown`'s optional `marked-katex-extension` import.
 
 # Forms
 

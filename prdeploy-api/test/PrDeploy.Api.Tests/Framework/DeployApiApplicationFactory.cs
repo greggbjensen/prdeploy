@@ -109,13 +109,24 @@ public class DeployApiApplicationFactory : WebApplicationFactory<Program>
         }
     }
 
+    /// <summary>Request header that makes <see cref="TestAuthenticationHandler"/> treat the request as anonymous, for testing unauthenticated access.</summary>
+    public const string AnonymousHeader = "X-Test-Anonymous";
+
+    /// <summary>Signs every request in as a fixed test user with a GitHub token, unless the request carries <see cref="AnonymousHeader"/>.</summary>
     private sealed class TestAuthenticationHandler(
         IOptionsMonitor<AuthenticationSchemeOptions> options,
         ILoggerFactory logger,
         UrlEncoder encoder) : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
     {
+        /// <summary>Returns no result for anonymous test requests, otherwise a ticket for the test user.</summary>
+        /// <returns>The authentication result for the current request.</returns>
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
+            if (Request.Headers.ContainsKey(AnonymousHeader))
+            {
+                return Task.FromResult(AuthenticateResult.NoResult());
+            }
+
             var claims = new[]
             {
                 new Claim(PrDeployClaimNames.GitHubToken, "test-token"),

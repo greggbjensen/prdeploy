@@ -12,7 +12,7 @@ public static class DeployStatusEndpoints
     /// <summary>Name of the SSE event carrying a <see cref="DeployWorkflowStatus"/>.</summary>
     public const string EventType = "deploy-status";
 
-    /// <summary>Maps <c>GET /api/deploy-status/{owner}/{repo}/events</c>. The caller must be authenticated and have access to the repository.</summary>
+    /// <summary>Maps <c>GET /api/deploy-status/{owner}/{repo}/events</c>; unauthenticated callers get 401 and callers without repository access get 403.</summary>
     /// <param name="endpoints">Route builder the endpoint is added to.</param>
     /// <returns>The endpoint convention builder.</returns>
     public static IEndpointConventionBuilder MapDeployStatusEvents(this IEndpointRouteBuilder endpoints)
@@ -31,6 +31,9 @@ public static class DeployStatusEndpoints
                 context.Response.Headers["X-Accel-Buffering"] = "no";
                 return TypedResults.ServerSentEvents(Stream(broadcaster, owner, repo, cancellationToken));
             })
+            // Reject missing or expired tokens with 401 before the handler resolves the
+            // user-scoped GitHub client, which cannot be created without a token.
+            .RequireAuthorization()
             .WithName("DeployStatusEvents")
             .WithSummary("Stream deployment workflow status")
             .WithDescription("Server-Sent Events stream of deploy-status events. Sends the latest status of each environment on connect, then every change. State is InProgress, Successful or Failure. Requires a bearer token with access to the repository.")

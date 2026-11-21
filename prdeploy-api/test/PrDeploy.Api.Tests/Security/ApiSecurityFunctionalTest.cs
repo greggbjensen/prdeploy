@@ -236,6 +236,18 @@ public class ApiSecurityFunctionalTest : IClassFixture<SecuredApiApplicationFact
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
+    /// <summary>Confirms an unauthenticated (for example, expired-token) caller gets 401 rather than a 500 from resolving the user's GitHub client.</summary>
+    [Fact]
+    public async Task DeployStatusEvents_RejectsUnauthenticatedCallerWith401()
+    {
+        using var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Add(DeployApiApplicationFactory.AnonymousHeader, "true");
+
+        using var response = await client.GetAsync($"/api/deploy-status/{Owner}/{Repo}/events");
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
     /// <summary>Sends a GraphQL operation to the API over HTTP.</summary>
     /// <param name="query">Operation text.</param>
     /// <param name="variables">Operation variables.</param>
