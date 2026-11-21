@@ -1,0 +1,58 @@
+info:
+  name: List pull request services
+  type: graphql
+  seq: 20
+  tags:
+    - query
+graphql:
+  method: POST
+  url: '{{baseUrl}}/graphql'
+  auth:
+    type: bearer
+    token: '{{jwt}}'
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    query: |-
+      query PullRequestServices($input: PullRequestServicesInput!) {
+        pullRequestServices(input: $input) {
+          name
+          triggered
+        }
+      }
+    variables: |-
+      {
+        "input": {
+          "owner": "{{owner}}",
+          "repo": "{{repo}}",
+          "pullNumber": 0
+        }
+      }
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("returns GraphQL data without errors", function () {
+          expect(res.status).to.equal(200);
+          expect(res.body.errors).to.be.undefined;
+        });
+settings:
+  encodeUrl: true
+docs: >-
+  Lists every service configured for the repository and whether the pull request already triggers its build.
+  A service is triggered when a workflow run for the pull request's head commit used the workflow file configured
+  for that service; services without a configured workflow are never reported as triggered. Read-only.
+
+
+  Set the exact pull request number before sending. The pull request dialog on the Deployments page shows
+  triggered services checked and queues the rest with the add services mutation.
+
+
+  Client operation:
+  [pull-request-services.graphql](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-app/src/app/shared/graphql/prdeploy-api/queries/pull-request-services.graphql).
+
+  Server schema:
+  [PullRequestQuery.cs](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-api/src/PrDeploy.Api/Schema/Queries/PullRequestQuery.cs).
+
+  Required environment: `owner`, `repo`, `jwt`, and a valid pull number.

@@ -1,0 +1,22 @@
+@use '../../../sass/variables' as *;
+
+.services-hint {
+  margin: 0 0 10px 3px;
+  color: $body-color;
+}
+
+.services-list {
+  height: 312px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: solid 1px $border-color;
+  border-radius: $border-radius;
+}
+
+.loading-spinner {
+  margin: 60px auto;
+}
+
+.services-info {
+  display: block;
+}

@@ -15,6 +15,8 @@ import { DeployWorkflowStatus } from 'src/app/shared/models';
 import { MatTableModule } from '@angular/material/table';
 import { DeployForceDialogData } from './deploy-force-dialog/deploy-force-dialog-data';
 import { DeployRollbackDialogData } from './deploy-rollback-dialog/deploy-rollback-dialog-data';
+import { PrServicesDialogComponent } from '../pr-services-dialog/pr-services-dialog.component';
+import { PrServicesDialogData } from '../pr-services-dialog/pr-services-dialog-data';
 import { MtxPopoverModule } from '@ng-matero/extensions/popover';
 import { MarkdownComponent } from 'ngx-markdown';
 import { CleanMarkdownPipe } from 'src/app/shared/pipes';
@@ -110,6 +112,14 @@ export class EnvironmentListComponent implements AfterViewInit {
       },
       width: '550px',
       height: '350px'
+    });
+  }
+
+  /** Opens the services dialog for a pull request so extra services can be triggered. */
+  showServices(pullNumber: number): void {
+    this._dialog.open<PrServicesDialogComponent, PrServicesDialogData>(PrServicesDialogComponent, {
+      data: { pullNumber },
+      width: '500px'
     });
   }
 

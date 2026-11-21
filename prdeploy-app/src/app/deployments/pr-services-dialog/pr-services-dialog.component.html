@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>Services for #{{ data.pullNumber }}</h2>
+<mat-dialog-content>
+  @if (loading) {
+    <mat-spinner class="loading-spinner" diameter="40"></mat-spinner>
+  } @else if (services.length > 0) {
+    <p class="services-hint">Checked services are already triggered. Check more to add them to this pull request.</p>
+    <mat-selection-list
+      class="services-list"
+      aria-label="Services"
+      (selectionChange)="onSelectionChange($event)">
+      @for (service of services; track service.name) {
+        <mat-list-option
+          [value]="service.name"
+          [selected]="service.triggered"
+          [disabled]="service.triggered"
+          [attr.data-triggered]="service.triggered">
+          {{ service.name }}
+        </mat-list-option>
+      }
+    </mat-selection-list>
+  } @else {
+    <app-alert-panel class="services-info" type="danger">
+      You must first configure services in&nbsp;
+      <a [routerLink]="['/', repoManager.owner, repoManager.repo, 'settings', 'repo']" (click)="cancel()">Settings</a>.
+    </app-alert-panel>
+  }
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-stroked-button class="mat-primary" (click)="cancel()">Cancel</button>
+  <button
+    mat-flat-button
+    class="mat-primary"
+    (click)="addServices()"
+    [loading]="processing"
+    [disabled]="processing || !selectedServices.length">
+    Add
+  </button>
+</mat-dialog-actions>

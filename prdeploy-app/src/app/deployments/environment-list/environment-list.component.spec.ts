@@ -156,4 +156,30 @@ describe('EnvironmentListComponent', () => {
     expect(renderUrls([]).querySelectorAll('.environment-url').length).toBe(0);
     expect(renderUrls(undefined).querySelectorAll('.environment-url').length).toBe(0);
   });
+
+  it('opens the services dialog for the pull request from the Services action', () => {
+    configure();
+    const open = jasmine.createSpy('open');
+    TestBed.overrideProvider(MatDialog, { useValue: { open } });
+    const fixture = TestBed.createComponent(EnvironmentListComponent);
+    fixture.componentInstance.data = [
+      { name: 'Dev', pullRequest: { number: 42, title: 'Add login page' } } as unknown as DeployEnvironment
+    ];
+    fixture.detectChanges();
+
+    const button = fixture.nativeElement.querySelector('button[title="Services"]') as HTMLButtonElement;
+    button.click();
+
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(open.calls.mostRecent().args[1].data).toEqual({ pullNumber: 42 });
+  });
+
+  it('hides the Services action when an environment has no pull request', () => {
+    configure();
+    const fixture = TestBed.createComponent(EnvironmentListComponent);
+    fixture.componentInstance.data = [{ name: 'Dev' } as unknown as DeployEnvironment];
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('button[title="Services"]')).toBeNull();
+  });
 });

@@ -111,6 +111,13 @@
         @if (environment.pullRequest) {
           <button
             mat-icon-button
+            title="Services"
+            aria-label="Services for pull request #{{ environment.pullRequest.number }}"
+            (click)="showServices(environment.pullRequest.number)">
+            <mat-icon>widgets</mat-icon>
+          </button>
+          <button
+            mat-icon-button
             class="mat-accent"
             title="/deploy {{ environment.name.toLowerCase() }}"
             (click)="redeploy(environment.name, environment.pullRequest.number)">

@@ -12,6 +12,7 @@ type DeployQuery {
   environments(input: RepoQueryInput!): [Environment!]!
   deployStateComparison(input: DeployStateComparisonInput!): DeployStateComparison!
   openPullRequests(input: OpenPullRequestInput!): [PullRequest!]!
+  pullRequestServices(input: PullRequestServicesInput!): [PullRequestServiceStatus!]!
   enabledOwnerRepos: [OwnerRepos!]!
   repositoryServices(input: RepoQueryInput!): [String!]!
   repositoryWorkflows(input: RepoQueryInput!): [String!]!
@@ -57,6 +58,22 @@ type PullRequest {
   updatedAt: DateTime
   "Login for user the pull request was created by."
   user: DeployUser
+}
+
+input PullRequestServicesInput {
+  pullNumber: Int!
+  "Repository owner or organization."
+  owner: ID
+  "Repository being accessed within the owner."
+  repo: ID
+}
+
+"A configured service and whether the pull request already triggers its build."
+type PullRequestServiceStatus {
+  "Name of the service as configured in the repository service settings."
+  name: String!
+  "True when the service's build workflow has run for the pull request's head commit."
+  triggered: Boolean!
 }
 
 "Input for retrieving the deploy state comparison."

@@ -16,6 +16,9 @@ import {
   OpenPullRequestsGQL,
   PullRequest
 } from 'src/app/shared/graphql';
+import { MatDialog } from '@angular/material/dialog';
+import { PrServicesDialogComponent } from '../pr-services-dialog/pr-services-dialog.component';
+import { PrServicesDialogData } from '../pr-services-dialog/pr-services-dialog-data';
 import { MtxPopoverModule } from '@ng-matero/extensions/popover';
 import { DatePipe } from '@angular/common';
 import { RepoManager } from 'src/app/shared/managers';
@@ -91,10 +94,19 @@ export class QueueListComponent implements AfterViewInit {
     private _openPullRequestsGQL: OpenPullRequestsGQL,
     private _deployQueueUpdateGQL: DeployQueueUpdateGQL,
     private _repoManager: RepoManager,
+    private _dialog: MatDialog,
     private _destroyRef: DestroyRef,
     private _changeDetectorRef: ChangeDetectorRef
   ) {
     this.filterPullRequests();
+  }
+
+  /** Opens the services dialog for a queued pull request so extra services can be triggered. */
+  showServices(pullNumber: number): void {
+    this._dialog.open<PrServicesDialogComponent, PrServicesDialogData>(PrServicesDialogComponent, {
+      data: { pullNumber },
+      width: '500px'
+    });
   }
 
   clearPullRequest(event: MouseEvent) {

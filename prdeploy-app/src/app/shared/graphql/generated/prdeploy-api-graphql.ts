@@ -163,6 +163,7 @@ export type DeployQuery = {
   environments: Array<Environment>;
   openPullRequests: Array<PullRequest>;
   ownerSettings: DeploySettings;
+  pullRequestServices: Array<PullRequestServiceStatus>;
   repoSettings: DeploySettings;
   repositoryServices: Array<Scalars['String']['output']>;
   repositoryWorkflows: Array<Scalars['String']['output']>;
@@ -196,6 +197,11 @@ export type DeployQueryEnvironmentsArgs = {
 
 export type DeployQueryOpenPullRequestsArgs = {
   input: OpenPullRequestInput;
+};
+
+
+export type DeployQueryPullRequestServicesArgs = {
+  input: PullRequestServicesInput;
 };
 
 
@@ -486,6 +492,23 @@ export type PullRequestAddServicesInput = {
   services: Array<Scalars['String']['input']>;
 };
 
+/** A configured service and whether the pull request already triggers its build. */
+export type PullRequestServiceStatus = {
+  __typename?: 'PullRequestServiceStatus';
+  /** Name of the service as configured in the repository service settings. */
+  name: Scalars['String']['output'];
+  /** True when the service's build workflow has run for the pull request's head commit. */
+  triggered: Scalars['Boolean']['output'];
+};
+
+export type PullRequestServicesInput = {
+  /** Repository owner or organization. */
+  owner?: InputMaybe<Scalars['ID']['input']>;
+  pullNumber: Scalars['Int']['input'];
+  /** Repository being accessed within the owner. */
+  repo?: InputMaybe<Scalars['ID']['input']>;
+};
+
 /** Input for a general owner and repo query. */
 export type RepoQueryInput = {
   /** Repository owner or organization. */
@@ -740,6 +763,13 @@ export type OpenPullRequestsQueryVariables = Exact<{
 
 
 export type OpenPullRequestsQuery = { __typename?: 'DeployQuery', openPullRequests: Array<{ __typename?: 'PullRequest', number: number, title?: string | null, user?: { __typename?: 'DeployUser', name?: string | null } | null }> };
+
+export type PullRequestServicesQueryVariables = Exact<{
+  input: PullRequestServicesInput;
+}>;
+
+
+export type PullRequestServicesQuery = { __typename?: 'DeployQuery', pullRequestServices: Array<{ __typename?: 'PullRequestServiceStatus', name: string, triggered: boolean }> };
 
 export type RepositoryServicesQueryVariables = Exact<{
   input: RepoQueryInput;
@@ -1205,6 +1235,25 @@ export const OpenPullRequestsDocument = gql`
   })
   export class OpenPullRequestsGQL extends Apollo.Query<OpenPullRequestsQuery, OpenPullRequestsQueryVariables> {
     override document = OpenPullRequestsDocument;
+    override client = 'deploy';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const PullRequestServicesDocument = gql`
+    query PullRequestServices($input: PullRequestServicesInput!) {
+  pullRequestServices(input: $input) {
+    name
+    triggered
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class PullRequestServicesGQL extends Apollo.Query<PullRequestServicesQuery, PullRequestServicesQueryVariables> {
+    override document = PullRequestServicesDocument;
     override client = 'deploy';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

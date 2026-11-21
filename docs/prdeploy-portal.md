@@ -57,6 +57,8 @@ Each environment has a **URLs** table. Use the add button to give it any number 
 
 Setting up your services allows you to add specific ones to your pull request with the comment `/add my-service` when it is not detected to include automatically.
 
+You can also do this from the **Deployments** page. Click the **Services** icon on an environment's pull request or on a queued pull request to open a dialog listing every configured service. Services the pull request's checks already trigger are shown checked and locked. Check any extra services and click **Add** to write a `.deploy` file line (a datestamp and the branch name) into each service's configured directory, which triggers its build. **Cancel** closes the dialog without changes.
+
 ![prdeploy settings Services](./assets/images/screenshots/prdeploy-portal-settings-services.png)
 {: style="margin: 30px 0 60px 0;"}
 

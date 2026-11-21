@@ -26,4 +26,9 @@ public interface IPullRequestService
     /// <param name="input">Input object containing the operation's arguments.</param>
     /// <returns>The status response produced by the operation.</returns>
     Task<StatusResponse> AddServicesAsync(PullRequestAddServicesInput input);
+
+    /// <summary>Lists every configured service and whether the pull request already triggers its build.</summary>
+    /// <param name="input">Repository and pull request number to inspect.</param>
+    /// <returns>One entry per configured service, in settings order.</returns>
+    Task<List<PullRequestServiceStatus>> ListServicesAsync(PullRequestServicesInput input);
 }

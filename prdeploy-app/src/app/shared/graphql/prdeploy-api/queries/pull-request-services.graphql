@@ -1,0 +1,6 @@
+query PullRequestServices($input: PullRequestServicesInput!) {
+  pullRequestServices(input: $input) {
+    name
+    triggered
+  }
+}

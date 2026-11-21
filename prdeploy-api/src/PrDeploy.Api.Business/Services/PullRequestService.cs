@@ -9,6 +9,7 @@ using Octokit;
 using PrDeploy.Api.Business.Mapping;
 using PrDeploy.Api.Business.Security.Interfaces;
 using PrDeploy.Api.Models.General;
+using PrDeploy.Api.Models.PullRequests;
 using PrDeploy.Api.Models.PullRequests.Inputs;
 using PullRequest = PrDeploy.Api.Models.PullRequests.PullRequest;
 
@@ -19,16 +20,20 @@ public partial class PullRequestService : IPullRequestService
 {
     private readonly IGitHubClient _client;
     private readonly IGitHubSecurity _gitHubSecurity;
+    private readonly IDeploySettingsService _settingsService;
     private readonly ILogger<PullRequestService> _logger;
 
     /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="client">Object containing the client data used by the operation.</param>
     /// <param name="gitHubSecurity">Guard that limits access to repositories in allowed organizations.</param>
+    /// <param name="settingsService">Service that reads the merged repository settings, including services.</param>
     /// <param name="logger">Logger used to report operational activity.</param>
-    public PullRequestService(IGitHubClient client, IGitHubSecurity gitHubSecurity, ILogger<PullRequestService> logger)
+    public PullRequestService(IGitHubClient client, IGitHubSecurity gitHubSecurity,
+        IDeploySettingsService settingsService, ILogger<PullRequestService> logger)
     {
         _client = client;
         _gitHubSecurity = gitHubSecurity;
+        _settingsService = settingsService;
         _logger = logger;
     }
 
@@ -78,6 +83,46 @@ public partial class PullRequestService : IPullRequestService
         _logger.LogInformation("Adding services {Services} to pull request {PullNumber} in {Owner}/{Repo}.",
             input.Services, input.PullNumber, input.Owner, input.Repo);
         return await AddCommentCommandAsync(input.Owner, input.Repo, input.PullNumber, $"/add {serviceList}");
+    }
+
+    /// <summary>Lists every configured service and whether the pull request already triggers its build.</summary>
+    /// <remarks>
+    /// A service counts as triggered when a workflow run for the pull request's head commit used the workflow file
+    /// configured for that service. Services without a configured workflow cannot be detected and are never triggered.
+    /// </remarks>
+    /// <param name="input">Repository and pull request number to inspect.</param>
+    /// <returns>One entry per configured service, in settings order.</returns>
+    public async Task<List<PullRequestServiceStatus>> ListServicesAsync(PullRequestServicesInput input)
+    {
+        await _gitHubSecurity.GuardRepoAsync(input.Owner, input.Repo);
+
+        var settings = await _settingsService.GetMergedAsync(input.Owner, input.Repo);
+        var services = settings.Services ?? [];
+        if (services.Count == 0)
+        {
+            return [];
+        }
+
+        var pull = await _client.PullRequest.Get(input.Owner, input.Repo, input.PullNumber);
+        var runs = await _client.Actions.Workflows.Runs.List(input.Owner, input.Repo,
+            new WorkflowRunsRequest { HeadSha = pull.Head.Sha },
+            new ApiOptions { PageCount = 1, PageSize = 100 });
+
+        var triggeredWorkflows = runs.WorkflowRuns
+            .Select(r => Path.GetFileName(r.Path ?? string.Empty))
+            .Where(w => w.Length > 0)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        _logger.LogDebug("Pull request {PullNumber} in {Owner}/{Repo} has runs for workflows: {Workflows}.",
+            input.PullNumber, input.Owner, input.Repo, triggeredWorkflows);
+
+        return services
+            .Select(s => new PullRequestServiceStatus
+            {
+                Name = s.Name,
+                Triggered = !string.IsNullOrEmpty(s.Workflow)
+                            && triggeredWorkflows.Contains(Path.GetFileName(s.Workflow))
+            })
+            .ToList();
     }
 
     /// <summary>Adds the comment command to the associated collection.</summary>

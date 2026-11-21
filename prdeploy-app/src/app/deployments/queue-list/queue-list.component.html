@@ -17,6 +17,13 @@
             &nbsp;&nbsp;<span>{{ pullRequest.title }}</span>
           </div>
           <span class="queue-pull-updated">{{ pullRequest.updatedAt | date: 'short' }}</span>
+          <button
+            mat-icon-button
+            title="Services"
+            aria-label="Services for pull request #{{ pullRequest.number }}"
+            (click)="showServices(pullRequest.number)">
+            <mat-icon>widgets</mat-icon>
+          </button>
           <button mat-icon-button class="mat-warn" title="Remove from queue" (click)="remove(pullRequest)">
             <mat-icon>close</mat-icon>
           </button>

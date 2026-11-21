@@ -24,6 +24,16 @@ stream with `fetch` (so the bearer token can be sent), reconnects after 3 second
 dashboard matches statuses to environments by name, ignoring case. `SseParser` and the icon component have Karma specs;
 run them with `npm test -- --watch=false --browsers=ChromeHeadless`.
 
+# Deployments: pull request services
+
+The **Services** icon on each environment row that has a pull request, and on each queued pull request, opens the
+`PrServicesDialogComponent`. It loads the `pullRequestServices` GraphQL query: every configured service with a
+`triggered` flag, true when a workflow run for the pull request's head commit used the service's configured workflow
+file. Triggered services are checked and locked. Checking extra services enables **Add**, which calls the
+`pullRequestAddServices` mutation; the API posts an `/add` comment and the webhook writes a `.deploy` file line
+(datestamp and branch) into each service's configured path. **Cancel** closes the dialog. The Karma spec is
+`pr-services-dialog.component.spec.ts`.
+
 # Settings: deep routing
 
 The Settings page is routed as `/:owner/:repo/settings/:level/:section`, where `level` is `owner` or `repo` and the

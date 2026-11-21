@@ -15,4 +15,13 @@ public class PullRequestQuery
     [GraphQLName("openPullRequests")]
     public async Task<List<PullRequest>> OpenPullRequests(IPullRequestService service, OpenPullRequestInput input) =>
         await service.ListOpenPullRequestsAsync(input);
+
+    /// <summary>Lists the configured services and whether the pull request already triggers each one.</summary>
+    /// <param name="service">Service that reads pull request and settings information.</param>
+    /// <param name="input">Repository and pull request number to inspect.</param>
+    /// <returns>One entry per configured service.</returns>
+    [GraphQLName("pullRequestServices")]
+    public async Task<List<PullRequestServiceStatus>> PullRequestServices(IPullRequestService service,
+        PullRequestServicesInput input) =>
+        await service.ListServicesAsync(input);
 }
