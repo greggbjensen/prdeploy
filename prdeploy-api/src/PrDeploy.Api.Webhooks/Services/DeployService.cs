@@ -410,16 +410,6 @@ public class DeployService
             return;
         }
 
-        // Check the branch before changing labels or running checks, which compare and find builds by branch name and
-        // fail with 404 when a pull request's branch was deleted, such as after it was merged. A rollback deploys the
-        // recorded stable builds, so it does not need the rolled-back pull request's branch.
-        if (!rollback && !await BranchExistsAsync(deployPullRequest.Head?.Ref))
-        {
-            await PostDeployFailedAsync(pullRequest.Number, environment, rollback,
-                $"Branch {deployPullRequest.Head?.Ref} for pull request #{deployPullRequest.Number} no longer exists.  Push the branch and try again.");
-            return;
-        }
-
         _logger.LogDebug("Removing pull request from queues for {Environment}.", environment);
         var availableEnvironments = await _pullRequestService.ProgressEnvironmentAsync(deployPullRequest,
             environment, retainLocks);
@@ -460,30 +450,6 @@ public class DeployService
 
         await TriggerDeployWorkflowAsync(deployName, environment, pullRequest, deployPullRequest, rollback,
             rollbackCount);
-    }
-
-    /// <summary>Checks whether a pull request's head branch still exists in this repository.</summary>
-    /// <remarks>Errors other than a missing branch propagate, so a failed lookup never counts as a deleted branch.</remarks>
-    /// <param name="branch">Head branch name of the pull request being deployed.</param>
-    /// <returns><c>true</c> when the branch exists; <c>false</c> when it is empty or GitHub reports it as not found.</returns>
-    private async Task<bool> BranchExistsAsync(string? branch)
-    {
-        if (string.IsNullOrEmpty(branch))
-        {
-            return false;
-        }
-
-        try
-        {
-            await GitHub.Repository.Branch.Get(_context.Owner, _context.Repo, branch);
-            return true;
-        }
-        catch (NotFoundException ex)
-        {
-            _logger.LogWarning(ex, "Deploy branch {Branch} no longer exists in {Owner}/{Repo}.",
-                branch, _context.Owner, _context.Repo);
-            return false;
-        }
     }
 
     /// <summary>Dispatches the configured deploy workflow on the repository's default branch with the builds to deploy and sync.</summary>

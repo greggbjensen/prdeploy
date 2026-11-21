@@ -104,19 +104,18 @@ public class YamlConfigurationTest
         }
     }
 
-    /// <summary>The shipped appsettings files must parse and carry the settings the API depends on.</summary>
+    /// <summary>The shipped appsettings file must parse and carry the settings the API depends on; appsettings.Development.yaml is gitignored and local to each developer, so it is not checked.</summary>
     [Fact]
     public void ShippedAppSettings_ParseWithExpectedValues()
     {
         var config = new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory)
             .AddYamlFile("appsettings.yaml", optional: false, reloadOnChange: false)
-            .AddYamlFile("appsettings.Development.yaml", optional: false, reloadOnChange: false)
             .Build();
 
         Assert.Equal("Local", config["Storage:Provider"]);
-        Assert.Equal("Debug", config["Serilog:MinimumLevel:Default"]);
-        Assert.True(config.GetValue<bool>("ApolloSandbox:Enabled"));
+        Assert.Equal("Information", config["Serilog:MinimumLevel:Default"]);
+        Assert.False(config.GetValue<bool>("ApolloSandbox:Enabled"));
         Assert.Equal("Serilog.Expressions", config["Serilog:Using:0"]);
         Assert.Contains("ByExcluding", config["Serilog:Filter:1:Name"]);
         Assert.Equal(3, config.GetSection("Cors:AllowedOrigins").GetChildren().Count());

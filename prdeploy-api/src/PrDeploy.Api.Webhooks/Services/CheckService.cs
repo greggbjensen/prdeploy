@@ -85,8 +85,9 @@ public partial class CheckService
             return overrideBuilds.ToList();
         }
 
-        _logger.LogInformation("Listing checks for ref: {Ref}", pullRequest.Head.Ref);
-        var result = await GetChecksForRefAsync(pullRequest.Head.Ref);
+        var head = await ResolveHeadAsync(pullRequest);
+        _logger.LogInformation("Listing checks for ref: {Ref}", head.Reference);
+        var result = await GetChecksForRefAsync(head.Reference);
 
         var checkSummaries = ListCheckSummaries(result.CheckRuns);
         var incompleteChecks = checkSummaries
@@ -115,14 +116,15 @@ public partial class CheckService
     /// <returns>Items matching the supplied criteria.</returns>
     public async Task<List<CheckSummary>> ListIncompletePullChecksAsync(PullRequest pullRequest)
     {
-        _logger.LogInformation("Listing checks for ref: {Ref}", pullRequest.Head.Ref);
-        var result = await GetChecksForRefAsync(pullRequest.Head.Ref);
+        var head = await ResolveHeadAsync(pullRequest);
+        _logger.LogInformation("Listing checks for ref: {Ref}", head.Reference);
+        var result = await GetChecksForRefAsync(head.Reference);
 
         var incompleteChecks = ListCheckSummaries(result.CheckRuns)
             .Where(c => c.Status != "completed" || c.Conclusion == "failure")
             .ToList();
 
-         
+        if (incompleteChecks.Count == 0)
         {
             _logger.LogDebug("All checks are complete.");
             return incompleteChecks;
@@ -166,21 +168,59 @@ public partial class CheckService
         return retainedChecks;
     }
 
-    /// <summary>Lists the workflows triggered by PR Deploy itself, which should not retrigger deploys.</summary>
+    /// <summary>Lists the lowercase file names of the workflows triggered by PR Deploy itself, which should not retrigger deploys.</summary>
+    /// <remarks>Callers compare these with the file name of a run's workflow path, so a setting configured as a
+    /// <c>.github/workflows/...</c> path is reduced to its file name.</remarks>
+    /// <param name="settings">Merged settings holding the deploy and automation test workflows.</param>
+    /// <returns>The lowercase workflow file names to exclude.</returns>
     public static List<string> GetExcludedWorkflows(DeploySettings settings)
     {
         var excludedWorkflows = (settings.Environments ?? [])
             .Where(e => e.AutomationTest?.Enabled == true && !string.IsNullOrEmpty(e.AutomationTest.Workflow))
-            .Select(e => e.AutomationTest!.Workflow!.ToLowerInvariant())
+            .Select(e => ToWorkflowFileName(e.AutomationTest!.Workflow))
             .Distinct()
             .ToList();
-        excludedWorkflows.Add(DeploySettings.GetWorkflowPath(settings.DeployWorkflow ?? string.Empty).ToLowerInvariant());
+        excludedWorkflows.Add(ToWorkflowFileName(settings.DeployWorkflow));
         return excludedWorkflows;
     }
 
-    /// <summary>Retrieves the checks for ref.</summary>
-    /// <param name="reference">Text used as the reference.</param>
-    /// <returns>Requested value, or its default when no value is available.</returns>
+    /// <summary>Reduces a workflow setting, either a file name or a <c>.github/workflows/...</c> path, to its lowercase file name.</summary>
+    /// <param name="workflow">Configured workflow file name or path.</param>
+    /// <returns>The lowercase file name, or an empty string when no workflow is configured.</returns>
+    internal static string ToWorkflowFileName(string? workflow) =>
+        Path.GetFileName(workflow ?? string.Empty).ToLowerInvariant();
+
+    /// <summary>Resolves the ref for a pull request's head commit: its branch, falling back to the head commit SHA only when the branch cannot be found.</summary>
+    /// <remarks>
+    /// GitHub keeps check runs and commits after a branch is deleted, such as after a merge, so the SHA still finds the
+    /// pull request's checks and builds. Errors other than a missing branch propagate.
+    /// </remarks>
+    /// <param name="pullRequest">Pull request whose head is resolved.</param>
+    /// <returns>The ref to look up, and whether it is the pull request's branch.</returns>
+    private async Task<HeadReference> ResolveHeadAsync(PullRequest pullRequest)
+    {
+        var branch = pullRequest.Head.Ref;
+        try
+        {
+            await _context.GitHub.Repository.Branch.Get(_context.Owner, _context.Repo, branch);
+            return new HeadReference(branch, BranchExists: true);
+        }
+        catch (NotFoundException)
+        {
+            _logger.LogInformation("Branch {Branch} for pull request {PullNumber} no longer exists; using head commit {Sha}.",
+                branch, pullRequest.Number, pullRequest.Head.Sha);
+            return new HeadReference(pullRequest.Head.Sha, BranchExists: false);
+        }
+    }
+
+    /// <summary>The ref used to look up a pull request's head commit, and whether it is the pull request's branch.</summary>
+    /// <param name="Reference">The head branch name, or the head commit SHA when the branch no longer exists.</param>
+    /// <param name="BranchExists">Whether the head branch exists, so <paramref name="Reference"/> is the branch name.</param>
+    private sealed record HeadReference(string Reference, bool BranchExists);
+
+    /// <summary>Gets the check runs reported for a ref.</summary>
+    /// <param name="reference">Branch name or commit SHA whose check runs are listed.</param>
+    /// <returns>The first page of check runs for the ref.</returns>
     private async Task<CheckRunsResponse> GetChecksForRefAsync(string reference)
     {
         return await _context.GitHub.Check.Run.GetAllForReference(_context.Owner, _context.Repo, reference,
@@ -260,12 +300,38 @@ public partial class CheckService
     private async Task<bool> VerifyBranchUpToDateAsync(PullRequest pullRequest,
         EnvironmentSettings environmentSettings)
     {
+        var head = await ResolveHeadAsync(pullRequest);
+
+        // A merged pull request's merge commit holds its changes, even when it was squashed into a new commit.
+        var compareHead = !head.BranchExists && pullRequest.Merged && !string.IsNullOrEmpty(pullRequest.MergeCommitSha)
+            ? pullRequest.MergeCommitSha
+            : head.Reference;
         var compare = await _context.GitHub.Repository.Commit.Compare(_context.Owner, _context.Repo,
-            pullRequest.Base.Ref, pullRequest.Head.Ref);
+            pullRequest.Base.Ref, compareHead);
 
         var pull = pullRequest;
         var valid = compare.BehindBy == 0;
-        if (!valid)
+        if (!valid && !head.BranchExists)
+        {
+            // There is no branch to update, so say so rather than reporting merge conflicts.
+            _logger.LogWarning("Branch {Branch} no longer exists and {Head} is behind {Base} by {BehindBy} commits.",
+                pull.Head.Ref, compareHead, pull.Base.Ref, compare.BehindBy);
+
+            var body = _templateService.Render(TemplateService.PullRequestBranchMissingOutOfDate, new
+            {
+                owner = _context.Owner,
+                repo = _context.Repo,
+                environment = environmentSettings,
+                badge = Settings.Badge,
+                prdeployPortalUrl = Settings.PrdeployPortalUrl,
+                branch = pull.Head.Ref,
+                baseBranch = pull.Base.Ref,
+                behindBy = compare.BehindBy
+            });
+
+            await _context.GitHub.Issue.Comment.Create(_context.Owner, _context.Repo, pull.Number, body);
+        }
+        else if (!valid)
         {
             _logger.LogInformation(
                 "Branch {Branch} is behind by {BehindBy} commits.\n    Mergeable: {Mergeable}\n    State:     {State}",

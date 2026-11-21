@@ -25,6 +25,7 @@ public class TemplateService
     public const string DeployReleasedJson = "deploy-released.json";
     public const string EnvironmentAvailableJson = "environment-available.json";
     public const string EnvironmentApprovalRequiredJson = "environment-approval-required.json";
+    public const string PullRequestBranchMissingOutOfDate = "pull-request-branch-missing-out-of-date.md";
     public const string PullRequestChecksIncomplete = "pull-request-checks-incomplete.md";
     public const string PullRequestChecksRedeploy = "pull-request-checks-redeploy.md";
     public const string PullRequestEnqueued = "pull-request-enqueued.md";

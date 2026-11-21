@@ -97,7 +97,7 @@ public class StatusManager
     {
         return !string.IsNullOrEmpty(workflowPath)
                && !string.IsNullOrEmpty(_context.Settings.DeployWorkflow)
-               && string.Equals(Path.GetFileName(workflowPath), _context.Settings.DeployWorkflow,
+               && string.Equals(Path.GetFileName(workflowPath), Path.GetFileName(_context.Settings.DeployWorkflow),
                    StringComparison.OrdinalIgnoreCase);
     }
 

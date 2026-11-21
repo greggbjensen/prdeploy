@@ -71,7 +71,7 @@ Webhook processing only calls a Jira host or Slack webhook URL that is absolute 
 | `issue_comment.created`                    | Runs `/deploy`, `/free`, `/rollback`, and `/add` commands from users with write access. |
 | `workflow_run.requested`, `completed`      | Posts deploy status, triggers automation tests, retriggers deploys.     |
 
-Comment commands only run when the comment author has `write`, `maintain`, or `admin` permission on the repository (`GET /repos/{owner}/{repo}/collaborators/{user}/permission`). Anyone who can read a repository, or any GitHub user on a public one, can comment, so commands from other users, bots, and apps are logged at `Warning` and ignored. `/deploy` and `/add` are also ignored for pull requests from forks, because deploys find checks and builds, and `/add` commits trigger files, by branch name in this repository; a fork pull request taken off a queue is not deployed and gets a failure comment instead.
+Comment commands only run when the comment author has `write`, `maintain`, or `admin` permission on the repository (`GET /repos/{owner}/{repo}/collaborators/{user}/permission`). Anyone who can read a repository, or any GitHub user on a public one, can comment, so commands from other users, bots, and apps are logged at `Warning` and ignored. `/deploy` and `/add` are also ignored for pull requests from forks, because deploys find checks and builds, and `/add` commits trigger files, by branch name in this repository (deploys fall back to the head commit SHA only when the branch no longer exists); a fork pull request taken off a queue is not deployed and gets a failure comment instead.
 
 Because the queue and some caches are in memory, the API runs as a single replica.
 

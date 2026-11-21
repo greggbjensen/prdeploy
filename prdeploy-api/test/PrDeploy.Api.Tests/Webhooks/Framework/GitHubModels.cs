@@ -38,15 +38,26 @@ public static class GitHubModels
               "html_url": "https://github.com/{{WebhookTestHost.Owner}}/{{WebhookTestHost.Repo}}/pull/{{number}}",
               "merged": {{merged.ToString().ToLowerInvariant()}},
               "merged_at": {{(merged ? "\"2026-11-15T12:00:00Z\"" : "null")}},
+              "merge_commit_sha": {{(merged ? $"\"{MergeCommitSha(number)}\"" : "null")}},
               "mergeable": true,
               "mergeable_state": "clean",
               "user": { "login": "{{login}}" },
-              "head": { "ref": "{{branch}}", "repo": { "full_name": "{{headRepository}}" } },
+              "head": { "ref": "{{branch}}", "sha": "{{HeadSha(branch)}}", "repo": { "full_name": "{{headRepository}}" } },
               "base": { "ref": "main", "repo": { "full_name": "{{WebhookTestHost.Owner}}/{{WebhookTestHost.Repo}}" } },
               "labels": [{{labelJson}}]
             }
             """);
     }
+
+    /// <summary>Gets the head commit SHA that <see cref="PullRequest"/> gives a pull request on the given branch.</summary>
+    /// <param name="branch">Head branch name of the pull request.</param>
+    /// <returns>A fake SHA derived from the branch name, so tests can set up lookups by commit.</returns>
+    public static string HeadSha(string branch) => $"{branch}-sha";
+
+    /// <summary>Gets the merge commit SHA that <see cref="PullRequest"/> gives a merged pull request.</summary>
+    /// <param name="number">Number of the merged pull request.</param>
+    /// <returns>A fake SHA derived from the pull request number.</returns>
+    public static string MergeCommitSha(int number) => $"merge-{number}-sha";
 
     /// <summary>Performs the workflow run operation and returns its result.</summary>
     /// <param name="id">Numeric value used for the id.</param>

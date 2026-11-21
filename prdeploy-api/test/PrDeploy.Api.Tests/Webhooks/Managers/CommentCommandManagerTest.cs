@@ -2,6 +2,7 @@ using Moq;
 using Octokit;
 using PrDeploy.Api.Tests.Webhooks.Framework;
 using PrDeploy.Api.Webhooks.Managers;
+using PrDeploy.Api.Webhooks.Models;
 
 namespace PrDeploy.Api.Tests.Webhooks.Managers;
 
@@ -323,42 +324,78 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Equal(PullNumber.ToString(), dispatch.Inputs["pull_number"]);
     }
 
-    /// <summary>Verifies a deploy whose pull request branch was deleted fails with a comment, because its checks and builds are found by branch name.</summary>
+    /// <summary>Verifies a deploy whose pull request branch was deleted finds its builds by the head commit SHA instead.</summary>
     [Fact]
-    public async Task ProcessCommentAsync_FailsWhenPullRequestBranchIsMissing()
+    public async Task ProcessCommentAsync_DeploysFromHeadCommitWhenPullRequestBranchIsMissing()
     {
         _host.SetupPullRequest(GitHubModels.PullRequest(PullNumber, Branch));
         SetupMissingBranch(Branch);
+        _host.SetupChecks(GitHubModels.HeadSha(Branch),
+            ("Build details", "completed", "success", 20014663490, "PR_DEPLOY_BUILD"));
+        _host.SetupBuildRun(20014663490, ".github/workflows/deploy-app-test-build.yml");
 
         await _manager.ProcessCommentAsync(CommentId, "/deploy", IssueUrl, Author);
 
-        Assert.Empty(_dispatches);
-        Assert.Contains(_comments, c => c.Number == PullNumber
-            && c.Body.Contains($"Branch {Branch} for pull request #{PullNumber} no longer exists."));
+        var (_, dispatch) = Assert.Single(_dispatches);
+        Assert.Equal("main", dispatch.Ref);
+        Assert.Equal("20014663490", dispatch.Inputs["deploy_run_ids"]);
     }
 
-    /// <summary>Verifies a deploy of a merged pull request whose branch was deleted, to an environment that requires the branch to be up to date, fails with a comment before comparing branches or changing labels.</summary>
+    /// <summary>Verifies a merged pull request whose branch was deleted, like one deployed again after merging, passes the up-to-date check by comparing its merge commit, and deploys the builds from its head commit.</summary>
     /// <param name="command">Queued or forced deploy command.</param>
     [Theory]
     [InlineData("/deploy stage")]
     [InlineData("/deploy stage --force")]
-    public async Task ProcessCommentAsync_FailsBeforeChecksWhenPullRequestBranchIsMissing(string command)
+    public async Task ProcessCommentAsync_DeploysMergedPullRequestWhenBranchIsMissing(string command)
     {
         _host.Context.Settings.Environments!.Single(e => e.Name == "stage").RequireBranchUpToDate = true;
         _host.SetupPullRequest(GitHubModels.PullRequest(PullNumber, Branch, labels: ["dev"], merged: true));
         SetupMissingBranch(Branch);
-        var commits = _host.MockOf(_host.GitHub.Object.Repository.Commit);
-        commits.Setup(c => c.Compare(WebhookTestHost.Owner, WebhookTestHost.Repo, It.IsAny<string>(), Branch))
-            .ThrowsAsync(new NotFoundException("Not Found", System.Net.HttpStatusCode.NotFound));
+        _host.SetupChecks(GitHubModels.HeadSha(Branch),
+            ("Build details", "completed", "success", 10014663490, "PR_DEPLOY_BUILD"));
+        var commits = SetupCompare(GitHubModels.MergeCommitSha(PullNumber), behindBy: 0);
 
         await _manager.ProcessCommentAsync(CommentId, command, IssueUrl, Author);
 
+        var (_, dispatch) = Assert.Single(_dispatches);
+        Assert.Equal("stage", dispatch.Inputs["environment"]);
+        Assert.Equal("10014663490", dispatch.Inputs["deploy_run_ids"]);
+        commits.Verify(c => c.Compare(WebhookTestHost.Owner, WebhookTestHost.Repo, "main", Branch), Times.Never);
+    }
+
+    /// <summary>Verifies a pull request whose branch was deleted and is behind the base branch is not deployed, and gets a comment that the branch cannot be updated instead of a merge conflicts comment.</summary>
+    [Fact]
+    public async Task ProcessCommentAsync_CommentsWhenMissingBranchIsBehindBase()
+    {
+        _host.Context.Settings.Environments!.Single(e => e.Name == "stage").RequireBranchUpToDate = true;
+        _host.SetupPullRequest(GitHubModels.PullRequest(PullNumber, Branch, merged: true));
+        SetupMissingBranch(Branch);
+        SetupCompare(GitHubModels.MergeCommitSha(PullNumber), behindBy: 2);
+
+        await _manager.ProcessCommentAsync(CommentId, "/deploy stage", IssueUrl, Author);
+
         Assert.Empty(_dispatches);
-        Assert.DoesNotContain(PullNumber, _labels.Keys);
-        commits.Verify(c => c.Compare(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()),
+        var (_, body) = Assert.Single(_comments, c => c.Number == PullNumber);
+        Assert.Contains($"Branch `{Branch}` no longer exists and this pull request is 2 commit(s) behind `main`", body);
+        _host.MockOf(_host.GitHub.Object.Connection).Verify(c => c.Put<UpdateBranchResponse>(It.IsAny<Uri>(),
+            It.IsAny<object>()), Times.Never);
+    }
+
+    /// <summary>Verifies a pull request whose branch exists is compared and has its checks listed by branch name, not by commit SHA.</summary>
+    [Fact]
+    public async Task ProcessCommentAsync_UsesBranchNameWhenBranchExists()
+    {
+        _host.Context.Settings.Environments!.Single(e => e.Name == "stage").RequireBranchUpToDate = true;
+        _host.SetupPullRequest(GitHubModels.PullRequest(PullNumber, Branch));
+        var commits = SetupCompare(Branch, behindBy: 0);
+
+        await _manager.ProcessCommentAsync(CommentId, "/deploy stage", IssueUrl, Author);
+
+        Assert.Single(_dispatches);
+        commits.Verify(c => c.Compare(WebhookTestHost.Owner, WebhookTestHost.Repo, "main", Branch));
+        _host.MockOf(_host.GitHub.Object.Check.Run).Verify(c => c.GetAllForReference(It.IsAny<string>(),
+            It.IsAny<string>(), GitHubModels.HeadSha(Branch), It.IsAny<CheckRunRequest>(), It.IsAny<ApiOptions>()),
             Times.Never);
-        Assert.Contains(_comments, c => c.Number == PullNumber
-            && c.Body.Contains($"Branch {Branch} for pull request #{PullNumber} no longer exists."));
     }
 
     /// <summary>Verifies a failed branch lookup other than not-found propagates instead of deploying.</summary>
@@ -405,6 +442,18 @@ public class CommentCommandManagerTest : IDisposable
         _host.MockOf(_host.GitHub.Object.Repository.Branch)
             .Setup(c => c.Get(WebhookTestHost.Owner, WebhookTestHost.Repo, branch))
             .ThrowsAsync(new NotFoundException("Branch not found", System.Net.HttpStatusCode.NotFound));
+
+    /// <summary>Makes comparing the base branch with the given head report it as behind by the given number of commits.</summary>
+    /// <param name="head">Head branch name or commit SHA compared with <c>main</c>.</param>
+    /// <param name="behindBy">Number of commits the head is behind <c>main</c>.</param>
+    /// <returns>The commits client mock, for verifying compare calls.</returns>
+    private Mock<IRepositoryCommitsClient> SetupCompare(string head, int behindBy)
+    {
+        var commits = _host.MockOf(_host.GitHub.Object.Repository.Commit);
+        commits.Setup(c => c.Compare(WebhookTestHost.Owner, WebhookTestHost.Repo, "main", head))
+            .ReturnsAsync(GitHubModels.FromJson<CompareResult>($$"""{ "behind_by": {{behindBy}}, "ahead_by": 1 }"""));
+        return commits;
+    }
 
     /// <summary>Releases resources owned by this instance.</summary>
     public void Dispose() => _host.Dispose();

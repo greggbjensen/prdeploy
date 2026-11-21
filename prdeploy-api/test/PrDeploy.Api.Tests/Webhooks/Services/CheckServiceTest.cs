@@ -94,7 +94,24 @@ public class CheckServiceTest : IDisposable
 
         var checks = await _service.ListIncompletePullChecksAsync(GitHubModels.PullRequest(1));
 
-        Assert.Equal(["Build (in_progress)", "Tests (completed)"], checks.Select(c => c.CheckName));
+        Assert.Equal(["Build", "Tests"], checks.Select(c => c.CheckName));
+        Assert.Equal(["in_progress", "completed"], checks.Select(c => c.Status));
+    }
+
+    /// <summary>Verifies checks from the deploy workflow are excluded when the deploy workflow is configured as a repository path rather than a file name.</summary>
+    [Fact]
+    public async Task ListIncompletePullChecksAsync_ExcludesDeployWorkflowConfiguredAsPath()
+    {
+        _host.Context.Settings.DeployWorkflow = ".github/workflows/combined-deploy.yaml";
+        _host.SetupChecks("feature-branch",
+            ("Build", "in_progress", null, 1),
+            ("Deploy", "in_progress", null, 2));
+        _host.SetupBuildRun(1, ".github/workflows/app-build.yml");
+        _host.SetupBuildRun(2, ".github/workflows/combined-deploy.yaml");
+
+        var checks = await _service.ListIncompletePullChecksAsync(GitHubModels.PullRequest(1));
+
+        Assert.Equal(["Build"], checks.Select(c => c.CheckName));
     }
 
     /// <summary>Verifies a failed check that is not a workflow job, such as one a test reporter creates through the Checks API, still counts as incomplete without looking up a workflow run.</summary>
@@ -108,7 +125,8 @@ public class CheckServiceTest : IDisposable
         var checks = await _service.ListIncompletePullChecksAsync(GitHubModels.PullRequest(1));
 
         var check = Assert.Single(checks);
-        Assert.Equal("Test results (completed)", check.CheckName);
+        Assert.Equal("Test results", check.CheckName);
+        Assert.Equal("completed", check.Status);
         Assert.Equal("failure", check.Conclusion);
         Assert.Equal(0, check.RunId);
     }

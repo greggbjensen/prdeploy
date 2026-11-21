@@ -22,12 +22,39 @@ public class StatusManagerTest : IDisposable
     /// <param name="expected">Whether the expected option is enabled.</param>
     [Theory]
     [InlineData(".github/workflows/combined-deploy.yaml", true)]
-    [InlineData(".github/workflows/DEPLOY.yml", true)]
+    [InlineData(".github/workflows/COMBINED-DEPLOY.YAML", true)]
+    [InlineData(".github/workflows/deploy.yml", false)]
     [InlineData(".github/workflows/app-build.yml", false)]
     [InlineData(null, false)]
     public void IsDeployWorkflow_MatchesConfiguredDeployWorkflow(string? path, bool expected)
     {
         Assert.Equal(expected, _manager.IsDeployWorkflow(path));
+    }
+
+    /// <summary>Verifies a deploy workflow configured as a repository path still matches runs by file name.</summary>
+    [Fact]
+    public void IsDeployWorkflow_MatchesDeployWorkflowConfiguredAsPath()
+    {
+        _host.Context.Settings.DeployWorkflow = ".github/workflows/combined-deploy.yaml";
+
+        Assert.True(_manager.IsDeployWorkflow(".github/workflows/combined-deploy.yaml"));
+        Assert.False(_manager.IsDeployWorkflow(".github/workflows/app-build.yml"));
+    }
+
+    /// <summary>Verifies the deploy and enabled automation test workflows are excluded from retriggering deploys, whether configured as file names or repository paths.</summary>
+    /// <param name="deployWorkflow">Configured deploy workflow.</param>
+    /// <param name="testWorkflow">Configured automation test workflow.</param>
+    [Theory]
+    [InlineData("combined-deploy.yaml", "e2e-tests.yml")]
+    [InlineData(".github/workflows/combined-deploy.yaml", ".github/workflows/E2E-Tests.yml")]
+    public void IsExcludedWorkflow_ExcludesWorkflowsPrDeployTriggers(string deployWorkflow, string testWorkflow)
+    {
+        _host.Context.Settings.DeployWorkflow = deployWorkflow;
+        _host.Context.Settings.Environments![0].AutomationTest = new() { Enabled = true, Workflow = testWorkflow };
+
+        Assert.True(_manager.IsExcludedWorkflow(".github/workflows/combined-deploy.yaml"));
+        Assert.True(_manager.IsExcludedWorkflow(".github/workflows/e2e-tests.yml"));
+        Assert.False(_manager.IsExcludedWorkflow(".github/workflows/app-build.yml"));
     }
 
     /// <summary>Verifies the expected behavior for this scenario: retriggers deploy when build completes.</summary>

@@ -1,0 +1,2 @@
+[![{{environment.name}}](https://badgen.net/badge/{{environment.name}}/Out%20of%20Date/{{color badge.statusColors.error}}?labelColor={{color environment.color}}&icon=github&scale=1.2)]({{prdeployPortalUrl}}/{{owner}}/{{repo}}/deployments?environment={{environment.name}} 'Open the queue')
+Branch `{{branch}}` no longer exists and this pull request is {{behindBy}} commit(s) behind `{{baseBranch}}`, so it cannot be updated.  Restore the branch and update it, or deploy a newer pull request.
