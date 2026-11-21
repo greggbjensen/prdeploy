@@ -79,6 +79,28 @@ export class ServicesFormComponent {
     this.saveServicesList();
   }
 
+  /** Handles a name input commit, applying the rename or restoring the original text when it is rejected. */
+  onNameChange(service: ServiceSettings, input: HTMLInputElement) {
+    this.rename(service, input.value);
+    input.value = service.name;
+  }
+
+  /**
+   * Renames a service. Blank names and names already used by another service are ignored.
+   * @returns true when the rename was applied.
+   */
+  rename(service: ServiceSettings, newName: string): boolean {
+    const name = newName?.trim();
+    if (!name || name === service.name || this.actingServiceList.some(s => s !== service && s.name === name)) {
+      return false;
+    }
+
+    service.name = name;
+    this.actingServiceList = _.sortBy(this.actingServiceList, s => s.name);
+    this.saveServicesList();
+    return true;
+  }
+
   remove(serviceName: any) {
     this.actingServiceList = this.actingServiceList.filter(s => s.name !== serviceName);
     this.saveServicesList();

@@ -68,4 +68,39 @@ describe('ServicesFormComponent', () => {
 
     expect(component.actingServiceList).toEqual([]);
   });
+
+  it('renames a service and keeps the list sorted', () => {
+    component.add('api');
+    component.add('web');
+    const web = component.actingServiceList.find(s => s.name === 'web')!;
+
+    expect(component.rename(web, ' aaa ')).toBeTrue();
+
+    expect(component.actingServiceList.map(s => s.name)).toEqual(['aaa', 'api']);
+  });
+
+  it('rejects a blank rename', () => {
+    component.add('api');
+
+    expect(component.rename(component.actingServiceList[0], '  ')).toBeFalse();
+    expect(component.actingServiceList[0].name).toBe('api');
+  });
+
+  it('rejects a rename to an existing name', () => {
+    component.add('api');
+    component.add('web');
+    const web = component.actingServiceList.find(s => s.name === 'web')!;
+
+    expect(component.rename(web, 'api')).toBeFalse();
+    expect(web.name).toBe('web');
+  });
+
+  it('restores the input text when a rename is rejected', () => {
+    component.add('api');
+    const input = { value: '' } as HTMLInputElement;
+
+    component.onNameChange(component.actingServiceList[0], input);
+
+    expect(input.value).toBe('api');
+  });
 });
