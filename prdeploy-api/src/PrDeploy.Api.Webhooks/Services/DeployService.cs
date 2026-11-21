@@ -532,9 +532,11 @@ public class DeployService
             return;
         }
 
+        var workflowFileName = DeploySettings.GetWorkflowPath(Settings.DeployWorkflow ?? string.Empty);
+
         try
         {
-          await GitHub.Actions.Workflows.CreateDispatch(_context.Owner, _context.Repo, DeploySettings.GetWorkflowPath(Settings.DeployWorkflow ?? string.Empty),
+              await GitHub.Actions.Workflows.CreateDispatch(_context.Owner, _context.Repo, workflowFileName,
               new CreateWorkflowDispatch(branch)
               {
                 Inputs = new Dictionary<string, object>
@@ -549,7 +551,7 @@ public class DeployService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unable to dispatch {Workflow}.", Settings.DeployWorkflow);
+            _logger.LogError(ex, "Unable to dispatch {Workflow}.", workflowFileName);
             await PostDeployFailedAsync(triggeringPullRequest.Number, environment, rollback, ex.Message);
         }
     }
