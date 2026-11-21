@@ -74,7 +74,9 @@ public static partial class Map
             ? new DeployUser
             {
                 Name = source.Name ?? source.Login,
-                Username = source.Login
+                Username = source.Login,
+                AvatarUrl = source.AvatarUrl,
+                Url = source.HtmlUrl
             }
             : null;
 

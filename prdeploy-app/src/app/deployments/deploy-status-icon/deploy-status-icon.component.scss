@@ -1,0 +1,19 @@
+@use '../../../sass/variables' as *;
+
+.deploy-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deploy-status-successful {
+  color: $success;
+}
+
+.deploy-status-failure {
+  color: $danger;
+}
+
+.deploy-status-none {
+  color: $gray-500;
+}

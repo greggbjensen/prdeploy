@@ -10,6 +10,10 @@ query DeploySettingsCompare($input: RepoQueryInput!) {
         queue
         color
         url
+        urls {
+          label
+          url
+        }
         requireApproval
         requireBranchUpToDate
         automationTest {
@@ -24,6 +28,10 @@ query DeploySettingsCompare($input: RepoQueryInput!) {
         queue
         color
         url
+        urls {
+          label
+          url
+        }
         requireApproval
         requireBranchUpToDate
         automationTest {

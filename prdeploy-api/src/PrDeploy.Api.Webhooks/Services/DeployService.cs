@@ -564,18 +564,18 @@ public class DeployService
 
         try
         {
-            await GitHub.Actions.Workflows.CreateDispatch(_context.Owner, _context.Repo, Settings.DeployWorkflow,
-                new CreateWorkflowDispatch(branch)
+          await GitHub.Actions.Workflows.CreateDispatch(_context.Owner, _context.Repo, DeploySettings.GetWorkflowPath(Settings.DeployWorkflow ?? string.Empty),
+              new CreateWorkflowDispatch(branch)
+              {
+                Inputs = new Dictionary<string, object>
                 {
-                    Inputs = new Dictionary<string, object>
-                    {
-                        ["pull_number"] = deployPullRequest?.Number.ToString() ?? string.Empty,
-                        ["environment"] = environment,
-                        ["deploy_name"] = deployName,
-                        ["deploy_run_ids"] = string.Join(",", deployRunIds),
-                        ["sync_run_ids"] = string.Join(",", syncRunIds)
-                    }
-                });
+                  ["pull_number"] = deployPullRequest?.Number.ToString() ?? string.Empty,
+                  ["environment"] = environment,
+                  ["deploy_name"] = deployName,
+                  ["deploy_run_ids"] = string.Join(",", deployRunIds),
+                  ["sync_run_ids"] = string.Join(",", syncRunIds)
+                }
+              });
         }
         catch (Exception ex)
         {
@@ -584,12 +584,12 @@ public class DeployService
         }
     }
 
-    /// <summary>
-    /// Converts the supplied value to the deployed service.
-    /// </summary>
-    /// <param name="build">Object containing the build data used by the operation.</param>
-    /// <returns>The deployed service produced by the operation.</returns>
-    private static DeployedService ToDeployedService(Build build) => new()
+  /// <summary>
+  /// Converts the supplied value to the deployed service.
+  /// </summary>
+  /// <param name="build">Object containing the build data used by the operation.</param>
+  /// <returns>The deployed service produced by the operation.</returns>
+  private static DeployedService ToDeployedService(Build build) => new()
     {
         Name = build.Name,
         RunId = build.RunId,

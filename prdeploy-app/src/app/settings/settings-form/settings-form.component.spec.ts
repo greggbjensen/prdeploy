@@ -98,4 +98,28 @@ describe('SettingsFormComponent', () => {
 
     expect(level.hasValues).toBeFalse();
   });
+
+  it('saves environment URLs without extra fields and drops incomplete rows', () => {
+    const component = create() as unknown as { mapEnvironment(compare: object): { urls?: object[]; url?: string } };
+
+    const input = component.mapEnvironment({
+      name: 'Dev',
+      url: null,
+      urls: [
+        { __typename: 'EnvironmentUrl', label: ' Web ', url: ' https://web.test ' },
+        { label: 'No url', url: '' },
+        { label: '', url: 'https://nolabel.test' }
+      ]
+    });
+
+    expect(input.urls).toEqual([{ label: 'Web', url: 'https://web.test' }]);
+    expect(input.url).toBeUndefined();
+  });
+
+  it('omits URLs from the saved environment when none are set', () => {
+    const component = create() as unknown as { mapEnvironment(compare: object): { urls?: object[] } };
+
+    expect(component.mapEnvironment({ name: 'Dev', urls: [] }).urls).toBeUndefined();
+    expect(component.mapEnvironment({ name: 'Dev' }).urls).toBeUndefined();
+  });
 });

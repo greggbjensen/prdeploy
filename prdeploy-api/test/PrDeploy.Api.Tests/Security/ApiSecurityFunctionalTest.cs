@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.Extensions.Caching.Memory;
@@ -9,6 +10,7 @@ using PrDeploy.Api.Business.Stores.Interfaces;
 using PrDeploy.Api.Models.Settings;
 using PrDeploy.Api.Tests.Framework;
 using PrDeploy.Api.Tests.Webhooks.Framework;
+using PrDeploy.Api.Webhooks.Status;
 
 namespace PrDeploy.Api.Tests.Security;
 
@@ -223,6 +225,45 @@ public class ApiSecurityFunctionalTest : IClassFixture<SecuredApiApplicationFact
 
         Assert.Equal("dev", Data(queues).GetProperty("deployQueues")[0].GetProperty("environment").GetString());
         Assert.Equal("dev1", Data(environments).GetProperty("environments")[0].GetProperty("name").GetString());
+    }
+
+    /// <summary>
+    /// Confirms the deploy status stream sends the current status as a deploy-status event to a user with access.
+    /// </summary>
+    [Fact]
+    public async Task DeployStatusEvents_StreamsCurrentStatusToUserWithAccess()
+    {
+        _factory.Services.GetRequiredService<DeployStatusBroadcaster>().Publish(new DeployWorkflowStatus(
+            Owner, Repo, "sse-dev", DeployWorkflowState.Successful, 12, 34, null, DateTimeOffset.UnixEpoch));
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        using var client = _factory.CreateClient();
+
+        using var response = await client.GetAsync($"/api/deploy-status/{Owner}/{Repo}/events",
+            HttpCompletionOption.ResponseHeadersRead, cts.Token);
+        using var reader = new StreamReader(await response.Content.ReadAsStreamAsync(cts.Token));
+        var eventLine = await reader.ReadLineAsync(cts.Token);
+        var dataLine = await reader.ReadLineAsync(cts.Token);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("text/event-stream", response.Content.Headers.ContentType?.MediaType);
+        Assert.Equal("event: deploy-status", eventLine);
+        using var data = JsonDocument.Parse(dataLine!["data: ".Length..]);
+        Assert.Equal("sse-dev", data.RootElement.GetProperty("environment").GetString());
+        Assert.Equal("Successful", data.RootElement.GetProperty("state").GetString());
+        Assert.Equal(12, data.RootElement.GetProperty("pullNumber").GetInt32());
+    }
+
+    /// <summary>
+    /// Confirms the deploy status stream refuses a repository the user cannot push to.
+    /// </summary>
+    [Fact]
+    public async Task DeployStatusEvents_ForbidsUserWithoutRepoAccess()
+    {
+        using var client = _factory.CreateClient();
+
+        using var response = await client.GetAsync($"/api/deploy-status/{Owner}/{LockedRepo}/events");
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
     /// <summary>

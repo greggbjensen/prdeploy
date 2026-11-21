@@ -27,6 +27,10 @@ graphql:
               queue
               color
               url
+              urls {
+                label
+                url
+              }
               requireApproval
               requireBranchUpToDate
               automationTest {
@@ -41,6 +45,10 @@ graphql:
               queue
               color
               url
+              urls {
+                label
+                url
+              }
               requireApproval
               requireBranchUpToDate
               automationTest {

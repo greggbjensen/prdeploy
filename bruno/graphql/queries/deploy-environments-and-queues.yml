@@ -19,6 +19,10 @@ graphql:
         deployEnvironments(input: $input) {
           name
           url
+          urls {
+            label
+            url
+          }
           color
           locked
           pullRequest {
@@ -30,6 +34,8 @@ graphql:
             user {
               name
               username
+              avatarUrl
+              url
             }
           }
         }
@@ -44,6 +50,8 @@ graphql:
             user {
               name
               username
+              avatarUrl
+              url
             }
           }
         }

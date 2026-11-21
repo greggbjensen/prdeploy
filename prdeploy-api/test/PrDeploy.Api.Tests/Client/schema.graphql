@@ -98,6 +98,8 @@ type DeployEnvironment {
   name: ID
   "The full URL of the environment."
   url: String
+  "Labelled URLs of the environment."
+  urls: [EnvironmentUrl!]!
   "The color used for the icon representing the environment."
   color: String
   "Current pull request in environment."
@@ -321,10 +323,19 @@ type EnvironmentSettings {
   queue: String!
   color: String!
   url: String
+  urls: [EnvironmentUrl!]
   requireApproval: Boolean!
   requireBranchUpToDate: Boolean!
   automationTest: AutomationTestSettings
   excludeFromRollback: [String!]
+}
+
+"Labelled URL of an environment."
+type EnvironmentUrl {
+  "Text displayed for the link."
+  label: String!
+  "Full URL of the link."
+  url: String!
 }
 
 "Comparison of services between a source and target environment."
@@ -344,6 +355,10 @@ type ServiceComparison {
 type DeployUser {
   name: String
   username: String
+  "URL of the user's GitHub avatar image."
+  avatarUrl: String
+  "URL of the user's GitHub profile page."
+  url: String
 }
 
 "The `DateTime` scalar represents an ISO-8601 compliant date time type."
@@ -424,10 +439,19 @@ input EnvironmentSettingsInput {
   queue: String!
   color: String!
   url: String
+  urls: [EnvironmentUrlInput!]
   requireApproval: Boolean!
   requireBranchUpToDate: Boolean!
   automationTest: AutomationTestSettingsInput
   excludeFromRollback: [String!]
+}
+
+"Labelled URL of an environment."
+input EnvironmentUrlInput {
+  "Text displayed for the link."
+  label: String!
+  "Full URL of the link."
+  url: String!
 }
 
 input AutomationTestSettingsInput {

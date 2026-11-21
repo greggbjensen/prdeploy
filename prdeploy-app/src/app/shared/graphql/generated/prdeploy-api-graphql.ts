@@ -91,6 +91,8 @@ export type DeployEnvironment = {
   pullRequest?: Maybe<PullRequest>;
   /** The full URL of the environment. */
   url?: Maybe<Scalars['String']['output']>;
+  /** Labelled URLs of the environment. */
+  urls: Array<EnvironmentUrl>;
 };
 
 export type DeployMutation = {
@@ -303,7 +305,11 @@ export type DeployStateComparisonInput = {
 
 export type DeployUser = {
   __typename?: 'DeployUser';
+  /** URL of the user's GitHub avatar image. */
+  avatarUrl?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
+  /** URL of the user's GitHub profile page. */
+  url?: Maybe<Scalars['String']['output']>;
   username?: Maybe<Scalars['String']['output']>;
 };
 
@@ -337,6 +343,7 @@ export type EnvironmentSettings = {
   requireApproval: Scalars['Boolean']['output'];
   requireBranchUpToDate: Scalars['Boolean']['output'];
   url?: Maybe<Scalars['String']['output']>;
+  urls?: Maybe<Array<EnvironmentUrl>>;
 };
 
 export type EnvironmentSettingsInput = {
@@ -348,6 +355,24 @@ export type EnvironmentSettingsInput = {
   requireApproval: Scalars['Boolean']['input'];
   requireBranchUpToDate: Scalars['Boolean']['input'];
   url?: InputMaybe<Scalars['String']['input']>;
+  urls?: InputMaybe<Array<EnvironmentUrlInput>>;
+};
+
+/** Labelled URL of an environment. */
+export type EnvironmentUrl = {
+  __typename?: 'EnvironmentUrl';
+  /** Text displayed for the link. */
+  label: Scalars['String']['output'];
+  /** Full URL of the link. */
+  url: Scalars['String']['output'];
+};
+
+/** Labelled URL of an environment. */
+export type EnvironmentUrlInput = {
+  /** Text displayed for the link. */
+  label: Scalars['String']['input'];
+  /** Full URL of the link. */
+  url: Scalars['String']['input'];
 };
 
 export type JiraSettings = {
@@ -681,14 +706,14 @@ export type DeployEnvironmentsAndQueuesQueryVariables = Exact<{
 }>;
 
 
-export type DeployEnvironmentsAndQueuesQuery = { __typename?: 'DeployQuery', deployEnvironments: Array<{ __typename?: 'DeployEnvironment', name?: string | null, url?: string | null, color?: string | null, locked: boolean, pullRequest?: { __typename?: 'PullRequest', number: number, title?: string | null, body?: string | null, url?: string | null, updatedAt?: any | null, user?: { __typename?: 'DeployUser', name?: string | null, username?: string | null } | null } | null }>, deployQueues: Array<{ __typename?: 'DeployQueue', environment?: string | null, pullRequests: Array<{ __typename?: 'PullRequest', number: number, title?: string | null, body?: string | null, url?: string | null, updatedAt?: any | null, user?: { __typename?: 'DeployUser', name?: string | null, username?: string | null } | null }> }> };
+export type DeployEnvironmentsAndQueuesQuery = { __typename?: 'DeployQuery', deployEnvironments: Array<{ __typename?: 'DeployEnvironment', name?: string | null, url?: string | null, urls: Array<{ __typename?: 'EnvironmentUrl', label: string, url: string }>, color?: string | null, locked: boolean, pullRequest?: { __typename?: 'PullRequest', number: number, title?: string | null, body?: string | null, url?: string | null, updatedAt?: any | null, user?: { __typename?: 'DeployUser', name?: string | null, username?: string | null, avatarUrl?: string | null, url?: string | null } | null } | null }>, deployQueues: Array<{ __typename?: 'DeployQueue', environment?: string | null, pullRequests: Array<{ __typename?: 'PullRequest', number: number, title?: string | null, body?: string | null, url?: string | null, updatedAt?: any | null, user?: { __typename?: 'DeployUser', name?: string | null, username?: string | null, avatarUrl?: string | null, url?: string | null } | null }> }> };
 
 export type DeploySettingsCompareQueryVariables = Exact<{
   input: RepoQueryInput;
 }>;
 
 
-export type DeploySettingsCompareQuery = { __typename?: 'DeployQuery', deploySettingsCompare: { __typename?: 'DeploySettingsCompare', deployWorkflow: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, environments: { __typename?: 'OwnerRepoValueOfListOfEnvironmentSettings', owner?: Array<{ __typename?: 'EnvironmentSettings', name: string, queue: string, color: string, url?: string | null, requireApproval: boolean, requireBranchUpToDate: boolean, excludeFromRollback?: Array<string> | null, automationTest?: { __typename?: 'AutomationTestSettings', enabled?: boolean | null, workflow?: string | null, inputs?: any | null } | null } | null> | null, repo?: Array<{ __typename?: 'EnvironmentSettings', name: string, queue: string, color: string, url?: string | null, requireApproval: boolean, requireBranchUpToDate: boolean, excludeFromRollback?: Array<string> | null, automationTest?: { __typename?: 'AutomationTestSettings', enabled?: boolean | null, workflow?: string | null, inputs?: any | null } | null } | null> | null }, services: { __typename?: 'OwnerRepoValueOfListOfServiceSettings', owner?: Array<{ __typename?: 'ServiceSettings', name: string, path?: string | null, workflow?: string | null } | null> | null, repo?: Array<{ __typename?: 'ServiceSettings', name: string, path?: string | null, workflow?: string | null } | null> | null }, defaultEnvironment: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, releaseEnvironment: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, jira: { __typename?: 'JiraSettingsCompare', addIssuesEnabled: { __typename?: 'OwnerRepoValueOfNullableOfBoolean', owner?: boolean | null, repo?: boolean | null }, host: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, username: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, password: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null } }, slack: { __typename?: 'SlackSettingsCompare', token: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, emailDomain: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, emailAliases: { __typename?: 'OwnerRepoDictionary', owner?: any | null, repo?: any | null }, webhooks: { __typename?: 'SlackWebHooksSettingsCompare', deployUrl: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, releaseUrl: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null } }, notificationsEnabled: { __typename?: 'OwnerRepoValueOfNullableOfBoolean', owner?: boolean | null, repo?: boolean | null } }, teams: { __typename?: 'TeamsSettingsCompare', webhooks: { __typename?: 'TeamsWebHooksSettingsCompare', deployUrl: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, releaseUrl: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null } }, notificationsEnabled: { __typename?: 'OwnerRepoValueOfNullableOfBoolean', owner?: boolean | null, repo?: boolean | null } }, badge: { __typename?: 'BadgeSettingsCompare', statusColors: { __typename?: 'BadgeStatusColorsSettingsCompare', error: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, warn: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, success: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, info: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null } } }, prdeployPortalUrl: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null } } };
+export type DeploySettingsCompareQuery = { __typename?: 'DeployQuery', deploySettingsCompare: { __typename?: 'DeploySettingsCompare', deployWorkflow: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, environments: { __typename?: 'OwnerRepoValueOfListOfEnvironmentSettings', owner?: Array<{ __typename?: 'EnvironmentSettings', name: string, queue: string, color: string, url?: string | null, urls?: Array<{ __typename?: 'EnvironmentUrl', label: string, url: string }> | null, requireApproval: boolean, requireBranchUpToDate: boolean, excludeFromRollback?: Array<string> | null, automationTest?: { __typename?: 'AutomationTestSettings', enabled?: boolean | null, workflow?: string | null, inputs?: any | null } | null } | null> | null, repo?: Array<{ __typename?: 'EnvironmentSettings', name: string, queue: string, color: string, url?: string | null, urls?: Array<{ __typename?: 'EnvironmentUrl', label: string, url: string }> | null, requireApproval: boolean, requireBranchUpToDate: boolean, excludeFromRollback?: Array<string> | null, automationTest?: { __typename?: 'AutomationTestSettings', enabled?: boolean | null, workflow?: string | null, inputs?: any | null } | null } | null> | null }, services: { __typename?: 'OwnerRepoValueOfListOfServiceSettings', owner?: Array<{ __typename?: 'ServiceSettings', name: string, path?: string | null, workflow?: string | null } | null> | null, repo?: Array<{ __typename?: 'ServiceSettings', name: string, path?: string | null, workflow?: string | null } | null> | null }, defaultEnvironment: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, releaseEnvironment: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, jira: { __typename?: 'JiraSettingsCompare', addIssuesEnabled: { __typename?: 'OwnerRepoValueOfNullableOfBoolean', owner?: boolean | null, repo?: boolean | null }, host: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, username: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, password: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null } }, slack: { __typename?: 'SlackSettingsCompare', token: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, emailDomain: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, emailAliases: { __typename?: 'OwnerRepoDictionary', owner?: any | null, repo?: any | null }, webhooks: { __typename?: 'SlackWebHooksSettingsCompare', deployUrl: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, releaseUrl: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null } }, notificationsEnabled: { __typename?: 'OwnerRepoValueOfNullableOfBoolean', owner?: boolean | null, repo?: boolean | null } }, teams: { __typename?: 'TeamsSettingsCompare', webhooks: { __typename?: 'TeamsWebHooksSettingsCompare', deployUrl: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, releaseUrl: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null } }, notificationsEnabled: { __typename?: 'OwnerRepoValueOfNullableOfBoolean', owner?: boolean | null, repo?: boolean | null } }, badge: { __typename?: 'BadgeSettingsCompare', statusColors: { __typename?: 'BadgeStatusColorsSettingsCompare', error: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, warn: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, success: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null }, info: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null } } }, prdeployPortalUrl: { __typename?: 'OwnerRepoValueOfString', owner?: string | null, repo?: string | null } } };
 
 export type DeployStateComparisonQueryVariables = Exact<{
   input: DeployStateComparisonInput;
@@ -883,6 +908,10 @@ export const DeployEnvironmentsAndQueuesDocument = gql`
   deployEnvironments(input: $input) {
     name
     url
+    urls {
+      label
+      url
+    }
     color
     locked
     pullRequest {
@@ -894,6 +923,8 @@ export const DeployEnvironmentsAndQueuesDocument = gql`
       user {
         name
         username
+        avatarUrl
+        url
       }
     }
   }
@@ -908,6 +939,8 @@ export const DeployEnvironmentsAndQueuesDocument = gql`
       user {
         name
         username
+        avatarUrl
+        url
       }
     }
   }
@@ -937,6 +970,10 @@ export const DeploySettingsCompareDocument = gql`
         queue
         color
         url
+        urls {
+          label
+          url
+        }
         requireApproval
         requireBranchUpToDate
         automationTest {
@@ -951,6 +988,10 @@ export const DeploySettingsCompareDocument = gql`
         queue
         color
         url
+        urls {
+          label
+          url
+        }
         requireApproval
         requireBranchUpToDate
         automationTest {

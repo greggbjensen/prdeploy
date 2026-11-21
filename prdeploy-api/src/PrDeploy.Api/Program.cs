@@ -15,6 +15,7 @@ using PrDeploy.Api.Models;
 using PrDeploy.Api.Models.Auth;
 using PrDeploy.Api.Options;
 using PrDeploy.Api.Webhooks;
+using PrDeploy.Api.Webhooks.Status;
 using Serilog;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -181,6 +182,9 @@ try
 
     // GitHub App events, authenticated by the webhook signature.
     app.MapGitHubWebhooks();
+
+    // Live deployment workflow status for the portal dashboard (Server-Sent Events).
+    app.MapDeployStatusEvents();
 
     app.MapGraphQL().WithOptions(options =>
     {

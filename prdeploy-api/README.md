@@ -7,8 +7,17 @@ as well as the GitHub App webhooks that respond to pull request, comment, and wo
 | ----------------------- | ------------------------------------------------------------------------------------------ |
 | `/graphql`              | GraphQL API for the prdeploy portal, authenticated as the signed in GitHub user.           |
 | `/api/oauth/*`          | GitHub OAuth token proxy and user info for the portal.                                     |
+| `/api/deploy-status/{owner}/{repo}/events` | Server-Sent Events stream of deploy workflow status (`InProgress`, `Successful`, `Failure`) for the portal Deployments dashboard. |
 | `/webhooks`             | GitHub App webhook URL, authenticated by the webhook secret signature.                     |
 | `/health/live`, `ready` | Kubernetes health checks.                                                                  |
+
+## Deploy status stream
+
+Each environment in the deploy settings can define `urls`, a list of `label` and `url` entries (GraphQL `EnvironmentSettings.urls` / `EnvironmentUrlInput`). `deployEnvironments` returns them as `urls`; blank entries are skipped, and the legacy single `url` is returned as one entry labelled `URL` only when no `urls` are configured (`Map.EnvironmentUrls`).
+
+Pull request users (`DeployUser`) include `avatarUrl` and `url` (the GitHub profile page), mapped from the GitHub user by `Map.DeployUser`.
+
+The deploy workflow `workflow_run` webhooks (`requested`, `completed`) publish a status per environment to an in-memory `DeployStatusBroadcaster`. `GET /api/deploy-status/{owner}/{repo}/events` streams the latest status of each environment on connect, then every change. Statuses are held in memory (like the webhook queue, this relies on a single API replica) so an environment shows a status after its first deploy run since the API started. Browsers cannot send an `Authorization` header with `EventSource`, so the portal reads the stream with `fetch`. Reverse proxies must not buffer it; the API sends `X-Accel-Buffering: no`.
 
 ## OpenAPI
 

@@ -10,6 +10,8 @@ import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { DeployStatusIconComponent } from '../deploy-status-icon/deploy-status-icon.component';
+import { DeployWorkflowStatus } from 'src/app/shared/models';
 import { MatTableModule } from '@angular/material/table';
 import { DeployForceDialogData } from './deploy-force-dialog/deploy-force-dialog-data';
 import { DeployRollbackDialogData } from './deploy-rollback-dialog/deploy-rollback-dialog-data';
@@ -26,6 +28,7 @@ import { CleanMarkdownPipe } from 'src/app/shared/pipes';
     MatButtonModule,
     MatIconModule,
     MatTableModule,
+    DeployStatusIconComponent,
     MtxPopoverModule,
     MarkdownComponent,
     DatePipe,
@@ -36,6 +39,9 @@ import { CleanMarkdownPipe } from 'src/app/shared/pipes';
 export class EnvironmentListComponent implements AfterViewInit {
   @Input() data: DeployEnvironment[] = [];
 
+  /** Latest deploy workflow status keyed by lowercase environment name. */
+  @Input() statuses: Record<string, DeployWorkflowStatus> = {};
+
   @Input() set loading(value: boolean) {
     this._loading = value;
   }
@@ -44,7 +50,16 @@ export class EnvironmentListComponent implements AfterViewInit {
     return this._loading;
   }
 
-  displayedColumns: string[] = ['environment', 'locked', 'pull-request', 'updated-at', 'user', 'url', 'actions'];
+  displayedColumns: string[] = [
+    'environment',
+    'status',
+    'locked',
+    'pull-request',
+    'updated-at',
+    'user',
+    'url',
+    'actions'
+  ];
 
   private _loading = false;
 
@@ -59,6 +74,11 @@ export class EnvironmentListComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.loading = true;
+  }
+
+  /** Returns the streamed deploy workflow status for an environment, if one has been received. */
+  statusOf(environment: string): DeployWorkflowStatus | undefined {
+    return this.statuses?.[environment?.toLowerCase()];
   }
 
   async free(environment: string, pullNumber: number): Promise<void> {

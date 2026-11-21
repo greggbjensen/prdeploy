@@ -122,7 +122,7 @@ public static partial class Mocker
     /// <param name="user">Object containing the user data used by the operation.</param>
     /// <returns>The user produced by the operation.</returns>
     public static User User(DeployUser user) => new(
-        null,
+        user.AvatarUrl,
         null,
         null,
         1,
@@ -134,7 +134,7 @@ public static partial class Mocker
         1,
         3,
         null,
-        null,
+        user.Url,
         2,
         54321,
         null,

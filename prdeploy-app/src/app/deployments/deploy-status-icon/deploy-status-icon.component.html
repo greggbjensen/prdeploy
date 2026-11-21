@@ -1,0 +1,19 @@
+@if (status; as status) {
+  <a class="deploy-status" [attr.href]="status.runUrl" target="_blank" rel="noopener noreferrer" [title]="title">
+    @switch (status.state) {
+      @case ('InProgress') {
+        <mat-spinner class="deploy-status-in-progress" diameter="20"></mat-spinner>
+      }
+      @case ('Successful') {
+        <mat-icon class="deploy-status-successful">check_circle</mat-icon>
+      }
+      @case ('Failure') {
+        <mat-icon class="deploy-status-failure">error</mat-icon>
+      }
+    }
+  </a>
+} @else {
+  <span class="deploy-status" title="No deploy status yet">
+    <mat-icon class="deploy-status-none">play_circle_outline</mat-icon>
+  </span>
+}

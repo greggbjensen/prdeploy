@@ -73,6 +73,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
             {
                 Name = environment.Name,
                 Url = environment.Url,
+                Urls = Map.EnvironmentUrls(environment),
                 Color = environment.Color
             };
 

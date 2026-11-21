@@ -1,6 +1,7 @@
 using HotChocolate;
 using HotChocolate.Types;
 using PrDeploy.Api.Models.PullRequests;
+using PrDeploy.Api.Models.Settings;
 
 namespace PrDeploy.Api.Models.DeployEnvironments
 {
@@ -24,6 +25,13 @@ namespace PrDeploy.Api.Models.DeployEnvironments
         /// <value>Current URL value.</value>
         [GraphQLDescription("The full URL of the environment.")]
         public string? Url { get; set; }
+
+        /// <summary>
+        /// Gets or sets the labelled URLs.
+        /// </summary>
+        /// <value>Current URLs value.</value>
+        [GraphQLDescription("Labelled URLs of the environment.")]
+        public List<EnvironmentUrl> Urls { get; set; } = new();
 
         /// <summary>
         /// Gets or sets the color.

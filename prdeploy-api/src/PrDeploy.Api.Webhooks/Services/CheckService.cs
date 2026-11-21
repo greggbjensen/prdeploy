@@ -134,7 +134,7 @@ public partial class CheckService
             .Where(c => c.Status != "completed" || c.Conclusion == "failure")
             .ToList();
 
-        if (incompleteChecks.Count == 0)
+         
         {
             _logger.LogDebug("All checks are complete.");
             return incompleteChecks;
@@ -188,7 +188,7 @@ public partial class CheckService
             .Select(e => e.AutomationTest!.Workflow!.ToLowerInvariant())
             .Distinct()
             .ToList();
-        excludedWorkflows.Add((settings.DeployWorkflow ?? string.Empty).ToLowerInvariant());
+        excludedWorkflows.Add(DeploySettings.GetWorkflowPath(settings.DeployWorkflow ?? string.Empty).ToLowerInvariant());
         return excludedWorkflows;
     }
 
@@ -218,7 +218,7 @@ public partial class CheckService
                 c.Output?.Text == BuildMarker,
                 c.Status.StringValue,
                 c.Conclusion?.StringValue ?? string.Empty,
-                $"{c.Name} ({c.Status.StringValue})",
+                c.Name,
                 c.HtmlUrl))
             .ToList();
     }

@@ -23,7 +23,14 @@ public class EnvironmentSettings
     /// Gets or sets the URL.
     /// </summary>
     /// <value>Current URL value.</value>
+    /// <remarks>Legacy single URL, superseded by <see cref="Urls"/>; still read when <see cref="Urls"/> is empty.</remarks>
     public string? Url { get; set; }
+
+    /// <summary>
+    /// Gets or sets the labelled URLs shown for the environment.
+    /// </summary>
+    /// <value>Current URLs value.</value>
+    public List<EnvironmentUrl>? Urls { get; set; }
     /// <summary>
     /// Gets or sets the require approval.
     /// </summary>

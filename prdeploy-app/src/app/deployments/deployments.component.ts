@@ -3,14 +3,15 @@ import { ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule, MatExpansionPanel } from '@angular/material/expansion';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, switchMap, EMPTY } from 'rxjs';
 import {
   DeployEnvironment,
   DeployEnvironmentDeployGQL,
   DeployEnvironmentsAndQueuesGQL,
   DeployQueue
 } from 'src/app/shared/graphql';
-import { LoggingService } from 'src/app/shared/services';
+import { DeployStatusService, LoggingService } from 'src/app/shared/services';
+import { DeployWorkflowStatus } from 'src/app/shared/models';
 import { QueueListComponent } from './queue-list/queue-list.component';
 import { EnvironmentListComponent } from './environment-list/environment-list.component';
 import { AddPrServiceDialogComponent } from './add-pr-service-dialog/add-pr-service-dialog.component';
@@ -38,6 +39,8 @@ export class DeploymentsComponent implements OnInit {
   deployEnvironments: DeployEnvironment[] = [];
   deployQueues: DeployQueue[] = [];
   loading = true;
+  /** Latest deploy workflow status keyed by lowercase environment name. */
+  deployStatuses: Record<string, DeployWorkflowStatus> = {};
   selectedEnvironment: string;
 
   constructor(
@@ -47,6 +50,7 @@ export class DeploymentsComponent implements OnInit {
     private _deployEnvironmentDeployGQL: DeployEnvironmentDeployGQL,
     private _notificationManager: NotificationManager,
     private _loggingService: LoggingService,
+    private _deployStatusService: DeployStatusService,
     private _dialog: MatDialog,
     private _activatedRoute: ActivatedRoute,
     private _destroyRef: DestroyRef,
@@ -56,9 +60,27 @@ export class DeploymentsComponent implements OnInit {
   ngOnInit(): void {
     this.repoManager.valueChanged$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => this.update());
 
+    this.repoManager.valueChanged$
+      .pipe(
+        switchMap(() => {
+          this.deployStatuses = {};
+          return this.repoManager.isValid
+            ? this._deployStatusService.watch(this.repoManager.owner, this.repoManager.repo)
+            : EMPTY;
+        }),
+        takeUntilDestroyed(this._destroyRef)
+      )
+      .subscribe(status => this.applyDeployStatus(status));
+
     firstValueFrom(this._activatedRoute.queryParamMap).then(param => {
       this.selectedEnvironment = param.get('environment');
     });
+  }
+
+  /** Records a streamed deploy status and refreshes the view. A new object keeps OnPush children updating. */
+  applyDeployStatus(status: DeployWorkflowStatus): void {
+    this.deployStatuses = { ...this.deployStatuses, [status.environment.toLowerCase()]: status };
+    this._changeDetectorRef.markForCheck();
   }
 
   async triggerDeployments(event: MouseEvent, queue: DeployQueue): Promise<void> {

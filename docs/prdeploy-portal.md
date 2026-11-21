@@ -3,6 +3,12 @@ The **prdeploy** has a portal that uses your GitHub Login to be able to see all 
 ![prdeploy deployments](./assets/images/screenshots/prdeploy-portal.png)
 {: style="margin: 30px 0 60px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
 
+## Deploy status
+
+The **Status** column of the **Deployments** grid shows the live state of each environment's deploy workflow: a spinner while it is in progress, a green check when it succeeded, and a red error icon when it failed or was cancelled. It updates automatically as GitHub reports workflow runs, and clicking the icon opens the run in GitHub. Environments with no status yet (for example after the API restarts) show a grey play icon until their next deploy run.
+
+The **User** column shows the GitHub avatar and name of the pull request's author, linked to their GitHub profile.
+
 ## Run comment commands
 
 From the **Deployments** grid, you can click the actions to run comment commands directly.
@@ -41,6 +47,8 @@ In the **Settings** page, your **Environments**, **[JIRA](jira-links.md)**, and 
 ### Environments
 
 Configure all of your available environments, if they should always be up to date, and if there is a gate to approve them.
+
+Each environment has a **URLs** table. Use the add button to give it any number of links, each with a **Label** (such as `Web` or `Admin`) and a full `http` or `https` URL. The **URLs** column of the **Deployments** grid shows every link as its label followed by the URL. An environment saved before this table existed with a single `url` keeps showing it, under the label `URL`, until you edit it in the table.
 
 ![prdeploy settings Environments](./assets/images/screenshots/prdeploy-portal-settings-environments.png)
 {: style="margin: 30px 0 60px 0;"}

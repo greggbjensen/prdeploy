@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using PrDeploy.Api.Webhooks.Auth;
 using PrDeploy.Api.Webhooks.Events;
 using PrDeploy.Api.Webhooks.Managers;
 using PrDeploy.Api.Webhooks.Options;
 using PrDeploy.Api.Webhooks.Services;
+using PrDeploy.Api.Webhooks.Status;
 using PrDeploy.Api.Webhooks.Utils;
 
 namespace PrDeploy.Api.Webhooks;
@@ -47,6 +49,7 @@ public static class IServiceCollectionExtensions
         services.AddHttpClient(SlackService.HttpClientName);
         services.AddHttpClient(JiraService.HttpClientName);
         services.AddMemoryCache();
+        services.TryAddSingleton<DeployStatusBroadcaster>();
         services.AddSingleton(TimeProvider.System);
 
         return services

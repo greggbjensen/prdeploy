@@ -5,6 +5,11 @@
   text-align: center;
 }
 
+.mat-column-status {
+  width: 70px;
+  text-align: center;
+}
+
 .mat-column-locked {
   width: 36px;
   text-align: center;
@@ -12,7 +17,7 @@
 }
 
 .mat-column-updated-at {
-  width: 145px;
+  width: 203px;
 }
 
 .mat-column-user {
@@ -20,7 +25,7 @@
 }
 
 .mat-column-url {
-  width: 270px;
+  width: 351px;
 }
 
 .mat-column-actions {
@@ -62,4 +67,43 @@ a {
 .pull-user {
   font-weight: $font-weight-bold;
   flex: 1;
+}
+
+.pull-title {
+  display: flex;
+  gap: 10px;
+  font-weight: $font-weight-bold;
+  margin-bottom: 10px;
+}
+
+// Pull request author: round GitHub avatar followed by the name, linking to their GitHub profile.
+.environment-user {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.environment-user-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+// Two-column grid shared by every URL of an environment: the label column is as wide as the longest label, so
+// all of the links start at the same horizontal position.
+.environment-urls {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  column-gap: 8px;
+  line-height: 24px;
+}
+
+// Each row's label and link become cells of the shared grid.
+.environment-url {
+  display: contents;
+}
+
+.environment-url a {
+  overflow-wrap: anywhere;
 }

@@ -1,0 +1,20 @@
+<h2 mat-dialog-title>Add URL</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="form">
+    <mat-form-field class="fill-width">
+      <mat-label>Label</mat-label>
+      <input matInput type="text" formControlName="label" />
+    </mat-form-field>
+    <mat-form-field class="fill-width">
+      <mat-label>URL</mat-label>
+      <input matInput type="text" formControlName="url" placeholder="https://" />
+      @if (form.controls.url.hasError('pattern')) {
+        <mat-error>Enter a full http or https URL.</mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-stroked-button class="mat-primary" (click)="cancel()">Cancel</button>
+  <button mat-flat-button class="mat-primary" (click)="add()" [disabled]="!form.valid">Add URL</button>
+</mat-dialog-actions>

@@ -1,0 +1,30 @@
+info:
+  name: Stream deploy workflow status
+  type: http
+  seq: 1
+http:
+  method: GET
+  url: "{{baseUrl}}/api/deploy-status/{{owner}}/{{repo}}/events"
+  headers:
+    - name: Accept
+      value: text/event-stream
+  auth:
+    type: bearer
+    token: "{{jwt}}"
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+settings:
+  encodeUrl: true
+docs: |-
+  Read-only Server-Sent Events stream used by the Deployments dashboard status column. On connect it sends the latest deploy workflow status of each environment, then every change as it happens. The stream stays open, so Bruno shows the events as they arrive; cancel the request to disconnect.
+
+  Each event is `event: deploy-status` with JSON data: `owner`, `repo`, `environment`, `state` (`InProgress`, `Successful` or `Failure`), `pullNumber`, `runId`, `runUrl` and `updatedAt`. Statuses are kept in memory, so an environment appears after its first deploy workflow run since the API started.
+
+  Authentication: bearer `jwt`, and the user must have push access to `owner`/`repo`. Responses: 200 stream, 401 not authenticated, 403 no repository access.
+
+  Swagger/OpenAPI: [GET /api/deploy-status/{owner}/{repo}/events](http://localhost:4302/openapi/v1.json#/paths/~1api~1deploy-status~1{owner}~1{repo}~1events/get)
+
+  Implementation: `prdeploy-api/src/PrDeploy.Api.Webhooks/Status/DeployStatusEndpoints.cs`.

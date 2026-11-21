@@ -5,7 +5,7 @@
   </button>
 </h2>
 @if (repoManager.repo) {
-  <app-environment-list [data]="deployEnvironments" [loading]="loading"></app-environment-list>
+  <app-environment-list [data]="deployEnvironments" [loading]="loading" [statuses]="deployStatuses"></app-environment-list>
 }
 
 <h2>

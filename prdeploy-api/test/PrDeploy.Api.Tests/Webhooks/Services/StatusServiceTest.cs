@@ -2,6 +2,7 @@ using Moq;
 using PrDeploy.Api.Models.DeployEnvironments;
 using PrDeploy.Api.Tests.Webhooks.Framework;
 using PrDeploy.Api.Webhooks.Services;
+using PrDeploy.Api.Webhooks.Status;
 
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
@@ -105,6 +106,53 @@ public class StatusServiceTest : IDisposable
         await _service.PostDeployCompletedAsync(GitHubModels.PullRequest(PullNumber, labels: ["dev"]), run);
 
         Assert.Empty(_comments);
+    }
+
+    /// <summary>
+    /// Verifies that a started deploy publishes an in-progress status.
+    /// </summary>
+    [Fact]
+    public async Task PostDeployStartedAsync_PublishesInProgressStatus()
+    {
+        var run = GitHubModels.WorkflowRun(7065200437, "[dev] My new feature");
+        SetupRun(run);
+
+        await _service.PostDeployStartedAsync(GitHubModels.PullRequest(PullNumber, labels: ["dev", "dev-lock"]), run);
+
+        var status = Assert.Single(_host.Get<DeployStatusBroadcaster>().GetSnapshot(WebhookTestHost.Owner,
+            WebhookTestHost.Repo));
+        Assert.Equal(DeployWorkflowState.InProgress, status.State);
+        Assert.Equal(PullNumber, status.PullNumber);
+        Assert.Equal(7065200437, status.RunId);
+        Assert.EndsWith("/actions/runs/7065200437", status.RunUrl);
+    }
+
+    /// <summary>
+    /// Verifies that a cancelled deploy publishes a failure status even though no comment is posted.
+    /// </summary>
+    [Fact]
+    public async Task PostDeployCompletedAsync_PublishesFailureForCancelledRun()
+    {
+        var run = GitHubModels.WorkflowRun(7065200437, "[dev] My new feature", conclusion: "cancelled");
+
+        await _service.PostDeployCompletedAsync(GitHubModels.PullRequest(PullNumber, labels: ["dev"]), run);
+
+        var status = Assert.Single(_host.Get<DeployStatusBroadcaster>().GetSnapshot(WebhookTestHost.Owner,
+            WebhookTestHost.Repo));
+        Assert.Equal(DeployWorkflowState.Failure, status.State);
+    }
+
+    /// <summary>
+    /// Verifies that a skipped run publishes nothing.
+    /// </summary>
+    [Fact]
+    public async Task PostDeployCompletedAsync_PublishesNothingForSkippedRun()
+    {
+        var run = GitHubModels.WorkflowRun(7065200437, "[dev] My new feature", conclusion: "skipped");
+
+        await _service.PostDeployCompletedAsync(GitHubModels.PullRequest(PullNumber, labels: ["dev"]), run);
+
+        Assert.Empty(_host.Get<DeployStatusBroadcaster>().GetSnapshot(WebhookTestHost.Owner, WebhookTestHost.Repo));
     }
 
     /// <summary>

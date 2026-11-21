@@ -376,6 +376,15 @@ export class SettingsFormComponent implements AfterViewInit {
     this.setObjectValue(input, 'queue', compare);
     this.setObjectValue(input, 'color', compare);
     this.setObjectValue(input, 'url', compare);
+
+    // Strip __typename and drop incomplete rows so only valid label and URL pairs are saved.
+    const urls = (compare.urls ?? [])
+      .filter(u => u.label?.trim() && u.url?.trim())
+      .map(u => ({ label: u.label.trim(), url: u.url.trim() }));
+    if (urls.length > 0) {
+      input.urls = urls;
+    }
+
     this.setObjectValue(input, 'requireApproval', compare);
     this.setObjectValue(input, 'requireBranchUpToDate', compare);
 

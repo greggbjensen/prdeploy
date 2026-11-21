@@ -4,7 +4,15 @@ namespace PrDeploy.Api.Models.Settings;
 /// </summary>
 public class DeploySettings
 {
-    //// Shared by the GraphQL API and the GitHub App webhooks in PrDeploy.Api.Webhooks.
+    /// <summary>
+    /// Gets the workflow path for the given workflow name.
+    /// </summary>
+    /// <param name="workflow">The name of the workflow.</param>
+    /// <returns>The path to the workflow file.</returns>
+    public static string GetWorkflowPath(string workflow) => string.IsNullOrEmpty(workflow)
+        ? string.Empty 
+        : Path.Combine(".github/workflows", workflow);
+    /// Shared by the GraphQL API and the GitHub App webhooks in PrDeploy.Api.Webhooks.
     /// <summary>
     /// Gets or sets the deploy workflow.
     /// </summary>

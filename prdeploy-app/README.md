@@ -6,6 +6,24 @@ Web application for Engineers, QA, and Product Owners to be able to review and d
 
 1. Register a GitHub OAuth Application.
 
+# Deployments: environment URLs
+
+The **URLs** column on the Deployments dashboard lists each environment's labelled links (`urls`: `label` and `url`), which are
+maintained in the **URLs** table of the Settings | Environments tab (`AddEnvironmentUrlDialogComponent` collects a label and an
+absolute `http(s)` URL). A legacy single `url` is moved into that table when the environment is edited. Both the form and
+the save mapping have Karma specs.
+
+The **User** column shows the pull request author's GitHub avatar (`user.avatarUrl`) and name, linked to their GitHub
+profile (`user.url`); the link is omitted when GitHub returns no profile URL.
+
+# Deployments: live deploy status
+
+The **Status** column on the Deployments dashboard shows each environment's deploy workflow state (spinner, check,
+error icon). `DeployStatusService` reads the API's `GET /api/deploy-status/{owner}/{repo}/events` Server-Sent Events
+stream with `fetch` (so the bearer token can be sent), reconnects after 3 seconds if the stream drops, and the
+dashboard matches statuses to environments by name, ignoring case. `SseParser` and the icon component have Karma specs;
+run them with `npm test -- --watch=false --browsers=ChromeHeadless`.
+
 # Settings: adding services
 
 The **Add Service** dialog (Settings > Services) starts with a **Workflow** dropdown listing the YAML files in the

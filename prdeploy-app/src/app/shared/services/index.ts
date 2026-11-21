@@ -7,3 +7,4 @@ export * from './app-config.service';
 export * from './app-info.service';
 export * from './errors/global-error.handler';
 export * from './logging.service';
+export * from './deploy-status.service';

@@ -153,6 +153,7 @@ public class DeploySettingsService : IDeploySettingsService
                     Name = NormalizeEnvironment(environment.Name),
                     Queue = environment.Queue,
                     Url = environment.Url,
+                    Urls = environment.Urls,
                     Color = environment.Color,
                     RequireApproval = environment.RequireApproval,
                     RequireBranchUpToDate = environment.RequireBranchUpToDate,
