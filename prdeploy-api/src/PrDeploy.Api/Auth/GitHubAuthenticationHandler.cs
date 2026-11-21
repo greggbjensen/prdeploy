@@ -9,16 +9,12 @@ using PrDeploy.Api.Business.Auth.Interfaces;
 
 namespace PrDeploy.Api.Auth
 {
-    /// <summary>
-    /// Represents git hub authentication handler data used by the application.
-    /// </summary>
+    /// <summary>Represents git hub authentication handler data used by the application.</summary>
     public class GitHubAuthenticationHandler : JwtBearerHandler
     {
         private readonly ICipherService _cipherService;
 
-        /// <summary>
-        /// Initializes the instance with its required dependencies.
-        /// </summary>
+        /// <summary>Initializes the instance with its required dependencies.</summary>
         /// <param name="options">Object containing the options data used by the operation.</param>
         /// <param name="logger">Logger used to report operational information and errors.</param>
         /// <param name="encoder">Object containing the encoder data used by the operation.</param>
@@ -33,9 +29,7 @@ namespace PrDeploy.Api.Auth
             _cipherService = cipherService;
         }
 
-        /// <summary>
-        /// Handles the authenticate according to the application's workflow.
-        /// </summary>
+        /// <summary>Handles the authenticate according to the application's workflow.</summary>
         /// <returns>The authenticate result produced by the operation.</returns>
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {

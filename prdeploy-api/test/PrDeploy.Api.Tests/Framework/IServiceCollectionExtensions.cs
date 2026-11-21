@@ -3,14 +3,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace PrDeploy.Api.Tests.Framework
 {
-    /// <summary>
-    /// Defines the contract for service Collection Extensions operations.
-    /// </summary>
+    /// <summary>Defines the contract for service Collection Extensions operations.</summary>
     public static class IServiceCollectionExtensions
     {
-        /// <summary>
-        /// Adds the test HTTP client factory to the associated collection.
-        /// </summary>
+        /// <summary>Adds the test HTTP client factory to the associated collection.</summary>
         /// <param name="services">Services to include in the operation.</param>
         /// <param name="factory">Object containing the factory data used by the operation.</param>
         /// <param name="configureOptions">Object containing the configure options data used by the operation.</param>

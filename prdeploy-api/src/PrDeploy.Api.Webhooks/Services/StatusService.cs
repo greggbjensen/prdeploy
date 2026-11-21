@@ -8,9 +8,7 @@ using PrDeploy.Api.Webhooks.Utils;
 
 namespace PrDeploy.Api.Webhooks.Services;
 
-/// <summary>
-/// Posts deployment status to pull requests and Slack as deploy workflows start and complete.
-/// </summary>
+/// <summary>Posts deployment status to pull requests and Slack as deploy workflows start and complete.</summary>
 public class StatusService
 {
     private const int BuildNameMaxLength = 25;
@@ -31,9 +29,7 @@ public class StatusService
     private readonly TimeProvider _timeProvider;
     private readonly ILogger<StatusService> _logger;
 
-    /// <summary>
-    /// Initializes the instance with its required dependencies.
-    /// </summary>
+    /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="context">Request or application context used by the operation.</param>
     /// <param name="templateService">Object containing the template service data used by the operation.</param>
     /// <param name="slackService">Object containing the Slack service data used by the operation.</param>
@@ -63,9 +59,7 @@ public class StatusService
         _logger = logger;
     }
 
-    /// <summary>
-    /// Posts the deploy completed to the configured destination.
-    /// </summary>
+    /// <summary>Posts the deploy completed to the configured destination.</summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <param name="run">Object containing the run data used by the operation.</param>
     public async Task PostDeployCompletedAsync(PullRequest pullRequest, WorkflowRun run)
@@ -192,9 +186,7 @@ public class StatusService
         _cache.Set(cacheKey, true, PostReleaseMessageDelay);
     }
 
-    /// <summary>
-    /// Posts the deploy started to the configured destination.
-    /// </summary>
+    /// <summary>Posts the deploy started to the configured destination.</summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <param name="run">Object containing the run data used by the operation.</param>
     public async Task PostDeployStartedAsync(PullRequest pullRequest, WorkflowRun run)
@@ -247,10 +239,7 @@ public class StatusService
         }
     }
 
-    /// <summary>
-    /// Publishes the deploy workflow status to connected dashboards. Does nothing when the environment is unknown or
-    /// the state is not a final outcome.
-    /// </summary>
+    /// <summary>Publishes the deploy workflow status to connected dashboards. Does nothing when the environment is unknown or the state is not a final outcome.</summary>
     /// <param name="environment">Environment name the workflow deploys to.</param>
     /// <param name="state">New state, or null when the run has no reportable state.</param>
     /// <param name="pullNumber">Pull request being deployed.</param>

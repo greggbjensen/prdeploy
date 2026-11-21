@@ -5,14 +5,10 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace PrDeploy.Api.Tests.Security;
 
-/// <summary>
-/// Verifies the service workflow setting survives comparison and YAML serialization.
-/// </summary>
+/// <summary>Verifies the service workflow setting survives comparison and YAML serialization.</summary>
 public class ServiceSettingsWorkflowTest
 {
-    /// <summary>
-    /// Confirms comparing owner and repo settings keeps each service's workflow.
-    /// </summary>
+    /// <summary>Confirms comparing owner and repo settings keeps each service's workflow.</summary>
     [Fact]
     public void Compare_ServiceWithWorkflow_KeepsWorkflow()
     {
@@ -25,9 +21,7 @@ public class ServiceSettingsWorkflowTest
         Assert.Null(compare.Services.Repo![0].Workflow);
     }
 
-    /// <summary>
-    /// Confirms the workflow is written and read back as a camel case YAML key.
-    /// </summary>
+    /// <summary>Confirms the workflow is written and read back as a camel case YAML key.</summary>
     [Fact]
     public void Yaml_ServiceWithWorkflow_RoundTrips()
     {

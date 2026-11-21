@@ -4,17 +4,13 @@ using PrDeploy.Api.Business.Stores.Interfaces;
 
 namespace PrDeploy.Api.Business.Stores;
 
-/// <summary>
-/// Stores serialized deployment values and their revisions in the local BLite database.
-/// </summary>
+/// <summary>Stores serialized deployment values and their revisions in the local BLite database.</summary>
 public sealed class BliteDeploymentStore : IDeploymentStore
 {
     private readonly BliteStorage _storage;
     private readonly DeploymentStoreOptions _storageOptions;
 
-    /// <summary>
-    /// Creates a store backed by the shared BLite database.
-    /// </summary>
+    /// <summary>Creates a store backed by the shared BLite database.</summary>
     public BliteDeploymentStore(BliteStorage storage, IOptions<DeploymentStoreOptions> storageOptions)
     {
         _storage = storage;
@@ -49,15 +45,11 @@ public sealed class BliteDeploymentStore : IDeploymentStore
     public Task SetAsync<T>(string name, T value, bool isSecure = false) =>
         SetDeploymentValue($"{_storageOptions.DeploymentValuePathPrefix}/{name.ToUpperInvariant()}", value, isSecure);
 
-    /// <summary>
-    /// Performs the repository path operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the repository path operation and returns its result.</summary>
     private string RepositoryPath(string owner, string repo, string name) =>
         $"{_storageOptions.DeploymentValuePathPrefix}/{owner}/{repo}/{name.ToUpperInvariant()}";
 
-    /// <summary>
-    /// Reads the requested historical revision from the local deployment-value collection.
-    /// </summary>
+    /// <summary>Reads the requested historical revision from the local deployment-value collection.</summary>
     private Task<T> GetDeploymentValue<T>(string path, int historical) =>
         _storage.ExecuteAsync(async context =>
         {
@@ -76,9 +68,7 @@ public sealed class BliteDeploymentStore : IDeploymentStore
                 : DeploymentValueSerialization.Deserialize<T>(selectedRevision.Value);
         });
 
-    /// <summary>
-    /// Appends a serialized revision to the local deployment-value collection.
-    /// </summary>
+    /// <summary>Appends a serialized revision to the local deployment-value collection.</summary>
     private Task SetDeploymentValue<T>(string path, T value, bool isSecure)
     {
         var serializedValue = DeploymentValueSerialization.Serialize(value);

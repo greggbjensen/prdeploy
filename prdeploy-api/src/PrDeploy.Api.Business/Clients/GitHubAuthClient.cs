@@ -20,9 +20,7 @@ using RestSharp;
 
 namespace PrDeploy.Api.Business.Clients
 {
-    /// <summary>
-    /// Provides client operations for communicating with the git Hub Auth Client.
-    /// </summary>
+    /// <summary>Provides client operations for communicating with the git Hub Auth Client.</summary>
     public class GitHubAuthClient : IGitHubAuthClient
     {
         private readonly ICipherService _cipherService;
@@ -34,9 +32,7 @@ namespace PrDeploy.Api.Business.Clients
         private readonly ILogger<GitHubAuthClient> _logger;
         private readonly IOrganizationAccess _organizationAccess;
 
-        /// <summary>
-        /// Initializes the instance with its required dependencies.
-        /// </summary>
+        /// <summary>Initializes the instance with its required dependencies.</summary>
         /// <param name="restClientInstance">Object containing the rest client instance data used by the operation.</param>
         /// <param name="jwtOptions">JWT issuer, audience, signing-key, and token-protection configuration.</param>
         /// <param name="cipherService">Object containing the cipher service data used by the operation.</param>
@@ -62,9 +58,7 @@ namespace PrDeploy.Api.Business.Clients
             _gitHubOptions = restClientInstance.Options;
         }
 
-        /// <summary>
-        /// Retrieves the access token.
-        /// </summary>
+        /// <summary>Retrieves the access token.</summary>
         /// <param name="accessTokenRequest">Object containing the access token request data used by the operation.</param>
         /// <returns>Requested value, or its default when no value is available.</returns>
         public async Task<AccessTokenResponse> GetAccessTokenAsync(AccessTokenRequest accessTokenRequest)
@@ -142,9 +136,7 @@ namespace PrDeploy.Api.Business.Clients
             return accessTokenResponse;
         }
 
-        /// <summary>
-        /// Extracts non-sensitive OAuth error fields from a GitHub token endpoint response body.
-        /// </summary>
+        /// <summary>Extracts non-sensitive OAuth error fields from a GitHub token endpoint response body.</summary>
         /// <param name="content">Raw JSON payload returned by the token endpoint.</param>
         /// <returns>The OAuth <c>error</c> code and <c>error_description</c> message when present.</returns>
         private static (string? Error, string? ErrorDescription) ExtractOAuthError(string? content)
@@ -180,9 +172,7 @@ namespace PrDeploy.Api.Business.Clients
             }
         }
 
-        /// <summary>
-        /// Retrieves the user info.
-        /// </summary>
+        /// <summary>Retrieves the user info.</summary>
         /// <param name="accessToken">Text used as the access token.</param>
         /// <returns>Requested value, or its default when no value is available.</returns>
         public Task<UserInfo> GetUserInfoAsync(string? accessToken = null)
@@ -190,10 +180,7 @@ namespace PrDeploy.Api.Business.Clients
             return GetUserInfoAsync(ResolveClient(accessToken));
         }
 
-        /// <summary>
-        /// Resolves the GitHub client for a user token: the request scoped client when no token is supplied,
-        /// otherwise a client authenticated with the supplied token.
-        /// </summary>
+        /// <summary>Resolves the GitHub client for a user token: the request scoped client when no token is supplied, otherwise a client authenticated with the supplied token.</summary>
         /// <param name="accessToken">GitHub access token of the user, or null to use the signed in user.</param>
         /// <returns>GitHub client authenticated as the user.</returns>
         private IGitHubClient ResolveClient(string? accessToken)
@@ -219,9 +206,7 @@ namespace PrDeploy.Api.Business.Clients
             return gitHubClient;
         }
 
-        /// <summary>
-        /// Retrieves the profile of the user the client is authenticated as.
-        /// </summary>
+        /// <summary>Retrieves the profile of the user the client is authenticated as.</summary>
         /// <param name="gitHubClient">GitHub client authenticated as the user.</param>
         /// <returns>The user's profile information.</returns>
         private async Task<UserInfo> GetUserInfoAsync(IGitHubClient gitHubClient)
@@ -240,9 +225,7 @@ namespace PrDeploy.Api.Business.Clients
             }
         }
 
-        /// <summary>
-        /// Creates the JWT from the supplied inputs.
-        /// </summary>
+        /// <summary>Creates the JWT from the supplied inputs.</summary>
         /// <param name="gitHubToken">Text used as the git hub token.</param>
         /// <param name="userInfo">Object containing the user info data used by the operation.</param>
         /// <returns>The object created from the supplied inputs.</returns>

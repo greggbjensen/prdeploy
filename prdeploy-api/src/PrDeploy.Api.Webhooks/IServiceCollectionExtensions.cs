@@ -14,14 +14,10 @@ using PrDeploy.Api.Webhooks.Utils;
 
 namespace PrDeploy.Api.Webhooks;
 
-/// <summary>
-/// Defines the contract for service Collection Extensions operations.
-/// </summary>
+/// <summary>Defines the contract for service Collection Extensions operations.</summary>
 public static class IServiceCollectionExtensions
 {
-    /// <summary>
-    /// Adds the pr deploy webhooks to the associated collection.
-    /// </summary>
+    /// <summary>Adds the pr deploy webhooks to the associated collection.</summary>
     /// <param name="services">Services to include in the operation.</param>
     /// <param name="configuration">Object containing the configuration data used by the operation.</param>
     /// <returns>The i service collection produced by the operation.</returns>
@@ -39,9 +35,7 @@ public static class IServiceCollectionExtensions
         return services.AddPrDeployWebhookServices();
     }
 
-    /// <summary>
-    /// Adds the pr deploy webhook services to the associated collection.
-    /// </summary>
+    /// <summary>Adds the pr deploy webhook services to the associated collection.</summary>
     /// <param name="services">Services to include in the operation.</param>
     /// <returns>The i service collection produced by the operation.</returns>
     public static IServiceCollection AddPrDeployWebhookServices(this IServiceCollection services)
@@ -70,9 +64,7 @@ public static class IServiceCollectionExtensions
             .AddScoped<StatusManager>();
     }
 
-    /// <summary>
-    /// Maps the endpoint configured as the GitHub App Webhook URL.
-    /// </summary>
+    /// <summary>Maps the endpoint configured as the GitHub App Webhook URL.</summary>
     public static IEndpointConventionBuilder MapGitHubWebhooks(this IEndpointRouteBuilder endpoints,
         string pattern = "/webhooks")
     {

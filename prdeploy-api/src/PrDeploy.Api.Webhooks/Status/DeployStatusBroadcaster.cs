@@ -4,19 +4,13 @@ using System.Threading.Channels;
 
 namespace PrDeploy.Api.Webhooks.Status;
 
-/// <summary>
-/// Keeps the latest deployment workflow status per environment and fans changes out to connected dashboard streams.
-/// State is held in memory, matching the single replica the webhook queue already requires.
-/// </summary>
+/// <summary>Keeps the latest deployment workflow status per environment and fans changes out to connected dashboard streams. State is held in memory, matching the single replica the webhook queue already requires.</summary>
 public class DeployStatusBroadcaster
 {
     private readonly ConcurrentDictionary<string, DeployWorkflowStatus> _latest = new();
     private readonly ConcurrentDictionary<Guid, Subscriber> _subscribers = new();
 
-    /// <summary>
-    /// Records a status and delivers it to every subscriber watching the same repository. A slow subscriber never
-    /// blocks the publisher because its channel is bounded and drops its oldest pending update.
-    /// </summary>
+    /// <summary>Records a status and delivers it to every subscriber watching the same repository. A slow subscriber never blocks the publisher because its channel is bounded and drops its oldest pending update.</summary>
     /// <param name="status">Status to record and broadcast.</param>
     public void Publish(DeployWorkflowStatus status)
     {
@@ -30,9 +24,7 @@ public class DeployStatusBroadcaster
         }
     }
 
-    /// <summary>
-    /// Lists the latest known status for each environment of a repository.
-    /// </summary>
+    /// <summary>Lists the latest known status for each environment of a repository.</summary>
     /// <param name="owner">Repository owner or organization.</param>
     /// <param name="repo">Repository name.</param>
     /// <returns>The current statuses, ordered by environment.</returns>
@@ -41,10 +33,7 @@ public class DeployStatusBroadcaster
         .OrderBy(s => s.Environment, StringComparer.OrdinalIgnoreCase)
         .ToList();
 
-    /// <summary>
-    /// Streams the current statuses of a repository followed by every later change until the caller cancels.
-    /// Subscribing happens before the snapshot is read so no change between the two is lost.
-    /// </summary>
+    /// <summary>Streams the current statuses of a repository followed by every later change until the caller cancels. Subscribing happens before the snapshot is read so no change between the two is lost.</summary>
     /// <param name="owner">Repository owner or organization.</param>
     /// <param name="repo">Repository name.</param>
     /// <param name="cancellationToken">Ends the stream, for example when the client disconnects.</param>
@@ -73,27 +62,19 @@ public class DeployStatusBroadcaster
         }
     }
 
-    /// <summary>
-    /// Builds the dictionary key identifying one environment of one repository.
-    /// </summary>
+    /// <summary>Builds the dictionary key identifying one environment of one repository.</summary>
     private static string Key(string owner, string repo, string environment) =>
         $"{owner}/{repo}/{environment}".ToLowerInvariant();
 
-    /// <summary>
-    /// Determines whether a status belongs to a repository, ignoring case.
-    /// </summary>
+    /// <summary>Determines whether a status belongs to a repository, ignoring case.</summary>
     private static bool Matches(DeployWorkflowStatus status, string owner, string repo) =>
         string.Equals(status.Owner, owner, StringComparison.OrdinalIgnoreCase)
         && string.Equals(status.Repo, repo, StringComparison.OrdinalIgnoreCase);
 
-    /// <summary>
-    /// A connected stream and the repository it watches.
-    /// </summary>
+    /// <summary>A connected stream and the repository it watches.</summary>
     private sealed class Subscriber(string owner, string repo)
     {
-        /// <summary>
-        /// Gets the pending updates for this subscriber, keeping only the newest when it falls behind.
-        /// </summary>
+        /// <summary>Gets the pending updates for this subscriber, keeping only the newest when it falls behind.</summary>
         public Channel<DeployWorkflowStatus> Channel { get; } = System.Threading.Channels.Channel
             .CreateBounded<DeployWorkflowStatus>(new BoundedChannelOptions(64)
             {
@@ -101,9 +82,7 @@ public class DeployStatusBroadcaster
                 SingleReader = true
             });
 
-        /// <summary>
-        /// Determines whether this subscriber watches the repository.
-        /// </summary>
+        /// <summary>Determines whether this subscriber watches the repository.</summary>
         public bool Matches(string statusOwner, string statusRepo) =>
             string.Equals(owner, statusOwner, StringComparison.OrdinalIgnoreCase)
             && string.Equals(repo, statusRepo, StringComparison.OrdinalIgnoreCase);

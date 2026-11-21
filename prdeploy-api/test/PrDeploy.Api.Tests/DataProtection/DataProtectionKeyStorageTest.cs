@@ -15,14 +15,10 @@ using Google.Cloud.Firestore;
 
 namespace PrDeploy.Api.Tests.DataProtection;
 
-/// <summary>
-/// Verifies provider selection and persistence of ASP.NET Core Data Protection keys.
-/// </summary>
+/// <summary>Verifies provider selection and persistence of ASP.NET Core Data Protection keys.</summary>
 public class DataProtectionKeyStorageTest
 {
-    /// <summary>
-    /// Confirms current and legacy local provider names select the BLite-backed local provider.
-    /// </summary>
+    /// <summary>Confirms current and legacy local provider names select the BLite-backed local provider.</summary>
     [Theory]
     [InlineData("Local")]
     [InlineData("BLite")]
@@ -39,9 +35,7 @@ public class DataProtectionKeyStorageTest
         Assert.Equal(StorageProvider.Local, StorageProviderConfiguration.GetProvider(configuration));
     }
 
-    /// <summary>
-    /// Confirms the default provider persists keys locally without registering cloud clients.
-    /// </summary>
+    /// <summary>Confirms the default provider persists keys locally without registering cloud clients.</summary>
     [Fact]
     public async Task AddPrDeployApi_UsesBliteByDefaultWithoutCloudServicesAndPersistsKeys()
     {
@@ -105,9 +99,7 @@ public class DataProtectionKeyStorageTest
         }
     }
 
-    /// <summary>
-    /// Confirms each cloud provider selects its own store without resolving a cloud client.
-    /// </summary>
+    /// <summary>Confirms each cloud provider selects its own store without resolving a cloud client.</summary>
     [Theory]
     [InlineData("Azure", typeof(CosmosDeploymentStore))]
     [InlineData("AWS", typeof(DynamoDbDeploymentStore))]
@@ -132,9 +124,7 @@ public class DataProtectionKeyStorageTest
         Assert.Single(services, descriptor => descriptor.ServiceType == typeof(IXmlRepository));
     }
 
-    /// <summary>
-    /// Confirms configuration rejects storage provider names that are not supported.
-    /// </summary>
+    /// <summary>Confirms configuration rejects storage provider names that are not supported.</summary>
     [Fact]
     public void AddPrDeployApi_RejectsUnsupportedStorageProvider()
     {
@@ -151,9 +141,7 @@ public class DataProtectionKeyStorageTest
         Assert.Contains("Supported values are 'Local', 'Azure', 'AWS', and 'GCP'.", exception.Message);
     }
 
-    /// <summary>
-    /// Confirms selecting Cosmos DB requires its connection information when the store is resolved.
-    /// </summary>
+    /// <summary>Confirms selecting Cosmos DB requires its connection information when the store is resolved.</summary>
     [Fact]
     public void AddPrDeployApi_RequiresAzureConnectionSettingsWhenSelected()
     {
@@ -174,9 +162,7 @@ public class DataProtectionKeyStorageTest
         Assert.Contains("Storage:Azure:ConnectionString", exception.Message);
     }
 
-    /// <summary>
-    /// Confirms selecting Firestore requires a project identifier when the store is resolved.
-    /// </summary>
+    /// <summary>Confirms selecting Firestore requires a project identifier when the store is resolved.</summary>
     [Fact]
     public void AddPrDeployApi_RequiresGcpProjectWhenSelected()
     {

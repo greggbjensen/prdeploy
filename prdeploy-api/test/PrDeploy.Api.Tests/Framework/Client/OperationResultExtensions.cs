@@ -2,16 +2,10 @@ using StrawberryShake;
 
 namespace PrDeploy.Api.Tests.Framework.Client
 {
-    /// <summary>
-    /// Represents operation result extensions data used by the application.
-    /// </summary>
+    /// <summary>Represents operation result extensions data used by the application.</summary>
     public static class OperationResultExtensions
     {
-        /// <summary>
-        /// Ensures that the operation result has no errors and throws a
-        /// detailed <see cref="GraphQLClientException"/> when the operation result
-        /// has errors.
-        /// </summary>
+        /// <summary>Ensures that the operation result has no errors and throws a detailed <see cref="GraphQLClientException"/> when the operation result has errors.</summary>
         /// <param name="result">The operation result.</param>
         /// <exception cref="ArgumentNullException">
         /// The operation result is null.

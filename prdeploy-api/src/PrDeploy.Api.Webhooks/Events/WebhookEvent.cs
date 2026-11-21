@@ -2,9 +2,7 @@ using System.Text.Json;
 
 namespace PrDeploy.Api.Webhooks.Events;
 
-/// <summary>
-/// A verified GitHub webhook delivery waiting to be processed.
-/// </summary>
+/// <summary>A verified GitHub webhook delivery waiting to be processed.</summary>
 /// <param name="Name">The X-GitHub-Event header, such as pull_request.</param>
 /// <param name="Action">The action from the payload, such as opened.</param>
 /// <param name="DeliveryId">The X-GitHub-Delivery header, used to trace the delivery in GitHub.</param>
@@ -26,9 +24,7 @@ public record WebhookEvent(string Name, string Action, string DeliveryId, JsonEl
         $"{WorkflowRun}.completed"
     ];
 
-    /// <summary>
-    /// Gets the is handled.
-    /// </summary>
+    /// <summary>Gets the is handled.</summary>
     /// <value>Current is handled value.</value>
     public bool IsHandled => HandledEvents.Contains($"{Name}.{Action}");
 }

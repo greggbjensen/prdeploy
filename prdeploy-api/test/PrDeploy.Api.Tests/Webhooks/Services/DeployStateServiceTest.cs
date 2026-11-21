@@ -4,25 +4,19 @@ using PrDeploy.Api.Webhooks.Services;
 
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
-/// <summary>
-/// Contains tests that verify deploy state service behavior.
-/// </summary>
+/// <summary>Contains tests that verify deploy state service behavior.</summary>
 public class DeployStateServiceTest : IDisposable
 {
     private readonly WebhookTestHost _host = new();
     private readonly DeployStateService _service;
 
-    /// <summary>
-    /// Initializes the test fixture and prepares its dependencies.
-    /// </summary>
+    /// <summary>Initializes the test fixture and prepares its dependencies.</summary>
     public DeployStateServiceTest()
     {
         _service = _host.Get<DeployStateService>();
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: adds services to deploy state.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: adds services to deploy state.</summary>
     [Fact]
     public async Task UpdateAsync_AddsServicesToDeployState()
     {
@@ -45,9 +39,7 @@ public class DeployStateServiceTest : IDisposable
         Assert.Equal("2024.2.25-r8067229180", actual.Services.Single(s => s.Name == "myorg-api-internal").Version);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: creates default deploy state when none is available.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: creates default deploy state when none is available.</summary>
     [Fact]
     public async Task GetAsync_CreatesDefaultDeployStateWhenNoneIsAvailable()
     {
@@ -59,9 +51,7 @@ public class DeployStateServiceTest : IDisposable
             $"{WebhookTestHost.Owner}/{WebhookTestHost.Repo}/DEPLOY_STATE_DEV".ToUpperInvariant()));
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: returns historical state without overwriting current.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: returns historical state without overwriting current.</summary>
     [Fact]
     public async Task GetAsync_ReturnsHistoricalStateWithoutOverwritingCurrent()
     {
@@ -74,9 +64,7 @@ public class DeployStateServiceTest : IDisposable
         Assert.Equal(2, (await _service.GetAsync("stable")).PullNumber);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: determines difference between environments.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: determines difference between environments.</summary>
     [Fact]
     public async Task DiffAsync_DeterminesDifferenceBetweenEnvironments()
     {
@@ -102,8 +90,6 @@ public class DeployStateServiceTest : IDisposable
         Assert.Equal(8068273297, actual.Services.Single(s => s.Name == "myorg-app-main").RunId);
     }
 
-    /// <summary>
-    /// Releases resources owned by this instance.
-    /// </summary>
+    /// <summary>Releases resources owned by this instance.</summary>
     public void Dispose() => _host.Dispose();
 }

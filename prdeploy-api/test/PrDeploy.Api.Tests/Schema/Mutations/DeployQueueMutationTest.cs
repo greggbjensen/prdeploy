@@ -10,24 +10,18 @@ using PrDeploy.Api.Tests.Webhooks.Framework;
 
 namespace PrDeploy.Api.Tests.Schema.Mutations;
 
-/// <summary>
-/// Contains tests that verify deploy queue mutation behavior.
-/// </summary>
+/// <summary>Contains tests that verify deploy queue mutation behavior.</summary>
 [Collection(ApiHostCollection.Name)]
 public class DeployQueueMutationTest : DeployApiTest
 {
-    /// <summary>
-    /// Initializes the test fixture and prepares its dependencies.
-    /// </summary>
+    /// <summary>Initializes the test fixture and prepares its dependencies.</summary>
     /// <param name="factory">Object containing the factory data used by the operation.</param>
     public DeployQueueMutationTest(DeployApiApplicationFactory factory)
         : base(factory)
     {
     }
 
-    /// <summary>
-    /// Configures the services for the current application or test.
-    /// </summary>
+    /// <summary>Configures the services for the current application or test.</summary>
     /// <param name="services">Services to include in the operation.</param>
     public override void ConfigureServices(IServiceCollection services)
     {
@@ -63,9 +57,7 @@ public class DeployQueueMutationTest : DeployApiTest
         services.AddSingleton<IDeploymentStore>(deploymentStore);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: sets environment pull request queue in order.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: sets environment pull request queue in order.</summary>
     [Fact]
     public async Task DeployQueueUpdate_SetsEnvironmentPullRequestQueueInOrder()
     {

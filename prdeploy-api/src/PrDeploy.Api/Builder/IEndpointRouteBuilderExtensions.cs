@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 
 namespace PrDeploy.Api.Builder
 {
-    /// <summary>
-    /// Defines the contract for endpoint Route Builder Extensions operations.
-    /// </summary>
+    /// <summary>Defines the contract for endpoint Route Builder Extensions operations.</summary>
     public static class IEndpointRouteBuilderExtensions
     {
         /// <remarks>

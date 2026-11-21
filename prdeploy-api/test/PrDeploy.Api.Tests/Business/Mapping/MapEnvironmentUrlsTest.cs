@@ -3,14 +3,10 @@ using PrDeploy.Api.Models.Settings;
 
 namespace PrDeploy.Api.Tests.Business.Mapping;
 
-/// <summary>
-/// Verifies how <see cref="Map.EnvironmentUrls"/> builds the labelled links for an environment.
-/// </summary>
+/// <summary>Verifies how <see cref="Map.EnvironmentUrls"/> builds the labelled links for an environment.</summary>
 public class MapEnvironmentUrlsTest
 {
-    /// <summary>
-    /// Labelled URLs are returned in order with their labels.
-    /// </summary>
+    /// <summary>Labelled URLs are returned in order with their labels.</summary>
     [Fact]
     public void ReturnsLabelledUrlsInOrder()
     {
@@ -29,9 +25,7 @@ public class MapEnvironmentUrlsTest
         Assert.Equal(new[] { "https://web.test", "https://admin.test" }, urls.Select(u => u.Url));
     }
 
-    /// <summary>
-    /// The legacy single URL is shown when no labelled URLs exist.
-    /// </summary>
+    /// <summary>The legacy single URL is shown when no labelled URLs exist.</summary>
     [Fact]
     public void FallsBackToLegacyUrlWhenNoUrlsConfigured()
     {
@@ -42,9 +36,7 @@ public class MapEnvironmentUrlsTest
         Assert.Equal("https://legacy.test", url.Url);
     }
 
-    /// <summary>
-    /// The legacy URL is ignored once labelled URLs are configured.
-    /// </summary>
+    /// <summary>The legacy URL is ignored once labelled URLs are configured.</summary>
     [Fact]
     public void IgnoresLegacyUrlWhenUrlsConfigured()
     {
@@ -57,9 +49,7 @@ public class MapEnvironmentUrlsTest
         Assert.Equal("Web", Assert.Single(Map.EnvironmentUrls(environment)).Label);
     }
 
-    /// <summary>
-    /// Entries without a URL are dropped and a blank label falls back to the URL.
-    /// </summary>
+    /// <summary>Entries without a URL are dropped and a blank label falls back to the URL.</summary>
     [Fact]
     public void SkipsBlankUrlsAndDefaultsBlankLabel()
     {
@@ -76,9 +66,7 @@ public class MapEnvironmentUrlsTest
         Assert.Equal("https://web.test", url.Label);
     }
 
-    /// <summary>
-    /// An environment with no URLs of any kind yields an empty list.
-    /// </summary>
+    /// <summary>An environment with no URLs of any kind yields an empty list.</summary>
     [Fact]
     public void ReturnsEmptyWhenNothingConfigured()
     {

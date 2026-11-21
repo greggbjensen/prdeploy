@@ -3,17 +3,13 @@ using Octokit;
 
 namespace PrDeploy.Api.Tests.Webhooks.Framework;
 
-/// <summary>
-/// Represents git hub mock extensions data used by the application.
-/// </summary>
+/// <summary>Represents git hub mock extensions data used by the application.</summary>
 public static class GitHubMockExtensions
 {
     private const string Owner = WebhookTestHost.Owner;
     private const string Repo = WebhookTestHost.Repo;
 
-    /// <summary>
-    /// Mocks a build workflow run with a build-details artifact containing version 2024.2.26-r8055221191.
-    /// </summary>
+    /// <summary>Mocks a build workflow run with a build-details artifact containing version 2024.2.26-r8055221191.</summary>
     public static void SetupBuildRun(this WebhookTestHost host, long runId, string path)
     {
         var github = host.GitHub.Object;
@@ -32,9 +28,7 @@ public static class GitHubMockExtensions
                 "build-details.zip")));
     }
 
-    /// <summary>
-    /// Stores or updates the setup checks.
-    /// </summary>
+    /// <summary>Stores or updates the setup checks.</summary>
     /// <param name="host">Object containing the host data used by the operation.</param>
     /// <param name="reference">Text used as the reference.</param>
     /// <param name="checks">Object containing the checks data used by the operation.</param>
@@ -46,9 +40,7 @@ public static class GitHubMockExtensions
             .ReturnsAsync(GitHubModels.CheckRuns(checks));
     }
 
-    /// <summary>
-    /// Sets up the check runs returned for a ref, where each run may carry output text such as the build marker.
-    /// </summary>
+    /// <summary>Sets up the check runs returned for a ref, where each run may carry output text such as the build marker.</summary>
     /// <param name="host">Test host whose GitHub client is configured.</param>
     /// <param name="reference">Git ref the check runs are listed for.</param>
     /// <param name="checks">Check runs to return; a null output text omits the run's output.</param>
@@ -60,9 +52,7 @@ public static class GitHubMockExtensions
             .ReturnsAsync(GitHubModels.CheckRuns(checks));
     }
 
-    /// <summary>
-    /// Stores or updates the setup pull request.
-    /// </summary>
+    /// <summary>Stores or updates the setup pull request.</summary>
     /// <param name="host">Object containing the host data used by the operation.</param>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     public static void SetupPullRequest(this WebhookTestHost host, PullRequest pullRequest)
@@ -72,9 +62,7 @@ public static class GitHubMockExtensions
             .ReturnsAsync(pullRequest);
     }
 
-    /// <summary>
-    /// Stores or updates the setup deployed pull requests.
-    /// </summary>
+    /// <summary>Stores or updates the setup deployed pull requests.</summary>
     /// <param name="host">Object containing the host data used by the operation.</param>
     /// <param name="pullRequests">Object containing the pull requests data used by the operation.</param>
     public static void SetupDeployedPullRequests(this WebhookTestHost host, params PullRequest[] pullRequests)
@@ -84,9 +72,7 @@ public static class GitHubMockExtensions
             .ReturnsAsync(pullRequests);
     }
 
-    /// <summary>
-    /// Stores or updates the setup user.
-    /// </summary>
+    /// <summary>Stores or updates the setup user.</summary>
     /// <param name="host">Object containing the host data used by the operation.</param>
     /// <param name="login">Text used as the login.</param>
     /// <param name="name">Name used to identify the value or resource.</param>
@@ -98,9 +84,7 @@ public static class GitHubMockExtensions
                 System.Text.Json.JsonSerializer.Serialize(new { login, name, email = "" })));
     }
 
-    /// <summary>
-    /// Sets the repository permission GitHub reports for a user, which gates comment commands.
-    /// </summary>
+    /// <summary>Sets the repository permission GitHub reports for a user, which gates comment commands.</summary>
     /// <param name="host">Test host whose GitHub client is configured.</param>
     /// <param name="login">User whose permission is configured.</param>
     /// <param name="permission">Legacy permission: admin, write, read, or none.</param>
@@ -114,9 +98,7 @@ public static class GitHubMockExtensions
                 System.Text.Json.JsonSerializer.Serialize(new { permission, role_name = roleName ?? permission })));
     }
 
-    /// <summary>
-    /// Captures the labels set on each pull request.
-    /// </summary>
+    /// <summary>Captures the labels set on each pull request.</summary>
     public static Dictionary<long, string[]> CaptureLabels(this WebhookTestHost host)
     {
         var labels = new Dictionary<long, string[]>();
@@ -127,9 +109,7 @@ public static class GitHubMockExtensions
         return labels;
     }
 
-    /// <summary>
-    /// Captures the comments created on each pull request.
-    /// </summary>
+    /// <summary>Captures the comments created on each pull request.</summary>
     public static List<(long Number, string Body)> CaptureComments(this WebhookTestHost host)
     {
         var comments = new List<(long, string)>();
@@ -140,9 +120,7 @@ public static class GitHubMockExtensions
         return comments;
     }
 
-    /// <summary>
-    /// Performs the capture dispatches operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the capture dispatches operation and returns its result.</summary>
     /// <param name="host">Object containing the host data used by the operation.</param>
     /// <returns>The collection of items produced by the operation.</returns>
     public static List<(string Workflow, CreateWorkflowDispatch Dispatch)> CaptureDispatches(this WebhookTestHost host)

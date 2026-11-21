@@ -9,9 +9,7 @@ using PrDeploy.Api.Webhooks.Utils;
 
 namespace PrDeploy.Api.Webhooks.Services;
 
-/// <summary>
-/// Coordinates check operations and their collaborators.
-/// </summary>
+/// <summary>Coordinates check operations and their collaborators.</summary>
 public partial class CheckService
 {
     private const int MaxPageSize = 100;
@@ -28,9 +26,7 @@ public partial class CheckService
     private readonly EnvironmentUtil _environmentUtil;
     private readonly ILogger<CheckService> _logger;
 
-    /// <summary>
-    /// Initializes the instance with its required dependencies.
-    /// </summary>
+    /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="context">Request or application context used by the operation.</param>
     /// <param name="templateService">Object containing the template service data used by the operation.</param>
     /// <param name="slackService">Object containing the Slack service data used by the operation.</param>
@@ -48,15 +44,11 @@ public partial class CheckService
         _logger = logger;
     }
 
-    /// <summary>
-    /// Gets the settings.
-    /// </summary>
+    /// <summary>Gets the settings.</summary>
     /// <value>Current settings value.</value>
     private DeploySettings Settings => _context.Settings;
 
-    /// <summary>
-    /// Checks whether the deploy ready condition is satisfied.
-    /// </summary>
+    /// <summary>Checks whether the deploy ready condition is satisfied.</summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <param name="environment">Deployment environment involved in the operation.</param>
     /// <returns>True when the requested condition is met; otherwise, false.</returns>
@@ -81,9 +73,7 @@ public partial class CheckService
         return valid;
     }
 
-    /// <summary>
-    /// Finds and returns the builds.
-    /// </summary>
+    /// <summary>Finds and returns the builds.</summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <param name="overrideBuildRunIds">Object containing the override build run ids data used by the operation.</param>
     /// <returns>Items matching the supplied criteria.</returns>
@@ -120,9 +110,7 @@ public partial class CheckService
         return uniqueBuilds;
     }
 
-    /// <summary>
-    /// Finds and returns the incomplete pull checks.
-    /// </summary>
+    /// <summary>Finds and returns the incomplete pull checks.</summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <returns>Items matching the supplied criteria.</returns>
     public async Task<List<CheckSummary>> ListIncompletePullChecksAsync(PullRequest pullRequest)
@@ -178,9 +166,7 @@ public partial class CheckService
         return retainedChecks;
     }
 
-    /// <summary>
-    /// Lists the workflows triggered by PR Deploy itself, which should not retrigger deploys.
-    /// </summary>
+    /// <summary>Lists the workflows triggered by PR Deploy itself, which should not retrigger deploys.</summary>
     public static List<string> GetExcludedWorkflows(DeploySettings settings)
     {
         var excludedWorkflows = (settings.Environments ?? [])
@@ -192,9 +178,7 @@ public partial class CheckService
         return excludedWorkflows;
     }
 
-    /// <summary>
-    /// Retrieves the checks for ref.
-    /// </summary>
+    /// <summary>Retrieves the checks for ref.</summary>
     /// <param name="reference">Text used as the reference.</param>
     /// <returns>Requested value, or its default when no value is available.</returns>
     private async Task<CheckRunsResponse> GetChecksForRefAsync(string reference)
@@ -203,9 +187,7 @@ public partial class CheckService
             new CheckRunRequest(), new ApiOptions { PageSize = MaxPageSize, PageCount = 1, StartPage = 1 });
     }
 
-    /// <summary>
-    /// Summarizes every check run reported for a ref, flagging the ones the build-details action marked as builds.
-    /// </summary>
+    /// <summary>Summarizes every check run reported for a ref, flagging the ones the build-details action marked as builds.</summary>
     /// <param name="checkRuns">Check runs reported for a ref.</param>
     /// <returns>One summary per check run. Checks that are not workflow jobs, such as those created through the
     /// Checks API by test reporters or third-party apps, are kept with a run ID of 0 so their failures still
@@ -223,9 +205,7 @@ public partial class CheckService
             .ToList();
     }
 
-    /// <summary>
-    /// A check run reduced to the details needed to report it and, for builds, locate the workflow run.
-    /// </summary>
+    /// <summary>A check run reduced to the details needed to report it and, for builds, locate the workflow run.</summary>
     /// <param name="RunId">ID of the workflow run the check belongs to, or 0 when the check is not a workflow
     /// job.</param>
     /// <param name="IsBuild">True when the check run is a build; otherwise, false.</param>
@@ -235,9 +215,7 @@ public partial class CheckService
     /// <param name="HtmlUrl">HTML URL of the check run, for logging.</param>
     public sealed record CheckSummary(long RunId, bool IsBuild, string Status, string Conclusion, string CheckName, string HtmlUrl);
 
-    /// <summary>
-    /// Parses the supplied input as the run id.
-    /// </summary>
+    /// <summary>Parses the supplied input as the run id.</summary>
     /// <param name="url">Text used as the URL.</param>
     /// <returns>The long produced by the operation.</returns>
     private static long ParseRunId(string? url)
@@ -246,9 +224,7 @@ public partial class CheckService
         return match.Success ? long.Parse(match.Groups[1].Value) : 0;
     }
 
-    /// <summary>
-    /// Checks whether the pull checks complete condition is satisfied.
-    /// </summary>
+    /// <summary>Checks whether the pull checks complete condition is satisfied.</summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <param name="environmentSettings">Object containing the environment settings data used by the operation.</param>
     /// <returns>True when the requested condition is met; otherwise, false.</returns>
@@ -277,9 +253,7 @@ public partial class CheckService
         return valid;
     }
 
-    /// <summary>
-    /// Checks whether the branch up to date condition is satisfied.
-    /// </summary>
+    /// <summary>Checks whether the branch up to date condition is satisfied.</summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <param name="environmentSettings">Object containing the environment settings data used by the operation.</param>
     /// <returns>True when the requested condition is met; otherwise, false.</returns>
@@ -339,9 +313,7 @@ public partial class CheckService
         return valid;
     }
 
-    /// <summary>
-    /// Attempts to update branch with main; the result indicates whether it succeeded.
-    /// </summary>
+    /// <summary>Attempts to update branch with main; the result indicates whether it succeeded.</summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <param name="environmentSettings">Object containing the environment settings data used by the operation.</param>
     /// <returns>True when the requested condition is met; otherwise, false.</returns>
@@ -378,9 +350,7 @@ public partial class CheckService
         return true;
     }
 
-    /// <summary>
-    /// Performs the extract build operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the extract build operation and returns its result.</summary>
     /// <param name="runId">Numeric value used for the run id.</param>
     /// <returns>The build produced by the operation.</returns>
     private async Task<Build> ExtractBuildAsync(long runId)
@@ -404,9 +374,7 @@ public partial class CheckService
         };
     }
 
-    /// <summary>
-    /// Resolves the service name a build workflow produces.
-    /// </summary>
+    /// <summary>Resolves the service name a build workflow produces.</summary>
     /// <param name="settings">Merged settings whose mapped services are searched.</param>
     /// <param name="workflowPath">Workflow file path of the run, such as <c>.github/workflows/api-build.yaml</c>.</param>
     /// <returns>The name of the service mapped to the workflow file; when none is mapped, the file name without its
@@ -425,16 +393,12 @@ public partial class CheckService
         return WorkflowSuffixRegex().Replace(Path.GetFileNameWithoutExtension(fileName), string.Empty);
     }
 
-    /// <summary>
-    /// Matches a trailing <c>-ci</c> or <c>-build</c> suffix on a workflow file name.
-    /// </summary>
+    /// <summary>Matches a trailing <c>-ci</c> or <c>-build</c> suffix on a workflow file name.</summary>
     /// <returns>The compiled expression.</returns>
     [GeneratedRegex(@"-(ci|build)$", RegexOptions.IgnoreCase)]
     private static partial Regex WorkflowSuffixRegex();
 
-    /// <summary>
-    /// Performs the extract version operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the extract version operation and returns its result.</summary>
     /// <param name="runId">Numeric value used for the run id.</param>
     /// <returns>Text produced or selected by the operation.</returns>
     private async Task<string> ExtractVersionAsync(long runId)
@@ -472,9 +436,7 @@ public partial class CheckService
         }
     }
 
-    /// <summary>
-    /// Performs the run regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the run regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"/runs/([0-9]+)/jobs?/", RegexOptions.IgnoreCase)]
     private static partial Regex RunRegex();

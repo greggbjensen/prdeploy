@@ -7,26 +7,20 @@ using PrDeploy.Api.Tests.Framework.Client;
 
 namespace PrDeploy.Api.Tests.Schema.Mutations;
 
-/// <summary>
-/// Contains tests that verify pull request mutation behavior.
-/// </summary>
+/// <summary>Contains tests that verify pull request mutation behavior.</summary>
 [Collection(ApiHostCollection.Name)]
 public class PullRequestMutationTest : DeployApiTest
 {
     private const int AddPullNumber = 2882;
 
-    /// <summary>
-    /// Initializes the test fixture and prepares its dependencies.
-    /// </summary>
+    /// <summary>Initializes the test fixture and prepares its dependencies.</summary>
     /// <param name="factory">Object containing the factory data used by the operation.</param>
     public PullRequestMutationTest(DeployApiApplicationFactory factory)
         : base(factory)
     {
     }
 
-    /// <summary>
-    /// Configures the services for the current application or test.
-    /// </summary>
+    /// <summary>Configures the services for the current application or test.</summary>
     /// <param name="services">Services to include in the operation.</param>
     public override void ConfigureServices(IServiceCollection services)
     {
@@ -46,9 +40,7 @@ public class PullRequestMutationTest : DeployApiTest
             });
         }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: adds add service comment.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: adds add service comment.</summary>
     [Fact]
     public async Task PullRequestAddService_AddsAddServiceComment()
     {

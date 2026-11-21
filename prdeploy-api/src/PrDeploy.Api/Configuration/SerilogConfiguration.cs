@@ -4,21 +4,14 @@ using Serilog.Sinks.SystemConsole.Themes;
 
 namespace PrDeploy.Api.Configuration
 {
-    /// <summary>
-    /// Builds the Serilog pipeline shared by the bootstrap logger and the host logger so both read the same
-    /// <c>Serilog</c> configuration section.
-    /// </summary>
+    /// <summary>Builds the Serilog pipeline shared by the bootstrap logger and the host logger so both read the same <c>Serilog</c> configuration section.</summary>
     public static class SerilogConfiguration
     {
-        /// <summary>
-        /// Output template for the development console: timestamp, level, source, message, properties, exception.
-        /// </summary>
+        /// <summary>Output template for the development console: timestamp, level, source, message, properties, exception.</summary>
         internal const string PrettyOutputTemplate =
             "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message:lj} {Properties:j}{NewLine}{Exception}";
 
-        /// <summary>
-        /// Applies the <c>Serilog</c> configuration section, log-context enrichment, and and the console sink: colored human-readable text for development, structured JSON otherwise.
-        /// </summary>
+        /// <summary>Applies the <c>Serilog</c> configuration section, log-context enrichment, and and the console sink: colored human-readable text for development, structured JSON otherwise.</summary>
         /// <param name="loggerConfiguration">Configuration to extend.</param>
         /// <param name="configuration">Application configuration holding the <c>Serilog</c> section.</param>
         /// <param name="services">

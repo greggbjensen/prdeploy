@@ -6,20 +6,13 @@ using System.Net.ServerSentEvents;
 
 namespace PrDeploy.Api.Webhooks.Status;
 
-/// <summary>
-/// Maps the Server-Sent Events stream of deployment workflow status used by the portal dashboard.
-/// </summary>
+/// <summary>Maps the Server-Sent Events stream of deployment workflow status used by the portal dashboard.</summary>
 public static class DeployStatusEndpoints
 {
-    /// <summary>
-    /// Name of the SSE event carrying a <see cref="DeployWorkflowStatus"/>.
-    /// </summary>
+    /// <summary>Name of the SSE event carrying a <see cref="DeployWorkflowStatus"/>.</summary>
     public const string EventType = "deploy-status";
 
-    /// <summary>
-    /// Maps <c>GET /api/deploy-status/{owner}/{repo}/events</c>. The caller must be authenticated and have access to
-    /// the repository.
-    /// </summary>
+    /// <summary>Maps <c>GET /api/deploy-status/{owner}/{repo}/events</c>. The caller must be authenticated and have access to the repository.</summary>
     /// <param name="endpoints">Route builder the endpoint is added to.</param>
     /// <returns>The endpoint convention builder.</returns>
     public static IEndpointConventionBuilder MapDeployStatusEvents(this IEndpointRouteBuilder endpoints)
@@ -46,9 +39,7 @@ public static class DeployStatusEndpoints
             .Produces(StatusCodes.Status403Forbidden);
     }
 
-    /// <summary>
-    /// Adapts broadcaster statuses to SSE items.
-    /// </summary>
+    /// <summary>Adapts broadcaster statuses to SSE items.</summary>
     private static async IAsyncEnumerable<SseItem<DeployWorkflowStatus>> Stream(DeployStatusBroadcaster broadcaster,
         string owner, string repo,
         [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken)

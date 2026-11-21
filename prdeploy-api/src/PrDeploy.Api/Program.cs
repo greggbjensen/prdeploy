@@ -216,14 +216,10 @@ finally
 
 // Required for integration testing.
 // SourceRef: https://stackoverflow.com/questions/55131379/integration-testing-asp-net-core-with-net-framework-cant-find-deps-json
-/// <summary>
-/// Represents program data used by the application.
-/// </summary>
+/// <summary>Represents program data used by the application.</summary>
 public partial class Program
 {
-    /// <summary>
-    /// Retrieves the value.
-    /// </summary>
+    /// <summary>Retrieves the value.</summary>
     /// <param name="form">Object containing the form data used by the operation.</param>
     /// <param name="name">Name used to identify the value or resource.</param>
     /// <returns>Requested value, or its default when no value is available.</returns>
@@ -231,9 +227,7 @@ public partial class Program
     {
         return (form?.TryGetValue(name, out var value) == true ? value.FirstOrDefault() : string.Empty)!;
     }
-    /// <summary>
-    /// Maps an anonymous, uncached plain-text health endpoint that runs the health checks carrying a tag.
-    /// </summary>
+    /// <summary>Maps an anonymous, uncached plain-text health endpoint that runs the health checks carrying a tag.</summary>
     /// <param name="endpoints">Route builder the endpoint is added to.</param>
     /// <param name="pattern">Route of the endpoint.</param>
     /// <param name="tag">Health check tag to run, such as <c>ready</c> or <c>live</c>.</param>

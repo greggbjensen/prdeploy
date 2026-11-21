@@ -3,14 +3,10 @@ using PrDeploy.Api.Models.Settings;
 
 namespace PrDeploy.Api.Tests.Security;
 
-/// <summary>
-/// Verifies Microsoft Teams settings are compared and merged between owner and repo levels.
-/// </summary>
+/// <summary>Verifies Microsoft Teams settings are compared and merged between owner and repo levels.</summary>
 public class TeamsSettingsTest
 {
-    /// <summary>
-    /// Confirms comparing keeps each level's webhook URLs and notifications flag.
-    /// </summary>
+    /// <summary>Confirms comparing keeps each level's webhook URLs and notifications flag.</summary>
     [Fact]
     public void Compare_TeamsSettings_KeepsOwnerAndRepoValues()
     {
@@ -37,9 +33,7 @@ public class TeamsSettingsTest
         Assert.Null(teams.NotificationsEnabled.Repo);
     }
 
-    /// <summary>
-    /// Confirms comparing settings without any Teams section still yields empty values.
-    /// </summary>
+    /// <summary>Confirms comparing settings without any Teams section still yields empty values.</summary>
     [Fact]
     public void Compare_NoTeamsSettings_ReturnsEmptyValues()
     {
@@ -49,9 +43,7 @@ public class TeamsSettingsTest
         Assert.Null(teams.NotificationsEnabled.Repo);
     }
 
-    /// <summary>
-    /// Confirms merging fills missing repo values from the owner and keeps repo overrides.
-    /// </summary>
+    /// <summary>Confirms merging fills missing repo values from the owner and keeps repo overrides.</summary>
     [Fact]
     public void Merge_RepoOverridesOwner_FillsGapsFromOwner()
     {
@@ -79,9 +71,7 @@ public class TeamsSettingsTest
         Assert.False(target.Teams.NotificationsEnabled);
     }
 
-    /// <summary>
-    /// Confirms merging adopts the owner's Teams section when the repo has none.
-    /// </summary>
+    /// <summary>Confirms merging adopts the owner's Teams section when the repo has none.</summary>
     [Fact]
     public void Merge_RepoWithoutTeams_UsesOwnerTeams()
     {

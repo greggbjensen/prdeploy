@@ -8,9 +8,7 @@ using PrDeploy.Api.Webhooks.Services;
 
 namespace PrDeploy.Api.Tests.Webhooks.Framework;
 
-/// <summary>
-/// Represents webhook test host data used by the application.
-/// </summary>
+/// <summary>Represents webhook test host data used by the application.</summary>
 public sealed class WebhookTestHost : IDisposable
 {
     public const string Owner = "greggbjensen";
@@ -20,9 +18,7 @@ public sealed class WebhookTestHost : IDisposable
     private readonly ServiceProvider _provider;
     private readonly IServiceScope _scope;
 
-    /// <summary>
-    /// Initializes the instance with its required dependencies.
-    /// </summary>
+    /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="settings">Settings used to configure the operation.</param>
     public WebhookTestHost(DeploySettings? settings = null)
     {
@@ -50,48 +46,34 @@ public sealed class WebhookTestHost : IDisposable
         WebhookSettingsService.NormalizeDefaults(Context.Settings);
     }
 
-    /// <summary>
-    /// Gets the git hub.
-    /// </summary>
+    /// <summary>Gets the git hub.</summary>
     /// <value>Current git hub value.</value>
     public Mock<IGitHubClient> GitHub { get; }
 
-    /// <summary>
-    /// Gets the deployment store.
-    /// </summary>
+    /// <summary>Gets the deployment store.</summary>
     /// <value>Current deployment store value.</value>
     public InMemoryDeploymentStore DeploymentStore { get; } = new();
 
-    /// <summary>
-    /// Gets the HTTP.
-    /// </summary>
+    /// <summary>Gets the HTTP.</summary>
     /// <value>Current HTTP value.</value>
     public FakeHttpMessageHandler Http { get; } = new();
 
-    /// <summary>
-    /// Gets the context.
-    /// </summary>
+    /// <summary>Gets the context.</summary>
     /// <value>Current context value.</value>
     public WebhookContext Context { get; }
 
-    /// <summary>
-    /// Retrieves the requested value.
-    /// </summary>
+    /// <summary>Retrieves the requested value.</summary>
     /// <typeparam name="T">Type of value consumed or produced by this operation.</typeparam>
     /// <returns>Requested value, or its default when no value is available.</returns>
     public T Get<T>() where T : notnull => _scope.ServiceProvider.GetRequiredService<T>();
 
-    /// <summary>
-    /// Performs the mock of operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the mock of operation and returns its result.</summary>
     /// <param name="client">Object containing the client data used by the operation.</param>
     /// <typeparam name="T">Type of value consumed or produced by this operation.</typeparam>
     /// <returns>The mock&lt;t&gt; produced by the operation.</returns>
     public Mock<T> MockOf<T>(T client) where T : class => Mock.Get(client);
 
-    /// <summary>
-    /// Same environments as the original Node.js webhooks test settings.
-    /// </summary>
+    /// <summary>Same environments as the original Node.js webhooks test settings.</summary>
     public static DeploySettings CreateDefaultSettings() => new()
     {
         DeployWorkflow = "deploy.yml",
@@ -142,9 +124,7 @@ public sealed class WebhookTestHost : IDisposable
         }
     };
 
-    /// <summary>
-    /// Performs the environment operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the environment operation and returns its result.</summary>
     /// <param name="name">Name used to identify the value or resource.</param>
     /// <param name="queue">Text used as the queue.</param>
     /// <param name="color">Text used as the color.</param>
@@ -160,9 +140,7 @@ public sealed class WebhookTestHost : IDisposable
         RequireApproval = requireApproval
     };
 
-    /// <summary>
-    /// Releases resources owned by this instance.
-    /// </summary>
+    /// <summary>Releases resources owned by this instance.</summary>
     public void Dispose()
     {
         _scope.Dispose();

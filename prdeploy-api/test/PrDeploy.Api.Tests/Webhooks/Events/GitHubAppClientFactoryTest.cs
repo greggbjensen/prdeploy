@@ -10,17 +10,13 @@ using MsOptions = Microsoft.Extensions.Options.Options;
 
 namespace PrDeploy.Api.Tests.Webhooks.Events;
 
-/// <summary>
-/// Contains tests that verify git hub app client factory behavior.
-/// </summary>
+/// <summary>Contains tests that verify git hub app client factory behavior.</summary>
 public class GitHubAppClientFactoryTest
 {
     private readonly RSA _rsa = RSA.Create(2048);
     private readonly FakeTimeProvider _time = new(new DateTimeOffset(2026, 11, 15, 12, 0, 0, TimeSpan.Zero));
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: creates signed JWT for app.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: creates signed JWT for app.</summary>
     [Fact]
     public void CreateAppJwt_CreatesSignedJwtForApp()
     {
@@ -43,9 +39,7 @@ public class GitHubAppClientFactoryTest
         Assert.Equal(now + 540, payload.RootElement.GetProperty("exp").GetInt64());
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: caches installation tokens until near expiry.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: caches installation tokens until near expiry.</summary>
     [Fact]
     public async Task CreateInstallationClientAsync_CachesInstallationTokensUntilNearExpiry()
     {
@@ -68,9 +62,7 @@ public class GitHubAppClientFactoryTest
         Assert.Equal("token-2", client.Connection.Credentials.Password);
     }
 
-    /// <summary>
-    /// Creates the factory from the supplied inputs.
-    /// </summary>
+    /// <summary>Creates the factory from the supplied inputs.</summary>
     /// <param name="createToken">Object containing the create token data used by the operation.</param>
     /// <returns>The object created from the supplied inputs.</returns>
     private GitHubAppClientFactory CreateFactory(Func<IGitHubClient, long, Task<AccessToken>> createToken)
@@ -79,9 +71,7 @@ public class GitHubAppClientFactoryTest
         return new GitHubAppClientFactory(options, _time, createToken);
     }
 
-    /// <summary>
-    /// Performs the base64 URL decode operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the base64 URL decode operation and returns its result.</summary>
     /// <param name="value">Value to store or process.</param>
     /// <returns>The byte[] produced by the operation.</returns>
     private static byte[] Base64UrlDecode(string value)

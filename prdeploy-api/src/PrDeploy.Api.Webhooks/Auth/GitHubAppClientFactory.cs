@@ -8,20 +8,14 @@ using PrDeploy.Api.Webhooks.Options;
 
 namespace PrDeploy.Api.Webhooks.Auth;
 
-/// <summary>
-/// Defines the contract for git Hub App Client Factory operations.
-/// </summary>
+/// <summary>Defines the contract for git Hub App Client Factory operations.</summary>
 public interface IGitHubAppClientFactory
 {
-    /// <summary>
-    /// Creates a GitHub client authenticated as the GitHub App installation that sent an event.
-    /// </summary>
+    /// <summary>Creates a GitHub client authenticated as the GitHub App installation that sent an event.</summary>
     Task<IGitHubClient> CreateInstallationClientAsync(long installationId);
 }
 
-/// <summary>
-/// Authenticates as the GitHub App with a signed JWT and exchanges it for cached installation tokens.
-/// </summary>
+/// <summary>Authenticates as the GitHub App with a signed JWT and exchanges it for cached installation tokens.</summary>
 public class GitHubAppClientFactory : IGitHubAppClientFactory
 {
     private static readonly ProductHeaderValue ProductHeader = new("prdeploy");
@@ -36,9 +30,7 @@ public class GitHubAppClientFactory : IGitHubAppClientFactory
     private readonly Func<IGitHubClient, long, Task<AccessToken>> _createInstallationToken;
     private RSA? _privateKey;
 
-    /// <summary>
-    /// Initializes the instance with its required dependencies.
-    /// </summary>
+    /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="options">Object containing the options data used by the operation.</param>
     /// <param name="timeProvider">Object containing the time provider data used by the operation.</param>
     public GitHubAppClientFactory(IOptions<GitHubAppOptions> options, TimeProvider timeProvider)
@@ -46,9 +38,7 @@ public class GitHubAppClientFactory : IGitHubAppClientFactory
     {
     }
 
-    /// <summary>
-    /// Initializes the instance with its required dependencies.
-    /// </summary>
+    /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="options">Object containing the options data used by the operation.</param>
     /// <param name="timeProvider">Object containing the time provider data used by the operation.</param>
     /// <param name="createInstallationToken">Object containing the create installation token data used by the operation.</param>
@@ -60,9 +50,7 @@ public class GitHubAppClientFactory : IGitHubAppClientFactory
         _createInstallationToken = createInstallationToken;
     }
 
-    /// <summary>
-    /// Creates the installation client from the supplied inputs.
-    /// </summary>
+    /// <summary>Creates the installation client from the supplied inputs.</summary>
     /// <param name="installationId">Numeric value used for the installation id.</param>
     /// <returns>The object created from the supplied inputs.</returns>
     public async Task<IGitHubClient> CreateInstallationClientAsync(long installationId)
@@ -74,9 +62,7 @@ public class GitHubAppClientFactory : IGitHubAppClientFactory
         };
     }
 
-    /// <summary>
-    /// Creates the app JWT from the supplied inputs.
-    /// </summary>
+    /// <summary>Creates the app JWT from the supplied inputs.</summary>
     /// <returns>The object created from the supplied inputs.</returns>
     internal string CreateAppJwt()
     {
@@ -103,9 +89,7 @@ public class GitHubAppClientFactory : IGitHubAppClientFactory
         return $"{unsigned}.{Base64UrlEncode(signature)}";
     }
 
-    /// <summary>
-    /// Retrieves the installation token.
-    /// </summary>
+    /// <summary>Retrieves the installation token.</summary>
     /// <param name="installationId">Numeric value used for the installation id.</param>
     /// <returns>Requested value, or its default when no value is available.</returns>
     private async Task<AccessToken> GetInstallationTokenAsync(long installationId)
@@ -138,9 +122,7 @@ public class GitHubAppClientFactory : IGitHubAppClientFactory
         }
     }
 
-    /// <summary>
-    /// Attempts to get cached token; the result indicates whether it succeeded.
-    /// </summary>
+    /// <summary>Attempts to get cached token; the result indicates whether it succeeded.</summary>
     /// <param name="installationId">Numeric value used for the installation id.</param>
     /// <param name="token">Authentication token used for the operation.</param>
     /// <returns>True when the requested condition is met; otherwise, false.</returns>
@@ -150,9 +132,7 @@ public class GitHubAppClientFactory : IGitHubAppClientFactory
                && token.ExpiresAt - TokenRefreshMargin > _timeProvider.GetUtcNow();
     }
 
-    /// <summary>
-    /// Retrieves the private key.
-    /// </summary>
+    /// <summary>Retrieves the private key.</summary>
     /// <returns>Requested value, or its default when no value is available.</returns>
     private RSA GetPrivateKey()
     {
@@ -180,9 +160,7 @@ public class GitHubAppClientFactory : IGitHubAppClientFactory
         return rsa;
     }
 
-    /// <summary>
-    /// Performs the base64 URL encode operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the base64 URL encode operation and returns its result.</summary>
     /// <param name="bytes">Object containing the bytes data used by the operation.</param>
     /// <returns>Text produced or selected by the operation.</returns>
     private static string Base64UrlEncode(byte[] bytes) =>

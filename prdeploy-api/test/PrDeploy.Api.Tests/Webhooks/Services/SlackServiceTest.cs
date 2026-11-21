@@ -6,17 +6,13 @@ using PrDeploy.Api.Webhooks.Services;
 
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
-/// <summary>
-/// Contains tests that verify Slack service behavior.
-/// </summary>
+/// <summary>Contains tests that verify Slack service behavior.</summary>
 public class SlackServiceTest : IDisposable
 {
     private readonly WebhookTestHost _host = new();
     private readonly SlackService _service;
 
-    /// <summary>
-    /// Initializes the test fixture and prepares its dependencies.
-    /// </summary>
+    /// <summary>Initializes the test fixture and prepares its dependencies.</summary>
     public SlackServiceTest()
     {
         _service = _host.Get<SlackService>();
@@ -28,9 +24,7 @@ public class SlackServiceTest : IDisposable
             : new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("ok") };
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: posts message to channel.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: posts message to channel.</summary>
     [Fact]
     public async Task PostMessageAsync_PostsMessageToChannel()
     {
@@ -43,9 +37,7 @@ public class SlackServiceTest : IDisposable
         Assert.Equal(json, body);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: does not post when disabled.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: does not post when disabled.</summary>
     [Fact]
     public async Task PostMessageAsync_DoesNotPostWhenDisabled()
     {
@@ -55,9 +47,7 @@ public class SlackServiceTest : IDisposable
         Assert.Empty(_host.Http.Requests);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: gets Slack user by built email from name.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: gets Slack user by built email from name.</summary>
     [Fact]
     public async Task LookupUserAsync_GetsSlackUserByBuiltEmailFromName()
     {
@@ -72,9 +62,7 @@ public class SlackServiceTest : IDisposable
         Assert.Equal("Bearer xoxb-test", request.Headers.Authorization!.ToString());
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: gets Slack user using email alias.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: gets Slack user using email alias.</summary>
     [Fact]
     public async Task LookupUserAsync_GetsSlackUserUsingEmailAlias()
     {
@@ -84,9 +72,7 @@ public class SlackServiceTest : IDisposable
         Assert.EndsWith("email=john.doe%40myorg.com", _host.Http.Requests[0].Request.RequestUri!.ToString());
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: returns null if name and email are empty.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: returns null if name and email are empty.</summary>
     [Fact]
     public async Task LookupUserAsync_ReturnsNullIfNameAndEmailAreEmpty()
     {
@@ -96,9 +82,7 @@ public class SlackServiceTest : IDisposable
         Assert.Empty(_host.Http.Requests);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: converts HTML tables to text.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: converts HTML tables to text.</summary>
     [Fact]
     public void TranslateGitHubMarkdown_ConvertsHtmlTablesToText()
     {
@@ -120,18 +104,14 @@ public class SlackServiceTest : IDisposable
         Assert.DoesNotContain("<", result);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: converts br tags to newlines.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: converts br tags to newlines.</summary>
     [Fact]
     public void TranslateGitHubMarkdown_ConvertsBrTagsToNewlines()
     {
         Assert.Equal("Line 1\nLine 2\nLine 3", _service.TranslateGitHubMarkdown("Line 1<br>Line 2<br/>Line 3"));
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: removes HTML comments.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: removes HTML comments.</summary>
     [Fact]
     public void TranslateGitHubMarkdown_RemovesHtmlComments()
     {
@@ -139,9 +119,7 @@ public class SlackServiceTest : IDisposable
         Assert.Equal("Text before  text after", result);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: strips other HTML tags but preserves content.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: strips other HTML tags but preserves content.</summary>
     [Fact]
     public void TranslateGitHubMarkdown_StripsOtherHtmlTagsButPreservesContent()
     {
@@ -149,9 +127,7 @@ public class SlackServiceTest : IDisposable
         Assert.Equal("Content inside divParagraph content", result);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: handles empty markdown.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: handles empty markdown.</summary>
     [Fact]
     public void TranslateGitHubMarkdown_HandlesEmptyMarkdown()
     {
@@ -159,9 +135,7 @@ public class SlackServiceTest : IDisposable
         Assert.Equal(string.Empty, _service.TranslateGitHubMarkdown(null));
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: handles mixed HTML and markdown.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: handles mixed HTML and markdown.</summary>
     [Fact]
     public void TranslateGitHubMarkdown_HandlesMixedHtmlAndMarkdown()
     {
@@ -184,9 +158,7 @@ public class SlackServiceTest : IDisposable
         Assert.Contains("More text with \nline break.", result);
     }
 
-    /// <summary>
-    /// Performs the user operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the user operation and returns its result.</summary>
     /// <param name="login">Text used as the login.</param>
     /// <param name="name">Name used to identify the value or resource.</param>
     /// <param name="email">Text used as the email.</param>
@@ -194,8 +166,6 @@ public class SlackServiceTest : IDisposable
     private static User User(string login = "dselvam", string? name = null, string? email = null) =>
         GitHubModels.FromJson<User>(System.Text.Json.JsonSerializer.Serialize(new { login, name, email }));
 
-    /// <summary>
-    /// Releases resources owned by this instance.
-    /// </summary>
+    /// <summary>Releases resources owned by this instance.</summary>
     public void Dispose() => _host.Dispose();
 }

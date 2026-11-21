@@ -7,9 +7,7 @@ using PrDeploy.Api.Tests.Framework.Client;
 
 namespace PrDeploy.Api.Tests.Schema.Mutations;
 
-/// <summary>
-/// Contains tests that verify deploy environment mutation behavior.
-/// </summary>
+/// <summary>Contains tests that verify deploy environment mutation behavior.</summary>
 [Collection(ApiHostCollection.Name)]
 public class DeployEnvironmentMutationTest : DeployApiTest
 {
@@ -18,18 +16,14 @@ public class DeployEnvironmentMutationTest : DeployApiTest
     private const int ForceDeployPullNumber = 2873;
     private const int RollbackDeployPullNumber = 2874;
 
-    /// <summary>
-    /// Initializes the test fixture and prepares its dependencies.
-    /// </summary>
+    /// <summary>Initializes the test fixture and prepares its dependencies.</summary>
     /// <param name="factory">Object containing the factory data used by the operation.</param>
     public DeployEnvironmentMutationTest(DeployApiApplicationFactory factory)
         : base(factory)
     {
     }
 
-    /// <summary>
-    /// Configures the services for the current application or test.
-    /// </summary>
+    /// <summary>Configures the services for the current application or test.</summary>
     /// <param name="services">Services to include in the operation.</param>
     public override void ConfigureServices(IServiceCollection services)
     {
@@ -77,9 +71,7 @@ public class DeployEnvironmentMutationTest : DeployApiTest
         });
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: adds free comment to pull request.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: adds free comment to pull request.</summary>
     [Fact]
     public async Task DeployEnvironmentFree_AddsFreeCommentToPullRequest()
     {
@@ -98,9 +90,7 @@ public class DeployEnvironmentMutationTest : DeployApiTest
         Assert.True(model.Success);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: adds deploy comment for environment to pull request.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: adds deploy comment for environment to pull request.</summary>
     [Fact]
     public async Task DeployEnvironmentDeploy_AddsDeployCommentForEnvironmentToPullRequest()
     {
@@ -121,9 +111,7 @@ public class DeployEnvironmentMutationTest : DeployApiTest
         Assert.True(model.Success);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: adds force deploy comment for environment to pull request.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: adds force deploy comment for environment to pull request.</summary>
     [Fact]
     public async Task DeployEnvironmentDeploy_AddsForceDeployCommentForEnvironmentToPullRequest()
     {
@@ -144,9 +132,7 @@ public class DeployEnvironmentMutationTest : DeployApiTest
         Assert.True(model.Success);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: adds rollback comment to pull request.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: adds rollback comment to pull request.</summary>
     [Fact]
     public async Task DeployEnvironmentRollback_AddsRollbackCommentToPullRequest()
     {

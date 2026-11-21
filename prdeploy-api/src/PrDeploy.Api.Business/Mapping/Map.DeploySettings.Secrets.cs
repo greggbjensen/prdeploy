@@ -2,19 +2,13 @@ using PrDeploy.Api.Models.Settings;
 
 namespace PrDeploy.Api.Business.Mapping;
 
-/// <summary>
-/// Hides credential settings from API responses and restores them when masked values are saved back.
-/// </summary>
+/// <summary>Hides credential settings from API responses and restores them when masked values are saved back.</summary>
 public static partial class Map
 {
-    /// <summary>
-    /// Value returned in place of a configured secret. Saving this value keeps the stored secret.
-    /// </summary>
+    /// <summary>Value returned in place of a configured secret. Saving this value keeps the stored secret.</summary>
     public const string SecretMask = "********";
 
-    /// <summary>
-    /// Creates a copy of the settings with credentials replaced by <see cref="SecretMask"/>.
-    /// </summary>
+    /// <summary>Creates a copy of the settings with credentials replaced by <see cref="SecretMask"/>.</summary>
     /// <remarks>
     /// The Jira token, Slack bot token, and Slack and Teams webhook URLs each grant access on their own, so they are
     /// never returned to the portal. The input is not changed, because it may be shared with the settings cache.
@@ -63,9 +57,7 @@ public static partial class Map
         };
     }
 
-    /// <summary>
-    /// Replaces any <see cref="SecretMask"/> values in settings being saved with the currently stored secrets.
-    /// </summary>
+    /// <summary>Replaces any <see cref="SecretMask"/> values in settings being saved with the currently stored secrets.</summary>
     /// <param name="incoming">Settings received from the portal; updated in place.</param>
     /// <param name="stored">Settings currently stored, or <c>null</c> when there are none.</param>
     public static void RestoreSecrets(DeploySettings incoming, DeploySettings? stored)
@@ -96,17 +88,13 @@ public static partial class Map
         }
     }
 
-    /// <summary>
-    /// Masks a secret value when one is configured.
-    /// </summary>
+    /// <summary>Masks a secret value when one is configured.</summary>
     /// <param name="value">Secret value.</param>
     /// <returns><see cref="SecretMask"/> when a value is set; otherwise the unset value, so the portal can tell
     /// configured secrets from missing ones.</returns>
     private static string? Mask(string? value) => string.IsNullOrEmpty(value) ? value : SecretMask;
 
-    /// <summary>
-    /// Resolves an incoming secret value.
-    /// </summary>
+    /// <summary>Resolves an incoming secret value.</summary>
     /// <param name="incoming">Value received from the portal.</param>
     /// <param name="stored">Value currently stored.</param>
     /// <returns>The stored value when the incoming value is the mask; otherwise the incoming value.</returns>

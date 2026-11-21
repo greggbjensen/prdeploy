@@ -4,14 +4,10 @@ using HotChocolate.Execution;
 
 namespace PrDeploy.Api.Filters
 {
-    /// <summary>
-    /// Represents sanitized HTTP response formatter data used by the application.
-    /// </summary>
+    /// <summary>Represents sanitized HTTP response formatter data used by the application.</summary>
     public class SanitizedHttpResponseFormatter : DefaultHttpResponseFormatter
     {
-        /// <summary>
-        /// Performs the on determine status code operation and returns its result.
-        /// </summary>
+        /// <summary>Performs the on determine status code operation and returns its result.</summary>
         /// <param name="result">Object containing the result data used by the operation.</param>
         /// <param name="format">Object containing the format data used by the operation.</param>
         /// <param name="proposedStatusCode">Object containing the proposed status code data used by the operation.</param>

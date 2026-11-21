@@ -3,17 +3,13 @@ using PrDeploy.Api.Business.Stores;
 
 namespace PrDeploy.Api.Tests.Stores;
 
-/// <summary>
-/// Verifies that the local BLite database is created when missing and reused when present.
-/// </summary>
+/// <summary>Verifies that the local BLite database is created when missing and reused when present.</summary>
 public sealed class BliteStorageTests : IDisposable
 {
     private readonly string _directory = Path.Combine(
         Path.GetTempPath(), "prdeploy-blite-storage-test", Guid.NewGuid().ToString("N"));
 
-    /// <summary>
-    /// Releases resources owned by this instance.
-    /// </summary>
+    /// <summary>Releases resources owned by this instance.</summary>
     public void Dispose()
     {
         if (Directory.Exists(_directory))
@@ -22,9 +18,7 @@ public sealed class BliteStorageTests : IDisposable
         }
     }
 
-    /// <summary>
-    /// Confirms a missing database file, including its parent directories, is created on first open.
-    /// </summary>
+    /// <summary>Confirms a missing database file, including its parent directories, is created on first open.</summary>
     [Fact]
     public void Constructor_CreatesDatabaseAndDirectories_WhenMissing()
     {
@@ -40,9 +34,7 @@ public sealed class BliteStorageTests : IDisposable
         Assert.True(File.Exists(databasePath));
     }
 
-    /// <summary>
-    /// Confirms an existing database on a persistent volume is reused rather than replaced.
-    /// </summary>
+    /// <summary>Confirms an existing database on a persistent volume is reused rather than replaced.</summary>
     [Fact]
     public void Constructor_ReusesExistingDatabase_WhenPresent()
     {
@@ -60,9 +52,7 @@ public sealed class BliteStorageTests : IDisposable
         Assert.Equal("persisted", Assert.Single(elements).Value);
     }
 
-    /// <summary>
-    /// Confirms a password-protected database cannot be reopened with a different password.
-    /// </summary>
+    /// <summary>Confirms a password-protected database cannot be reopened with a different password.</summary>
     [Fact]
     public void Constructor_Throws_WhenPasswordDoesNotMatch()
     {

@@ -3,9 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace PrDeploy.Api.Webhooks.Utils;
 
-/// <summary>
-/// Converts GitHub flavored markdown to Slack mrkdwn.
-/// </summary>
+/// <summary>Converts GitHub flavored markdown to Slack mrkdwn.</summary>
 /// <remarks>
 /// Replaces the slackify-markdown package used by the original Node.js webhooks.
 /// SourceRef: https://api.slack.com/reference/surfaces/formatting
@@ -16,9 +14,7 @@ public static partial class SlackMarkdown
     private const char PlaceholderEnd = '\u0003';
     private const char BoldMarker = '\u0001';
 
-    /// <summary>
-    /// Performs the convert operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the convert operation and returns its result.</summary>
     /// <param name="markdown">Text used as the markdown.</param>
     /// <returns>Text produced or selected by the operation.</returns>
     public static string Convert(string? markdown)
@@ -46,9 +42,7 @@ public static partial class SlackMarkdown
         return text.Trim('\n');
     }
 
-    /// <summary>
-    /// Performs the convert text operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the convert text operation and returns its result.</summary>
     /// <param name="text">Text used as the text.</param>
     /// <returns>Text produced or selected by the operation.</returns>
     private static string ConvertText(string text)
@@ -59,9 +53,7 @@ public static partial class SlackMarkdown
         }
 
         var placeholders = new List<string>();
-        /// <summary>
-        /// Performs the protect operation and returns its result.
-        /// </summary>
+        /// <summary>Performs the protect operation and returns its result.</summary>
         /// <param name="value">Value to store or process.</param>
         /// <returns>Text produced or selected by the operation.</returns>
         string Protect(string value)
@@ -99,9 +91,7 @@ public static partial class SlackMarkdown
         return PlaceholderRegex().Replace(text, m => placeholders[int.Parse(m.Groups["index"].Value)]);
     }
 
-    /// <summary>
-    /// Performs the format link operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the format link operation and returns its result.</summary>
     /// <param name="url">Text used as the URL.</param>
     /// <param name="text">Text used as the text.</param>
     /// <returns>Text produced or selected by the operation.</returns>
@@ -111,136 +101,98 @@ public static partial class SlackMarkdown
         return string.IsNullOrEmpty(text) || text == url ? $"<{url}>" : $"<{url}|{Escape(text)}>";
     }
 
-    /// <summary>
-    /// Performs the strip emphasis operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the strip emphasis operation and returns its result.</summary>
     /// <param name="text">Text used as the text.</param>
     /// <returns>Text produced or selected by the operation.</returns>
     private static string StripEmphasis(string text) => EmphasisCharsRegex().Replace(text, string.Empty);
 
-    /// <summary>
-    /// Performs the escape operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the escape operation and returns its result.</summary>
     /// <param name="text">Text used as the text.</param>
     /// <returns>Text produced or selected by the operation.</returns>
     private static string Escape(string text) =>
         text.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
 
-    /// <summary>
-    /// Performs the code block regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the code block regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"^[ \t]*```[^\n]*\n(?<code>.*?)^[ \t]*```[ \t]*$", RegexOptions.Singleline | RegexOptions.Multiline)]
     private static partial Regex CodeBlockRegex();
 
-    /// <summary>
-    /// Performs the inline code regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the inline code regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"`[^`\n]+`")]
     private static partial Regex InlineCodeRegex();
 
-    /// <summary>
-    /// Performs the image regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the image regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"!\[(?<text>[^\]]*)\]\((?<url>[^)\s]+)(?:\s+""[^""]*"")?\)")]
     private static partial Regex ImageRegex();
 
-    /// <summary>
-    /// Performs the link regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the link regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"\[(?<text>[^\]]+)\]\((?<url>[^)\s]+)(?:\s+""[^""]*"")?\)")]
     private static partial Regex LinkRegex();
 
-    /// <summary>
-    /// Performs the auto link regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the auto link regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"<(?<url>https?://[^>\s]+)>")]
     private static partial Regex AutoLinkRegex();
 
-    /// <summary>
-    /// Performs the block quote regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the block quote regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"^(?<indent>[ \t]*)>[ \t]?", RegexOptions.Multiline)]
     private static partial Regex BlockQuoteRegex();
 
-    /// <summary>
-    /// Performs the heading regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the heading regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"^[ \t]*#{1,6}[ \t]+(?<text>.+?)[ \t]*#*[ \t]*$", RegexOptions.Multiline)]
     private static partial Regex HeadingRegex();
 
-    /// <summary>
-    /// Performs the horizontal rule regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the horizontal rule regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"^[ \t]*([-*_])([ \t]*\1){2,}[ \t]*$", RegexOptions.Multiline)]
     private static partial Regex HorizontalRuleRegex();
 
-    /// <summary>
-    /// Performs the task list regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the task list regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"^(?<indent>[ \t]*)[-*+][ \t]+\[(?<done>[ xX])\][ \t]+", RegexOptions.Multiline)]
     private static partial Regex TaskListRegex();
 
-    /// <summary>
-    /// Performs the bullet regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the bullet regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"^(?<indent>[ \t]*)[-*+][ \t]+", RegexOptions.Multiline)]
     private static partial Regex BulletRegex();
 
-    /// <summary>
-    /// Performs the bold asterisk regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the bold asterisk regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"\*\*(?<text>[^\n]+?)\*\*")]
     private static partial Regex BoldAsteriskRegex();
 
-    /// <summary>
-    /// Performs the bold underscore regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the bold underscore regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"(?<![\w_])__(?<text>[^\n]+?)__(?![\w_])")]
     private static partial Regex BoldUnderscoreRegex();
 
-    /// <summary>
-    /// Performs the italic asterisk regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the italic asterisk regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"(?<![\w*])\*(?![\s*])(?<text>[^\n*]+?)(?<!\s)\*(?![\w*])")]
     private static partial Regex ItalicAsteriskRegex();
 
-    /// <summary>
-    /// Performs the strikethrough regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the strikethrough regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"~~(?<text>[^\n]+?)~~")]
     private static partial Regex StrikethroughRegex();
 
-    /// <summary>
-    /// Performs the emphasis chars regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the emphasis chars regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"[*_~]{1,3}")]
     private static partial Regex EmphasisCharsRegex();
 
-    /// <summary>
-    /// Performs the placeholder regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the placeholder regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex("\u0002(?<index>\\d+)\u0003")]
     private static partial Regex PlaceholderRegex();
 
-    /// <summary>
-    /// Performs the extra blank lines regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the extra blank lines regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"\n{3,}")]
     private static partial Regex ExtraBlankLinesRegex();

@@ -24,14 +24,10 @@ using RestSharp;
 
 namespace PrDeploy.Api.Business;
 
-/// <summary>
-/// Defines the contract for service collection extensions operations.
-/// </summary>
+/// <summary>Defines the contract for service collection extensions operations.</summary>
 public static class IServiceCollectionExtensions
 {
-    /// <summary>
-    /// Registers PrDeploy business services and the configured deployment-value store.
-    /// </summary>
+    /// <summary>Registers PrDeploy business services and the configured deployment-value store.</summary>
     public static IServiceCollection AddPrDeployApiBusiness(
         this IServiceCollection services,
         IConfiguration configuration)
@@ -64,9 +60,7 @@ public static class IServiceCollectionExtensions
         return services;
     }
 
-    /// <summary>
-    /// Registers the selected document-storage backend and its Data Protection key repository.
-    /// </summary>
+    /// <summary>Registers the selected document-storage backend and its Data Protection key repository.</summary>
     /// <remarks>
     /// The default Local provider uses BLite and does not register or resolve cloud SDK clients
     /// or credential providers.
@@ -145,15 +139,11 @@ public static class IServiceCollectionExtensions
         return services;
     }
 
-    /// <summary>
-    /// Wraps a provider-specific store with the logging decorator.
-    /// </summary>
+    /// <summary>Wraps a provider-specific store with the logging decorator.</summary>
     private static IDeploymentStore WithLogging(IDeploymentStore inner, IServiceProvider serviceProvider) =>
         new LoggingDeploymentStore(inner, serviceProvider.GetRequiredService<ILogger<LoggingDeploymentStore>>());
 
-    /// <summary>
-    /// Creates a Cosmos client from the selected Azure provider's connection settings.
-    /// </summary>
+    /// <summary>Creates a Cosmos client from the selected Azure provider's connection settings.</summary>
     private static CosmosClient CreateCosmosClient(IConfiguration configuration)
     {
         var connectionString = configuration["Storage:Azure:ConnectionString"];
@@ -173,9 +163,7 @@ public static class IServiceCollectionExtensions
         return new CosmosClient(endpoint, key);
     }
 
-    /// <summary>
-    /// Creates a Firestore client for the selected GCP project.
-    /// </summary>
+    /// <summary>Creates a Firestore client for the selected GCP project.</summary>
     private static FirestoreDb CreateFirestoreDb(IConfiguration configuration)
     {
         var projectId = configuration["Storage:GCP:ProjectId"];
@@ -188,9 +176,7 @@ public static class IServiceCollectionExtensions
         return FirestoreDb.Create(projectId);
     }
 
-    /// <summary>
-    /// Performs the uses legacy systems manager for data protection operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the uses legacy systems manager for data protection operation and returns its result.</summary>
     /// <param name="configuration">Object containing the configuration data used by the operation.</param>
     /// <returns>True when the requested condition is met; otherwise, false.</returns>
     private static bool UsesLegacySystemsManagerForDataProtection(IConfiguration configuration)

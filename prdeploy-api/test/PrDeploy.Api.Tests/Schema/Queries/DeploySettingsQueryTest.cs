@@ -9,24 +9,18 @@ using PrDeploy.Api.Tests.Webhooks.Framework;
 
 namespace PrDeploy.Api.Tests.Schema.Queries;
 
-/// <summary>
-/// Contains tests that verify deploy settings GraphQL query and mutation Any-scalar coercion behavior.
-/// </summary>
+/// <summary>Contains tests that verify deploy settings GraphQL query and mutation Any-scalar coercion behavior.</summary>
 [Collection(ApiHostCollection.Name)]
 public class DeploySettingsQueryTest : DeployApiTest
 {
-    /// <summary>
-    /// Initializes the test fixture and prepares its dependencies.
-    /// </summary>
+    /// <summary>Initializes the test fixture and prepares its dependencies.</summary>
     /// <param name="factory">Object containing the factory data used by the operation.</param>
     public DeploySettingsQueryTest(DeployApiApplicationFactory factory)
         : base(factory)
     {
     }
 
-    /// <summary>
-    /// Verifies that querying repoSettings returns Any-typed Dictionary&lt;string, object&gt; fields without coercion errors.
-    /// </summary>
+    /// <summary>Verifies that querying repoSettings returns Any-typed Dictionary&lt;string, object&gt; fields without coercion errors.</summary>
     [Fact]
     public async Task RepoSettings_ReturnsAnyDictionaryFields()
     {
@@ -103,9 +97,7 @@ public class DeploySettingsQueryTest : DeployApiTest
         Assert.Equal("${environment}", inputs.GetProperty("environment").GetString());
     }
 
-    /// <summary>
-    /// Verifies that querying deploySettingsCompare returns OwnerRepoDictionary Any fields and handles null or empty dictionaries.
-    /// </summary>
+    /// <summary>Verifies that querying deploySettingsCompare returns OwnerRepoDictionary Any fields and handles null or empty dictionaries.</summary>
     [Fact]
     public async Task DeploySettingsCompare_ReturnsOwnerRepoDictionaryAnyFields()
     {
@@ -165,9 +157,7 @@ public class DeploySettingsQueryTest : DeployApiTest
         Assert.Equal("bob.alias@example.com", emailAliases.GetProperty("repo").GetProperty("bob@example.com").GetString());
     }
 
-    /// <summary>
-    /// Verifies that repoSettingsSet accepts Any-typed Dictionary&lt;string, object&gt; inputs without coercion errors.
-    /// </summary>
+    /// <summary>Verifies that repoSettingsSet accepts Any-typed Dictionary&lt;string, object&gt; inputs without coercion errors.</summary>
     [Fact]
     public async Task RepoSettingsSet_AcceptsAnyDictionaryInputs()
     {

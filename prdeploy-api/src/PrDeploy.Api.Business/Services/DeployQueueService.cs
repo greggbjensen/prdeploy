@@ -13,9 +13,7 @@ using PrDeploy.Api.Models.Settings;
 
 namespace PrDeploy.Api.Business.Services;
 
-/// <summary>
-/// Coordinates deploy queue operations and their collaborators.
-/// </summary>
+/// <summary>Coordinates deploy queue operations and their collaborators.</summary>
 public class DeployQueueService : IDeployQueueService
 {
     private readonly IGitHubClient _gitHubClient;
@@ -25,9 +23,7 @@ public class DeployQueueService : IDeployQueueService
     private readonly IGitHubSecurity _gitHubSecurity;
     private readonly ILogger<DeployQueueService> _logger;
 
-    /// <summary>
-    /// Initializes the instance with its required dependencies.
-    /// </summary>
+    /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="gitHubClient">Object containing the git hub client data used by the operation.</param>
     /// <param name="deploySettingsService">Object containing the deploy settings service data used by the operation.</param>
     /// <param name="deploymentStore">Object containing the deployment store data used by the operation.</param>
@@ -46,9 +42,7 @@ public class DeployQueueService : IDeployQueueService
         _logger = logger;
     }
 
-    /// <summary>
-    /// Updates the target value using the supplied inputs.
-    /// </summary>
+    /// <summary>Updates the target value using the supplied inputs.</summary>
     /// <param name="input">Input object containing the operation's arguments.</param>
     /// <returns>The value after it has been stored or updated.</returns>
     public async Task<DeployQueue> UpdateAsync(DeployQueueUpdateInput input)
@@ -70,9 +64,7 @@ public class DeployQueueService : IDeployQueueService
         return deployQueue;
     }
 
-    /// <summary>
-    /// Finds and returns the matching items.
-    /// </summary>
+    /// <summary>Finds and returns the matching items.</summary>
     /// <param name="input">Input object containing the operation's arguments.</param>
     /// <returns>Items matching the supplied criteria.</returns>
     public async Task<List<DeployQueue>> ListAsync(RepoQueryInput input)
@@ -87,9 +79,7 @@ public class DeployQueueService : IDeployQueueService
         return queues.ToList();
     }
 
-    /// <summary>
-    /// Adds the comment for new entries to the associated collection.
-    /// </summary>
+    /// <summary>Adds the comment for new entries to the associated collection.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <param name="environment">Deployment environment involved in the operation.</param>
@@ -116,9 +106,7 @@ public class DeployQueueService : IDeployQueueService
         }
     }
 
-    /// <summary>
-    /// Retrieves the queue.
-    /// </summary>
+    /// <summary>Retrieves the queue.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <param name="environmentSettings">Object containing the environment settings data used by the operation.</param>
@@ -145,9 +133,7 @@ public class DeployQueueService : IDeployQueueService
         return queue;
     }
 
-    /// <summary>
-    /// Retrieves the pull numbers.
-    /// </summary>
+    /// <summary>Retrieves the pull numbers.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <param name="queueName">Text used as the queue name.</param>
@@ -167,9 +153,7 @@ public class DeployQueueService : IDeployQueueService
         return pullNumbers;
     }
 
-    /// <summary>
-    /// Stores or updates the pull numbers.
-    /// </summary>
+    /// <summary>Stores or updates the pull numbers.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <param name="queueName">Text used as the queue name.</param>

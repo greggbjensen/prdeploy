@@ -5,17 +5,13 @@ using PrDeploy.Api.Webhooks.Services;
 
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
-/// <summary>
-/// Contains tests that verify Jira service behavior.
-/// </summary>
+/// <summary>Contains tests that verify Jira service behavior.</summary>
 public class JiraServiceTest : IDisposable
 {
     private readonly WebhookTestHost _host = new();
     private readonly JiraService _service;
 
-    /// <summary>
-    /// Initializes the test fixture and prepares its dependencies.
-    /// </summary>
+    /// <summary>Initializes the test fixture and prepares its dependencies.</summary>
     public JiraServiceTest()
     {
         _service = _host.Get<JiraService>();
@@ -38,9 +34,7 @@ public class JiraServiceTest : IDisposable
         };
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: handles no associated issues.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: handles no associated issues.</summary>
     [Fact]
     public async Task ListAssociatedIssuesAsync_HandlesNoAssociatedIssues()
     {
@@ -50,9 +44,7 @@ public class JiraServiceTest : IDisposable
         Assert.Empty(_host.Http.Requests);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: lists associated issues.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: lists associated issues.</summary>
     [Fact]
     public async Task ListAssociatedIssuesAsync_ListsAssociatedIssues()
     {
@@ -70,9 +62,7 @@ public class JiraServiceTest : IDisposable
         Assert.Equal("key in ('SCRUM-1234', 'SCRUM-1242', 'UX-553')", json.RootElement.GetProperty("jql").GetString());
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: returns empty when Jira fails.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: returns empty when Jira fails.</summary>
     [Fact]
     public async Task ListAssociatedIssuesAsync_ReturnsEmptyWhenJiraFails()
     {
@@ -81,10 +71,7 @@ public class JiraServiceTest : IDisposable
         Assert.Empty(await _service.ListAssociatedIssuesAsync("SCRUM-1234-feature"));
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: does not send credentials to a Jira host that is not a public
-    /// HTTPS address, such as a cloud metadata endpoint.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: does not send credentials to a Jira host that is not a public HTTPS address, such as a cloud metadata endpoint.</summary>
     /// <param name="host">Configured Jira host.</param>
     [Theory]
     [InlineData("http://myorg.atlassian.net")]
@@ -99,9 +86,7 @@ public class JiraServiceTest : IDisposable
         Assert.Empty(_host.Http.Requests);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: a query string on the host cannot replace the API path.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: a query string on the host cannot replace the API path.</summary>
     [Fact]
     public async Task ListAssociatedIssuesAsync_IgnoresQueryOnHost()
     {
@@ -113,8 +98,6 @@ public class JiraServiceTest : IDisposable
         Assert.Equal("https://myorg.atlassian.net/jira/rest/api/3/search/jql", request.RequestUri!.ToString());
     }
 
-    /// <summary>
-    /// Releases resources owned by this instance.
-    /// </summary>
+    /// <summary>Releases resources owned by this instance.</summary>
     public void Dispose() => _host.Dispose();
 }

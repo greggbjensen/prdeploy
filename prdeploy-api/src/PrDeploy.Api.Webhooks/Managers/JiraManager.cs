@@ -5,9 +5,7 @@ using PrDeploy.Api.Webhooks.Services;
 
 namespace PrDeploy.Api.Webhooks.Managers;
 
-/// <summary>
-/// Adds links to the Jira issues found in the branch name to the top of the pull request body.
-/// </summary>
+/// <summary>Adds links to the Jira issues found in the branch name to the top of the pull request body.</summary>
 public partial class JiraManager
 {
     private readonly JiraService _jiraService;
@@ -15,9 +13,7 @@ public partial class JiraManager
     private readonly TemplateService _templateService;
     private readonly ILogger<JiraManager> _logger;
 
-    /// <summary>
-    /// Initializes the instance with its required dependencies.
-    /// </summary>
+    /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="jiraService">Object containing the Jira service data used by the operation.</param>
     /// <param name="pullRequestService">Object containing the pull request service data used by the operation.</param>
     /// <param name="templateService">Object containing the template service data used by the operation.</param>
@@ -31,9 +27,7 @@ public partial class JiraManager
         _logger = logger;
     }
 
-    /// <summary>
-    /// Adds the Jira issues to pull request to the associated collection.
-    /// </summary>
+    /// <summary>Adds the Jira issues to pull request to the associated collection.</summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     public async Task AddJiraIssuesToPullRequestAsync(PullRequest pullRequest)
     {
@@ -60,9 +54,7 @@ public partial class JiraManager
         await _pullRequestService.UpdatePullRequestBodyAsync(pullRequest.Number, body);
     }
 
-    /// <summary>
-    /// Determines whether the issues text regex condition holds.
-    /// </summary>
+    /// <summary>Determines whether the issues text regex condition holds.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"<!-- ISSUES_START(?::(?<branchName>.*?))? .*? ISSUES_END -->", RegexOptions.Singleline | RegexOptions.Multiline)]
     private static partial Regex IssuesTextRegex();

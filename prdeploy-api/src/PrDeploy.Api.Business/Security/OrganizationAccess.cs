@@ -6,9 +6,7 @@ using PrDeploy.Api.Business.Security.Interfaces;
 
 namespace PrDeploy.Api.Business.Security;
 
-/// <summary>
-/// Checks GitHub organization membership against the <see cref="GitHubAuthOptions.AllowedOrganizations"/> list.
-/// </summary>
+/// <summary>Checks GitHub organization membership against the <see cref="GitHubAuthOptions.AllowedOrganizations"/> list.</summary>
 /// <remarks>
 /// Results are not cached here; callers that check repeatedly, such as <see cref="GitHubSecurity"/>, cache them.
 /// </remarks>
@@ -17,9 +15,7 @@ public class OrganizationAccess : IOrganizationAccess
     private readonly HashSet<string> _allowedOrganizations;
     private readonly ILogger<OrganizationAccess> _logger;
 
-    /// <summary>
-    /// Initializes the instance with the configured allowed organizations.
-    /// </summary>
+    /// <summary>Initializes the instance with the configured allowed organizations.</summary>
     /// <param name="options">GitHub authentication options holding the allowed organizations.</param>
     /// <param name="logger">Logger used to report membership decisions.</param>
     public OrganizationAccess(IOptions<GitHubAuthOptions> options, ILogger<OrganizationAccess> logger)

@@ -6,14 +6,10 @@ using Serilog.Events;
 
 namespace PrDeploy.Api.Tests.Logging;
 
-/// <summary>
-/// Verifies that the shared Serilog pipeline honors the <c>Serilog</c> configuration section.
-/// </summary>
+/// <summary>Verifies that the shared Serilog pipeline honors the <c>Serilog</c> configuration section.</summary>
 public class SerilogConfigurationTest
 {
-    /// <summary>
-    /// Sink that stores every event it receives.
-    /// </summary>
+    /// <summary>Sink that stores every event it receives.</summary>
     private sealed class CollectingSink : ILogEventSink
     {
         public List<LogEvent> Events { get; } = new();
@@ -22,9 +18,7 @@ public class SerilogConfigurationTest
         public void Emit(LogEvent logEvent) => Events.Add(logEvent);
     }
 
-    /// <summary>
-    /// Builds a logger from in-memory settings and captures its output.
-    /// </summary>
+    /// <summary>Builds a logger from in-memory settings and captures its output.</summary>
     /// <param name="settings">Configuration key/value pairs.</param>
     /// <param name="sink">Receives the emitted events.</param>
     /// <returns>The configured logger.</returns>
@@ -36,9 +30,7 @@ public class SerilogConfigurationTest
             .CreateLogger();
     }
 
-    /// <summary>
-    /// A namespace override must suppress that namespace below its level while other sources use the default.
-    /// </summary>
+    /// <summary>A namespace override must suppress that namespace below its level while other sources use the default.</summary>
     [Fact]
     public void Configure_AppliesMinimumLevelOverrides()
     {
@@ -57,9 +49,7 @@ public class SerilogConfigurationTest
             sink.Events.Select(e => e.MessageTemplate.Text));
     }
 
-    /// <summary>
-    /// A more specific override must win over its parent namespace, as the Development settings rely on.
-    /// </summary>
+    /// <summary>A more specific override must win over its parent namespace, as the Development settings rely on.</summary>
     [Fact]
     public void Configure_MoreSpecificOverrideWins()
     {
@@ -77,9 +67,7 @@ public class SerilogConfigurationTest
         Assert.Equal(new[] { "shown" }, sink.Events.Select(e => e.MessageTemplate.Text));
     }
 
-    /// <summary>
-    /// Debug events must be dropped at the Information default and emitted when the default is lowered.
-    /// </summary>
+    /// <summary>Debug events must be dropped at the Information default and emitted when the default is lowered.</summary>
     [Theory]
     [InlineData("Information", 0)]
     [InlineData("Debug", 1)]
@@ -96,9 +84,7 @@ public class SerilogConfigurationTest
         Assert.Equal(expectedDebugEvents, sink.Events.Count);
     }
 
-    /// <summary>
-    /// Properties pushed through the log context (such as the user scope) must reach emitted events.
-    /// </summary>
+    /// <summary>Properties pushed through the log context (such as the user scope) must reach emitted events.</summary>
     [Fact]
     public void Configure_EnrichesFromLogContext()
     {
@@ -113,9 +99,7 @@ public class SerilogConfigurationTest
         Assert.Equal("\"octocat\"", sink.Events.Single().Properties["User"].ToString());
     }
 
-    /// <summary>
-    /// Runs the real console sink against a captured <see cref="Console.Out"/> and returns what it wrote.
-    /// </summary>
+    /// <summary>Runs the real console sink against a captured <see cref="Console.Out"/> and returns what it wrote.</summary>
     /// <param name="prettyConsole">Whether to use the development formatting.</param>
     /// <returns>The raw console text, including any ANSI escape codes.</returns>
     private static string WriteToConsole(bool prettyConsole)
@@ -140,9 +124,7 @@ public class SerilogConfigurationTest
         return writer.ToString();
     }
 
-    /// <summary>
-    /// Production output must be a single structured JSON document with the rendered message and properties.
-    /// </summary>
+    /// <summary>Production output must be a single structured JSON document with the rendered message and properties.</summary>
     [Fact]
     public void Configure_NonDevelopment_WritesStructuredJson()
     {
@@ -153,9 +135,7 @@ public class SerilogConfigurationTest
         Assert.Equal("octocat", json.RootElement.GetProperty("Properties").GetProperty("Owner").GetString());
     }
 
-    /// <summary>
-    /// Development output must be colorized (ANSI codes) readable text rather than JSON.
-    /// </summary>
+    /// <summary>Development output must be colorized (ANSI codes) readable text rather than JSON.</summary>
     [Fact]
     public void Configure_Development_WritesColoredReadableText()
     {

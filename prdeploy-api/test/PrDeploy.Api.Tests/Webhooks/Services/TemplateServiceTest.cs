@@ -6,16 +6,12 @@ using PrDeploy.Api.Webhooks.Services;
 
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
-/// <summary>
-/// Contains tests that verify template service behavior.
-/// </summary>
+/// <summary>Contains tests that verify template service behavior.</summary>
 public class TemplateServiceTest
 {
     private readonly TemplateService _service = new();
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: renders dynamic pull request queue table.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: renders dynamic pull request queue table.</summary>
     [Fact]
     public void RenderQueueTable_RendersDynamicPullRequestQueueTable()
     {
@@ -29,9 +25,7 @@ public class TemplateServiceTest
             """.Replace("\r", ""), result);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: renders static template without context.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: renders static template without context.</summary>
     [Fact]
     public void Render_RendersStaticTemplateWithoutContext()
     {
@@ -39,9 +33,7 @@ public class TemplateServiceTest
         Assert.NotNull(result);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: renders issues template with context.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: renders issues template with context.</summary>
     [Fact]
     public void Render_RendersIssuesTemplateWithContext()
     {
@@ -79,9 +71,7 @@ public class TemplateServiceTest
             """.Replace("\r", ""), result);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: omits issues block when no issues.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: omits issues block when no issues.</summary>
     [Fact]
     public void Render_OmitsIssuesBlockWhenNoIssues()
     {
@@ -96,9 +86,7 @@ public class TemplateServiceTest
         Assert.Equal("Body", result.Trim());
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: renders valid JSON with escaping.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: renders valid JSON with escaping.</summary>
     [Fact]
     public void Render_RendersValidJsonWithEscaping()
     {
@@ -114,9 +102,7 @@ public class TemplateServiceTest
         Assert.Contains("\" these things", text);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: keeps non ascii characters like handlebars js.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: keeps non ascii characters like handlebars js.</summary>
     [Fact]
     public void Render_KeepsNonAsciiCharactersLikeHandlebarsJs()
     {
@@ -134,9 +120,7 @@ public class TemplateServiceTest
         Assert.Contains("placehold.co/32x32/1d8348/ffffff", result);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: renders each with parent context.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: renders each with parent context.</summary>
     [Fact]
     public void Render_RendersEachWithParentContext()
     {

@@ -3,24 +3,18 @@ using Octokit.Internal;
 
 namespace PrDeploy.Api.Tests.Webhooks.Framework;
 
-/// <summary>
-/// Builds Octokit models from GitHub API JSON, since they have no public setters.
-/// </summary>
+/// <summary>Builds Octokit models from GitHub API JSON, since they have no public setters.</summary>
 public static class GitHubModels
 {
     private static readonly SimpleJsonSerializer Serializer = new();
 
-    /// <summary>
-    /// Performs the from JSON operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the from JSON operation and returns its result.</summary>
     /// <param name="json">Text used as the JSON.</param>
     /// <typeparam name="T">Type of value consumed or produced by this operation.</typeparam>
     /// <returns>The t produced by the operation.</returns>
     public static T FromJson<T>(string json) => Serializer.Deserialize<T>(json);
 
-    /// <summary>
-    /// Performs the pull request operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the pull request operation and returns its result.</summary>
     /// <param name="number">Numeric value used for the number.</param>
     /// <param name="branch">Branch associated with the operation.</param>
     /// <param name="login">Text used as the login.</param>
@@ -54,9 +48,7 @@ public static class GitHubModels
             """);
     }
 
-    /// <summary>
-    /// Performs the workflow run operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the workflow run operation and returns its result.</summary>
     /// <param name="id">Numeric value used for the id.</param>
     /// <param name="name">Name used to identify the value or resource.</param>
     /// <param name="path">Path used to locate the resource.</param>
@@ -84,9 +76,7 @@ public static class GitHubModels
             """);
     }
 
-    /// <summary>
-    /// Checks whether the runs condition is satisfied.
-    /// </summary>
+    /// <summary>Checks whether the runs condition is satisfied.</summary>
     /// <param name="checks">Object containing the checks data used by the operation.</param>
     /// <returns>The check runs response produced by the operation.</returns>
     public static CheckRunsResponse CheckRuns(params (string Name, string Status, string? Conclusion, long RunId)[] checks)
@@ -94,10 +84,7 @@ public static class GitHubModels
         return CheckRuns(checks.Select(c => (c.Name, c.Status, c.Conclusion, c.RunId, (string?)null)).ToArray());
     }
 
-    /// <summary>
-    /// Builds a check runs response whose runs may carry output text, such as the build marker written by the
-    /// build-details action.
-    /// </summary>
+    /// <summary>Builds a check runs response whose runs may carry output text, such as the build marker written by the build-details action.</summary>
     /// <param name="checks">Check runs to include; a null output text omits the <c>output</c> object entirely.</param>
     /// <returns>The check runs response produced by the operation.</returns>
     public static CheckRunsResponse CheckRuns(

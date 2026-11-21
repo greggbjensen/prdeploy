@@ -3,16 +3,10 @@ using PrDeploy.Api.Models.Settings;
 
 namespace PrDeploy.Api.Tests.Security;
 
-/// <summary>
-/// Verifies the settings mapping functions that mask credentials, restore them on save, and stop a repository that
-/// points Jira at a different host from inheriting the owner's credentials. The API behavior built on these is
-/// covered over HTTP in <see cref="ApiSecurityFunctionalTest"/>.
-/// </summary>
+/// <summary>Verifies the settings mapping functions that mask credentials, restore them on save, and stop a repository that points Jira at a different host from inheriting the owner's credentials. The API behavior built on these is covered over HTTP in <see cref="ApiSecurityFunctionalTest"/>.</summary>
 public class SettingsSecretsTest
 {
-    /// <summary>
-    /// Confirms every credential is masked, non-secret values are kept, and the source settings are not changed.
-    /// </summary>
+    /// <summary>Confirms every credential is masked, non-secret values are kept, and the source settings are not changed.</summary>
     [Fact]
     public void RedactSecrets_MasksCredentialsWithoutChangingSource()
     {
@@ -33,9 +27,7 @@ public class SettingsSecretsTest
         Assert.Equal("xoxb-x", source.Slack!.Token);
     }
 
-    /// <summary>
-    /// Confirms unset secrets stay unset, so the portal can tell configured secrets from missing ones.
-    /// </summary>
+    /// <summary>Confirms unset secrets stay unset, so the portal can tell configured secrets from missing ones.</summary>
     [Fact]
     public void RedactSecrets_LeavesUnsetSecretsUnset()
     {
@@ -45,9 +37,7 @@ public class SettingsSecretsTest
         Assert.Null(redacted.Slack);
     }
 
-    /// <summary>
-    /// Confirms masked values are replaced by the stored secrets while new and cleared values are kept.
-    /// </summary>
+    /// <summary>Confirms masked values are replaced by the stored secrets while new and cleared values are kept.</summary>
     [Fact]
     public void RestoreSecrets_KeepsStoredSecretsForMaskedValues()
     {
@@ -63,9 +53,7 @@ public class SettingsSecretsTest
         Assert.Null(incoming.Teams.Webhooks.ReleaseUrl);
     }
 
-    /// <summary>
-    /// Confirms a repository that overrides the Jira host does not inherit the owner's Jira credentials.
-    /// </summary>
+    /// <summary>Confirms a repository that overrides the Jira host does not inherit the owner's Jira credentials.</summary>
     [Fact]
     public void Merge_DifferentJiraHost_DoesNotInheritCredentials()
     {
@@ -78,9 +66,7 @@ public class SettingsSecretsTest
         Assert.Null(repo.Jira.Password);
     }
 
-    /// <summary>
-    /// Confirms credentials are inherited when the repository keeps the owner's Jira host.
-    /// </summary>
+    /// <summary>Confirms credentials are inherited when the repository keeps the owner's Jira host.</summary>
     /// <param name="host">Repository host, or <c>null</c> to inherit it.</param>
     [Theory]
     [InlineData(null)]
@@ -95,9 +81,7 @@ public class SettingsSecretsTest
         Assert.Equal("owner-jira-token", repo.Jira.Password);
     }
 
-    /// <summary>
-    /// Creates settings with every kind of credential populated.
-    /// </summary>
+    /// <summary>Creates settings with every kind of credential populated.</summary>
     /// <param name="prefix">Prefix that makes the values unique to one settings level.</param>
     /// <returns>The populated settings.</returns>
     private static DeploySettings WithSecrets(string prefix) => new()

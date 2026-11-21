@@ -5,9 +5,7 @@ using PrDeploy.Api.Webhooks.Services;
 
 namespace PrDeploy.Api.Webhooks.Managers;
 
-/// <summary>
-/// Runs slash commands such as /deploy, /free, /rollback and /add from pull request comments.
-/// </summary>
+/// <summary>Runs slash commands such as /deploy, /free, /rollback and /add from pull request comments.</summary>
 public partial class CommentCommandManager
 {
     private readonly DeployService _deployService;
@@ -15,9 +13,7 @@ public partial class CommentCommandManager
     private readonly ILogger<CommentCommandManager> _logger;
     private readonly List<CommentCommand> _commands;
 
-    /// <summary>
-    /// Initializes the instance with its required dependencies.
-    /// </summary>
+    /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="deployService">Object containing the deploy service data used by the operation.</param>
     /// <param name="pullRequestService">Object containing the pull request service data used by the operation.</param>
     /// <param name="logger">Logger used to report operational information and errors.</param>
@@ -36,9 +32,7 @@ public partial class CommentCommandManager
         ];
     }
 
-    /// <summary>
-    /// Processes the comment and applies the associated behavior.
-    /// </summary>
+    /// <summary>Processes the comment and applies the associated behavior.</summary>
     /// <param name="commentId">Identifier of the GitHub comment associated with the request.</param>
     /// <param name="body">Text used as the body.</param>
     /// <param name="issueUrl">Text used as the issue URL.</param>
@@ -84,9 +78,7 @@ public partial class CommentCommandManager
         }
     }
 
-    /// <summary>
-    /// Performs the deploy command operation.
-    /// </summary>
+    /// <summary>Performs the deploy command operation.</summary>
     /// <param name="match">Object containing the match data used by the operation.</param>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <param name="commentId">Identifier of the GitHub comment associated with the request.</param>
@@ -99,9 +91,7 @@ public partial class CommentCommandManager
         await _deployService.RequestDeployAsync(pullRequest, environment, commentId, forceDeploy, retainLocks);
     }
 
-    /// <summary>
-    /// Restores the command to a previous state.
-    /// </summary>
+    /// <summary>Restores the command to a previous state.</summary>
     /// <param name="match">Object containing the match data used by the operation.</param>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <param name="commentId">Identifier of the GitHub comment associated with the request.</param>
@@ -113,9 +103,7 @@ public partial class CommentCommandManager
         await _deployService.RollbackDeployAsync(pullRequest, environment, commentId, count);
     }
 
-    /// <summary>
-    /// Releases the command so it can be used again.
-    /// </summary>
+    /// <summary>Releases the command so it can be used again.</summary>
     /// <param name="match">Object containing the match data used by the operation.</param>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <param name="commentId">Identifier of the GitHub comment associated with the request.</param>
@@ -126,9 +114,7 @@ public partial class CommentCommandManager
         await _deployService.FreeDeployAsync(pullRequest, environment, commentId);
     }
 
-    /// <summary>
-    /// Adds the command to the associated collection.
-    /// </summary>
+    /// <summary>Adds the command to the associated collection.</summary>
     /// <param name="match">Object containing the match data used by the operation.</param>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <param name="commentId">Identifier of the GitHub comment associated with the request.</param>
@@ -140,9 +126,7 @@ public partial class CommentCommandManager
         await _deployService.AddServicesAsync(pullRequest, services, commentId);
     }
 
-    /// <summary>
-    /// Retrieves the group.
-    /// </summary>
+    /// <summary>Retrieves the group.</summary>
     /// <param name="match">Object containing the match data used by the operation.</param>
     /// <param name="name">Name used to identify the value or resource.</param>
     /// <returns>Requested value, or its default when no value is available.</returns>
@@ -152,44 +136,32 @@ public partial class CommentCommandManager
         return group.Success ? group.Value : null;
     }
 
-    /// <summary>
-    /// Performs the deploy regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the deploy regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"(?:^|\s)/deploy(?:\s+(?<environment>\w+))?(?:\s+--(?<forceDeploy>force))?(?:\s+--(?<retainLocks>retain))?")]
     private static partial Regex DeployRegex();
 
-    /// <summary>
-    /// Releases the regex so it can be used again.
-    /// </summary>
+    /// <summary>Releases the regex so it can be used again.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"(?:^|\s)/free(?:\s+(?<environment>\w+))?")]
     private static partial Regex FreeRegex();
 
-    /// <summary>
-    /// Restores the regex to a previous state.
-    /// </summary>
+    /// <summary>Restores the regex to a previous state.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"(?:^|\s)/rollback(?:\s+(?<environment>\w+))?(?:\s+(?<count>\d+))?")]
     private static partial Regex RollbackRegex();
 
-    /// <summary>
-    /// Adds the regex to the associated collection.
-    /// </summary>
+    /// <summary>Adds the regex to the associated collection.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"(?:^|\s)/add\s+(?<services>[\w\-\s]+)")]
     private static partial Regex AddRegex();
 
-    /// <summary>
-    /// Determines whether the issue id regex condition holds.
-    /// </summary>
+    /// <summary>Determines whether the issue id regex condition holds.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@".*/(?<issueNumber>\d+)")]
     private static partial Regex IssueIdRegex();
 
-    /// <summary>
-    /// Describes a supported pull-request comment command and the handler that processes it.
-    /// </summary>
+    /// <summary>Describes a supported pull-request comment command and the handler that processes it.</summary>
     /// <param name="Name">Command name used in logs and user-facing feedback.</param>
     /// <param name="Pattern">Regular expression that recognizes the command and captures its arguments.</param>
     /// <param name="Action">Asynchronous handler invoked with the match, pull request, and comment identifier.</param>

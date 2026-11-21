@@ -2,14 +2,10 @@ using StrawberryShake;
 
 namespace PrDeploy.Api.Tests.Framework.Client
 {
-    /// <summary>
-    /// Defines the contract for client Error Extensions operations.
-    /// </summary>
+    /// <summary>Defines the contract for client Error Extensions operations.</summary>
     public static class IClientErrorExtensions
     {
-        /// <summary>
-        /// Retrieves the exception detail.
-        /// </summary>
+        /// <summary>Retrieves the exception detail.</summary>
         /// <param name="error">Object containing the error data used by the operation.</param>
         /// <returns>Requested value, or its default when no value is available.</returns>
         public static ExceptionDetail GetExceptionDetail(this IClientError error)

@@ -6,9 +6,7 @@ using PrDeploy.Api.Webhooks.Status;
 
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
-/// <summary>
-/// Contains tests that verify status service behavior.
-/// </summary>
+/// <summary>Contains tests that verify status service behavior.</summary>
 public class StatusServiceTest : IDisposable
 {
     private const int PullNumber = 3097;
@@ -16,9 +14,7 @@ public class StatusServiceTest : IDisposable
     private readonly StatusService _service;
     private readonly List<(long Number, string Body)> _comments;
 
-    /// <summary>
-    /// Initializes the test fixture and prepares its dependencies.
-    /// </summary>
+    /// <summary>Initializes the test fixture and prepares its dependencies.</summary>
     public StatusServiceTest()
     {
         _service = _host.Get<StatusService>();
@@ -26,9 +22,7 @@ public class StatusServiceTest : IDisposable
         _host.SetupUser("greggbjensen", "Gregg Jensen");
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: posts pull request comment for deployment started.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: posts pull request comment for deployment started.</summary>
     [Fact]
     public async Task PostDeployStartedAsync_PostsPullRequestCommentForDeploymentStarted()
     {
@@ -46,9 +40,7 @@ public class StatusServiceTest : IDisposable
         Assert.Empty(_host.Http.Requests); // No approval required for dev.
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: posts pull request comment for rollback started.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: posts pull request comment for rollback started.</summary>
     [Fact]
     public async Task PostDeployStartedAsync_PostsPullRequestCommentForRollbackStarted()
     {
@@ -70,9 +62,7 @@ public class StatusServiceTest : IDisposable
                                                   && r.Body!.Contains("requires"));
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: updates deploy state and posts messages.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: updates deploy state and posts messages.</summary>
     [Fact]
     public async Task PostDeployCompletedAsync_UpdatesDeployStateAndPostsMessages()
     {
@@ -95,9 +85,7 @@ public class StatusServiceTest : IDisposable
         Assert.Contains("*Release notes*", release.Body);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: ignores cancelled runs.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: ignores cancelled runs.</summary>
     [Fact]
     public async Task PostDeployCompletedAsync_IgnoresCancelledRuns()
     {
@@ -108,9 +96,7 @@ public class StatusServiceTest : IDisposable
         Assert.Empty(_comments);
     }
 
-    /// <summary>
-    /// Verifies that a started deploy publishes an in-progress status.
-    /// </summary>
+    /// <summary>Verifies that a started deploy publishes an in-progress status.</summary>
     [Fact]
     public async Task PostDeployStartedAsync_PublishesInProgressStatus()
     {
@@ -127,9 +113,7 @@ public class StatusServiceTest : IDisposable
         Assert.EndsWith("/actions/runs/7065200437", status.RunUrl);
     }
 
-    /// <summary>
-    /// Verifies that a cancelled deploy publishes a failure status even though no comment is posted.
-    /// </summary>
+    /// <summary>Verifies that a cancelled deploy publishes a failure status even though no comment is posted.</summary>
     [Fact]
     public async Task PostDeployCompletedAsync_PublishesFailureForCancelledRun()
     {
@@ -142,9 +126,7 @@ public class StatusServiceTest : IDisposable
         Assert.Equal(DeployWorkflowState.Failure, status.State);
     }
 
-    /// <summary>
-    /// Verifies that a skipped run publishes nothing.
-    /// </summary>
+    /// <summary>Verifies that a skipped run publishes nothing.</summary>
     [Fact]
     public async Task PostDeployCompletedAsync_PublishesNothingForSkippedRun()
     {
@@ -155,9 +137,7 @@ public class StatusServiceTest : IDisposable
         Assert.Empty(_host.Get<DeployStatusBroadcaster>().GetSnapshot(WebhookTestHost.Owner, WebhookTestHost.Repo));
     }
 
-    /// <summary>
-    /// Stores or updates the setup run.
-    /// </summary>
+    /// <summary>Stores or updates the setup run.</summary>
     /// <param name="run">Object containing the run data used by the operation.</param>
     private void SetupRun(Octokit.WorkflowRun run)
     {
@@ -166,8 +146,6 @@ public class StatusServiceTest : IDisposable
             .ReturnsAsync(run);
     }
 
-    /// <summary>
-    /// Releases resources owned by this instance.
-    /// </summary>
+    /// <summary>Releases resources owned by this instance.</summary>
     public void Dispose() => _host.Dispose();
 }

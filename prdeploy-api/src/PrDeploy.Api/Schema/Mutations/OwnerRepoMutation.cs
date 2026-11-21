@@ -4,15 +4,11 @@ using PrDeploy.Api.Models.OwnerRepo;
 
 namespace PrDeploy.Api.Schema.Mutations;
 
-/// <summary>
-/// Defines mutations for changing the owner Repo Mutation.
-/// </summary>
+/// <summary>Defines mutations for changing the owner Repo Mutation.</summary>
 [ExtendObjectType("DeployMutation")]
 public class OwnerRepoMutation
 {
-    /// <summary>
-    /// Adds the enabled to the associated collection.
-    /// </summary>
+    /// <summary>Adds the enabled to the associated collection.</summary>
     /// <param name="service">Object containing the service data used by the operation.</param>
     /// <param name="input">Input object containing the operation's arguments.</param>
     /// <returns>The status response produced by the operation.</returns>
@@ -20,9 +16,7 @@ public class OwnerRepoMutation
     public async Task<StatusResponse> AddEnabled(IOwnerRepoService service, Repository input) => 
         await service.AddEnabledAsync(input);
 
-    /// <summary>
-    /// Removes the enabled from the associated collection.
-    /// </summary>
+    /// <summary>Removes the enabled from the associated collection.</summary>
     /// <param name="service">Object containing the service data used by the operation.</param>
     /// <param name="input">Input object containing the operation's arguments.</param>
     /// <returns>The status response produced by the operation.</returns>

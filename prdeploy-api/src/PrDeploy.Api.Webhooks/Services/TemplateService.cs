@@ -8,9 +8,7 @@ using static PrDeploy.Api.Webhooks.Services.CheckService;
 
 namespace PrDeploy.Api.Webhooks.Services;
 
-/// <summary>
-/// Renders the Handlebars templates for GitHub comments and Slack messages.
-/// </summary>
+/// <summary>Renders the Handlebars templates for GitHub comments and Slack messages.</summary>
 /// <remarks>
 /// Template contexts are converted to camelCase dictionaries so templates keep handlebars.js style names.
 /// GitHub objects should be passed through <see cref="Pull"/>, <see cref="Run"/> or <see cref="Check"/>,
@@ -53,9 +51,7 @@ public class TemplateService
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
     };
 
-    /// <summary>
-    /// Performs the render operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the render operation and returns its result.</summary>
     /// <param name="templateName">Text used as the template name.</param>
     /// <param name="context">Request or application context used by the operation.</param>
     /// <returns>Text produced or selected by the operation.</returns>
@@ -65,9 +61,7 @@ public class TemplateService
         return template(ToTemplateContext(context));
     }
 
-    /// <summary>
-    /// Performs the render queue table operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the render queue table operation and returns its result.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <param name="normalizedEnvironment">Deployment environment involved in the operation.</param>
@@ -95,9 +89,7 @@ public class TemplateService
         return $"{positions}\n{columns}\n{pulls}";
     }
 
-    /// <summary>
-    /// Performs the pull operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the pull operation and returns its result.</summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <returns>The object produced by the operation.</returns>
     public static object? Pull(PullRequest? pullRequest) => pullRequest == null
@@ -110,9 +102,7 @@ public class TemplateService
             body = pullRequest.Body
         };
 
-    /// <summary>
-    /// Performs the run operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the run operation and returns its result.</summary>
     /// <param name="run">Object containing the run data used by the operation.</param>
     /// <returns>The object produced by the operation.</returns>
     public static object? Run(WorkflowRun? run) => run == null
@@ -126,9 +116,7 @@ public class TemplateService
             conclusion = run.Conclusion?.StringValue
         };
 
-    /// <summary>
-    /// Checks whether the condition condition is satisfied.
-    /// </summary>
+    /// <summary>Checks whether the condition condition is satisfied.</summary>
     /// <param name="check">Object containing the check data used by the operation.</param>
     /// <returns>The object produced by the operation.</returns>
     public static object Check(CheckRun check) => new
@@ -139,9 +127,7 @@ public class TemplateService
         conclusion = check.Conclusion?.StringValue
     };
 
-    /// <summary>
-    /// Checks whether the condition condition is satisfied.
-    /// </summary>
+    /// <summary>Checks whether the condition condition is satisfied.</summary>
     /// <param name="check">Object containing the check data used by the operation.</param>
     /// <returns>The object produced by the operation.</returns>
     public static object Check(CheckSummary check) => new
@@ -152,9 +138,7 @@ public class TemplateService
         conclusion = check.Conclusion
     };    
 
-    /// <summary>
-    /// Converts the supplied value to the template context.
-    /// </summary>
+    /// <summary>Converts the supplied value to the template context.</summary>
     /// <param name="context">Request or application context used by the operation.</param>
     /// <returns>The object produced by the operation.</returns>
     internal static object ToTemplateContext(object? context)
@@ -168,9 +152,7 @@ public class TemplateService
         return ToTemplateValue(element) ?? new Dictionary<string, object?>();
     }
 
-    /// <summary>
-    /// Converts the supplied value to the template value.
-    /// </summary>
+    /// <summary>Converts the supplied value to the template value.</summary>
     /// <param name="element">Object containing the element data used by the operation.</param>
     /// <returns>The object produced by the operation.</returns>
     private static object? ToTemplateValue(JsonElement element) => element.ValueKind switch
@@ -185,9 +167,7 @@ public class TemplateService
         _ => null
     };
 
-    /// <summary>
-    /// Performs the load template operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the load template operation and returns its result.</summary>
     /// <param name="templateName">Text used as the template name.</param>
     /// <returns>Text produced or selected by the operation.</returns>
     private static string LoadTemplate(string templateName)
@@ -200,9 +180,7 @@ public class TemplateService
         return reader.ReadToEnd().Replace("\r", string.Empty);
     }
 
-    /// <summary>
-    /// Creates the handlebars from the supplied inputs.
-    /// </summary>
+    /// <summary>Creates the handlebars from the supplied inputs.</summary>
     /// <returns>The object created from the supplied inputs.</returns>
     private static IHandlebars CreateHandlebars()
     {
@@ -226,22 +204,16 @@ public class TemplateService
         return handlebars;
     }
 
-    /// <summary>
-    /// Retrieves the string.
-    /// </summary>
+    /// <summary>Retrieves the string.</summary>
     /// <param name="arguments">Object containing the arguments data used by the operation.</param>
     /// <returns>Requested value, or its default when no value is available.</returns>
     private static string? GetString(Arguments arguments) =>
         arguments.Length > 0 && arguments[0] is not UndefinedBindingResult ? arguments[0]?.ToString() : null;
 
-    /// <summary>
-    /// Escapes the same characters as handlebars.js, leaving non-ASCII characters such as names as is.
-    /// </summary>
+    /// <summary>Escapes the same characters as handlebars.js, leaving non-ASCII characters such as names as is.</summary>
     private sealed class HandlebarsJsTextEncoder : ITextEncoder
     {
-        /// <summary>
-        /// Performs the encode operation.
-        /// </summary>
+        /// <summary>Performs the encode operation.</summary>
         /// <param name="text">Object containing the text data used by the operation.</param>
         /// <param name="target">Target environment or value for the operation.</param>
         public void Encode(StringBuilder text, TextWriter target)
@@ -252,9 +224,7 @@ public class TemplateService
             }
         }
 
-        /// <summary>
-        /// Performs the encode operation.
-        /// </summary>
+        /// <summary>Performs the encode operation.</summary>
         /// <param name="text">Text used as the text.</param>
         /// <param name="target">Target environment or value for the operation.</param>
         public void Encode(string text, TextWriter target)
@@ -265,9 +235,7 @@ public class TemplateService
             }
         }
 
-        /// <summary>
-        /// Performs the encode operation.
-        /// </summary>
+        /// <summary>Performs the encode operation.</summary>
         /// <param name="text">Object containing the text data used by the operation.</param>
         /// <param name="target">Target environment or value for the operation.</param>
         /// <typeparam name="T">Type of value consumed or produced by this operation.</typeparam>
@@ -279,9 +247,7 @@ public class TemplateService
             }
         }
 
-        /// <summary>
-        /// Performs the write operation.
-        /// </summary>
+        /// <summary>Performs the write operation.</summary>
         /// <param name="c">Object containing the c data used by the operation.</param>
         /// <param name="target">Target environment or value for the operation.</param>
         private static void Write(char c, TextWriter target)

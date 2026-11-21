@@ -6,18 +6,14 @@ using PrDeploy.Api.Webhooks.Managers;
 
 namespace PrDeploy.Api.Tests.Webhooks.Managers;
 
-/// <summary>
-/// Contains tests that verify Jira manager behavior.
-/// </summary>
+/// <summary>Contains tests that verify Jira manager behavior.</summary>
 public class JiraManagerTest : IDisposable
 {
     private readonly WebhookTestHost _host = new();
     private readonly JiraManager _manager;
     private readonly List<string> _bodies = [];
 
-    /// <summary>
-    /// Initializes the test fixture and prepares its dependencies.
-    /// </summary>
+    /// <summary>Initializes the test fixture and prepares its dependencies.</summary>
     public JiraManagerTest()
     {
         _manager = _host.Get<JiraManager>();
@@ -34,9 +30,7 @@ public class JiraManagerTest : IDisposable
             .ReturnsAsync((PullRequest)null!);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: adds issues to top of body.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: adds issues to top of body.</summary>
     [Fact]
     public async Task AddJiraIssuesToPullRequestAsync_AddsIssuesToTopOfBody()
     {
@@ -52,9 +46,7 @@ public class JiraManagerTest : IDisposable
             """.Replace("\r", ""), Assert.Single(_bodies));
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: does nothing when issues already added for branch.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: does nothing when issues already added for branch.</summary>
     [Fact]
     public async Task AddJiraIssuesToPullRequestAsync_DoesNothingWhenIssuesAlreadyAddedForBranch()
     {
@@ -65,9 +57,7 @@ public class JiraManagerTest : IDisposable
         Assert.Empty(_host.Http.Requests);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: replaces issues when branch changed.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: replaces issues when branch changed.</summary>
     [Fact]
     public async Task AddJiraIssuesToPullRequestAsync_ReplacesIssuesWhenBranchChanged()
     {
@@ -79,8 +69,6 @@ public class JiraManagerTest : IDisposable
         Assert.EndsWith("\n\nMy description", body);
     }
 
-    /// <summary>
-    /// Releases resources owned by this instance.
-    /// </summary>
+    /// <summary>Releases resources owned by this instance.</summary>
     public void Dispose() => _host.Dispose();
 }

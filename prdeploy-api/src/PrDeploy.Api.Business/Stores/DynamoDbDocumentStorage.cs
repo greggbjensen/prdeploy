@@ -3,18 +3,14 @@ using Amazon.DynamoDBv2.Model;
 
 namespace PrDeploy.Api.Business.Stores;
 
-/// <summary>
-/// Provides document operations for deployment values and Data Protection keys in DynamoDB.
-/// </summary>
+/// <summary>Provides document operations for deployment values and Data Protection keys in DynamoDB.</summary>
 /// <param name="dynamoDb">AWS SDK client used to query and write DynamoDB items.</param>
 /// <param name="tableName">Name of the table containing deployment and key documents.</param>
 public sealed class DynamoDbDocumentStorage(IAmazonDynamoDB dynamoDb, string tableName)
 {
     private const string DataProtectionPartition = "DATA_PROTECTION";
 
-    /// <summary>
-    /// Retrieves a deployment value revision by its storage path.
-    /// </summary>
+    /// <summary>Retrieves a deployment value revision by its storage path.</summary>
     public async Task<Dictionary<string, AttributeValue>?> GetDeploymentValueAsync(
         string path,
         int historical,
@@ -53,9 +49,7 @@ public sealed class DynamoDbDocumentStorage(IAmazonDynamoDB dynamoDb, string tab
         return null;
     }
 
-    /// <summary>
-    /// Appends a deployment value revision to its path partition.
-    /// </summary>
+    /// <summary>Appends a deployment value revision to its path partition.</summary>
     public Task SetDeploymentValueAsync(
         string path,
         string value,
@@ -78,9 +72,7 @@ public sealed class DynamoDbDocumentStorage(IAmazonDynamoDB dynamoDb, string tab
         }, cancellationToken);
     }
 
-    /// <summary>
-    /// Reads the XML from all persisted Data Protection key records.
-    /// </summary>
+    /// <summary>Reads the XML from all persisted Data Protection key records.</summary>
     public async Task<IReadOnlyList<string>> GetDataProtectionKeysAsync(
         CancellationToken cancellationToken = default)
     {
@@ -112,9 +104,7 @@ public sealed class DynamoDbDocumentStorage(IAmazonDynamoDB dynamoDb, string tab
         return xmlElements;
     }
 
-    /// <summary>
-    /// Adds or replaces a Data Protection key record by its friendly name.
-    /// </summary>
+    /// <summary>Adds or replaces a Data Protection key record by its friendly name.</summary>
     public Task StoreDataProtectionKeyAsync(
         string friendlyName,
         string xml,
@@ -131,9 +121,7 @@ public sealed class DynamoDbDocumentStorage(IAmazonDynamoDB dynamoDb, string tab
             }
         }, cancellationToken);
 
-    /// <summary>
-    /// Performs the deployment partition operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the deployment partition operation and returns its result.</summary>
     /// <param name="path">Path used to locate the resource.</param>
     /// <returns>Text produced or selected by the operation.</returns>
     private static string DeploymentPartition(string path) => $"DEPLOYMENT#{path}";

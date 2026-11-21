@@ -7,9 +7,7 @@ using PrDeploy.Api.Webhooks.Options;
 
 namespace PrDeploy.Api.Webhooks.Events;
 
-/// <summary>
-/// Verifies GitHub webhook deliveries and queues the ones PR Deploy handles.
-/// </summary>
+/// <summary>Verifies GitHub webhook deliveries and queues the ones PR Deploy handles.</summary>
 public class WebhookRequestHandler
 {
     public const string EventHeader = "X-GitHub-Event";
@@ -19,9 +17,7 @@ public class WebhookRequestHandler
     private readonly GitHubAppOptions _options;
     private readonly ILogger<WebhookRequestHandler> _logger;
 
-    /// <summary>
-    /// Initializes the instance with its required dependencies.
-    /// </summary>
+    /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="queue">Object containing the queue data used by the operation.</param>
     /// <param name="options">Object containing the options data used by the operation.</param>
     /// <param name="logger">Logger used to report operational information and errors.</param>
@@ -33,9 +29,7 @@ public class WebhookRequestHandler
         _logger = logger;
     }
 
-    /// <summary>
-    /// Handles the requested input according to the application's workflow.
-    /// </summary>
+    /// <summary>Handles the requested input according to the application's workflow.</summary>
     /// <param name="request">Request to process or send to the associated service.</param>
     /// <param name="cancellationToken">Object containing the cancellation token data used by the operation.</param>
     /// <returns>The i result produced by the operation.</returns>

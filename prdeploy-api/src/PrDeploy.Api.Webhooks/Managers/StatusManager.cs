@@ -4,9 +4,7 @@ using PrDeploy.Api.Webhooks.Services;
 
 namespace PrDeploy.Api.Webhooks.Managers;
 
-/// <summary>
-/// Reacts to workflow runs and closed pull requests to report deploy status and progress queues.
-/// </summary>
+/// <summary>Reacts to workflow runs and closed pull requests to report deploy status and progress queues.</summary>
 public class StatusManager
 {
     public const string RequestedAction = "requested";
@@ -19,9 +17,7 @@ public class StatusManager
     private readonly AutomationTestService _automationTestService;
     private readonly ILogger<StatusManager> _logger;
 
-    /// <summary>
-    /// Initializes the instance with its required dependencies.
-    /// </summary>
+    /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="context">Request or application context used by the operation.</param>
     /// <param name="statusService">Object containing the status service data used by the operation.</param>
     /// <param name="deployService">Object containing the deploy service data used by the operation.</param>
@@ -40,9 +36,7 @@ public class StatusManager
         _logger = logger;
     }
 
-    /// <summary>
-    /// Processes the workflow run and applies the associated behavior.
-    /// </summary>
+    /// <summary>Processes the workflow run and applies the associated behavior.</summary>
     /// <param name="run">Object containing the run data used by the operation.</param>
     /// <param name="action">Text used as the action.</param>
     public async Task ProcessWorkflowRunAsync(WorkflowRun run, string action)
@@ -89,18 +83,14 @@ public class StatusManager
         }
     }
 
-    /// <summary>
-    /// Processes the pull request closed and applies the associated behavior.
-    /// </summary>
+    /// <summary>Processes the pull request closed and applies the associated behavior.</summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     public async Task ProcessPullRequestClosedAsync(PullRequest pullRequest)
     {
         await _deployService.ReleasePullRequestAsync(pullRequest);
     }
 
-    /// <summary>
-    /// Determines whether the deploy workflow condition holds.
-    /// </summary>
+    /// <summary>Determines whether the deploy workflow condition holds.</summary>
     /// <param name="workflowPath">Text used as the workflow path.</param>
     /// <returns>True when the requested condition is met; otherwise, false.</returns>
     internal bool IsDeployWorkflow(string? workflowPath)
@@ -111,9 +101,7 @@ public class StatusManager
                    StringComparison.OrdinalIgnoreCase);
     }
 
-    /// <summary>
-    /// Determines whether the excluded workflow condition holds.
-    /// </summary>
+    /// <summary>Determines whether the excluded workflow condition holds.</summary>
     /// <param name="workflowPath">Text used as the workflow path.</param>
     /// <returns>True when the requested condition is met; otherwise, false.</returns>
     internal bool IsExcludedWorkflow(string? workflowPath)

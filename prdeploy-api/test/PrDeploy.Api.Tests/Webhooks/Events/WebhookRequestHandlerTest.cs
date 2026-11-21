@@ -12,9 +12,7 @@ using MsOptions = Microsoft.Extensions.Options.Options;
 
 namespace PrDeploy.Api.Tests.Webhooks.Events;
 
-/// <summary>
-/// Contains tests that verify webhook request handler behavior.
-/// </summary>
+/// <summary>Contains tests that verify webhook request handler behavior.</summary>
 public class WebhookRequestHandlerTest
 {
     private const string Secret = "It's a Secret to Everybody";
@@ -27,9 +25,7 @@ public class WebhookRequestHandlerTest
     private readonly WebhookEventQueue _queue;
     private readonly WebhookRequestHandler _handler;
 
-    /// <summary>
-    /// Initializes the test fixture and prepares its dependencies.
-    /// </summary>
+    /// <summary>Initializes the test fixture and prepares its dependencies.</summary>
     public WebhookRequestHandlerTest()
     {
         var options = MsOptions.Create(new GitHubAppOptions { WebhookSecret = Secret, QueueCapacity = 1 });
@@ -37,9 +33,7 @@ public class WebhookRequestHandlerTest
         _handler = new WebhookRequestHandler(_queue, options, NullLogger<WebhookRequestHandler>.Instance);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: matches git hub example.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: matches git hub example.</summary>
     [Fact]
     public void WebhookSignature_MatchesGitHubExample()
     {
@@ -54,9 +48,7 @@ public class WebhookRequestHandlerTest
         Assert.False(WebhookSignature.IsValid("", body, expected));
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: queues handled events.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: queues handled events.</summary>
     [Fact]
     public async Task HandleAsync_QueuesHandledEvents()
     {
@@ -70,9 +62,7 @@ public class WebhookRequestHandlerTest
         Assert.Equal("delivery-1", events.Current.DeliveryId);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: rejects invalid signature.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: rejects invalid signature.</summary>
     [Fact]
     public async Task HandleAsync_RejectsInvalidSignature()
     {
@@ -83,9 +73,7 @@ public class WebhookRequestHandlerTest
         Assert.True(_queue.TryEnqueue(null!)); // Nothing was queued, so there is still capacity.
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: acknowledges ping and unhandled events.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: acknowledges ping and unhandled events.</summary>
     [Fact]
     public async Task HandleAsync_AcknowledgesPingAndUnhandledEvents()
     {
@@ -95,9 +83,7 @@ public class WebhookRequestHandlerTest
         Assert.True(_queue.TryEnqueue(null!));
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: returns service unavailable when queue is full.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: returns service unavailable when queue is full.</summary>
     [Fact]
     public async Task HandleAsync_ReturnsServiceUnavailableWhenQueueIsFull()
     {
@@ -107,9 +93,7 @@ public class WebhookRequestHandlerTest
         Assert.Equal(StatusCodes.Status503ServiceUnavailable, Assert.IsType<StatusCodeHttpResult>(result).StatusCode);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: returns service unavailable when secret is not configured.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: returns service unavailable when secret is not configured.</summary>
     [Fact]
     public async Task HandleAsync_ReturnsServiceUnavailableWhenSecretIsNotConfigured()
     {
@@ -122,10 +106,7 @@ public class WebhookRequestHandlerTest
         Assert.Equal(StatusCodes.Status503ServiceUnavailable, Assert.IsType<StatusCodeHttpResult>(result).StatusCode);
     }
 
-    /// <summary>
-    /// Verifies that a signed payload that is not valid JSON is rejected with a structured warning that carries
-    /// the parse exception and delivery identifiers.
-    /// </summary>
+    /// <summary>Verifies that a signed payload that is not valid JSON is rejected with a structured warning that carries the parse exception and delivery identifiers.</summary>
     [Fact]
     public async Task HandleAsync_InvalidJson_LogsWarningAndReturnsBadRequest()
     {
@@ -142,9 +123,7 @@ public class WebhookRequestHandlerTest
         Assert.Equal("delivery-1", entry.Properties["DeliveryId"]);
     }
 
-    /// <summary>
-    /// Verifies that a signed delivery without the event header is rejected with a structured warning.
-    /// </summary>
+    /// <summary>Verifies that a signed delivery without the event header is rejected with a structured warning.</summary>
     [Fact]
     public async Task HandleAsync_MissingEventHeader_LogsWarningAndReturnsBadRequest()
     {
@@ -160,9 +139,7 @@ public class WebhookRequestHandlerTest
         Assert.Equal(WebhookRequestHandler.EventHeader, entry.Properties["Header"]);
     }
 
-    /// <summary>
-    /// Creates a handler that reports to the supplied logger.
-    /// </summary>
+    /// <summary>Creates a handler that reports to the supplied logger.</summary>
     /// <param name="logger">Logger that captures the handler's entries.</param>
     /// <returns>A handler using a fresh queue and the shared test secret.</returns>
     private static WebhookRequestHandler CreateHandler(ILogger<WebhookRequestHandler> logger)
@@ -171,9 +148,7 @@ public class WebhookRequestHandlerTest
         return new WebhookRequestHandler(new WebhookEventQueue(options), options, logger);
     }
 
-    /// <summary>
-    /// Creates the request from the supplied inputs.
-    /// </summary>
+    /// <summary>Creates the request from the supplied inputs.</summary>
     /// <param name="eventName">Text used as the event name.</param>
     /// <param name="payload">Text used as the payload.</param>
     /// <param name="signature">Text used as the signature.</param>

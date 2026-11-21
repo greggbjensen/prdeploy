@@ -6,9 +6,7 @@ using PrDeploy.Api.Webhooks.Utils;
 
 namespace PrDeploy.Api.Webhooks.Services;
 
-/// <summary>
-/// Dispatches the configured automation test workflow after a successful deploy.
-/// </summary>
+/// <summary>Dispatches the configured automation test workflow after a successful deploy.</summary>
 public partial class AutomationTestService
 {
     private readonly WebhookContext _context;
@@ -16,9 +14,7 @@ public partial class AutomationTestService
     private readonly EnvironmentUtil _environmentUtil;
     private readonly ILogger<AutomationTestService> _logger;
 
-    /// <summary>
-    /// Initializes the instance with its required dependencies.
-    /// </summary>
+    /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="context">Request or application context used by the operation.</param>
     /// <param name="pullRequestService">Object containing the pull request service data used by the operation.</param>
     /// <param name="environmentUtil">Object containing the environment util data used by the operation.</param>
@@ -32,9 +28,7 @@ public partial class AutomationTestService
         _logger = logger;
     }
 
-    /// <summary>
-    /// Performs the trigger test run operation.
-    /// </summary>
+    /// <summary>Performs the trigger test run operation.</summary>
     /// <param name="pullRequest">Pull request associated with the operation.</param>
     /// <param name="run">Object containing the run data used by the operation.</param>
     public async Task TriggerTestRunAsync(PullRequest pullRequest, WorkflowRun run)
@@ -61,9 +55,7 @@ public partial class AutomationTestService
             automationSettings.Workflow, new CreateWorkflowDispatch(pullRequest.Head.Ref) { Inputs = inputs });
     }
 
-    /// <summary>
-    /// Performs the replace automation tokens operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the replace automation tokens operation and returns its result.</summary>
     /// <param name="inputs">Object containing the inputs data used by the operation.</param>
     /// <param name="context">Request or application context used by the operation.</param>
     /// <returns>The dictionary&lt;string, object&gt; produced by the operation.</returns>
@@ -84,9 +76,7 @@ public partial class AutomationTestService
             }));
     }
 
-    /// <summary>
-    /// Converts the supplied value to the token regex.
-    /// </summary>
+    /// <summary>Converts the supplied value to the token regex.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"\$\{(.*?)\}")]
     private static partial Regex TokenRegex();

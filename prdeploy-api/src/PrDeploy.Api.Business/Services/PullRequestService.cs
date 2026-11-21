@@ -14,18 +14,14 @@ using PullRequest = PrDeploy.Api.Models.PullRequests.PullRequest;
 
 namespace PrDeploy.Api.Business.Services;
 
-/// <summary>
-/// Coordinates pull request operations and their collaborators.
-/// </summary>
+/// <summary>Coordinates pull request operations and their collaborators.</summary>
 public partial class PullRequestService : IPullRequestService
 {
     private readonly IGitHubClient _client;
     private readonly IGitHubSecurity _gitHubSecurity;
     private readonly ILogger<PullRequestService> _logger;
 
-    /// <summary>
-    /// Initializes the instance with its required dependencies.
-    /// </summary>
+    /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="client">Object containing the client data used by the operation.</param>
     /// <param name="gitHubSecurity">Guard that limits access to repositories in allowed organizations.</param>
     /// <param name="logger">Logger used to report operational activity.</param>
@@ -36,9 +32,7 @@ public partial class PullRequestService : IPullRequestService
         _logger = logger;
     }
 
-    /// <summary>
-    /// Finds and returns the open pull requests.
-    /// </summary>
+    /// <summary>Finds and returns the open pull requests.</summary>
     /// <param name="input">Input object containing the operation's arguments.</param>
     /// <returns>Items matching the supplied criteria.</returns>
     public async Task<List<PullRequest>> ListOpenPullRequestsAsync(OpenPullRequestInput input)
@@ -75,9 +69,7 @@ public partial class PullRequestService : IPullRequestService
 #pragma warning restore CS8619
     }
 
-    /// <summary>
-    /// Adds the services to the associated collection.
-    /// </summary>
+    /// <summary>Adds the services to the associated collection.</summary>
     /// <param name="input">Input object containing the operation's arguments.</param>
     /// <returns>The status response produced by the operation.</returns>
     public async Task<StatusResponse> AddServicesAsync(PullRequestAddServicesInput input)
@@ -88,9 +80,7 @@ public partial class PullRequestService : IPullRequestService
         return await AddCommentCommandAsync(input.Owner, input.Repo, input.PullNumber, $"/add {serviceList}");
     }
 
-    /// <summary>
-    /// Adds the comment command to the associated collection.
-    /// </summary>
+    /// <summary>Adds the comment command to the associated collection.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <param name="pullNumber">Number identifying the pull request.</param>
@@ -121,9 +111,7 @@ public partial class PullRequestService : IPullRequestService
         return new StatusResponse();
     }
 
-    /// <summary>
-    /// Matches a single slash command followed by word or hyphenated arguments and <c>--</c> flags.
-    /// </summary>
+    /// <summary>Matches a single slash command followed by word or hyphenated arguments and <c>--</c> flags.</summary>
     /// <returns>The compiled expression.</returns>
     [GeneratedRegex(@"^/[a-z]+(?: (?:--)?[\w-]+)*$")]
     private static partial Regex CommandRegex();

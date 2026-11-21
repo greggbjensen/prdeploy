@@ -10,9 +10,7 @@ using PrDeploy.Api.Models.Settings;
 
 namespace PrDeploy.Api.Tests.Security;
 
-/// <summary>
-/// Verifies which access guard <see cref="DeploySettingsService"/> applies to repository and owner settings.
-/// </summary>
+/// <summary>Verifies which access guard <see cref="DeploySettingsService"/> applies to repository and owner settings.</summary>
 public class DeploySettingsServiceSecurityTest : IDisposable
 {
     private readonly Mock<IGitHubSecurity> _security = new();
@@ -20,10 +18,7 @@ public class DeploySettingsServiceSecurityTest : IDisposable
     private readonly MemoryCache _cache = new(new MemoryCacheOptions());
     private readonly DeploySettingsService _service;
 
-    /// <summary>
-    /// Wires the service with stored owner and repo settings and an owner guard that always denies,
-    /// simulating an outside collaborator who is not a member of the owning organization.
-    /// </summary>
+    /// <summary>Wires the service with stored owner and repo settings and an owner guard that always denies, simulating an outside collaborator who is not a member of the owning organization.</summary>
     public DeploySettingsServiceSecurityTest()
     {
         _store.Setup(s => s.GetAsync<DeploySettings?>("o", It.IsAny<string>()))
@@ -36,18 +31,14 @@ public class DeploySettingsServiceSecurityTest : IDisposable
             NullLogger<DeploySettingsService>.Instance);
     }
 
-    /// <summary>
-    /// Releases the in-memory cache used for merged settings.
-    /// </summary>
+    /// <summary>Releases the in-memory cache used for merged settings.</summary>
     public void Dispose()
     {
         _cache.Dispose();
         GC.SuppressFinalize(this);
     }
 
-    /// <summary>
-    /// Confirms merged settings only require repository access, so outside collaborators can load them.
-    /// </summary>
+    /// <summary>Confirms merged settings only require repository access, so outside collaborators can load them.</summary>
     [Fact]
     public async Task GetMergedAsync_RepoAccessWithoutOwnerAccess_ReturnsSettings()
     {
@@ -58,9 +49,7 @@ public class DeploySettingsServiceSecurityTest : IDisposable
         _security.Verify(s => s.GuardOwnerAsync(It.IsAny<string>()), Times.Never);
     }
 
-    /// <summary>
-    /// Confirms merged settings are denied when repository access is denied, before anything is loaded.
-    /// </summary>
+    /// <summary>Confirms merged settings are denied when repository access is denied, before anything is loaded.</summary>
     [Fact]
     public async Task GetMergedAsync_NoRepoAccess_ThrowsBeforeLoading()
     {
@@ -72,9 +61,7 @@ public class DeploySettingsServiceSecurityTest : IDisposable
         _store.Verify(s => s.GetAsync<DeploySettings?>(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
-    /// <summary>
-    /// Confirms cached merged settings are still guarded for each caller.
-    /// </summary>
+    /// <summary>Confirms cached merged settings are still guarded for each caller.</summary>
     [Fact]
     public async Task GetMergedAsync_Cached_StillGuardsRepo()
     {
@@ -85,9 +72,7 @@ public class DeploySettingsServiceSecurityTest : IDisposable
         await Assert.ThrowsAsync<HttpRequestException>(() => _service.GetMergedAsync("o", "r"));
     }
 
-    /// <summary>
-    /// Confirms comparing settings only requires repository access.
-    /// </summary>
+    /// <summary>Confirms comparing settings only requires repository access.</summary>
     [Fact]
     public async Task CompareAsync_RepoAccessWithoutOwnerAccess_ReturnsComparison()
     {
@@ -97,9 +82,7 @@ public class DeploySettingsServiceSecurityTest : IDisposable
         _security.Verify(s => s.GuardOwnerAsync(It.IsAny<string>()), Times.Never);
     }
 
-    /// <summary>
-    /// Confirms reading owner settings directly still requires owner access.
-    /// </summary>
+    /// <summary>Confirms reading owner settings directly still requires owner access.</summary>
     [Fact]
     public async Task GetOwnerSettingsAsync_NoOwnerAccess_ThrowsForbidden()
     {

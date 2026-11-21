@@ -10,9 +10,7 @@ using PrDeploy.Api.Business.Security.Interfaces;
 
 namespace PrDeploy.Api.Business.Security
 {
-    /// <summary>
-    /// Represents git hub security data used by the application.
-    /// </summary>
+    /// <summary>Represents git hub security data used by the application.</summary>
     public partial class GitHubSecurity : IGitHubSecurity
     {
         private static readonly TimeSpan AccessRefreshTimeSpan = TimeSpan.FromMinutes(10);
@@ -22,9 +20,7 @@ namespace PrDeploy.Api.Business.Security
         private readonly ISecurityContext _securityContext;
         private readonly IOrganizationAccess _organizationAccess;
 
-        /// <summary>
-        /// Initializes the instance with its required dependencies.
-        /// </summary>
+        /// <summary>Initializes the instance with its required dependencies.</summary>
         /// <param name="client">GitHub client authenticated as the signed in user.</param>
         /// <param name="logger">Logger used to report operational information and errors.</param>
         /// <param name="cache">Cache holding granted access decisions per token.</param>
@@ -40,9 +36,7 @@ namespace PrDeploy.Api.Business.Security
             _logger = logger;
         }
 
-        /// <summary>
-        /// Enforces access requirements for the Repo.
-        /// </summary>
+        /// <summary>Enforces access requirements for the Repo.</summary>
         /// <param name="owner">Repository owner or organization whose values are addressed.</param>
         /// <param name="repo">Repository whose values are addressed.</param>
         public async Task GuardRepoAsync(string owner, string repo)
@@ -56,9 +50,7 @@ namespace PrDeploy.Api.Business.Security
             }
         }
 
-        /// <summary>
-        /// Enforces access requirements for the Owner.
-        /// </summary>
+        /// <summary>Enforces access requirements for the Owner.</summary>
         /// <param name="owner">Repository owner or organization whose values are addressed.</param>
         public async Task GuardOwnerAsync(string owner)
         {
@@ -70,10 +62,7 @@ namespace PrDeploy.Api.Business.Security
             }
         }
 
-        /// <summary>
-        /// Determines whether the signed in user is a contributor (can push) on a repository owned by an allowed
-        /// organization they belong to.
-        /// </summary>
+        /// <summary>Determines whether the signed in user is a contributor (can push) on a repository owned by an allowed organization they belong to.</summary>
         /// <remarks>
         /// The owner must first pass <see cref="HasOwnerAccessAsync"/>. Then the code reads the repository with the user's own token and inspects the <c>permissions</c> block GitHub returns
         /// for the authenticated user. This reflects every way the user can hold access (direct collaborator,
@@ -147,9 +136,7 @@ namespace PrDeploy.Api.Business.Security
             return hasAccess;
         }
 
-        /// <summary>
-        /// Determines whether the owner is in the configured allowed organizations and the signed in user belongs to it.
-        /// </summary>
+        /// <summary>Determines whether the owner is in the configured allowed organizations and the signed in user belongs to it.</summary>
         /// <remarks>
         /// Delegates to <see cref="IOrganizationAccess.IsMemberAsync"/>: the owner must be listed in
         /// <c>GitHubAuth:AllowedOrganizations</c> and be either the user's own account or an organization where the
@@ -192,9 +179,7 @@ namespace PrDeploy.Api.Business.Security
             return hasAccess;
         }
 
-        /// <summary>
-        /// Checks that an owner is a valid GitHub user or organization name.
-        /// </summary>
+        /// <summary>Checks that an owner is a valid GitHub user or organization name.</summary>
         /// <remarks>
         /// Owner and repository names are used in storage keys and GitHub API paths, so characters such as <c>/</c>
         /// or <c>..</c> must be rejected before an access check could pass for a different resource.
@@ -203,31 +188,23 @@ namespace PrDeploy.Api.Business.Security
         /// <returns><c>true</c> when the name only contains characters GitHub allows.</returns>
         public static bool IsValidOwnerName(string? owner) => owner != null && OwnerNameRegex().IsMatch(owner);
 
-        /// <summary>
-        /// Checks that a repository name is valid on GitHub and is not a relative path segment.
-        /// </summary>
+        /// <summary>Checks that a repository name is valid on GitHub and is not a relative path segment.</summary>
         /// <param name="repo">Repository name to check.</param>
         /// <returns><c>true</c> when the name only contains characters GitHub allows.</returns>
         public static bool IsValidRepoName(string? repo) =>
             repo != null && repo != "." && repo != ".." && RepoNameRegex().IsMatch(repo);
 
-        /// <summary>
-        /// Matches GitHub owner names: alphanumerics and single hyphens, up to 39 characters.
-        /// </summary>
+        /// <summary>Matches GitHub owner names: alphanumerics and single hyphens, up to 39 characters.</summary>
         /// <returns>The compiled expression.</returns>
         [GeneratedRegex("^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$")]
         private static partial Regex OwnerNameRegex();
 
-        /// <summary>
-        /// Matches GitHub repository names: alphanumerics, '.', '_' and '-', up to 100 characters.
-        /// </summary>
+        /// <summary>Matches GitHub repository names: alphanumerics, '.', '_' and '-', up to 100 characters.</summary>
         /// <returns>The compiled expression.</returns>
         [GeneratedRegex("^[A-Za-z0-9._-]{1,100}$")]
         private static partial Regex RepoNameRegex();
 
-        /// <summary>
-        /// Determines whether GitHub reports write level permission for the authenticated user.
-        /// </summary>
+        /// <summary>Determines whether GitHub reports write level permission for the authenticated user.</summary>
         /// <param name="permissions">Permissions GitHub returned for the authenticated user, if any.</param>
         /// <returns>True when push, maintain, or admin permission is present; otherwise, false.</returns>
         private static bool HasWriteAccess(RepositoryPermissions? permissions)
@@ -235,10 +212,7 @@ namespace PrDeploy.Api.Business.Security
             return permissions != null && (permissions.Push || permissions.Maintain || permissions.Admin);
         }
 
-        /// <summary>
-        /// Produces a stable, non reversible cache key fragment for the user's token so that cached access
-        /// decisions are scoped to a single token and the raw token is never stored as a key.
-        /// </summary>
+        /// <summary>Produces a stable, non reversible cache key fragment for the user's token so that cached access decisions are scoped to a single token and the raw token is never stored as a key.</summary>
         /// <param name="userToken">GitHub token of the signed in user.</param>
         /// <returns>Uppercase hexadecimal SHA-256 hash of the token.</returns>
         private static string HashToken(string userToken)

@@ -10,9 +10,7 @@ using PrDeploy.Api.Webhooks.Models;
 
 namespace PrDeploy.Api.Webhooks.Services;
 
-/// <summary>
-/// Loads the merged owner and repository deploy settings for the repository that sent an event.
-/// </summary>
+/// <summary>Loads the merged owner and repository deploy settings for the repository that sent an event.</summary>
 /// <remarks>
 /// Unlike <see cref="DeploySettingsService"/>, this does not guard on the signed in user, because events are
 /// authenticated by the webhook signature and act as the GitHub App installation.
@@ -40,9 +38,7 @@ public class WebhookSettingsService
     private readonly IMemoryCache _cache;
     private readonly ILogger<WebhookSettingsService> _logger;
 
-    /// <summary>
-    /// Initializes the instance with its required dependencies.
-    /// </summary>
+    /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="context">Request or application context used by the operation.</param>
     /// <param name="deploymentStore">Object containing the deployment store data used by the operation.</param>
     /// <param name="cache">Object containing the cache data used by the operation.</param>
@@ -56,9 +52,7 @@ public class WebhookSettingsService
         _logger = logger;
     }
 
-    /// <summary>
-    /// Retrieves the requested value.
-    /// </summary>
+    /// <summary>Retrieves the requested value.</summary>
     /// <returns>Requested value, or its default when no value is available.</returns>
     public async Task<RepoSettings> GetAsync()
     {
@@ -96,9 +90,7 @@ public class WebhookSettingsService
         }
     }
 
-    /// <summary>
-    /// Normalizes the defaults for consistent processing.
-    /// </summary>
+    /// <summary>Normalizes the defaults for consistent processing.</summary>
     /// <param name="settings">Settings used to configure the operation.</param>
     internal static void NormalizeDefaults(DeploySettings settings)
     {
@@ -138,9 +130,7 @@ public class WebhookSettingsService
         settings.Badge.StatusColors ??= new BadgeStatusColorsSettings();
     }
 
-    /// <summary>
-    /// Retrieves the owner settings.
-    /// </summary>
+    /// <summary>Retrieves the owner settings.</summary>
     /// <returns>Requested value, or its default when no value is available.</returns>
     private async Task<DeploySettings?> GetOwnerSettingsAsync()
     {
@@ -155,9 +145,7 @@ public class WebhookSettingsService
         return settings;
     }
 
-    /// <summary>
-    /// Retrieves the repo settings.
-    /// </summary>
+    /// <summary>Retrieves the repo settings.</summary>
     /// <returns>Requested value, or its default when no value is available.</returns>
     private async Task<DeploySettings> GetRepoSettingsAsync()
     {
@@ -174,9 +162,7 @@ public class WebhookSettingsService
         return settings;
     }
 
-    /// <summary>
-    /// Retrieves the default branch.
-    /// </summary>
+    /// <summary>Retrieves the default branch.</summary>
     /// <returns>Requested value, or its default when no value is available.</returns>
     private async Task<string> GetDefaultBranchAsync()
     {
@@ -192,9 +178,7 @@ public class WebhookSettingsService
         }
     }
 
-    /// <summary>
-    /// Performs the apply environment colors operation.
-    /// </summary>
+    /// <summary>Performs the apply environment colors operation.</summary>
     /// <param name="settings">Settings used to configure the operation.</param>
     private async Task ApplyEnvironmentColorsAsync(DeploySettings settings)
     {
@@ -247,9 +231,7 @@ public class WebhookSettingsService
         }
     }
 
-    /// <summary>
-    /// Retrieves the default color.
-    /// </summary>
+    /// <summary>Retrieves the default color.</summary>
     /// <param name="label">Text used as the label.</param>
     /// <returns>Requested value, or its default when no value is available.</returns>
     private static string GetDefaultColor(string label)

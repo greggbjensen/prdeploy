@@ -3,14 +3,10 @@ using Microsoft.Extensions.Configuration.Json;
 
 namespace PrDeploy.Api.Configuration
 {
-    /// <summary>
-    /// Extensions for loading YAML configuration files.
-    /// </summary>
+    /// <summary>Extensions for loading YAML configuration files.</summary>
     public static class YamlConfigurationExtensions
     {
-        /// <summary>
-        /// Adds a YAML file as a configuration source.
-        /// </summary>
+        /// <summary>Adds a YAML file as a configuration source.</summary>
         /// <param name="builder">Builder to extend.</param>
         /// <param name="path">File path, relative to the builder's base path.</param>
         /// <param name="optional">Whether a missing file is ignored.</param>
@@ -22,11 +18,7 @@ namespace PrDeploy.Api.Configuration
             return builder.Add(CreateSource(builder, path, optional, reloadOnChange));
         }
 
-        /// <summary>
-        /// Replaces the default <c>appsettings.json</c> and <c>appsettings.{environment}.json</c> sources with
-        /// <c>appsettings.yaml</c> and <c>appsettings.{environment}.yaml</c> at the same position, so precedence
-        /// against user secrets, environment variables, and the command line is unchanged.
-        /// </summary>
+        /// <summary>Replaces the default <c>appsettings.json</c> and <c>appsettings.{environment}.json</c> sources with <c>appsettings.yaml</c> and <c>appsettings.{environment}.yaml</c> at the same position, so precedence against user secrets, environment variables, and the command line is unchanged.</summary>
         /// <param name="builder">Builder created by <c>WebApplication.CreateBuilder</c>.</param>
         /// <param name="environmentName">Current hosting environment name.</param>
         /// <returns>The same builder for chaining.</returns>
@@ -53,9 +45,7 @@ namespace PrDeploy.Api.Configuration
             return builder;
         }
 
-        /// <summary>
-        /// Creates a configured YAML source rooted at the builder's file provider.
-        /// </summary>
+        /// <summary>Creates a configured YAML source rooted at the builder's file provider.</summary>
         private static YamlConfigurationSource CreateSource(
             IConfigurationBuilder builder, string path, bool optional, bool reloadOnChange)
         {

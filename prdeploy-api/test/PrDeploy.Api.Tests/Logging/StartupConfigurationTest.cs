@@ -6,9 +6,7 @@ using PrDeploy.Api.Tests.Framework;
 
 namespace PrDeploy.Api.Tests.Logging;
 
-/// <summary>
-/// Verifies which configuration sources the API reads when it starts.
-/// </summary>
+/// <summary>Verifies which configuration sources the API reads when it starts.</summary>
 /// <param name="factory">Application factory used to start the API under test.</param>
 [Collection(ApiHostCollection.Name)]
 public class StartupConfigurationTest(DeployApiApplicationFactory factory) : DeployApiTest(factory)
@@ -16,19 +14,14 @@ public class StartupConfigurationTest(DeployApiApplicationFactory factory) : Dep
     private const string MarkerVariable = "PrDeployDotEnvTest__Marker";
     private const string MarkerKey = "PrDeployDotEnvTest:Marker";
 
-    /// <summary>
-    /// Removes hosted services so starting the host only builds configuration and services.
-    /// </summary>
+    /// <summary>Removes hosted services so starting the host only builds configuration and services.</summary>
     /// <param name="services">Services registered for the test host.</param>
     public override void ConfigureTestServices(IServiceCollection services)
     {
         services.RemoveAll<IHostedService>();
     }
 
-    /// <summary>
-    /// A <c>.env</c> file in the working directory must not be loaded into environment variables or
-    /// configuration, because it would silently override the YAML appsettings files.
-    /// </summary>
+    /// <summary>A <c>.env</c> file in the working directory must not be loaded into environment variables or configuration, because it would silently override the YAML appsettings files.</summary>
     [Fact]
     public void Startup_IgnoresDotEnvFileInWorkingDirectory()
     {

@@ -6,9 +6,7 @@ using PrDeploy.Api.Models.General;
 using PrDeploy.Api.Models.OwnerRepo;
 
 namespace PrDeploy.Api.Business.Services;
-/// <summary>
-/// Coordinates owner repo operations and their collaborators.
-/// </summary>
+/// <summary>Coordinates owner repo operations and their collaborators.</summary>
 public class OwnerRepoService : IOwnerRepoService
 {
     private const string OwnerReposKey = "OWNER_REPOS";
@@ -16,9 +14,7 @@ public class OwnerRepoService : IOwnerRepoService
     private readonly IGitHubSecurity _gitHubSecurity;
     private readonly ILogger<OwnerRepoService> _logger;
 
-    /// <summary>
-    /// Initializes the instance with its required dependencies.
-    /// </summary>
+    /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="deploymentStore">Object containing the deployment store data used by the operation.</param>
     /// <param name="gitHubSecurity">Object containing the git hub security data used by the operation.</param>
     /// <param name="logger">Logger used to report operational activity.</param>
@@ -29,9 +25,7 @@ public class OwnerRepoService : IOwnerRepoService
         _logger = logger;
     }
 
-    /// <summary>
-    /// Enables a repository for prdeploy when the user is a contributor on it within an allowed organization.
-    /// </summary>
+    /// <summary>Enables a repository for prdeploy when the user is a contributor on it within an allowed organization.</summary>
     /// <param name="repository">Repository to enable.</param>
     /// <returns>A successful response once saved, or an unsuccessful response with a user facing message when
     /// the owner is not allowed for the user or the user is not a contributor; nothing is saved in that case.</returns>
@@ -91,9 +85,7 @@ public class OwnerRepoService : IOwnerRepoService
         };
     }
 
-    /// <summary>
-    /// Removes the enabled from the associated collection.
-    /// </summary>
+    /// <summary>Removes the enabled from the associated collection.</summary>
     /// <param name="repository">Repository whose values are addressed.</param>
     /// <returns>The status response produced by the operation.</returns>
     public async Task<StatusResponse> RemoveEnabledAsync(Repository repository)
@@ -126,9 +118,7 @@ public class OwnerRepoService : IOwnerRepoService
         };
     }
 
-    /// <summary>
-    /// Lists the enabled repositories, grouped by owner, that the signed in user has access to.
-    /// </summary>
+    /// <summary>Lists the enabled repositories, grouped by owner, that the signed in user has access to.</summary>
     /// <remarks>
     /// Repositories the user cannot access are left out. An empty list means either nothing is enabled yet or
     /// the user can access none of the enabled repositories; in both cases the portal offers to enable one.
@@ -179,10 +169,7 @@ public class OwnerRepoService : IOwnerRepoService
         return ownerReposList;
     }
 
-    /// <summary>
-    /// Loads every enabled repository from the store, regardless of the signed in user's access,
-    /// creating and saving an empty list the first time.
-    /// </summary>
+    /// <summary>Loads every enabled repository from the store, regardless of the signed in user's access, creating and saving an empty list the first time.</summary>
     /// <remarks>
     /// Never return this list to a caller directly; use <see cref="ListEnabledAsync"/>, which filters by access.
     /// </remarks>

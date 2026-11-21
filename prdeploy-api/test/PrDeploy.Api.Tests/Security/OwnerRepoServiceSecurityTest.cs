@@ -7,18 +7,14 @@ using PrDeploy.Api.Models.OwnerRepo;
 
 namespace PrDeploy.Api.Tests.Security;
 
-/// <summary>
-/// Verifies how <see cref="OwnerRepoService"/> filters and guards enabled repositories per user.
-/// </summary>
+/// <summary>Verifies how <see cref="OwnerRepoService"/> filters and guards enabled repositories per user.</summary>
 public class OwnerRepoServiceSecurityTest
 {
     private const string OwnerReposKey = "OWNER_REPOS";
     private readonly Mock<IDeploymentStore> _store = new();
     private readonly Mock<IGitHubSecurity> _security = new();
 
-    /// <summary>
-    /// Builds the service under test over the supplied stored enabled repositories.
-    /// </summary>
+    /// <summary>Builds the service under test over the supplied stored enabled repositories.</summary>
     /// <param name="enabled">Enabled owners and repositories held in the store.</param>
     /// <returns>Service wired to the mocked store and security.</returns>
     private OwnerRepoService CreateService(List<OwnerRepos> enabled)
@@ -27,10 +23,7 @@ public class OwnerRepoServiceSecurityTest
         return new OwnerRepoService(_store.Object, _security.Object, NullLogger<OwnerRepoService>.Instance);
     }
 
-    /// <summary>
-    /// Confirms a user who can access none of the repositories enabled by others gets an empty list
-    /// rather than a Forbidden error, so the portal can offer to enable their own repository.
-    /// </summary>
+    /// <summary>Confirms a user who can access none of the repositories enabled by others gets an empty list rather than a Forbidden error, so the portal can offer to enable their own repository.</summary>
     [Fact]
     public async Task ListEnabledAsync_OnlyOtherUsersRepos_ReturnsEmpty()
     {
@@ -42,9 +35,7 @@ public class OwnerRepoServiceSecurityTest
         Assert.Empty(await service.ListEnabledAsync());
     }
 
-    /// <summary>
-    /// Confirms only repositories the user can access are returned, and owners left empty are dropped.
-    /// </summary>
+    /// <summary>Confirms only repositories the user can access are returned, and owners left empty are dropped.</summary>
     [Fact]
     public async Task ListEnabledAsync_MixedAccess_ReturnsOnlyAccessibleRepos()
     {
@@ -62,9 +53,7 @@ public class OwnerRepoServiceSecurityTest
         Assert.Equal(new[] { "journosa" }, ownerRepos.Repos);
     }
 
-    /// <summary>
-    /// Confirms a user can enable a repository they have access to even when other repositories are enabled.
-    /// </summary>
+    /// <summary>Confirms a user can enable a repository they have access to even when other repositories are enabled.</summary>
     [Fact]
     public async Task AddEnabledAsync_AccessibleRepo_AddsAlongsideExisting()
     {
@@ -83,9 +72,7 @@ public class OwnerRepoServiceSecurityTest
             l.Count == 2 && l.Any(o => o.Owner == "journosa" && o.Repos.Contains("journosa"))), false));
     }
 
-    /// <summary>
-    /// Confirms disabling a repository keeps repositories enabled by other users that the caller cannot access.
-    /// </summary>
+    /// <summary>Confirms disabling a repository keeps repositories enabled by other users that the caller cannot access.</summary>
     [Fact]
     public async Task RemoveEnabledAsync_KeepsOtherUsersRepos()
     {
@@ -101,10 +88,7 @@ public class OwnerRepoServiceSecurityTest
             l.Count == 1 && l[0].Owner == "greggbjensen"), false));
     }
 
-    /// <summary>
-    /// Confirms adding a repository the user is not a contributor on is rejected with a message, not an error,
-    /// so the portal keeps the user signed in, and nothing is saved.
-    /// </summary>
+    /// <summary>Confirms adding a repository the user is not a contributor on is rejected with a message, not an error, so the portal keeps the user signed in, and nothing is saved.</summary>
     [Fact]
     public async Task AddEnabledAsync_NotContributor_ReturnsRejectionWithoutSaving()
     {
@@ -119,10 +103,7 @@ public class OwnerRepoServiceSecurityTest
         _store.Verify(s => s.SetAsync(OwnerReposKey, It.IsAny<List<OwnerRepos>>(), It.IsAny<bool>()), Times.Never);
     }
 
-    /// <summary>
-    /// Confirms adding a repository whose owner is not an allowed organization of the user is rejected
-    /// with a message before repository access is checked.
-    /// </summary>
+    /// <summary>Confirms adding a repository whose owner is not an allowed organization of the user is rejected with a message before repository access is checked.</summary>
     [Fact]
     public async Task AddEnabledAsync_OwnerNotAllowed_ReturnsRejectionWithoutSaving()
     {

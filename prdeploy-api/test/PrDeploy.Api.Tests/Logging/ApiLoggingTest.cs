@@ -14,14 +14,10 @@ using PrDeploy.Api.Tests.Framework;
 
 namespace PrDeploy.Api.Tests.Logging;
 
-/// <summary>
-/// Verifies structured logging in the API's error filter and middleware.
-/// </summary>
+/// <summary>Verifies structured logging in the API's error filter and middleware.</summary>
 public class ApiLoggingTest
 {
-    /// <summary>
-    /// Logger that records the scope state passed to <see cref="ILogger.BeginScope{TState}"/>.
-    /// </summary>
+    /// <summary>Logger that records the scope state passed to <see cref="ILogger.BeginScope{TState}"/>.</summary>
     /// <typeparam name="T">Category type.</typeparam>
     private sealed class ScopeLogger<T> : ILogger<T>
     {
@@ -44,9 +40,7 @@ public class ApiLoggingTest
         }
     }
 
-    /// <summary>
-    /// Creates the filter under test together with its capturing logger.
-    /// </summary>
+    /// <summary>Creates the filter under test together with its capturing logger.</summary>
     /// <param name="logger">Receives the logger used by the filter.</param>
     /// <returns>The filter.</returns>
     private static SanitizedErrorFilter CreateFilter(out CapturingLogger<SanitizedErrorFilter> logger)
@@ -57,9 +51,7 @@ public class ApiLoggingTest
         return new SanitizedErrorFilter(logger, environment.Object);
     }
 
-    /// <summary>
-    /// Confirms forbidden errors are warnings and the message is a template, not interpolated text.
-    /// </summary>
+    /// <summary>Confirms forbidden errors are warnings and the message is a template, not interpolated text.</summary>
     [Fact]
     public void OnError_Forbidden_LogsWarningWithStructuredProperties()
     {
@@ -75,9 +67,7 @@ public class ApiLoggingTest
         Assert.Contains("{ErrorMessage}", entry.Template);
     }
 
-    /// <summary>
-    /// Confirms Octokit authorization failures map to UNAUTHORIZED and log as a warning.
-    /// </summary>
+    /// <summary>Confirms Octokit authorization failures map to UNAUTHORIZED and log as a warning.</summary>
     [Fact]
     public void OnError_OctokitAuthorizationException_MapsToUnauthorizedWarning()
     {
@@ -93,9 +83,7 @@ public class ApiLoggingTest
         Assert.Equal("UNAUTHORIZED", entry.Properties["ErrorCode"]);
     }
 
-    /// <summary>
-    /// Confirms validation failures are warnings.
-    /// </summary>
+    /// <summary>Confirms validation failures are warnings.</summary>
     [Fact]
     public void OnError_Validation_LogsWarning()
     {
@@ -108,9 +96,7 @@ public class ApiLoggingTest
         Assert.Equal(LogLevel.Warning, Assert.Single(logger.Entries).Level);
     }
 
-    /// <summary>
-    /// Confirms an unexpected exception is logged at Error with the exception attached.
-    /// </summary>
+    /// <summary>Confirms an unexpected exception is logged at Error with the exception attached.</summary>
     [Fact]
     public void OnError_Unexpected_LogsErrorWithException()
     {
@@ -125,9 +111,7 @@ public class ApiLoggingTest
         Assert.Same(failure, entry.Exception);
     }
 
-    /// <summary>
-    /// Confirms an authenticated request runs inside a scope carrying the login.
-    /// </summary>
+    /// <summary>Confirms an authenticated request runs inside a scope carrying the login.</summary>
     [Fact]
     public async Task UserLogScopeMiddleware_Authenticated_OpensUserScope()
     {
@@ -147,9 +131,7 @@ public class ApiLoggingTest
         Assert.Equal("octocat", scope[UserLogScopeMiddleware.UserProperty]);
     }
 
-    /// <summary>
-    /// Confirms anonymous requests pass through without a user scope.
-    /// </summary>
+    /// <summary>Confirms anonymous requests pass through without a user scope.</summary>
     [Fact]
     public async Task UserLogScopeMiddleware_Anonymous_OpensNoScope()
     {
@@ -163,9 +145,7 @@ public class ApiLoggingTest
         Assert.Empty(logger.Scopes);
     }
 
-    /// <summary>
-    /// Confirms the GraphQL standards middleware logs headers as Debug template properties.
-    /// </summary>
+    /// <summary>Confirms the GraphQL standards middleware logs headers as Debug template properties.</summary>
     [Fact]
     public async Task GraphQlStandardsMiddleware_LogsHeadersAsDebugProperties()
     {

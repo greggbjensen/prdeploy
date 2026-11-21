@@ -11,18 +11,14 @@ using PrDeploy.Api.Webhooks.Events;
 
 namespace PrDeploy.Api.Tests.Webhooks.Events;
 
-/// <summary>
-/// Contains tests that verify webhook event dispatcher behavior.
-/// </summary>
+/// <summary>Contains tests that verify webhook event dispatcher behavior.</summary>
 public class WebhookEventDispatcherTest
 {
     private readonly Mock<IGitHubClient> _github = new() { DefaultValue = DefaultValue.Mock };
     private readonly InMemoryDeploymentStore _deploymentStore = new();
     private readonly WebhookEventDispatcher _dispatcher;
 
-    /// <summary>
-    /// Initializes the test fixture and prepares its dependencies.
-    /// </summary>
+    /// <summary>Initializes the test fixture and prepares its dependencies.</summary>
     public WebhookEventDispatcherTest()
     {
         var clientFactory = new Mock<IGitHubAppClientFactory>();
@@ -38,9 +34,7 @@ public class WebhookEventDispatcherTest
             clientFactory.Object, NullLogger<WebhookEventDispatcher>.Instance);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: loads settings and runs comment command.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: loads settings and runs comment command.</summary>
     [Fact]
     public async Task DispatchAsync_LoadsSettingsAndRunsCommentCommand()
     {
@@ -82,9 +76,7 @@ public class WebhookEventDispatcherTest
             It.Is<NewLabel>(l => l.Name == "stage" && l.Color == "2e86c1")));
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: deserializes pull request payload.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: deserializes pull request payload.</summary>
     [Fact]
     public async Task DispatchAsync_DeserializesPullRequestPayload()
     {
@@ -101,9 +93,7 @@ public class WebhookEventDispatcherTest
             WebhookTestHost.Repo, 8, new[] { "stage" }));
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: logs and continues when flow fails.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: logs and continues when flow fails.</summary>
     [Fact]
     public async Task DispatchAsync_LogsAndContinuesWhenFlowFails()
     {
@@ -117,9 +107,7 @@ public class WebhookEventDispatcherTest
             """));
     }
 
-    /// <summary>
-    /// Performs the event operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the event operation and returns its result.</summary>
     /// <param name="name">Name used to identify the value or resource.</param>
     /// <param name="action">Text used as the action.</param>
     /// <param name="properties">Text used as the properties.</param>

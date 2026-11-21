@@ -3,17 +3,13 @@ using System.Text;
 
 namespace PrDeploy.Api.Webhooks.Auth;
 
-/// <summary>
-/// Verifies the X-Hub-Signature-256 header GitHub sends with every webhook delivery.
-/// </summary>
+/// <summary>Verifies the X-Hub-Signature-256 header GitHub sends with every webhook delivery.</summary>
 public static class WebhookSignature
 {
     public const string HeaderName = "X-Hub-Signature-256";
     private const string Prefix = "sha256=";
 
-    /// <summary>
-    /// Computes the requested value from the supplied inputs.
-    /// </summary>
+    /// <summary>Computes the requested value from the supplied inputs.</summary>
     /// <param name="secret">Text used as the secret.</param>
     /// <param name="body">Object containing the body data used by the operation.</param>
     /// <returns>Text produced or selected by the operation.</returns>
@@ -23,9 +19,7 @@ public static class WebhookSignature
         return Prefix + Convert.ToHexStringLower(hash);
     }
 
-    /// <summary>
-    /// Determines whether the valid condition holds.
-    /// </summary>
+    /// <summary>Determines whether the valid condition holds.</summary>
     /// <param name="secret">Text used as the secret.</param>
     /// <param name="body">Object containing the body data used by the operation.</param>
     /// <param name="signature">Text used as the signature.</param>

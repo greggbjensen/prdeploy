@@ -5,25 +5,19 @@ using PrDeploy.Api.Webhooks.Managers;
 
 namespace PrDeploy.Api.Tests.Webhooks.Managers;
 
-/// <summary>
-/// Contains tests that verify status manager behavior.
-/// </summary>
+/// <summary>Contains tests that verify status manager behavior.</summary>
 public class StatusManagerTest : IDisposable
 {
     private readonly WebhookTestHost _host = new();
     private readonly StatusManager _manager;
 
-    /// <summary>
-    /// Initializes the test fixture and prepares its dependencies.
-    /// </summary>
+    /// <summary>Initializes the test fixture and prepares its dependencies.</summary>
     public StatusManagerTest()
     {
         _manager = _host.Get<StatusManager>();
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: matches configured deploy workflow.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: matches configured deploy workflow.</summary>
     /// <param name="path">Path used to locate the resource.</param>
     /// <param name="expected">Whether the expected option is enabled.</param>
     [Theory]
@@ -36,9 +30,7 @@ public class StatusManagerTest : IDisposable
         Assert.Equal(expected, _manager.IsDeployWorkflow(path));
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: retriggers deploy when build completes.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: retriggers deploy when build completes.</summary>
     [Fact]
     public async Task ProcessWorkflowRunAsync_RetriggersDeployWhenBuildCompletes()
     {
@@ -62,9 +54,7 @@ public class StatusManagerTest : IDisposable
         Assert.Equal("stage", Assert.Single(dispatches).Dispatch.Inputs["environment"]);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: ignores runs without pull request.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: ignores runs without pull request.</summary>
     [Fact]
     public async Task ProcessWorkflowRunAsync_IgnoresRunsWithoutPullRequest()
     {
@@ -78,9 +68,7 @@ public class StatusManagerTest : IDisposable
             .Verify(c => c.Get(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: promotes release to stable when merged.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: promotes release to stable when merged.</summary>
     [Fact]
     public async Task ProcessPullRequestClosedAsync_PromotesReleaseToStableWhenMerged()
     {
@@ -101,8 +89,6 @@ public class StatusManagerTest : IDisposable
         Assert.Equal("2.0.0", Assert.Single(stable.Services!).Version);
     }
 
-    /// <summary>
-    /// Releases resources owned by this instance.
-    /// </summary>
+    /// <summary>Releases resources owned by this instance.</summary>
     public void Dispose() => _host.Dispose();
 }

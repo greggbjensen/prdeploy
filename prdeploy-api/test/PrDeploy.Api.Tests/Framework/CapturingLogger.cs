@@ -2,9 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace PrDeploy.Api.Tests.Framework;
 
-/// <summary>
-/// One captured log call, exposing the structured template and properties for assertions.
-/// </summary>
+/// <summary>One captured log call, exposing the structured template and properties for assertions.</summary>
 /// <param name="Level">Severity of the entry.</param>
 /// <param name="Template">Unformatted message template, which must not contain interpolated values.</param>
 /// <param name="Message">Fully rendered message.</param>
@@ -17,17 +15,13 @@ public sealed record LogEntry(
     IReadOnlyDictionary<string, object?> Properties,
     Exception? Exception);
 
-/// <summary>
-/// In-memory logger that records every entry so tests can assert on structured logging.
-/// </summary>
+/// <summary>In-memory logger that records every entry so tests can assert on structured logging.</summary>
 /// <typeparam name="T">Category type of the logger.</typeparam>
 public sealed class CapturingLogger<T> : ILogger<T>
 {
     private readonly List<LogEntry> _entries = new();
 
-    /// <summary>
-    /// Gets the entries captured so far.
-    /// </summary>
+    /// <summary>Gets the entries captured so far.</summary>
     public IReadOnlyList<LogEntry> Entries => _entries;
 
     /// <inheritdoc />
@@ -36,9 +30,7 @@ public sealed class CapturingLogger<T> : ILogger<T>
     /// <inheritdoc />
     public bool IsEnabled(LogLevel logLevel) => true;
 
-    /// <summary>
-    /// Records the entry along with its structured properties.
-    /// </summary>
+    /// <summary>Records the entry along with its structured properties.</summary>
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
         Func<TState, Exception?, string> formatter)
     {

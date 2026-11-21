@@ -8,14 +8,10 @@ using PrDeploy.Api.Business.Options;
 
 namespace PrDeploy.Api.Tests.Auth;
 
-/// <summary>
-/// Contains tests that verify authentication configuration.
-/// </summary>
+/// <summary>Contains tests that verify authentication configuration.</summary>
 public class AuthenticationExtensionsTest
 {
-    /// <summary>
-    /// Verifies that authentication setup rejects a missing JWT signing key.
-    /// </summary>
+    /// <summary>Verifies that authentication setup rejects a missing JWT signing key.</summary>
     [Theory]
     [InlineData("")]
     [InlineData("  ")]
@@ -30,9 +26,7 @@ public class AuthenticationExtensionsTest
         Assert.Contains("Jwt:Key", exception.Message);
     }
 
-    /// <summary>
-    /// Verifies that authentication uses the configured JWT signing key.
-    /// </summary>
+    /// <summary>Verifies that authentication uses the configured JWT signing key.</summary>
     [Fact]
     public void AddGitHubAuthentication_UsesConfiguredSigningKey()
     {

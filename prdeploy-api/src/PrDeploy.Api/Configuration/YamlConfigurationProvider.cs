@@ -3,14 +3,10 @@ using YamlDotNet.RepresentationModel;
 
 namespace PrDeploy.Api.Configuration
 {
-    /// <summary>
-    /// Configuration source that reads a YAML file into the standard colon-delimited configuration keys.
-    /// </summary>
+    /// <summary>Configuration source that reads a YAML file into the standard colon-delimited configuration keys.</summary>
     public class YamlConfigurationSource : FileConfigurationSource
     {
-        /// <summary>
-        /// Creates the provider that parses the file.
-        /// </summary>
+        /// <summary>Creates the provider that parses the file.</summary>
         /// <param name="builder">Configuration builder, used to resolve the file provider.</param>
         /// <returns>A <see cref="YamlConfigurationProvider"/> for this source.</returns>
         public override IConfigurationProvider Build(IConfigurationBuilder builder)
@@ -20,23 +16,16 @@ namespace PrDeploy.Api.Configuration
         }
     }
 
-    /// <summary>
-    /// Loads configuration from a YAML file. Mappings become nested sections and sequences become indexed
-    /// children (<c>Section:0</c>, <c>Section:1</c>, …), matching the layout produced by the JSON provider.
-    /// </summary>
+    /// <summary>Loads configuration from a YAML file. Mappings become nested sections and sequences become indexed children (<c>Section:0</c>, <c>Section:1</c>, …), matching the layout produced by the JSON provider.</summary>
     public class YamlConfigurationProvider : FileConfigurationProvider
     {
-        /// <summary>
-        /// Creates a provider for the given source.
-        /// </summary>
+        /// <summary>Creates a provider for the given source.</summary>
         /// <param name="source">Source describing the file to read.</param>
         public YamlConfigurationProvider(YamlConfigurationSource source) : base(source)
         {
         }
 
-        /// <summary>
-        /// Parses the YAML stream and replaces <c>Data</c> with the flattened key/value pairs.
-        /// </summary>
+        /// <summary>Parses the YAML stream and replaces <c>Data</c> with the flattened key/value pairs.</summary>
         /// <param name="stream">Open stream over the YAML file.</param>
         /// <exception cref="FormatException">The YAML is malformed or its root is not a mapping.</exception>
         public override void Load(Stream stream)
@@ -44,9 +33,7 @@ namespace PrDeploy.Api.Configuration
             Data = Parse(stream);
         }
 
-        /// <summary>
-        /// Flattens a YAML document into configuration keys. An empty document yields no keys.
-        /// </summary>
+        /// <summary>Flattens a YAML document into configuration keys. An empty document yields no keys.</summary>
         /// <param name="stream">Stream containing YAML text.</param>
         /// <returns>Case-insensitive key/value pairs; null scalars are stored as <c>null</c>.</returns>
         /// <exception cref="FormatException">The YAML is malformed or its root is not a mapping.</exception>
@@ -78,9 +65,7 @@ namespace PrDeploy.Api.Configuration
             return data;
         }
 
-        /// <summary>
-        /// Recursively walks a node, writing scalar leaves into <paramref name="data"/>.
-        /// </summary>
+        /// <summary>Recursively walks a node, writing scalar leaves into <paramref name="data"/>.</summary>
         /// <param name="node">Node to visit.</param>
         /// <param name="path">Colon-delimited key of the node, or null for the root.</param>
         /// <param name="data">Destination dictionary.</param>

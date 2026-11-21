@@ -17,9 +17,7 @@ using PrDeploy.Api.Tests.Webhooks.Framework;
 
 namespace PrDeploy.Api.Tests.Framework;
 
-/// <summary>
-/// Creates an isolated API test host with local storage and an in-memory deployment store.
-/// </summary>
+/// <summary>Creates an isolated API test host with local storage and an in-memory deployment store.</summary>
 public class DeployApiApplicationFactory : WebApplicationFactory<Program>
 {
     private readonly string _storageDirectory = Path.Combine(
@@ -27,27 +25,18 @@ public class DeployApiApplicationFactory : WebApplicationFactory<Program>
         "prdeploy-api-tests",
         Guid.NewGuid().ToString("N"));
 
-    /// <summary>
-    /// Gets or sets the configure services.
-    /// </summary>
+    /// <summary>Gets or sets the configure services.</summary>
     /// <value>Current configure services value.</value>
     public Action<IServiceCollection>? ConfigureServices { get; set; }
 
-    /// <summary>
-    /// Gets or sets the configure test services.
-    /// </summary>
+    /// <summary>Gets or sets the configure test services.</summary>
     /// <value>Current configure test services value.</value>
     public Action<IServiceCollection>? ConfigureTestServices { get; set; }
 
-    /// <summary>
-    /// Gets whether the real repository and organization access checks run. When <c>false</c>, every caller is
-    /// allowed so tests can focus on other behavior; functional security tests override this and mock GitHub instead.
-    /// </summary>
+    /// <summary>Gets whether the real repository and organization access checks run. When <c>false</c>, every caller is allowed so tests can focus on other behavior; functional security tests override this and mock GitHub instead.</summary>
     protected virtual bool UseRealGitHubSecurity => false;
 
-    /// <summary>
-    /// Configures the test host with isolated storage and any test-specific service overrides.
-    /// </summary>
+    /// <summary>Configures the test host with isolated storage and any test-specific service overrides.</summary>
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("Jwt__Key")))
@@ -110,9 +99,7 @@ public class DeployApiApplicationFactory : WebApplicationFactory<Program>
         });
     }
 
-    /// <summary>
-    /// Disposes the test host and removes its temporary local database directory.
-    /// </summary>
+    /// <summary>Disposes the test host and removes its temporary local database directory.</summary>
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);

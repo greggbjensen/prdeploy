@@ -2,18 +2,13 @@ using System.Text.RegularExpressions;
 
 namespace PrDeploy.Api.Webhooks.Utils;
 
-/// <summary>
-/// Processes HTML content in markdown strings to convert it to Slack-compatible format.
-/// Handles HTML tables, line breaks, comments, and other HTML tags.
-/// </summary>
+/// <summary>Processes HTML content in markdown strings to convert it to Slack-compatible format. Handles HTML tables, line breaks, comments, and other HTML tags.</summary>
 /// <remarks>
 /// Based on the logic from greggbjensen/slackify-markdown fork (html-tag-handling branch).
 /// </remarks>
 public static partial class HtmlProcessor
 {
-    /// <summary>
-    /// Processes HTML content in a markdown string, converting HTML tags to Slack-compatible format.
-    /// </summary>
+    /// <summary>Processes HTML content in a markdown string, converting HTML tags to Slack-compatible format.</summary>
     public static string ProcessHtmlInMarkdown(string? markdown)
     {
         if (string.IsNullOrEmpty(markdown))
@@ -24,9 +19,7 @@ public static partial class HtmlProcessor
         return ProcessHtml("root", markdown);
     }
 
-    /// <summary>
-    /// Processes the HTML and applies the associated behavior.
-    /// </summary>
+    /// <summary>Processes the HTML and applies the associated behavior.</summary>
     /// <param name="currentTag">Text used as the current tag.</param>
     /// <param name="currentValue">Text used as the current value.</param>
     /// <returns>Text produced or selected by the operation.</returns>
@@ -74,24 +67,18 @@ public static partial class HtmlProcessor
         return text;
     }
 
-    /// <summary>
-    /// Performs the HTML comment regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the HTML comment regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex("<!--.*?-->", RegexOptions.Singleline)]
     private static partial Regex HtmlCommentRegex();
 
-    /// <summary>
-    /// Performs the closed tag regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the closed tag regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"<([^>\s]+)(?:\s[^>]*)?>(.*?)(</\1>)(\s*)", RegexOptions.Singleline)]
     private static partial Regex ClosedTagRegex();
 
     // Excludes : so markdown autolinks like <https://example.com> are kept.
-    /// <summary>
-    /// Performs the open tag regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the open tag regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"<([^>\s:]+)(?:\s[^>]*)?/?>")]
     private static partial Regex OpenTagRegex();

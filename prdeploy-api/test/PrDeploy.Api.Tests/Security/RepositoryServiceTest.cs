@@ -8,9 +8,7 @@ using PrDeploy.Api.Models.General.Inputs;
 
 namespace PrDeploy.Api.Tests.Security;
 
-/// <summary>
-/// Verifies <see cref="RepositoryService"/> guards repository access and lists its YAML workflow files.
-/// </summary>
+/// <summary>Verifies <see cref="RepositoryService"/> guards repository access and lists its YAML workflow files.</summary>
 public class RepositoryServiceTest
 {
     private readonly Mock<IGitHubClient> _client = new();
@@ -18,9 +16,7 @@ public class RepositoryServiceTest
     private readonly Mock<IGitHubSecurity> _security = new();
     private readonly RepositoryService _service;
 
-    /// <summary>
-    /// Wires the service with a mocked GitHub contents client and security guard.
-    /// </summary>
+    /// <summary>Wires the service with a mocked GitHub contents client and security guard.</summary>
     public RepositoryServiceTest()
     {
         var repository = new Mock<IRepositoriesClient>();
@@ -30,9 +26,7 @@ public class RepositoryServiceTest
             NullLogger<RepositoryService>.Instance);
     }
 
-    /// <summary>
-    /// Stubs the workflows folder listing with the given entries.
-    /// </summary>
+    /// <summary>Stubs the workflows folder listing with the given entries.</summary>
     /// <param name="entries">Pairs of file path and content type.</param>
     private void SetupFolder(params (string Path, ContentType Type)[] entries)
     {
@@ -43,16 +37,12 @@ public class RepositoryServiceTest
         _contents.Setup(c => c.GetAllContents("o", "r", ".github/workflows")).ReturnsAsync(contents);
     }
 
-    /// <summary>
-    /// Runs the listing for the test repository.
-    /// </summary>
+    /// <summary>Runs the listing for the test repository.</summary>
     /// <returns>The workflow paths returned by the service.</returns>
     private Task<List<string>> ListAsync() =>
         _service.ListWorkflowsAsync(new RepoQueryInput { Owner = "o", Repo = "r" });
 
-    /// <summary>
-    /// Confirms every YAML file is returned, sorted, while folders and other file types are skipped.
-    /// </summary>
+    /// <summary>Confirms every YAML file is returned, sorted, while folders and other file types are skipped.</summary>
     [Fact]
     public async Task ListWorkflowsAsync_ReturnsSortedYamlFiles()
     {
@@ -71,9 +61,7 @@ public class RepositoryServiceTest
         _security.Verify(s => s.GuardRepoAsync("o", "r"), Times.Once);
     }
 
-    /// <summary>
-    /// Confirms a repository without a workflows folder yields an empty list.
-    /// </summary>
+    /// <summary>Confirms a repository without a workflows folder yields an empty list.</summary>
     [Fact]
     public async Task ListWorkflowsAsync_NoWorkflowsFolder_ReturnsEmpty()
     {
@@ -85,9 +73,7 @@ public class RepositoryServiceTest
         Assert.Empty(result);
     }
 
-    /// <summary>
-    /// Confirms access denial stops the call before GitHub is queried.
-    /// </summary>
+    /// <summary>Confirms access denial stops the call before GitHub is queried.</summary>
     [Fact]
     public async Task ListWorkflowsAsync_AccessDenied_ThrowsWithoutQueryingGitHub()
     {

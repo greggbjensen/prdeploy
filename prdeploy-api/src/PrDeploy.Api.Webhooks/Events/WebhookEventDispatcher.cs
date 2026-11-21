@@ -9,9 +9,7 @@ using PrDeploy.Api.Webhooks.Services;
 
 namespace PrDeploy.Api.Webhooks.Events;
 
-/// <summary>
-/// Processes a webhook event in its own dependency injection scope, authenticated as the GitHub App installation.
-/// </summary>
+/// <summary>Processes a webhook event in its own dependency injection scope, authenticated as the GitHub App installation.</summary>
 public class WebhookEventDispatcher
 {
     // Deserializes GitHub payloads into the same models returned by the Octokit API clients.
@@ -21,9 +19,7 @@ public class WebhookEventDispatcher
     private readonly IGitHubAppClientFactory _clientFactory;
     private readonly ILogger<WebhookEventDispatcher> _logger;
 
-    /// <summary>
-    /// Initializes the instance with its required dependencies.
-    /// </summary>
+    /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="scopeFactory">Object containing the scope factory data used by the operation.</param>
     /// <param name="clientFactory">Object containing the client factory data used by the operation.</param>
     /// <param name="logger">Logger used to report operational information and errors.</param>
@@ -35,9 +31,7 @@ public class WebhookEventDispatcher
         _logger = logger;
     }
 
-    /// <summary>
-    /// Performs the dispatch operation.
-    /// </summary>
+    /// <summary>Performs the dispatch operation.</summary>
     /// <param name="webhookEvent">Object containing the webhook event data used by the operation.</param>
     public async Task DispatchAsync(WebhookEvent webhookEvent)
     {
@@ -79,9 +73,7 @@ public class WebhookEventDispatcher
         }
     }
 
-    /// <summary>
-    /// Performs the route operation.
-    /// </summary>
+    /// <summary>Performs the route operation.</summary>
     /// <param name="webhookEvent">Object containing the webhook event data used by the operation.</param>
     /// <param name="services">Services to include in the operation.</param>
     private async Task RouteAsync(WebhookEvent webhookEvent, IServiceProvider services)
@@ -142,9 +134,7 @@ public class WebhookEventDispatcher
         }
     }
 
-    /// <summary>
-    /// Performs the deserialize operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the deserialize operation and returns its result.</summary>
     /// <param name="element">Object containing the element data used by the operation.</param>
     /// <typeparam name="T">Type of value consumed or produced by this operation.</typeparam>
     /// <returns>The t produced by the operation.</returns>

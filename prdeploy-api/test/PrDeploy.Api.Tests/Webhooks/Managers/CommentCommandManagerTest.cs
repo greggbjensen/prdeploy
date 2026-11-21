@@ -5,9 +5,7 @@ using PrDeploy.Api.Webhooks.Managers;
 
 namespace PrDeploy.Api.Tests.Webhooks.Managers;
 
-/// <summary>
-/// Contains tests that verify comment command manager behavior.
-/// </summary>
+/// <summary>Contains tests that verify comment command manager behavior.</summary>
 public class CommentCommandManagerTest : IDisposable
 {
     private const long CommentId = 2015899564;
@@ -23,9 +21,7 @@ public class CommentCommandManagerTest : IDisposable
     private readonly List<(long Number, string Body)> _comments;
     private readonly Dictionary<long, string[]> _labels;
 
-    /// <summary>
-    /// Initializes the test fixture and prepares its dependencies.
-    /// </summary>
+    /// <summary>Initializes the test fixture and prepares its dependencies.</summary>
     public CommentCommandManagerTest()
     {
         _manager = _host.Get<CommentCommandManager>();
@@ -50,9 +46,7 @@ public class CommentCommandManagerTest : IDisposable
                 """{ "commit": { "message": "This is a test commit message.\n\nWith more details." } }""")]);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: deploys to default environment.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: deploys to default environment.</summary>
     [Fact]
     public async Task ProcessCommentAsync_DeploysToDefaultEnvironment()
     {
@@ -73,9 +67,7 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Equal(["prod", "dev", "dev-lock"], _labels[PullNumber]);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: uses next available environment in queue.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: uses next available environment in queue.</summary>
     [Fact]
     public async Task ProcessCommentAsync_UsesNextAvailableEnvironmentInQueue()
     {
@@ -89,9 +81,7 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Equal("dev3", Assert.Single(_dispatches).Dispatch.Inputs["environment"]);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: enqueues when no environment is available.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: enqueues when no environment is available.</summary>
     [Fact]
     public async Task ProcessCommentAsync_EnqueuesWhenNoEnvironmentIsAvailable()
     {
@@ -112,9 +102,7 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Contains("| [5](https://github.com/greggbjensen/prdeploy-example-repo/pull/5) | [8](", body);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: force deploys with retained locks.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: force deploys with retained locks.</summary>
     [Fact]
     public async Task ProcessCommentAsync_ForceDeploysWithRetainedLocks()
     {
@@ -128,9 +116,7 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Empty(_labels[1]); // Other pull request is removed from stage.
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: frees environment and dequeues next pull request.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: frees environment and dequeues next pull request.</summary>
     [Fact]
     public async Task ProcessCommentAsync_FreesEnvironmentAndDequeuesNextPullRequest()
     {
@@ -151,9 +137,7 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Empty(queue ?? []);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: rolls back to previous stable state.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: rolls back to previous stable state.</summary>
     [Fact]
     public async Task ProcessCommentAsync_RollsBackToPreviousStableState()
     {
@@ -176,9 +160,7 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Equal("[prod ROLLBACK #8] add-service-pr: This is a test commit message.", dispatch.Inputs["deploy_name"]);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: adds service deploy files.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: adds service deploy files.</summary>
     [Fact]
     public async Task ProcessCommentAsync_AddsServiceDeployFiles()
     {
@@ -197,9 +179,7 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Empty(_comments);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: comments when service is not configured.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: comments when service is not configured.</summary>
     [Fact]
     public async Task ProcessCommentAsync_CommentsWhenServiceIsNotConfigured()
     {
@@ -211,9 +191,7 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Contains("- deploy-bad-test", body);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: ignores comments without commands.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: ignores comments without commands.</summary>
     [Fact]
     public async Task ProcessCommentAsync_IgnoresCommentsWithoutCommands()
     {
@@ -223,10 +201,7 @@ public class CommentCommandManagerTest : IDisposable
         _host.MockOf(_host.GitHub.Object.PullRequest).Verify(c => c.Get(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: ignores commands from users without write access, so
-    /// readers of the repository, or anyone on a public repository, cannot deploy.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: ignores commands from users without write access, so readers of the repository, or anyone on a public repository, cannot deploy.</summary>
     /// <param name="permission">Legacy permission GitHub reports.</param>
     /// <param name="roleName">Role name GitHub reports.</param>
     [Theory]
@@ -245,10 +220,7 @@ public class CommentCommandManagerTest : IDisposable
         _host.MockOf(_host.GitHub.Object.PullRequest).Verify(c => c.Get(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: ignores commands from users who are not collaborators,
-    /// which GitHub reports as not found, and from comments without an author.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: ignores commands from users who are not collaborators, which GitHub reports as not found, and from comments without an author.</summary>
     /// <param name="author">Comment author, or <c>null</c> when the payload has none.</param>
     [Theory]
     [InlineData("stranger")]
@@ -266,10 +238,7 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Empty(_dispatches);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: runs commands for maintainers, whose legacy permission
-    /// is reported as write.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: runs commands for maintainers, whose legacy permission is reported as write.</summary>
     [Fact]
     public async Task ProcessCommentAsync_RunsCommandsForMaintainers()
     {
@@ -282,10 +251,7 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Single(_dispatches);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: refuses to deploy or add services to a pull request from a
-    /// fork, because its branch name would resolve to a branch in this repository.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: refuses to deploy or add services to a pull request from a fork, because its branch name would resolve to a branch in this repository.</summary>
     /// <param name="command">Command that deploys or commits by branch name.</param>
     [Theory]
     [InlineData("/deploy")]
@@ -302,10 +268,7 @@ public class CommentCommandManagerTest : IDisposable
             It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CreateFileRequest>()), Times.Never);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: still frees environments held by a fork pull request, since
-    /// freeing only changes labels.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: still frees environments held by a fork pull request, since freeing only changes labels.</summary>
     [Fact]
     public async Task ProcessCommentAsync_FreesEnvironmentForFork()
     {
@@ -318,9 +281,7 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Equal(["dev"], _labels[PullNumber]);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: a fork pull request taken off a queue is not deployed.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: a fork pull request taken off a queue is not deployed.</summary>
     [Fact]
     public async Task ProcessCommentAsync_DoesNotDeployForkDequeuedFromQueue()
     {
@@ -334,8 +295,6 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Contains(_comments, c => c.Number == 9 && c.Body.Contains("Pull requests from forks cannot be deployed."));
     }
 
-    /// <summary>
-    /// Releases resources owned by this instance.
-    /// </summary>
+    /// <summary>Releases resources owned by this instance.</summary>
     public void Dispose() => _host.Dispose();
 }

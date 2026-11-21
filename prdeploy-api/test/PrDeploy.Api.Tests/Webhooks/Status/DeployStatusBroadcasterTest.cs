@@ -2,16 +2,12 @@ using PrDeploy.Api.Webhooks.Status;
 
 namespace PrDeploy.Api.Tests.Webhooks.Status;
 
-/// <summary>
-/// Contains tests that verify deploy status broadcaster behavior.
-/// </summary>
+/// <summary>Contains tests that verify deploy status broadcaster behavior.</summary>
 public class DeployStatusBroadcasterTest
 {
     private static readonly DateTimeOffset Now = new(2026, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
-    /// <summary>
-    /// Verifies that the latest status per environment is returned in the snapshot, scoped to the repository.
-    /// </summary>
+    /// <summary>Verifies that the latest status per environment is returned in the snapshot, scoped to the repository.</summary>
     [Fact]
     public void GetSnapshot_ReturnsLatestStatusPerEnvironmentForRepository()
     {
@@ -27,9 +23,7 @@ public class DeployStatusBroadcasterTest
         Assert.Equal(DeployWorkflowState.Successful, snapshot[0].State);
     }
 
-    /// <summary>
-    /// Verifies that a subscriber receives the snapshot first, then later changes for its repository only.
-    /// </summary>
+    /// <summary>Verifies that a subscriber receives the snapshot first, then later changes for its repository only.</summary>
     [Fact]
     public async Task SubscribeAsync_SendsSnapshotThenChangesForRepositoryOnly()
     {
@@ -49,9 +43,7 @@ public class DeployStatusBroadcasterTest
         Assert.Equal(DeployWorkflowState.InProgress, enumerator.Current.State);
     }
 
-    /// <summary>
-    /// Verifies that cancelling ends the stream.
-    /// </summary>
+    /// <summary>Verifies that cancelling ends the stream.</summary>
     [Fact]
     public async Task SubscribeAsync_EndsWhenCancelled()
     {
@@ -65,9 +57,7 @@ public class DeployStatusBroadcasterTest
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => pending);
     }
 
-    /// <summary>
-    /// Verifies the conclusion mapping: success, failure-like outcomes, and non-final outcomes.
-    /// </summary>
+    /// <summary>Verifies the conclusion mapping: success, failure-like outcomes, and non-final outcomes.</summary>
     [Theory]
     [InlineData("success", DeployWorkflowState.Successful)]
     [InlineData("failure", DeployWorkflowState.Failure)]
@@ -79,9 +69,7 @@ public class DeployStatusBroadcasterTest
     public void FromConclusion_MapsOutcome(string? conclusion, DeployWorkflowState? expected) =>
         Assert.Equal(expected, DeployWorkflowStatus.FromConclusion(conclusion));
 
-    /// <summary>
-    /// Builds a status for tests.
-    /// </summary>
+    /// <summary>Builds a status for tests.</summary>
     private static DeployWorkflowStatus Status(string owner, string repo, string environment,
         DeployWorkflowState state) => new(owner, repo, environment, state, 1, 2, null, Now);
 }

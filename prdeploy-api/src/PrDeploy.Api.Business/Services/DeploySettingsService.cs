@@ -16,9 +16,7 @@ using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
 namespace PrDeploy.Api.Business.Services;
-/// <summary>
-/// Coordinates deploy settings operations and their collaborators.
-/// </summary>
+/// <summary>Coordinates deploy settings operations and their collaborators.</summary>
 public class DeploySettingsService : IDeploySettingsService
 {
     private const string DeploySettingsKey = "DEPLOY_SETTINGS";
@@ -31,9 +29,7 @@ public class DeploySettingsService : IDeploySettingsService
     private readonly IGitHubSecurity _gitHubSecurity;
     private readonly ILogger<DeploySettingsService> _logger;
 
-    /// <summary>
-    /// Initializes the instance with its required dependencies.
-    /// </summary>
+    /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="deploymentStore">Object containing the deployment store data used by the operation.</param>
     /// <param name="gitHubSecurity">Object containing the git hub security data used by the operation.</param>
     /// <param name="cache">Object containing the cache data used by the operation.</param>
@@ -47,9 +43,7 @@ public class DeploySettingsService : IDeploySettingsService
         _logger = logger;
     }
 
-    /// <summary>
-    /// Compares the supplied values and returns their differences.
-    /// </summary>
+    /// <summary>Compares the supplied values and returns their differences.</summary>
     /// <param name="input">Input object containing the operation's arguments.</param>
     /// <returns>The deploy settings compare produced by the operation.</returns>
     public async Task<DeploySettingsCompare> CompareAsync(RepoQueryInput input)
@@ -64,9 +58,7 @@ public class DeploySettingsService : IDeploySettingsService
         return settingsCompare!;
     }
 
-    /// <summary>
-    /// Retrieves the merged.
-    /// </summary>
+    /// <summary>Retrieves the merged.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <returns>Requested value, or its default when no value is available.</returns>
@@ -95,9 +87,7 @@ public class DeploySettingsService : IDeploySettingsService
         return repoSettings;
     }
 
-    /// <summary>
-    /// Retrieves the environment.
-    /// </summary>
+    /// <summary>Retrieves the environment.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <param name="environment">Deployment environment involved in the operation.</param>
@@ -109,9 +99,7 @@ public class DeploySettingsService : IDeploySettingsService
         return result!;
     }
 
-    /// <summary>
-    /// Retrieves the environment.
-    /// </summary>
+    /// <summary>Retrieves the environment.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <param name="environment">Deployment environment involved in the operation.</param>
@@ -134,9 +122,7 @@ public class DeploySettingsService : IDeploySettingsService
         return result;
     }
 
-    /// <summary>
-    /// Retrieves the queue environments.
-    /// </summary>
+    /// <summary>Retrieves the queue environments.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <returns>Requested value, or its default when no value is available.</returns>
@@ -165,9 +151,7 @@ public class DeploySettingsService : IDeploySettingsService
         return environmentSettings;
     }
 
-    /// <summary>
-    /// Finds and returns the services.
-    /// </summary>
+    /// <summary>Finds and returns the services.</summary>
     /// <param name="input">Input object containing the operation's arguments.</param>
     /// <returns>Items matching the supplied criteria.</returns>
     public async Task<List<string>> ListServicesAsync(RepoQueryInput input)
@@ -183,9 +167,7 @@ public class DeploySettingsService : IDeploySettingsService
         return services ?? new List<string>();
     }
 
-    /// <summary>
-    /// Retrieves the owner settings.
-    /// </summary>
+    /// <summary>Retrieves the owner settings.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <returns>Requested value, or its default when no value is available.</returns>
     public async Task<DeploySettings> GetOwnerSettingsAsync(string owner)
@@ -194,9 +176,7 @@ public class DeploySettingsService : IDeploySettingsService
         return Map.RedactSecrets(await LoadOwnerSettingsAsync(owner));
     }
 
-    /// <summary>
-    /// Loads the owner level settings without an access check, saving the defaults when none exist yet.
-    /// </summary>
+    /// <summary>Loads the owner level settings without an access check, saving the defaults when none exist yet.</summary>
     /// <remarks>
     /// Callers must have already guarded access, either to the owner or to a repository under the owner.
     /// </remarks>
@@ -217,9 +197,7 @@ public class DeploySettingsService : IDeploySettingsService
         return deploySettings;
     }
 
-    /// <summary>
-    /// Stores or updates the owner settings.
-    /// </summary>
+    /// <summary>Stores or updates the owner settings.</summary>
     /// <param name="input">Input object containing the operation's arguments.</param>
     /// <returns>The value after it has been stored or updated.</returns>
     public async Task<StatusResponse> SetOwnerSettingsAsync(SetOwnerSettingsInput input)
@@ -237,9 +215,7 @@ public class DeploySettingsService : IDeploySettingsService
         };
     }
 
-    /// <summary>
-    /// Retrieves the repo settings with credentials masked.
-    /// </summary>
+    /// <summary>Retrieves the repo settings with credentials masked.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <returns>Requested value, or its default when no value is available.</returns>
@@ -248,9 +224,7 @@ public class DeploySettingsService : IDeploySettingsService
         return Map.RedactSecrets(await LoadRepoSettingsAsync(owner, repo));
     }
 
-    /// <summary>
-    /// Loads the stored repository settings, including secrets, after checking repository access.
-    /// </summary>
+    /// <summary>Loads the stored repository settings, including secrets, after checking repository access.</summary>
     /// <param name="owner">Owner of the repository.</param>
     /// <param name="repo">Name of the repository.</param>
     /// <returns>The stored settings, or empty settings that are saved when none exist.</returns>
@@ -270,9 +244,7 @@ public class DeploySettingsService : IDeploySettingsService
         return deploySettings;
     }
 
-    /// <summary>
-    /// Stores or updates the repo settings.
-    /// </summary>
+    /// <summary>Stores or updates the repo settings.</summary>
     /// <param name="input">Input object containing the operation's arguments.</param>
     /// <returns>The value after it has been stored or updated.</returns>
     public async Task<StatusResponse> SetRepoSettingsAsync(SetRepoSettingsInput input)
@@ -295,9 +267,7 @@ public class DeploySettingsService : IDeploySettingsService
         };
     }
 
-    /// <summary>
-    /// Normalizes the environment for consistent processing.
-    /// </summary>
+    /// <summary>Normalizes the environment for consistent processing.</summary>
     /// <param name="environment">Deployment environment involved in the operation.</param>
     /// <returns>Text produced or selected by the operation.</returns>
     public string NormalizeEnvironment(string environment)
@@ -305,9 +275,7 @@ public class DeploySettingsService : IDeploySettingsService
         return NormalizeEnvironmentRegex.Replace(environment, string.Empty);
     }
 
-    /// <summary>
-    /// Performs the load default owner settings operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the load default owner settings operation and returns its result.</summary>
     /// <returns>The deploy settings produced by the operation.</returns>
     private async Task<DeploySettings> LoadDefaultOwnerSettingsAsync()
     {
@@ -322,17 +290,13 @@ public class DeploySettingsService : IDeploySettingsService
         return deploySettings;
     }
 
-    /// <summary>
-    /// Retrieves the settings cache key.
-    /// </summary>
+    /// <summary>Retrieves the settings cache key.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <returns>Requested value, or its default when no value is available.</returns>
     private static string GetSettingsCacheKey(string owner, string repo) => $"{owner}:{repo}:settings";
 
-    /// <summary>
-    /// Retrieves the webhook settings cache key.
-    /// </summary>
+    /// <summary>Retrieves the webhook settings cache key.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <returns>Requested value, or its default when no value is available.</returns>

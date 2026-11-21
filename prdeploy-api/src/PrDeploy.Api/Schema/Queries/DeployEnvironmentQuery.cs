@@ -6,15 +6,11 @@ using Environment = PrDeploy.Api.Models.DeployEnvironments.Environment;
 
 namespace PrDeploy.Api.Schema.Queries;
 
-/// <summary>
-/// Defines queries for retrieving the deploy Environment Query.
-/// </summary>
+/// <summary>Defines queries for retrieving the deploy Environment Query.</summary>
 [ExtendObjectType("DeployQuery")]
 public class DeployEnvironmentQuery
 {
-    /// <summary>
-    /// Performs the deploy environments operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the deploy environments operation and returns its result.</summary>
     /// <param name="service">Object containing the service data used by the operation.</param>
     /// <param name="input">Input object containing the operation's arguments.</param>
     /// <returns>The collection of items produced by the operation.</returns>
@@ -22,9 +18,7 @@ public class DeployEnvironmentQuery
     public async Task<List<DeployEnvironment>> DeployEnvironments(IDeployEnvironmentService service, RepoQueryInput input) =>
         await service.ListAsync(input);
 
-    /// <summary>
-    /// Performs the environments operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the environments operation and returns its result.</summary>
     /// <param name="service">Object containing the service data used by the operation.</param>
     /// <param name="input">Input object containing the operation's arguments.</param>
     /// <returns>The collection of items produced by the operation.</returns>
@@ -32,9 +26,7 @@ public class DeployEnvironmentQuery
     public async Task<List<Environment>> Environments(IDeployEnvironmentService service, RepoQueryInput input) =>
         await service.ListEnvironmentsAsync(input);
 
-    /// <summary>
-    /// Performs the deploy state comparison operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the deploy state comparison operation and returns its result.</summary>
     /// <param name="service">Object containing the service data used by the operation.</param>
     /// <param name="input">Input object containing the operation's arguments.</param>
     /// <returns>The deploy state comparison produced by the operation.</returns>

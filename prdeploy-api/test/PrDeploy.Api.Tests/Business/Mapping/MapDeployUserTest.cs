@@ -4,14 +4,10 @@ using PrDeploy.Api.Tests.Framework;
 
 namespace PrDeploy.Api.Tests.Business.Mapping;
 
-/// <summary>
-/// Verifies how <see cref="Map.DeployUser"/> maps a GitHub user for display in the portal.
-/// </summary>
+/// <summary>Verifies how <see cref="Map.DeployUser"/> maps a GitHub user for display in the portal.</summary>
 public class MapDeployUserTest
 {
-    /// <summary>
-    /// The avatar image and profile page URLs are carried through from GitHub.
-    /// </summary>
+    /// <summary>The avatar image and profile page URLs are carried through from GitHub.</summary>
     [Fact]
     public void MapsAvatarAndProfileUrls()
     {
@@ -31,9 +27,7 @@ public class MapDeployUserTest
         Assert.Equal("https://github.com/ada", user.Url);
     }
 
-    /// <summary>
-    /// A user without a display name falls back to the login, and missing URLs stay null.
-    /// </summary>
+    /// <summary>A user without a display name falls back to the login, and missing URLs stay null.</summary>
     [Fact]
     public void FallsBackToLoginAndLeavesMissingUrlsNull()
     {
@@ -44,9 +38,7 @@ public class MapDeployUserTest
         Assert.Null(user.Url);
     }
 
-    /// <summary>
-    /// No GitHub user maps to no deploy user.
-    /// </summary>
+    /// <summary>No GitHub user maps to no deploy user.</summary>
     [Fact]
     public void ReturnsNullForNoUser()
     {

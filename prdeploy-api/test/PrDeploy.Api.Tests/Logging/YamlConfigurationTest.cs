@@ -5,14 +5,10 @@ using PrDeploy.Api.Configuration;
 
 namespace PrDeploy.Api.Tests.Logging;
 
-/// <summary>
-/// Verifies the YAML configuration provider and the swap of the default appsettings JSON sources.
-/// </summary>
+/// <summary>Verifies the YAML configuration provider and the swap of the default appsettings JSON sources.</summary>
 public class YamlConfigurationTest
 {
-    /// <summary>
-    /// Parses YAML text through the provider.
-    /// </summary>
+    /// <summary>Parses YAML text through the provider.</summary>
     /// <param name="yaml">YAML document.</param>
     /// <returns>The flattened configuration.</returns>
     private static IConfigurationRoot Build(string yaml)
@@ -21,9 +17,7 @@ public class YamlConfigurationTest
         return new ConfigurationBuilder().AddInMemoryCollection(data).Build();
     }
 
-    /// <summary>
-    /// Nested mappings and sequences must flatten to colon-delimited and indexed keys.
-    /// </summary>
+    /// <summary>Nested mappings and sequences must flatten to colon-delimited and indexed keys.</summary>
     [Fact]
     public void Parse_FlattensMappingsAndSequences()
     {
@@ -35,9 +29,7 @@ public class YamlConfigurationTest
         Assert.Equal("n", config["A:Items:0:Name"]);
     }
 
-    /// <summary>
-    /// Keys are case-insensitive, scalars keep their text, and quoted empty strings stay empty.
-    /// </summary>
+    /// <summary>Keys are case-insensitive, scalars keep their text, and quoted empty strings stay empty.</summary>
     [Fact]
     public void Parse_KeepsScalarsAndIsCaseInsensitive()
     {
@@ -51,9 +43,7 @@ public class YamlConfigurationTest
         Assert.Equal("null", config["Quoted"]);
     }
 
-    /// <summary>
-    /// An empty document yields no keys, and an empty sequence yields no children.
-    /// </summary>
+    /// <summary>An empty document yields no keys, and an empty sequence yields no children.</summary>
     [Fact]
     public void Parse_HandlesEmptyDocumentAndEmptySequence()
     {
@@ -61,9 +51,7 @@ public class YamlConfigurationTest
         Assert.Empty(Build("List: []\n").GetSection("List").GetChildren());
     }
 
-    /// <summary>
-    /// Malformed YAML and non-mapping roots must raise <see cref="FormatException"/>.
-    /// </summary>
+    /// <summary>Malformed YAML and non-mapping roots must raise <see cref="FormatException"/>.</summary>
     [Theory]
     [InlineData("A: [unclosed")]
     [InlineData("- a\n- b\n")]
@@ -72,9 +60,7 @@ public class YamlConfigurationTest
         Assert.Throws<FormatException>(() => Build(yaml));
     }
 
-    /// <summary>
-    /// The swap must replace the appsettings JSON sources in place, keeping later sources after them.
-    /// </summary>
+    /// <summary>The swap must replace the appsettings JSON sources in place, keeping later sources after them.</summary>
     [Fact]
     public void UseYamlAppSettings_ReplacesJsonSourcesInPlace()
     {
@@ -92,9 +78,7 @@ public class YamlConfigurationTest
         Assert.Equal(4, builder.Sources.Count);
     }
 
-    /// <summary>
-    /// Files on disk must load, with a later YAML file overriding an earlier one and a missing optional file ignored.
-    /// </summary>
+    /// <summary>Files on disk must load, with a later YAML file overriding an earlier one and a missing optional file ignored.</summary>
     [Fact]
     public void AddYamlFile_LoadsFilesWithOverrides()
     {
@@ -120,9 +104,7 @@ public class YamlConfigurationTest
         }
     }
 
-    /// <summary>
-    /// The shipped appsettings files must parse and carry the settings the API depends on.
-    /// </summary>
+    /// <summary>The shipped appsettings files must parse and carry the settings the API depends on.</summary>
     [Fact]
     public void ShippedAppSettings_ParseWithExpectedValues()
     {

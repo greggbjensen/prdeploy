@@ -6,14 +6,10 @@ using PrDeploy.Api.Tests.Framework;
 
 namespace PrDeploy.Api.Tests.Logging;
 
-/// <summary>
-/// Verifies that the deployment store decorator logs structured entries without leaking values.
-/// </summary>
+/// <summary>Verifies that the deployment store decorator logs structured entries without leaking values.</summary>
 public class LoggingDeploymentStoreTest
 {
-    /// <summary>
-    /// Confirms a read logs structured identifiers and whether a value was found.
-    /// </summary>
+    /// <summary>Confirms a read logs structured identifiers and whether a value was found.</summary>
     [Fact]
     public async Task GetAsync_LogsStructuredPropertiesAndFound()
     {
@@ -33,9 +29,7 @@ public class LoggingDeploymentStoreTest
         Assert.DoesNotContain("secret-value", entry.Message);
     }
 
-    /// <summary>
-    /// Confirms a missing value is reported as not found at the revision boundary.
-    /// </summary>
+    /// <summary>Confirms a missing value is reported as not found at the revision boundary.</summary>
     [Fact]
     public async Task GetHistoricalAsync_MissingValue_LogsNotFound()
     {
@@ -50,9 +44,7 @@ public class LoggingDeploymentStoreTest
         Assert.Equal(3, entry.Properties["Historical"]);
     }
 
-    /// <summary>
-    /// Confirms a write logs its identifiers but never the stored value.
-    /// </summary>
+    /// <summary>Confirms a write logs its identifiers but never the stored value.</summary>
     [Fact]
     public async Task SetAsync_LogsWithoutValue()
     {
@@ -68,9 +60,7 @@ public class LoggingDeploymentStoreTest
         Assert.DoesNotContain("super-secret", entry.Message);
     }
 
-    /// <summary>
-    /// Confirms failures are logged at Error and rethrown unchanged.
-    /// </summary>
+    /// <summary>Confirms failures are logged at Error and rethrown unchanged.</summary>
     [Fact]
     public async Task SetAsync_Failure_LogsErrorAndRethrows()
     {

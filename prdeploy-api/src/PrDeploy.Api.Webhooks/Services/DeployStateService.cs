@@ -4,9 +4,7 @@ using PrDeploy.Api.Models.DeployEnvironments;
 
 namespace PrDeploy.Api.Webhooks.Services;
 
-/// <summary>
-/// Tracks which service versions are deployed to each environment as deployment values.
-/// </summary>
+/// <summary>Tracks which service versions are deployed to each environment as deployment values.</summary>
 public class DeployStateService
 {
     public const string StableEnvironment = "stable";
@@ -16,9 +14,7 @@ public class DeployStateService
     private readonly WebhookContext _context;
     private readonly ILogger<DeployStateService> _logger;
 
-    /// <summary>
-    /// Initializes the instance with its required dependencies.
-    /// </summary>
+    /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="deploymentStore">Object containing the deployment store data used by the operation.</param>
     /// <param name="context">Request or application context used by the operation.</param>
     /// <param name="logger">Logger used to report operational information and errors.</param>
@@ -30,9 +26,7 @@ public class DeployStateService
         _logger = logger;
     }
 
-    /// <summary>
-    /// Synchronizes the stored values with the current source of truth.
-    /// </summary>
+    /// <summary>Synchronizes the stored values with the current source of truth.</summary>
     /// <param name="environment">Deployment environment involved in the operation.</param>
     public async Task SyncAsync(string environment)
     {
@@ -40,9 +34,7 @@ public class DeployStateService
         await SetAsync(environment, stableState);
     }
 
-    /// <summary>
-    /// Updates the target value using the supplied inputs.
-    /// </summary>
+    /// <summary>Updates the target value using the supplied inputs.</summary>
     /// <param name="environment">Deployment environment involved in the operation.</param>
     /// <param name="pullNumber">Number identifying the pull request.</param>
     /// <param name="services">Services to include in the operation.</param>
@@ -67,9 +59,7 @@ public class DeployStateService
         return state;
     }
 
-    /// <summary>
-    /// Retrieves the requested value.
-    /// </summary>
+    /// <summary>Retrieves the requested value.</summary>
     /// <param name="environment">Deployment environment involved in the operation.</param>
     /// <param name="historical">Number of revisions to move back from the latest value; zero selects the latest revision.</param>
     /// <returns>Requested value, or its default when no value is available.</returns>
@@ -97,9 +87,7 @@ public class DeployStateService
         return value;
     }
 
-    /// <summary>
-    /// Compares the supplied values and returns their differences.
-    /// </summary>
+    /// <summary>Compares the supplied values and returns their differences.</summary>
     /// <param name="sourceEnvironment">Source environment or value for the operation.</param>
     /// <param name="targetEnvironment">Target environment or value for the operation.</param>
     /// <param name="sourceHistorical">Revision offset to use when reading the source deployment state.</param>
@@ -122,9 +110,7 @@ public class DeployStateService
         };
     }
 
-    /// <summary>
-    /// Stores or updates the supplied value.
-    /// </summary>
+    /// <summary>Stores or updates the supplied value.</summary>
     /// <param name="environment">Deployment environment involved in the operation.</param>
     /// <param name="state">Deployment state snapshot to persist for the environment.</param>
     private async Task SetAsync(string environment, DeployState state)
@@ -133,9 +119,7 @@ public class DeployStateService
         await _deploymentStore.SetAsync(_context.Owner, _context.Repo, name, state);
     }
 
-    /// <summary>
-    /// Builds the storage key used to locate deployment state for an environment.
-    /// </summary>
+    /// <summary>Builds the storage key used to locate deployment state for an environment.</summary>
     /// <param name="environment">Deployment environment involved in the operation.</param>
     /// <returns>The normalized storage key used to locate deployment state for an environment.</returns>
     private static string GetVariableName(string environment) =>

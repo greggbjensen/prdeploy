@@ -2,14 +2,10 @@ using PrDeploy.Api.Webhooks.Utils;
 
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
-/// <summary>
-/// Contains tests that verify Slack markdown behavior.
-/// </summary>
+/// <summary>Contains tests that verify Slack markdown behavior.</summary>
 public class SlackMarkdownTest
 {
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: converts inline markdown.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: converts inline markdown.</summary>
     /// <param name="markdown">Text used as the markdown.</param>
     /// <param name="expected">Text used as the expected.</param>
     [Theory]
@@ -32,9 +28,7 @@ public class SlackMarkdownTest
         Assert.Equal(expected, SlackMarkdown.Convert(markdown));
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: converts lists.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: converts lists.</summary>
     [Fact]
     public void Convert_ConvertsLists()
     {
@@ -42,9 +36,7 @@ public class SlackMarkdownTest
         Assert.Equal("•   one\n•   two\n  •   nested\n☑ done\n☐ todo\n1. first", result);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: keeps code blocks untouched.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: keeps code blocks untouched.</summary>
     [Fact]
     public void Convert_KeepsCodeBlocksUntouched()
     {
@@ -52,9 +44,7 @@ public class SlackMarkdownTest
         Assert.Equal("Before *x*\n\n```\nvar a = b < c && **d**;\n```\n\nAfter _y_", result);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: collapses extra blank lines.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: collapses extra blank lines.</summary>
     [Fact]
     public void Convert_CollapsesExtraBlankLines()
     {

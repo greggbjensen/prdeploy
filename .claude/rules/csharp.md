@@ -22,6 +22,11 @@ Follow the target framework, SDK, language version, package-management setup, an
 - Keep secrets and sensitive data out of source, logs, traces, and exception messages.
 - Use the project's established HTTP client and dependency-injection patterns for outbound requests.
 
+## XML Documentation Comments
+
+- Write every `<summary>` element on a single line, with the opening tag, text, and closing tag together: `/// <summary>Gets the deploy workflow.</summary>`. Never split a summary across multiple `///` lines; condense longer explanations into one sentence or move the detail into `<remarks>`.
+- Apply this to all C# code, including private members and tests. Other tags such as `<param>`, `<returns>`, and `<value>` stay on their own lines.
+
 ## Tests
 
 - Use the test framework and conventions already present in the solution.

@@ -10,9 +10,7 @@ using PrDeploy.Api.Webhooks.Utils;
 
 namespace PrDeploy.Api.Webhooks.Services;
 
-/// <summary>
-/// Coordinates Jira operations and their collaborators.
-/// </summary>
+/// <summary>Coordinates Jira operations and their collaborators.</summary>
 public partial class JiraService
 {
     public const string HttpClientName = "jira";
@@ -21,9 +19,7 @@ public partial class JiraService
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<JiraService> _logger;
 
-    /// <summary>
-    /// Initializes the instance with its required dependencies.
-    /// </summary>
+    /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="context">Request or application context used by the operation.</param>
     /// <param name="httpClientFactory">Object containing the HTTP client factory data used by the operation.</param>
     /// <param name="logger">Logger used to report operational information and errors.</param>
@@ -34,9 +30,7 @@ public partial class JiraService
         _logger = logger;
     }
 
-    /// <summary>
-    /// Finds and returns the associated issues.
-    /// </summary>
+    /// <summary>Finds and returns the associated issues.</summary>
     /// <param name="branchName">Branch associated with the operation.</param>
     /// <returns>Items matching the supplied criteria.</returns>
     public async Task<List<JiraIssue>> ListAssociatedIssuesAsync(string branchName)
@@ -97,9 +91,7 @@ public partial class JiraService
         }
     }
 
-    /// <summary>
-    /// Retrieves the base URL.
-    /// </summary>
+    /// <summary>Retrieves the base URL.</summary>
     /// <param name="self">Text used as the self.</param>
     /// <param name="host">Text used as the host.</param>
     /// <returns>Requested value, or its default when no value is available.</returns>
@@ -109,81 +101,57 @@ public partial class JiraService
         return url.GetLeftPart(UriPartial.Authority);
     }
 
-    /// <summary>
-    /// Performs the Jira issue regex operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the Jira issue regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>
     [GeneratedRegex(@"[a-z]{2,6}-\d+", RegexOptions.IgnoreCase)]
     private static partial Regex JiraIssueRegex();
 
-    /// <summary>
-    /// Represents a response containing the jira Search Response.
-    /// </summary>
+    /// <summary>Represents a response containing the jira Search Response.</summary>
     private class JiraSearchResponse
     {
-        /// <summary>
-        /// Gets or sets the issues.
-        /// </summary>
+        /// <summary>Gets or sets the issues.</summary>
         /// <value>Current issues value.</value>
         [JsonPropertyName("issues")]
         public List<JiraSearchIssue>? Issues { get; set; }
     }
 
-    /// <summary>
-    /// Represents Jira search issue data used by the application.
-    /// </summary>
+    /// <summary>Represents Jira search issue data used by the application.</summary>
     private class JiraSearchIssue
     {
-        /// <summary>
-        /// Gets or sets the key.
-        /// </summary>
+        /// <summary>Gets or sets the key.</summary>
         /// <value>Current key value.</value>
         [JsonPropertyName("key")]
         public string? Key { get; set; }
 
-        /// <summary>
-        /// Gets or sets the self.
-        /// </summary>
+        /// <summary>Gets or sets the self.</summary>
         /// <value>Current self value.</value>
         [JsonPropertyName("self")]
         public string? Self { get; set; }
 
-        /// <summary>
-        /// Gets or sets the fields.
-        /// </summary>
+        /// <summary>Gets or sets the fields.</summary>
         /// <value>Current fields value.</value>
         [JsonPropertyName("fields")]
         public JiraSearchFields? Fields { get; set; }
     }
 
-    /// <summary>
-    /// Represents Jira search fields data used by the application.
-    /// </summary>
+    /// <summary>Represents Jira search fields data used by the application.</summary>
     private class JiraSearchFields
     {
-        /// <summary>
-        /// Gets or sets the summary.
-        /// </summary>
+        /// <summary>Gets or sets the summary.</summary>
         /// <value>Current summary value.</value>
         [JsonPropertyName("summary")]
         public string? Summary { get; set; }
 
-        /// <summary>
-        /// Gets or sets the issue type.
-        /// </summary>
+        /// <summary>Gets or sets the issue type.</summary>
         /// <value>Current issue type value.</value>
         [JsonPropertyName("issuetype")]
         public JiraIssueType? IssueType { get; set; }
     }
 
-    /// <summary>
-    /// Represents Jira issue type data used by the application.
-    /// </summary>
+    /// <summary>Represents Jira issue type data used by the application.</summary>
     private class JiraIssueType
     {
-        /// <summary>
-        /// Gets or sets the name.
-        /// </summary>
+        /// <summary>Gets or sets the name.</summary>
         /// <value>Current name value.</value>
         [JsonPropertyName("name")]
         public string? Name { get; set; }

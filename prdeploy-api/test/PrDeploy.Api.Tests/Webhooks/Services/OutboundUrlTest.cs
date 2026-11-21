@@ -2,14 +2,10 @@ using PrDeploy.Api.Webhooks.Utils;
 
 namespace PrDeploy.Api.Tests.Webhooks.Services;
 
-/// <summary>
-/// Contains tests that verify which settings URLs the API is allowed to call.
-/// </summary>
+/// <summary>Contains tests that verify which settings URLs the API is allowed to call.</summary>
 public class OutboundUrlTest
 {
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: public HTTPS URLs are allowed.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: public HTTPS URLs are allowed.</summary>
     /// <param name="url">URL to check.</param>
     [Theory]
     [InlineData("https://hooks.slack.com/services/T000/B000/XXXX")]
@@ -22,10 +18,7 @@ public class OutboundUrlTest
         Assert.Equal(url, uri.OriginalString);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: non-HTTPS, relative, credentialed, and internal addresses
-    /// are rejected.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: non-HTTPS, relative, credentialed, and internal addresses are rejected.</summary>
     /// <param name="url">URL to check.</param>
     [Theory]
     [InlineData(null)]

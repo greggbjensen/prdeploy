@@ -4,17 +4,13 @@ using HotChocolate.Execution;
 
 namespace PrDeploy.Api.Filters
 {
-    /// <summary>
-    /// Represents sanitized error filter data used by the application.
-    /// </summary>
+    /// <summary>Represents sanitized error filter data used by the application.</summary>
     public class SanitizedErrorFilter : IErrorFilter
     {
         private readonly ILogger<SanitizedErrorFilter> _logger;
         private readonly IHostEnvironment _hostEnvironment;
 
-        /// <summary>
-        /// Initializes the instance with its required dependencies.
-        /// </summary>
+        /// <summary>Initializes the instance with its required dependencies.</summary>
         /// <param name="logger">Logger used to report operational information and errors.</param>
         /// <param name="hostEnvironment">Object containing the host environment data used by the operation.</param>
         public SanitizedErrorFilter(ILogger<SanitizedErrorFilter> logger, IHostEnvironment hostEnvironment)
@@ -23,9 +19,7 @@ namespace PrDeploy.Api.Filters
             _hostEnvironment = hostEnvironment;
         }
 
-        /// <summary>
-        /// Performs the on error operation and returns its result.
-        /// </summary>
+        /// <summary>Performs the on error operation and returns its result.</summary>
         /// <param name="error">Object containing the error data used by the operation.</param>
         /// <returns>The i error produced by the operation.</returns>
         public IError OnError(IError error)

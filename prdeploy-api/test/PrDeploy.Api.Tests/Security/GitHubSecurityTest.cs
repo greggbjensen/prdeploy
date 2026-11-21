@@ -9,9 +9,7 @@ using PrDeploy.Api.Business.Security;
 
 namespace PrDeploy.Api.Tests.Security;
 
-/// <summary>
-/// Verifies how <see cref="GitHubSecurity"/> decides repository and owner access from GitHub responses.
-/// </summary>
+/// <summary>Verifies how <see cref="GitHubSecurity"/> decides repository and owner access from GitHub responses.</summary>
 public class GitHubSecurityTest : IDisposable
 {
     private const string Token = "gh-token";
@@ -19,27 +17,21 @@ public class GitHubSecurityTest : IDisposable
     private readonly Mock<IGitHubClient> _github = new();
     private readonly MemoryCache _cache = new(new MemoryCacheOptions());
 
-    /// <summary>
-    /// Makes every user an active member of any organization by default; tests narrow this where needed.
-    /// </summary>
+    /// <summary>Makes every user an active member of any organization by default; tests narrow this where needed.</summary>
     public GitHubSecurityTest()
     {
         _github.Setup(g => g.Organization.Member.GetOrganizationMembership(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(Membership(MembershipState.Active));
     }
 
-    /// <summary>
-    /// Releases the in-memory cache used to store access decisions.
-    /// </summary>
+    /// <summary>Releases the in-memory cache used to store access decisions.</summary>
     public void Dispose()
     {
         _cache.Dispose();
         GC.SuppressFinalize(this);
     }
 
-    /// <summary>
-    /// Builds the security service under test for the supplied caller.
-    /// </summary>
+    /// <summary>Builds the security service under test for the supplied caller.</summary>
     /// <param name="token">GitHub token of the caller; empty simulates an anonymous request.</param>
     /// <param name="login">GitHub login of the caller.</param>
     /// <returns>Security service wired to the mocked GitHub client and shared cache.</returns>
@@ -58,9 +50,7 @@ public class GitHubSecurityTest : IDisposable
             organizationAccess);
     }
 
-    /// <summary>
-    /// Creates an Octokit repository whose permissions block reflects the authenticated user.
-    /// </summary>
+    /// <summary>Creates an Octokit repository whose permissions block reflects the authenticated user.</summary>
     /// <param name="permissions">Permissions GitHub reports for the caller, or null when omitted.</param>
     /// <returns>Repository model carrying the supplied permissions.</returns>
     private static Octokit.Repository RepositoryWith(RepositoryPermissions? permissions)
@@ -71,9 +61,7 @@ public class GitHubSecurityTest : IDisposable
         return repository;
     }
 
-    /// <summary>
-    /// Creates Octokit repository permissions with only the named levels granted.
-    /// </summary>
+    /// <summary>Creates Octokit repository permissions with only the named levels granted.</summary>
     /// <param name="admin">Whether admin permission is granted.</param>
     /// <param name="maintain">Whether maintain permission is granted.</param>
     /// <param name="push">Whether push (write) permission is granted.</param>
@@ -83,9 +71,7 @@ public class GitHubSecurityTest : IDisposable
     private static RepositoryPermissions Permissions(bool admin = false, bool maintain = false, bool push = false,
         bool triage = false, bool pull = false) => new(admin, maintain, push, triage, pull);
 
-    /// <summary>
-    /// Creates an Octokit organization membership in the supplied state.
-    /// </summary>
+    /// <summary>Creates an Octokit organization membership in the supplied state.</summary>
     /// <param name="state">Membership state reported by GitHub.</param>
     /// <returns>Organization membership model with the requested state.</returns>
     private static OrganizationMembership Membership(MembershipState state)
@@ -96,9 +82,7 @@ public class GitHubSecurityTest : IDisposable
         return membership;
     }
 
-    /// <summary>
-    /// Confirms any write level permission (as held by outside collaborators and team members) grants access.
-    /// </summary>
+    /// <summary>Confirms any write level permission (as held by outside collaborators and team members) grants access.</summary>
     /// <param name="admin">Whether admin permission is granted.</param>
     /// <param name="maintain">Whether maintain permission is granted.</param>
     /// <param name="push">Whether push permission is granted.</param>
@@ -115,9 +99,7 @@ public class GitHubSecurityTest : IDisposable
         Assert.True(await CreateSecurity().HasRepoAccessAsync("journosa", "journosa"));
     }
 
-    /// <summary>
-    /// Confirms read and triage users, and public repository visitors, cannot manage deployments.
-    /// </summary>
+    /// <summary>Confirms read and triage users, and public repository visitors, cannot manage deployments.</summary>
     /// <param name="triage">Whether triage permission is granted alongside read.</param>
     [Theory]
     [InlineData(false)]
@@ -130,9 +112,7 @@ public class GitHubSecurityTest : IDisposable
         Assert.False(await CreateSecurity().HasRepoAccessAsync("o", "r"));
     }
 
-    /// <summary>
-    /// Confirms a repository response without a permissions block is treated as no access.
-    /// </summary>
+    /// <summary>Confirms a repository response without a permissions block is treated as no access.</summary>
     [Fact]
     public async Task HasRepoAccessAsync_PermissionsMissing_ReturnsFalse()
     {
@@ -141,9 +121,7 @@ public class GitHubSecurityTest : IDisposable
         Assert.False(await CreateSecurity().HasRepoAccessAsync("o", "r"));
     }
 
-    /// <summary>
-    /// Confirms a repository hidden from the token (GitHub 404) is denied rather than thrown.
-    /// </summary>
+    /// <summary>Confirms a repository hidden from the token (GitHub 404) is denied rather than thrown.</summary>
     [Fact]
     public async Task HasRepoAccessAsync_RepositoryNotVisible_ReturnsFalse()
     {
@@ -153,9 +131,7 @@ public class GitHubSecurityTest : IDisposable
         Assert.False(await CreateSecurity().HasRepoAccessAsync("o", "r"));
     }
 
-    /// <summary>
-    /// Confirms a granted decision is cached per token, case-insensitively, while denials are re-checked.
-    /// </summary>
+    /// <summary>Confirms a granted decision is cached per token, case-insensitively, while denials are re-checked.</summary>
     [Fact]
     public async Task HasRepoAccessAsync_Granted_IsCachedCaseInsensitively()
     {
@@ -169,9 +145,7 @@ public class GitHubSecurityTest : IDisposable
         _github.Verify(g => g.Repository.Get(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
     }
 
-    /// <summary>
-    /// Confirms a cached grant for one token is not reused for a different token.
-    /// </summary>
+    /// <summary>Confirms a cached grant for one token is not reused for a different token.</summary>
     [Fact]
     public async Task HasRepoAccessAsync_DifferentToken_DoesNotReuseCache()
     {
@@ -183,9 +157,7 @@ public class GitHubSecurityTest : IDisposable
         Assert.False(await CreateSecurity("token-b", "someone-else").HasRepoAccessAsync("o", "r"));
     }
 
-    /// <summary>
-    /// Confirms the guard throws Forbidden when the user lacks write access.
-    /// </summary>
+    /// <summary>Confirms the guard throws Forbidden when the user lacks write access.</summary>
     [Fact]
     public async Task GuardRepoAsync_NoWriteAccess_ThrowsForbidden()
     {
@@ -196,10 +168,7 @@ public class GitHubSecurityTest : IDisposable
         Assert.Equal(HttpStatusCode.Forbidden, ex.StatusCode);
     }
 
-    /// <summary>
-    /// Confirms a contributor is denied when the repository owner is not in the allowed organizations,
-    /// without asking GitHub about the repository.
-    /// </summary>
+    /// <summary>Confirms a contributor is denied when the repository owner is not in the allowed organizations, without asking GitHub about the repository.</summary>
     [Fact]
     public async Task HasRepoAccessAsync_OwnerNotAllowed_ReturnsFalse()
     {
@@ -211,10 +180,7 @@ public class GitHubSecurityTest : IDisposable
         _github.Verify(g => g.Repository.Get(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
-    /// <summary>
-    /// Confirms an outside collaborator with push access is denied when they are not a member of the
-    /// allowed organization that owns the repository.
-    /// </summary>
+    /// <summary>Confirms an outside collaborator with push access is denied when they are not a member of the allowed organization that owns the repository.</summary>
     [Fact]
     public async Task HasRepoAccessAsync_ContributorButNotOrgMember_ReturnsFalse()
     {
@@ -226,9 +192,7 @@ public class GitHubSecurityTest : IDisposable
         Assert.False(await CreateSecurity().HasRepoAccessAsync("journosa", "journosa"));
     }
 
-    /// <summary>
-    /// Confirms an owner outside the allowed organizations is denied even for an active member.
-    /// </summary>
+    /// <summary>Confirms an owner outside the allowed organizations is denied even for an active member.</summary>
     [Fact]
     public async Task HasOwnerAccessAsync_OwnerNotAllowed_ReturnsFalseWithoutLookup()
     {
@@ -238,9 +202,7 @@ public class GitHubSecurityTest : IDisposable
             Times.Never);
     }
 
-    /// <summary>
-    /// Confirms an active organization member has owner access.
-    /// </summary>
+    /// <summary>Confirms an active organization member has owner access.</summary>
     [Fact]
     public async Task HasOwnerAccessAsync_ActiveMember_ReturnsTrue()
     {
@@ -250,9 +212,7 @@ public class GitHubSecurityTest : IDisposable
         Assert.True(await CreateSecurity().HasOwnerAccessAsync("journosa"));
     }
 
-    /// <summary>
-    /// Confirms a pending invitation does not grant owner access.
-    /// </summary>
+    /// <summary>Confirms a pending invitation does not grant owner access.</summary>
     [Fact]
     public async Task HasOwnerAccessAsync_PendingMember_ReturnsFalse()
     {
@@ -262,9 +222,7 @@ public class GitHubSecurityTest : IDisposable
         Assert.False(await CreateSecurity().HasOwnerAccessAsync("o"));
     }
 
-    /// <summary>
-    /// Confirms an outside collaborator (not an organization member) is denied owner access.
-    /// </summary>
+    /// <summary>Confirms an outside collaborator (not an organization member) is denied owner access.</summary>
     [Fact]
     public async Task HasOwnerAccessAsync_NotMember_ReturnsFalse()
     {
@@ -274,9 +232,7 @@ public class GitHubSecurityTest : IDisposable
         Assert.False(await CreateSecurity().HasOwnerAccessAsync("o"));
     }
 
-    /// <summary>
-    /// Confirms a user owns their personal account without calling the organization API.
-    /// </summary>
+    /// <summary>Confirms a user owns their personal account without calling the organization API.</summary>
     [Fact]
     public async Task HasOwnerAccessAsync_OwnAccount_ReturnsTrueWithoutMembershipLookup()
     {
@@ -286,9 +242,7 @@ public class GitHubSecurityTest : IDisposable
             Times.Never);
     }
 
-    /// <summary>
-    /// Confirms anonymous callers are denied for both repository and owner checks.
-    /// </summary>
+    /// <summary>Confirms anonymous callers are denied for both repository and owner checks.</summary>
     [Fact]
     public async Task NoToken_DeniesRepoAndOwner()
     {
@@ -298,10 +252,7 @@ public class GitHubSecurityTest : IDisposable
         Assert.False(await security.HasOwnerAccessAsync("o"));
     }
 
-    /// <summary>
-    /// Confirms names that are not valid on GitHub, including path segments that could change storage keys or API
-    /// paths, are denied without calling GitHub.
-    /// </summary>
+    /// <summary>Confirms names that are not valid on GitHub, including path segments that could change storage keys or API paths, are denied without calling GitHub.</summary>
     /// <param name="owner">Owner name.</param>
     /// <param name="repo">Repository name.</param>
     [Theory]
@@ -323,9 +274,7 @@ public class GitHubSecurityTest : IDisposable
             Times.Never);
     }
 
-    /// <summary>
-    /// Confirms valid GitHub names, including dots, underscores, and hyphens, pass name validation.
-    /// </summary>
+    /// <summary>Confirms valid GitHub names, including dots, underscores, and hyphens, pass name validation.</summary>
     /// <param name="owner">Owner name.</param>
     /// <param name="repo">Repository name.</param>
     [Theory]

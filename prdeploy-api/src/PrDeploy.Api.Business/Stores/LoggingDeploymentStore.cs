@@ -4,10 +4,7 @@ using PrDeploy.Api.Business.Stores.Interfaces;
 
 namespace PrDeploy.Api.Business.Stores;
 
-/// <summary>
-/// Decorates a provider-specific <see cref="IDeploymentStore"/> with structured logging, so every storage
-/// provider (local, Azure, AWS, GCP) and every consumer (API and webhooks) is logged the same way.
-/// </summary>
+/// <summary>Decorates a provider-specific <see cref="IDeploymentStore"/> with structured logging, so every storage provider (local, Azure, AWS, GCP) and every consumer (API and webhooks) is logged the same way.</summary>
 /// <remarks>
 /// Values are never logged because they may be marked secure. Only the owner, repo, value name, revision offset,
 /// duration, and whether a value was found are recorded. Reads and writes are logged at Debug; failures are
@@ -18,9 +15,7 @@ public sealed class LoggingDeploymentStore : IDeploymentStore
     private readonly IDeploymentStore _inner;
     private readonly ILogger<LoggingDeploymentStore> _logger;
 
-    /// <summary>
-    /// Wraps a store with logging.
-    /// </summary>
+    /// <summary>Wraps a store with logging.</summary>
     /// <param name="inner">Provider-specific store that performs the actual reads and writes.</param>
     /// <param name="logger">Logger used to report storage activity and failures.</param>
     public LoggingDeploymentStore(IDeploymentStore inner, ILogger<LoggingDeploymentStore> logger)
@@ -57,9 +52,7 @@ public sealed class LoggingDeploymentStore : IDeploymentStore
     public Task SetAsync<T>(string name, T value, bool isSecure = false) =>
         WriteAsync(() => _inner.SetAsync(name, value, isSecure), null, null, name, isSecure);
 
-    /// <summary>
-    /// Runs a read against the inner store and logs its outcome without ever logging the value.
-    /// </summary>
+    /// <summary>Runs a read against the inner store and logs its outcome without ever logging the value.</summary>
     /// <param name="read">Read to run against the inner store.</param>
     /// <param name="owner">Repository owner, or null for global values.</param>
     /// <param name="repo">Repository name, or null for owner or global values.</param>
@@ -88,9 +81,7 @@ public sealed class LoggingDeploymentStore : IDeploymentStore
         }
     }
 
-    /// <summary>
-    /// Runs a write against the inner store and logs its outcome without ever logging the value.
-    /// </summary>
+    /// <summary>Runs a write against the inner store and logs its outcome without ever logging the value.</summary>
     /// <param name="write">Write to run against the inner store.</param>
     /// <param name="owner">Repository owner, or null for global values.</param>
     /// <param name="repo">Repository name, or null for owner or global values.</param>

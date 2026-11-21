@@ -17,14 +17,10 @@ using RestSharp;
 
 namespace PrDeploy.Api.Tests.Auth;
 
-/// <summary>
-/// Contains tests that verify git hub authentication client behavior.
-/// </summary>
+/// <summary>Contains tests that verify git hub authentication client behavior.</summary>
 public class GitHubAuthClientTest
 {
-    /// <summary>
-    /// Creates an organization access double that treats every user as a member of an allowed organization.
-    /// </summary>
+    /// <summary>Creates an organization access double that treats every user as a member of an allowed organization.</summary>
     /// <returns>Organization access that always allows sign in.</returns>
     private static IOrganizationAccess AllowAllOrganizations()
     {
@@ -33,9 +29,7 @@ public class GitHubAuthClientTest
         return access.Object;
     }
 
-    /// <summary>
-    /// Verifies that RestSharp maps GitHub's JSON token field names.
-    /// </summary>
+    /// <summary>Verifies that RestSharp maps GitHub's JSON token field names.</summary>
     [Fact]
     public async Task PostAsync_MapsGitHubTokenResponseFields()
     {
@@ -64,9 +58,7 @@ public class GitHubAuthClientTest
         Assert.Equal("bearer", response.TokenType);
     }
 
-    /// <summary>
-    /// Verifies that access token exchange parameters are posted in an encoded form body and exchanged for a signed JWT.
-    /// </summary>
+    /// <summary>Verifies that access token exchange parameters are posted in an encoded form body and exchanged for a signed JWT.</summary>
     [Fact]
     public async Task GetAccessTokenAsync_PostsOAuthParametersInFormBody()
     {
@@ -152,9 +144,7 @@ public class GitHubAuthClientTest
         cipher.Verify(x => x.Encrypt("ghu_test"), Times.Once);
     }
 
-    /// <summary>
-    /// Verifies that an OAuth error response logs sanitized error details and throws an <see cref="HttpRequestException"/>.
-    /// </summary>
+    /// <summary>Verifies that an OAuth error response logs sanitized error details and throws an <see cref="HttpRequestException"/>.</summary>
     [Fact]
     public async Task GetAccessTokenAsync_WhenGitHubReturnsOAuthError_LogsWarningAndThrows()
     {
@@ -220,10 +210,7 @@ public class GitHubAuthClientTest
         Assert.DoesNotContain("do-not-log", entry.Message, StringComparison.Ordinal);
     }
 
-    /// <summary>
-    /// Verifies that a token response that is not valid JSON is logged as a structured warning that carries the
-    /// parse exception and HTTP status but never the response body.
-    /// </summary>
+    /// <summary>Verifies that a token response that is not valid JSON is logged as a structured warning that carries the parse exception and HTTP status but never the response body.</summary>
     [Fact]
     public async Task GetAccessTokenAsync_InvalidJsonResponse_LogsParseWarningWithoutBody()
     {
@@ -270,9 +257,7 @@ public class GitHubAuthClientTest
         Assert.All(logger.Entries, e => Assert.DoesNotContain("secret-body", e.Message, StringComparison.Ordinal));
     }
 
-    /// <summary>
-    /// Verifies that an Octokit authorization failure during user info lookup is translated into an <see cref="HttpRequestException"/> with the upstream status code.
-    /// </summary>
+    /// <summary>Verifies that an Octokit authorization failure during user info lookup is translated into an <see cref="HttpRequestException"/> with the upstream status code.</summary>
     [Fact]
     public async Task GetUserInfoAsync_WhenGitHubThrowsAuthorizationException_ThrowsHttpRequestExceptionWithUnauthorizedStatus()
     {
@@ -306,10 +291,7 @@ public class GitHubAuthClientTest
         Assert.Equal(401, entry.Properties["StatusCode"]);
     }
 
-    /// <summary>
-    /// Verifies that a user who is not a member of any allowed organization is rejected with Forbidden
-    /// and no JWT is issued.
-    /// </summary>
+    /// <summary>Verifies that a user who is not a member of any allowed organization is rejected with Forbidden and no JWT is issued.</summary>
     [Fact]
     public async Task GetAccessTokenAsync_NotMemberOfAllowedOrganization_ThrowsForbidden()
     {
@@ -352,9 +334,7 @@ public class GitHubAuthClientTest
         cipher.Verify(x => x.Encrypt(It.IsAny<string>()), Times.Never);
     }
 
-    /// <summary>
-    /// Verifies that a JWT issued by <see cref="GitHubAuthClient.GetAccessTokenAsync"/> is accepted by <see cref="PrDeploy.Api.Auth.GitHubAuthenticationHandler"/> and restores the decrypted GitHub token into <see cref="ISecurityContext"/>.
-    /// </summary>
+    /// <summary>Verifies that a JWT issued by <see cref="GitHubAuthClient.GetAccessTokenAsync"/> is accepted by <see cref="PrDeploy.Api.Auth.GitHubAuthenticationHandler"/> and restores the decrypted GitHub token into <see cref="ISecurityContext"/>.</summary>
     [Fact]
     public async Task GetAccessTokenAsync_IssuedJwt_AuthenticatesAndDecryptsGitHubTokenInHandler()
     {

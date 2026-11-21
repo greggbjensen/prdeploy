@@ -5,9 +5,7 @@ using PrDeploy.Api.Webhooks.Options;
 
 namespace PrDeploy.Api.Webhooks.Events;
 
-/// <summary>
-/// Processes queued webhook events in the background with limited concurrency.
-/// </summary>
+/// <summary>Processes queued webhook events in the background with limited concurrency.</summary>
 public class WebhookEventWorker : BackgroundService
 {
     private readonly WebhookEventQueue _queue;
@@ -15,9 +13,7 @@ public class WebhookEventWorker : BackgroundService
     private readonly GitHubAppOptions _options;
     private readonly ILogger<WebhookEventWorker> _logger;
 
-    /// <summary>
-    /// Initializes the instance with its required dependencies.
-    /// </summary>
+    /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="queue">Object containing the queue data used by the operation.</param>
     /// <param name="dispatcher">Object containing the dispatcher data used by the operation.</param>
     /// <param name="options">Object containing the options data used by the operation.</param>
@@ -31,9 +27,7 @@ public class WebhookEventWorker : BackgroundService
         _logger = logger;
     }
 
-    /// <summary>
-    /// Performs the execute operation.
-    /// </summary>
+    /// <summary>Performs the execute operation.</summary>
     /// <param name="stoppingToken">Object containing the stopping token data used by the operation.</param>
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -44,9 +38,7 @@ public class WebhookEventWorker : BackgroundService
         return Task.WhenAll(consumers);
     }
 
-    /// <summary>
-    /// Performs the consume operation.
-    /// </summary>
+    /// <summary>Performs the consume operation.</summary>
     /// <param name="stoppingToken">Object containing the stopping token data used by the operation.</param>
     private async Task ConsumeAsync(CancellationToken stoppingToken)
     {

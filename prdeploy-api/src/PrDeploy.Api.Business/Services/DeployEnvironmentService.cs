@@ -13,9 +13,7 @@ using Environment = PrDeploy.Api.Models.DeployEnvironments.Environment;
 
 namespace PrDeploy.Api.Business.Services;
 
-/// <summary>
-/// Coordinates deploy environment operations and their collaborators.
-/// </summary>
+/// <summary>Coordinates deploy environment operations and their collaborators.</summary>
 public class DeployEnvironmentService : IDeployEnvironmentService
 {
     private const string DeployStatePrefix = "DEPLOY_STATE_";
@@ -29,9 +27,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
     private readonly IValidator<RepoQueryInput> _environmentsInputValidator;
     private readonly ILogger<DeployEnvironmentService> _logger;
 
-    /// <summary>
-    /// Initializes the instance with its required dependencies.
-    /// </summary>
+    /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="gitHubClient">Object containing the git hub client data used by the operation.</param>
     /// <param name="deploySettingsService">Object containing the deploy settings service data used by the operation.</param>
     /// <param name="pullRequestService">Object containing the pull request service data used by the operation.</param>
@@ -56,9 +52,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
         _deployStateComparisonInputValidator = deployStateComparisonInputValidator;
     }
 
-    /// <summary>
-    /// Finds and returns the matching items.
-    /// </summary>
+    /// <summary>Finds and returns the matching items.</summary>
     /// <param name="input">Input object containing the operation's arguments.</param>
     /// <returns>Items matching the supplied criteria.</returns>
     public async Task<List<DeployEnvironment>> ListAsync(RepoQueryInput input)
@@ -111,9 +105,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
         return deployEnvironments;
     }
 
-    /// <summary>
-    /// Finds and returns the environments.
-    /// </summary>
+    /// <summary>Finds and returns the environments.</summary>
     /// <param name="input">Input object containing the operation's arguments.</param>
     /// <returns>Items matching the supplied criteria.</returns>
     public async Task<List<Environment>> ListEnvironmentsAsync(RepoQueryInput input)
@@ -132,9 +124,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
         return environments;
     }
 
-    /// <summary>
-    /// Releases the resource so it can be used again.
-    /// </summary>
+    /// <summary>Releases the resource so it can be used again.</summary>
     /// <param name="input">Input object containing the operation's arguments.</param>
     /// <returns>The status response produced by the operation.</returns>
     public async Task<StatusResponse> FreeAsync(PullDeployInput input)
@@ -145,9 +135,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
             $"/free {input.Environment.ToLower()}");
     }
 
-    /// <summary>
-    /// Performs the deploy operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the deploy operation and returns its result.</summary>
     /// <param name="input">Input object containing the operation's arguments.</param>
     /// <returns>The status response produced by the operation.</returns>
     public async Task<StatusResponse> DeployAsync(EnvironmentDeployInput input)
@@ -162,9 +150,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
             $"/deploy {input.Environment.ToLower()}{forceString}{retainString}");
     }
 
-    /// <summary>
-    /// Restores the deployment to a previous state.
-    /// </summary>
+    /// <summary>Restores the deployment to a previous state.</summary>
     /// <param name="input">Input object containing the operation's arguments.</param>
     /// <returns>The status response produced by the operation.</returns>
     public async Task<StatusResponse> RollbackAsync(RollbackInput input)
@@ -177,9 +163,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
             $"/rollback {input.Environment.ToLower()}{countString}");
     }
 
-    /// <summary>
-    /// Compares the deploy state and returns their differences.
-    /// </summary>
+    /// <summary>Compares the deploy state and returns their differences.</summary>
     /// <param name="input">Input object containing the operation's arguments.</param>
     /// <returns>The deploy state comparison produced by the operation.</returns>
     public async Task<DeployStateComparison> CompareDeployStateAsync(DeployStateComparisonInput input)
@@ -243,9 +227,7 @@ public class DeployEnvironmentService : IDeployEnvironmentService
         return stateComparison;
     }
 
-    /// <summary>
-    /// Retrieves the or create deploy state.
-    /// </summary>
+    /// <summary>Retrieves the or create deploy state.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <param name="name">Name used to identify the value or resource.</param>

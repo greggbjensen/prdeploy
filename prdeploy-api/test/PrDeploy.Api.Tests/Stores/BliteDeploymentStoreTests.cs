@@ -5,14 +5,10 @@ using PrDeploy.Api.Business.Stores.Interfaces;
 
 namespace PrDeploy.Api.Tests.Stores;
 
-/// <summary>
-/// Exercises the local deployment store's value serialization and revision history.
-/// </summary>
+/// <summary>Exercises the local deployment store's value serialization and revision history.</summary>
 public sealed class BliteDeploymentStoreTests
 {
-    /// <summary>
-    /// Confirms local storage round-trips YAML values and retains earlier revisions.
-    /// </summary>
+    /// <summary>Confirms local storage round-trips YAML values and retains earlier revisions.</summary>
     [Fact]
     public async Task DeploymentStore_PreservesYamlValuesAndHistoricalRevisions()
     {

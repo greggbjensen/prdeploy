@@ -25,14 +25,10 @@ using RestSharp;
 
 namespace PrDeploy.Api.Tests.Logging;
 
-/// <summary>
-/// Verifies that business-layer classes emit structured (template based) log entries.
-/// </summary>
+/// <summary>Verifies that business-layer classes emit structured (template based) log entries.</summary>
 public class BusinessLoggingTest
 {
-    /// <summary>
-    /// Builds a security context test double for the supplied user.
-    /// </summary>
+    /// <summary>Builds a security context test double for the supplied user.</summary>
     /// <param name="token">GitHub token, which must never appear in logs.</param>
     /// <param name="login">GitHub login of the caller.</param>
     /// <returns>Mocked security context.</returns>
@@ -44,9 +40,7 @@ public class BusinessLoggingTest
         return context;
     }
 
-    /// <summary>
-    /// Creates an organization access double that treats the user as a member of every owner.
-    /// </summary>
+    /// <summary>Creates an organization access double that treats the user as a member of every owner.</summary>
     /// <returns>Organization access that always allows the owner.</returns>
     private static IOrganizationAccess AllowAllOrganizations()
     {
@@ -57,9 +51,7 @@ public class BusinessLoggingTest
         return access.Object;
     }
 
-    /// <summary>
-    /// Confirms a repo access denial logs a structured warning and throws Forbidden.
-    /// </summary>
+    /// <summary>Confirms a repo access denial logs a structured warning and throws Forbidden.</summary>
     [Fact]
     public async Task GuardRepoAsync_Denied_LogsStructuredWarning()
     {
@@ -81,9 +73,7 @@ public class BusinessLoggingTest
         Assert.All(logger.Entries, e => Assert.DoesNotContain("gh-token-123", e.Message));
     }
 
-    /// <summary>
-    /// Confirms a GitHub lookup failure keeps the exception and uses a message template.
-    /// </summary>
+    /// <summary>Confirms a GitHub lookup failure keeps the exception and uses a message template.</summary>
     [Fact]
     public async Task HasRepoAccessAsync_LookupFails_LogsWarningWithException()
     {
@@ -102,9 +92,7 @@ public class BusinessLoggingTest
         Assert.Contains("{Login}", entry.Template);
     }
 
-    /// <summary>
-    /// Confirms an anonymous caller is denied without a warning about a missing token leaking details.
-    /// </summary>
+    /// <summary>Confirms an anonymous caller is denied without a warning about a missing token leaking details.</summary>
     [Fact]
     public async Task HasRepoAccessAsync_NoToken_ReturnsFalseAndLogsDebug()
     {
@@ -119,9 +107,7 @@ public class BusinessLoggingTest
         Assert.Equal(LogLevel.Debug, Assert.Single(logger.Entries).Level);
     }
 
-    /// <summary>
-    /// Confirms a client ID mismatch is logged as a warning and rejected before contacting GitHub.
-    /// </summary>
+    /// <summary>Confirms a client ID mismatch is logged as a warning and rejected before contacting GitHub.</summary>
     [Fact]
     public async Task GetAccessTokenAsync_ClientIdMismatch_LogsWarningAndThrowsForbidden()
     {
@@ -150,9 +136,7 @@ public class BusinessLoggingTest
         Assert.DoesNotContain("other", entry.Message);
     }
 
-    /// <summary>
-    /// Confirms saving repo settings logs an Information entry carrying the owner and repo.
-    /// </summary>
+    /// <summary>Confirms saving repo settings logs an Information entry carrying the owner and repo.</summary>
     [Fact]
     public async Task SetRepoSettingsAsync_LogsInformation()
     {
@@ -171,9 +155,7 @@ public class BusinessLoggingTest
         Assert.Equal("r", entry.Properties["Repo"]);
     }
 
-    /// <summary>
-    /// Confirms a missing environment is logged as a warning before the not-found exception.
-    /// </summary>
+    /// <summary>Confirms a missing environment is logged as a warning before the not-found exception.</summary>
     [Fact]
     public void GetEnvironment_Missing_LogsWarningAndThrows()
     {
@@ -190,9 +172,7 @@ public class BusinessLoggingTest
         Assert.Equal("prod", entry.Properties["Environment"]);
     }
 
-    /// <summary>
-    /// Confirms enabling a repository logs the owner and repo.
-    /// </summary>
+    /// <summary>Confirms enabling a repository logs the owner and repo.</summary>
     [Fact]
     public async Task AddEnabledAsync_LogsInformation()
     {
@@ -207,10 +187,7 @@ public class BusinessLoggingTest
         Assert.Equal("o", entry.Properties["Owner"]);
     }
 
-    /// <summary>
-    /// Confirms a user with no authorized repositories gets an empty list and an Information entry,
-    /// so they can enable a repository of their own instead of being locked out.
-    /// </summary>
+    /// <summary>Confirms a user with no authorized repositories gets an empty list and an Information entry, so they can enable a repository of their own instead of being locked out.</summary>
     [Fact]
     public async Task ListEnabledAsync_NoAccess_LogsInformationAndReturnsEmpty()
     {
@@ -230,9 +207,7 @@ public class BusinessLoggingTest
         Assert.DoesNotContain(logger.Entries, e => e.Level >= LogLevel.Warning);
     }
 
-    /// <summary>
-    /// Confirms a deploy request logs its environment, pull request, and options as properties.
-    /// </summary>
+    /// <summary>Confirms a deploy request logs its environment, pull request, and options as properties.</summary>
     [Fact]
     public async Task DeployAsync_LogsStructuredInformation()
     {
@@ -262,9 +237,7 @@ public class BusinessLoggingTest
         Assert.Equal(true, entry.Properties["Force"]);
     }
 
-    /// <summary>
-    /// Confirms an empty queue is created with a Debug entry and that updating logs the queue size.
-    /// </summary>
+    /// <summary>Confirms an empty queue is created with a Debug entry and that updating logs the queue size.</summary>
     [Fact]
     public async Task ListAsync_LogsDebugForQueues()
     {

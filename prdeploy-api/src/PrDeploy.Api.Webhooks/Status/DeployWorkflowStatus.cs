@@ -1,8 +1,6 @@
 namespace PrDeploy.Api.Webhooks.Status;
 
-/// <summary>
-/// The latest deployment workflow status for one environment of a repository.
-/// </summary>
+/// <summary>The latest deployment workflow status for one environment of a repository.</summary>
 /// <param name="Owner">Repository owner or organization.</param>
 /// <param name="Repo">Repository name.</param>
 /// <param name="Environment">Environment the workflow deploys to, such as dev or prod.</param>
@@ -21,9 +19,7 @@ public record DeployWorkflowStatus(
     string? RunUrl,
     DateTimeOffset UpdatedAt)
 {
-    /// <summary>
-    /// Maps a completed workflow run conclusion to a state.
-    /// </summary>
+    /// <summary>Maps a completed workflow run conclusion to a state.</summary>
     /// <param name="conclusion">GitHub conclusion such as success, failure, cancelled or timed_out.</param>
     /// <returns>The matching state, or null when the conclusion is not a final outcome (for example skipped).</returns>
     public static DeployWorkflowState? FromConclusion(string? conclusion) => conclusion?.ToLowerInvariant() switch

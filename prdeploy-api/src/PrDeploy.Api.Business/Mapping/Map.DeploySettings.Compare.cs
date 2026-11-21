@@ -3,14 +3,10 @@ using PrDeploy.Api.Models.Settings.Compare;
 
 namespace PrDeploy.Api.Business.Mapping;
 
-/// <summary>
-/// Represents map data used by the application.
-/// </summary>
+/// <summary>Represents map data used by the application.</summary>
 public static partial class Map
 {
-    /// <summary>
-    /// Compares the supplied values and returns their differences.
-    /// </summary>
+    /// <summary>Compares the supplied values and returns their differences.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <returns>The deploy settings compare produced by the operation.</returns>
@@ -65,9 +61,7 @@ public static partial class Map
         return compare;
     }
 
-    /// <summary>
-    /// Compares the supplied values and returns their differences.
-    /// </summary>
+    /// <summary>Compares the supplied values and returns their differences.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <returns>The Jira settings compare produced by the operation.</returns>
@@ -98,9 +92,7 @@ public static partial class Map
         };
     }
 
-    /// <summary>
-    /// Compares the supplied values and returns their differences.
-    /// </summary>
+    /// <summary>Compares the supplied values and returns their differences.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <returns>The Slack settings compare produced by the operation.</returns>
@@ -133,9 +125,7 @@ public static partial class Map
         };
     }
 
-    /// <summary>
-    /// Compares the supplied values and returns their differences.
-    /// </summary>
+    /// <summary>Compares the supplied values and returns their differences.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <returns>The Microsoft Teams settings compare produced by the operation.</returns>
@@ -152,9 +142,7 @@ public static partial class Map
         };
     }
 
-    /// <summary>
-    /// Compares the supplied values and returns their differences.
-    /// </summary>
+    /// <summary>Compares the supplied values and returns their differences.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <returns>The Microsoft Teams web hooks settings compare produced by the operation.</returns>
@@ -175,9 +163,7 @@ public static partial class Map
         };
     }
 
-    /// <summary>
-    /// Compares the supplied values and returns their differences.
-    /// </summary>
+    /// <summary>Compares the supplied values and returns their differences.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <returns>The Slack web hooks settings compare produced by the operation.</returns>
@@ -198,9 +184,7 @@ public static partial class Map
         };
     }
 
-    /// <summary>
-    /// Compares the supplied values and returns their differences.
-    /// </summary>
+    /// <summary>Compares the supplied values and returns their differences.</summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <returns>The badge settings compare produced by the operation.</returns>

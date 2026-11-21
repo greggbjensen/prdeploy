@@ -9,24 +9,18 @@ using PrDeploy.Api.Tests.Webhooks.Framework;
 
 namespace PrDeploy.Api.Tests.Schema.Queries;
 
-/// <summary>
-/// Contains tests that verify repository query behavior.
-/// </summary>
+/// <summary>Contains tests that verify repository query behavior.</summary>
 [Collection(ApiHostCollection.Name)]
 public class RepositoryQueryTest : DeployApiTest
 {
-    /// <summary>
-    /// Initializes the test fixture and prepares its dependencies.
-    /// </summary>
+    /// <summary>Initializes the test fixture and prepares its dependencies.</summary>
     /// <param name="factory">Object containing the factory data used by the operation.</param>
     public RepositoryQueryTest(DeployApiApplicationFactory factory)
         : base(factory)
     {
     }
 
-    /// <summary>
-    /// Configures the services for the current application or test.
-    /// </summary>
+    /// <summary>Configures the services for the current application or test.</summary>
     /// <param name="services">Services to include in the operation.</param>
     public override void ConfigureServices(IServiceCollection services)
     {
@@ -42,9 +36,7 @@ public class RepositoryQueryTest : DeployApiTest
         services.AddSingleton<IDeploymentStore>(deploymentStore);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: searches open pull requests.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: searches open pull requests.</summary>
     [Fact]
     public async Task OpenPullRequests_SearchesOpenPullRequests()
     {
@@ -63,9 +55,7 @@ public class RepositoryQueryTest : DeployApiTest
         Assert.Contains("prdeploy-example-repo", repository.Repos);
     }
 
-    /// <summary>
-    /// Verifies the expected behavior for this scenario: lists configured services.
-    /// </summary>
+    /// <summary>Verifies the expected behavior for this scenario: lists configured services.</summary>
     [Fact]
     public async Task RepositoryServices_ListsConfiguredServices()
     {

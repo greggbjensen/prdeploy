@@ -3,17 +3,13 @@ using Microsoft.Azure.Cosmos;
 
 namespace PrDeploy.Api.Business.Stores;
 
-/// <summary>
-/// Provides document operations for deployment values and Data Protection keys in Cosmos DB.
-/// </summary>
+/// <summary>Provides document operations for deployment values and Data Protection keys in Cosmos DB.</summary>
 public sealed class CosmosDocumentStorage : IDisposable
 {
     private readonly CosmosClient _client;
     private readonly Lazy<Task<Container>> _container;
 
-    /// <summary>
-    /// Creates a document-storage adapter for the specified Cosmos DB database and container.
-    /// </summary>
+    /// <summary>Creates a document-storage adapter for the specified Cosmos DB database and container.</summary>
     /// <param name="client">The Cosmos DB client used to access the database.</param>
     /// <param name="databaseName">The database name to create or open.</param>
     /// <param name="containerName">The container name to create or open.</param>
@@ -25,21 +21,15 @@ public sealed class CosmosDocumentStorage : IDisposable
         _container = new Lazy<Task<Container>>(InitializeContainerAsync);
     }
 
-    /// <summary>
-    /// Gets the database name.
-    /// </summary>
+    /// <summary>Gets the database name.</summary>
     /// <value>Current database name value.</value>
     public string DatabaseName { get; }
 
-    /// <summary>
-    /// Gets the container name.
-    /// </summary>
+    /// <summary>Gets the container name.</summary>
     /// <value>Current container name value.</value>
     public string ContainerName { get; }
 
-    /// <summary>
-    /// Retrieves a deployment value revision by its storage path.
-    /// </summary>
+    /// <summary>Retrieves a deployment value revision by its storage path.</summary>
     public async Task<StorageDocument?> GetDeploymentValueAsync(string path, int historical)
     {
         var container = await _container.Value.ConfigureAwait(false);
@@ -68,9 +58,7 @@ public sealed class CosmosDocumentStorage : IDisposable
         return null;
     }
 
-    /// <summary>
-    /// Appends a deployment value revision to its path partition.
-    /// </summary>
+    /// <summary>Appends a deployment value revision to its path partition.</summary>
     public async Task SetDeploymentValueAsync(string path, string value, bool isSecure)
     {
         var container = await _container.Value.ConfigureAwait(false);
@@ -86,9 +74,7 @@ public sealed class CosmosDocumentStorage : IDisposable
         }, new PartitionKey(path)).ConfigureAwait(false);
     }
 
-    /// <summary>
-    /// Reads all persisted Data Protection key documents.
-    /// </summary>
+    /// <summary>Reads all persisted Data Protection key documents.</summary>
     public async Task<IReadOnlyList<StorageDocument>> GetDataProtectionKeysAsync()
     {
         var container = await _container.Value.ConfigureAwait(false);
@@ -113,9 +99,7 @@ public sealed class CosmosDocumentStorage : IDisposable
         return documents;
     }
 
-    /// <summary>
-    /// Adds or replaces a Data Protection key document by its friendly name.
-    /// </summary>
+    /// <summary>Adds or replaces a Data Protection key document by its friendly name.</summary>
     public async Task StoreDataProtectionKeyAsync(string friendlyName, string xml)
     {
         var container = await _container.Value.ConfigureAwait(false);
@@ -131,19 +115,13 @@ public sealed class CosmosDocumentStorage : IDisposable
         }, new PartitionKey(DataProtectionPartition)).ConfigureAwait(false);
     }
 
-    /// <summary>
-    /// Partition used to keep Data Protection key documents separate from deployment values.
-    /// </summary>
+    /// <summary>Partition used to keep Data Protection key documents separate from deployment values.</summary>
     public const string DataProtectionPartition = "data-protection";
 
-    /// <summary>
-    /// Releases resources owned by this instance.
-    /// </summary>
+    /// <summary>Releases resources owned by this instance.</summary>
     public void Dispose() => _client.Dispose();
 
-    /// <summary>
-    /// Performs the initialize container operation and returns its result.
-    /// </summary>
+    /// <summary>Performs the initialize container operation and returns its result.</summary>
     /// <returns>The container produced by the operation.</returns>
     private async Task<Container> InitializeContainerAsync()
     {
@@ -156,69 +134,49 @@ public sealed class CosmosDocumentStorage : IDisposable
     }
 }
 
-/// <summary>
-/// Cosmos DB document shape shared by deployment value revisions and Data Protection keys.
-/// </summary>
+/// <summary>Cosmos DB document shape shared by deployment value revisions and Data Protection keys.</summary>
 public sealed class StorageDocument
 {
-    /// <summary>
-    /// Gets or sets the id.
-    /// </summary>
+    /// <summary>Gets or sets the id.</summary>
     /// <value>Current id value.</value>
     [JsonPropertyName("id")]
     public string Id { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Gets or sets the partition key.
-    /// </summary>
+    /// <summary>Gets or sets the partition key.</summary>
     /// <value>Current partition key value.</value>
     [JsonPropertyName("partitionKey")]
     public string PartitionKey { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Gets or sets the document type.
-    /// </summary>
+    /// <summary>Gets or sets the document type.</summary>
     /// <value>Current document type value.</value>
     [JsonPropertyName("documentType")]
     public string DocumentType { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Gets or sets the path.
-    /// </summary>
+    /// <summary>Gets or sets the path.</summary>
     /// <value>Current path value.</value>
     [JsonPropertyName("path")]
     public string Path { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Gets or sets the value.
-    /// </summary>
+    /// <summary>Gets or sets the value.</summary>
     /// <value>Current value value.</value>
     [JsonPropertyName("value")]
     public string Value { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Gets or sets whether the deployment value was marked secure by its caller.
-    /// </summary>
+    /// <summary>Gets or sets whether the deployment value was marked secure by its caller.</summary>
     [JsonPropertyName("isSecure")]
     public bool IsSecure { get; set; }
 
-    /// <summary>
-    /// Gets or sets the revision.
-    /// </summary>
+    /// <summary>Gets or sets the revision.</summary>
     /// <value>Current revision value.</value>
     [JsonPropertyName("revision")]
     public long Revision { get; set; }
 
-    /// <summary>
-    /// Gets or sets the friendly name.
-    /// </summary>
+    /// <summary>Gets or sets the friendly name.</summary>
     /// <value>Current friendly name value.</value>
     [JsonPropertyName("friendlyName")]
     public string FriendlyName { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Gets or sets the XML.
-    /// </summary>
+    /// <summary>Gets or sets the XML.</summary>
     /// <value>Current XML value.</value>
     [JsonPropertyName("xml")]
     public string Xml { get; set; } = string.Empty;

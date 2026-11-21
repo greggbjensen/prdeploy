@@ -4,9 +4,7 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace PrDeploy.Api.Tests.Webhooks.Framework;
 
-/// <summary>
-/// Stores serialized deployment values and their revisions for webhook tests.
-/// </summary>
+/// <summary>Stores serialized deployment values and their revisions for webhook tests.</summary>
 /// <remarks>
 /// This fake uses the same YAML serialization as the production deployment stores.
 /// </remarks>
@@ -23,9 +21,7 @@ public class InMemoryDeploymentStore : IDeploymentStore
 
     private readonly Dictionary<string, List<string>> _deploymentValues = new();
 
-    /// <summary>
-    /// Gets the deployment values.
-    /// </summary>
+    /// <summary>Gets the deployment values.</summary>
     /// <value>Current deployment values value.</value>
     public IReadOnlyDictionary<string, List<string>> DeploymentValues => _deploymentValues;
 
@@ -53,9 +49,7 @@ public class InMemoryDeploymentStore : IDeploymentStore
     /// <inheritdoc />
     public Task SetAsync<T>(string name, T value, bool isSecure = false) => Set(name, value);
 
-    /// <summary>
-    /// Deserializes the requested value revision, returning the type default when it is unavailable.
-    /// </summary>
+    /// <summary>Deserializes the requested value revision, returning the type default when it is unavailable.</summary>
     private T Get<T>(string key, int historical)
     {
         if (!_deploymentValues.TryGetValue(key.ToUpperInvariant(), out var history) || history.Count <= historical)
@@ -66,9 +60,7 @@ public class InMemoryDeploymentStore : IDeploymentStore
         return Deserializer.Deserialize<T>(history[history.Count - (historical + 1)]);
     }
 
-    /// <summary>
-    /// Appends a YAML-serialized value to its in-memory revision history.
-    /// </summary>
+    /// <summary>Appends a YAML-serialized value to its in-memory revision history.</summary>
     private Task Set<T>(string key, T value)
     {
         var upperKey = key.ToUpperInvariant();

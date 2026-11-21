@@ -1,14 +1,10 @@
 using PrDeploy.Api.Models.Settings;
 
 namespace PrDeploy.Api.Business.Mapping;
-/// <summary>
-/// Represents map data used by the application.
-/// </summary>
+/// <summary>Represents map data used by the application.</summary>
 public static partial class Map
 {
-    /// <summary>
-    /// Performs the merge operation.
-    /// </summary>
+    /// <summary>Performs the merge operation.</summary>
     /// <param name="target">Target environment or value for the operation.</param>
     /// <param name="source">Source environment or value for the operation.</param>
     public static void Merge(DeploySettings? target, DeploySettings? source)
@@ -73,9 +69,7 @@ public static partial class Map
         }
     }
 
-    /// <summary>
-    /// Performs the merge operation.
-    /// </summary>
+    /// <summary>Performs the merge operation.</summary>
     /// <param name="target">Target environment or value for the operation.</param>
     /// <param name="source">Source environment or value for the operation.</param>
     private static void Merge(SlackSettings? target, SlackSettings? source)
@@ -100,9 +94,7 @@ public static partial class Map
         }
     }
 
-    /// <summary>
-    /// Merges Microsoft Teams settings, keeping target values and filling gaps from the source.
-    /// </summary>
+    /// <summary>Merges Microsoft Teams settings, keeping target values and filling gaps from the source.</summary>
     /// <param name="target">Target environment or value for the operation.</param>
     /// <param name="source">Source environment or value for the operation.</param>
     private static void Merge(TeamsSettings? target, TeamsSettings? source)
@@ -124,9 +116,7 @@ public static partial class Map
         }
     }
 
-    /// <summary>
-    /// Merges Microsoft Teams web hook settings, keeping target values and filling gaps from the source.
-    /// </summary>
+    /// <summary>Merges Microsoft Teams web hook settings, keeping target values and filling gaps from the source.</summary>
     /// <param name="target">Target environment or value for the operation.</param>
     /// <param name="source">Source environment or value for the operation.</param>
     private static void Merge(TeamsWebHooksSettings? target, TeamsWebHooksSettings? source)
@@ -140,9 +130,7 @@ public static partial class Map
         target.ReleaseUrl ??= source.ReleaseUrl;
     }
 
-    /// <summary>
-    /// Performs the merge operation.
-    /// </summary>
+    /// <summary>Performs the merge operation.</summary>
     /// <param name="target">Target environment or value for the operation.</param>
     /// <param name="source">Source environment or value for the operation.</param>
     private static void Merge(SlackWebHooksSettings? target, SlackWebHooksSettings? source)
@@ -156,9 +144,7 @@ public static partial class Map
         target.ReleaseUrl ??= source.ReleaseUrl;
     }
 
-    /// <summary>
-    /// Performs the merge operation.
-    /// </summary>
+    /// <summary>Performs the merge operation.</summary>
     /// <param name="target">Target environment or value for the operation.</param>
     /// <param name="source">Source environment or value for the operation.</param>
     private static void Merge(JiraSettings? target, JiraSettings? source)
@@ -183,9 +169,7 @@ public static partial class Map
         }
     }
 
-    /// <summary>
-    /// Performs the merge operation.
-    /// </summary>
+    /// <summary>Performs the merge operation.</summary>
     /// <param name="target">Target environment or value for the operation.</param>
     /// <param name="source">Source environment or value for the operation.</param>
     public static void Merge(Dictionary<string, object>? target, Dictionary<string, object>? source)
@@ -204,9 +188,7 @@ public static partial class Map
         }
     }
 
-    /// <summary>
-    /// Performs the merge operation.
-    /// </summary>
+    /// <summary>Performs the merge operation.</summary>
     /// <param name="target">Target environment or value for the operation.</param>
     /// <param name="source">Source environment or value for the operation.</param>
     public static void Merge(BadgeSettings? target, BadgeSettings? source)
@@ -219,9 +201,7 @@ public static partial class Map
         Merge(target.StatusColors, source.StatusColors);
     }
 
-    /// <summary>
-    /// Performs the merge operation.
-    /// </summary>
+    /// <summary>Performs the merge operation.</summary>
     /// <param name="target">Target environment or value for the operation.</param>
     /// <param name="source">Source environment or value for the operation.</param>
     public static void Merge(BadgeStatusColorsSettings? target, BadgeStatusColorsSettings? source)

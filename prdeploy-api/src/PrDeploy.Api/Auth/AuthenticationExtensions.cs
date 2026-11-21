@@ -5,14 +5,10 @@ using System.Text;
 
 namespace PrDeploy.Api.Auth
 {
-    /// <summary>
-    /// Represents authentication extensions data used by the application.
-    /// </summary>
+    /// <summary>Represents authentication extensions data used by the application.</summary>
     public static class AuthenticationExtensions
     {
-        /// <summary>
-        /// Adds the git hub authentication to the associated collection.
-        /// </summary>
+        /// <summary>Adds the git hub authentication to the associated collection.</summary>
         /// <param name="services">Services to include in the operation.</param>
         /// <param name="configureGitHub">Object containing the configure git hub data used by the operation.</param>
         /// <param name="configureJwt">Object containing the configure JWT data used by the operation.</param>

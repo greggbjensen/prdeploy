@@ -3,9 +3,7 @@ using PrDeploy.Api.Models.PullRequests;
 
 namespace PrDeploy.Api.Tests.Constants;
 
-/// <summary>
-/// Represents pull request data data used by the application.
-/// </summary>
+/// <summary>Represents pull request data data used by the application.</summary>
 public class PullRequestData
 {
     public PullRequest TestPull = new()

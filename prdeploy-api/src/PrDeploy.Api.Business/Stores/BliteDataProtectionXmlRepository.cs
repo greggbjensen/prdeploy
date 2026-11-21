@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.DataProtection.Repositories;
 
 namespace PrDeploy.Api.Business.Stores;
 
-/// <summary>
-/// Persists ASP.NET Core Data Protection keys in the shared local BLite database.
-/// </summary>
+/// <summary>Persists ASP.NET Core Data Protection keys in the shared local BLite database.</summary>
 /// <param name="storage">Shared BLite adapter that persists and retrieves XML key documents.</param>
 public sealed class BliteDataProtectionXmlRepository(BliteStorage storage) : IXmlRepository
 {

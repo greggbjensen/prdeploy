@@ -18,14 +18,10 @@ using PrDeploy.Api.Business.Services;
 
 namespace PrDeploy.Api;
 
-/// <summary>
-/// Registers the API's GraphQL, authentication, and persistence services.
-/// </summary>
+/// <summary>Registers the API's GraphQL, authentication, and persistence services.</summary>
 public static class IServiceCollectionExtensions
 {
-    /// <summary>
-    /// Adds the pr deploy API to the associated collection.
-    /// </summary>
+    /// <summary>Adds the pr deploy API to the associated collection.</summary>
     /// <param name="services">Services to include in the operation.</param>
     /// <param name="configuration">Object containing the configuration data used by the operation.</param>
     /// <returns>The i service collection produced by the operation.</returns>
@@ -88,9 +84,7 @@ public static class IServiceCollectionExtensions
         return services;
     }
 
-    /// <summary>
-    /// Selects the Data Protection key repository associated with the configured storage provider.
-    /// </summary>
+    /// <summary>Selects the Data Protection key repository associated with the configured storage provider.</summary>
     private static void ConfigureDataProtectionKeyStorage(
         IServiceCollection services,
         IConfiguration configuration)
@@ -131,9 +125,7 @@ public static class IServiceCollectionExtensions
         });
     }
 
-    /// <summary>
-    /// Checks whether AWS Systems Manager Parameter Store was selected for Data Protection keys.
-    /// </summary>
+    /// <summary>Checks whether AWS Systems Manager Parameter Store was selected for Data Protection keys.</summary>
     private static bool UsesLegacySystemsManagerForDataProtection(IConfiguration configuration)
     {
         var keyStorage = configuration.GetSection("DataProtection:KeyStorage");

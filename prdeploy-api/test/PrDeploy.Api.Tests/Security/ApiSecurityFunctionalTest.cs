@@ -14,10 +14,7 @@ using PrDeploy.Api.Webhooks.Status;
 
 namespace PrDeploy.Api.Tests.Security;
 
-/// <summary>
-/// Exercises authorization, input validation, and secret handling through the GraphQL HTTP endpoint with the real
-/// access checks. Only the GitHub API is mocked.
-/// </summary>
+/// <summary>Exercises authorization, input validation, and secret handling through the GraphQL HTTP endpoint with the real access checks. Only the GitHub API is mocked.</summary>
 [Collection(ApiHostCollection.Name)]
 public class ApiSecurityFunctionalTest : IClassFixture<SecuredApiApplicationFactory>
 {
@@ -31,11 +28,7 @@ public class ApiSecurityFunctionalTest : IClassFixture<SecuredApiApplicationFact
     private readonly IDeploymentStore _store;
     private readonly List<(string Repo, long Number, string Body)> _comments = [];
 
-    /// <summary>
-    /// Resets stored settings, cached access grants, and the GitHub mock so each test starts from the same state:
-    /// the user is an active member of the owner organization, can push to the test repository, and can only read
-    /// <see cref="LockedRepo"/>.
-    /// </summary>
+    /// <summary>Resets stored settings, cached access grants, and the GitHub mock so each test starts from the same state: the user is an active member of the owner organization, can push to the test repository, and can only read <see cref="LockedRepo"/>.</summary>
     /// <param name="factory">Shared API host with real access checks.</param>
     public ApiSecurityFunctionalTest(SecuredApiApplicationFactory factory)
     {
@@ -58,9 +51,7 @@ public class ApiSecurityFunctionalTest : IClassFixture<SecuredApiApplicationFact
             .ReturnsAsync((IssueComment)null!);
     }
 
-    /// <summary>
-    /// Confirms repository and owner settings queries return credentials masked and other values unchanged.
-    /// </summary>
+    /// <summary>Confirms repository and owner settings queries return credentials masked and other values unchanged.</summary>
     [Fact]
     public async Task SettingsQueries_MaskCredentials()
     {
@@ -83,10 +74,7 @@ public class ApiSecurityFunctionalTest : IClassFixture<SecuredApiApplicationFact
         Assert.DoesNotContain("xoxb-test", result.RootElement.GetRawText());
     }
 
-    /// <summary>
-    /// Confirms the settings comparison the portal edits masks owner credentials, which outside collaborators with
-    /// only repository access can read.
-    /// </summary>
+    /// <summary>Confirms the settings comparison the portal edits masks owner credentials, which outside collaborators with only repository access can read.</summary>
     [Fact]
     public async Task DeploySettingsCompare_MasksOwnerCredentials()
     {
@@ -102,9 +90,7 @@ public class ApiSecurityFunctionalTest : IClassFixture<SecuredApiApplicationFact
         Assert.Equal(Map.SecretMask, compare.GetProperty("jira").GetProperty("password").GetProperty("repo").GetString());
     }
 
-    /// <summary>
-    /// Confirms saving the masked values the portal received keeps the stored secrets, while a new value replaces them.
-    /// </summary>
+    /// <summary>Confirms saving the masked values the portal received keeps the stored secrets, while a new value replaces them.</summary>
     [Fact]
     public async Task RepoSettingsSet_KeepsStoredSecretsForMaskedValues()
     {
@@ -130,10 +116,7 @@ public class ApiSecurityFunctionalTest : IClassFixture<SecuredApiApplicationFact
         Assert.Equal("xoxb-new", stored.Slack!.Token);
     }
 
-    /// <summary>
-    /// Confirms a user who can only read a repository cannot read its settings, list its pull requests, change its
-    /// queues, or post deploy commands to it.
-    /// </summary>
+    /// <summary>Confirms a user who can only read a repository cannot read its settings, list its pull requests, change its queues, or post deploy commands to it.</summary>
     /// <param name="operation">GraphQL operation to send.</param>
     [Theory]
     [InlineData("""query ($r: RepoQueryInput!) { repoSettings(input: $r) { deployWorkflow } }""")]
@@ -152,10 +135,7 @@ public class ApiSecurityFunctionalTest : IClassFixture<SecuredApiApplicationFact
         Assert.Null(await _store.GetAsync<List<int>?>(Owner, LockedRepo, "DEV_PR_QUEUE"));
     }
 
-    /// <summary>
-    /// Confirms names that are not valid on GitHub, which could change storage keys or API paths, and owners that
-    /// are not allowed are denied before GitHub is asked about them.
-    /// </summary>
+    /// <summary>Confirms names that are not valid on GitHub, which could change storage keys or API paths, and owners that are not allowed are denied before GitHub is asked about them.</summary>
     /// <param name="owner">Owner to request.</param>
     /// <param name="repo">Repository to request.</param>
     [Theory]
@@ -174,9 +154,7 @@ public class ApiSecurityFunctionalTest : IClassFixture<SecuredApiApplicationFact
         _github.Verify(g => g.Organization.Member.GetOrganizationMembership(owner, It.IsAny<string>()), Times.Never);
     }
 
-    /// <summary>
-    /// Confirms environment and service values cannot add lines or other commands to the comment posted for the user.
-    /// </summary>
+    /// <summary>Confirms environment and service values cannot add lines or other commands to the comment posted for the user.</summary>
     /// <param name="operation">GraphQL mutation with an injected value.</param>
     [Theory]
     [InlineData("""mutation { deployEnvironmentDeploy(input: { owner: "greggbjensen", repo: "prdeploy-example-repo", environment: "dev\n/deploy prod --force", pullNumber: 8 }) { success } }""")]
@@ -190,9 +168,7 @@ public class ApiSecurityFunctionalTest : IClassFixture<SecuredApiApplicationFact
         Assert.Empty(_comments);
     }
 
-    /// <summary>
-    /// Confirms an authorized deploy posts exactly one single-line command as the user.
-    /// </summary>
+    /// <summary>Confirms an authorized deploy posts exactly one single-line command as the user.</summary>
     [Fact]
     public async Task DeployEnvironmentDeploy_PostsCommandForWriter()
     {
@@ -206,9 +182,7 @@ public class ApiSecurityFunctionalTest : IClassFixture<SecuredApiApplicationFact
         Assert.Equal("/deploy stage --force --retain", body.Trim());
     }
 
-    /// <summary>
-    /// Confirms listing queues does not rename environments in the cached merged settings.
-    /// </summary>
+    /// <summary>Confirms listing queues does not rename environments in the cached merged settings.</summary>
     [Fact]
     public async Task DeployQueues_DoesNotChangeEnvironmentNames()
     {
@@ -227,9 +201,7 @@ public class ApiSecurityFunctionalTest : IClassFixture<SecuredApiApplicationFact
         Assert.Equal("dev1", Data(environments).GetProperty("environments")[0].GetProperty("name").GetString());
     }
 
-    /// <summary>
-    /// Confirms the deploy status stream sends the current status as a deploy-status event to a user with access.
-    /// </summary>
+    /// <summary>Confirms the deploy status stream sends the current status as a deploy-status event to a user with access.</summary>
     [Fact]
     public async Task DeployStatusEvents_StreamsCurrentStatusToUserWithAccess()
     {
@@ -253,9 +225,7 @@ public class ApiSecurityFunctionalTest : IClassFixture<SecuredApiApplicationFact
         Assert.Equal(12, data.RootElement.GetProperty("pullNumber").GetInt32());
     }
 
-    /// <summary>
-    /// Confirms the deploy status stream refuses a repository the user cannot push to.
-    /// </summary>
+    /// <summary>Confirms the deploy status stream refuses a repository the user cannot push to.</summary>
     [Fact]
     public async Task DeployStatusEvents_ForbidsUserWithoutRepoAccess()
     {
@@ -266,9 +236,7 @@ public class ApiSecurityFunctionalTest : IClassFixture<SecuredApiApplicationFact
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
-    /// <summary>
-    /// Sends a GraphQL operation to the API over HTTP.
-    /// </summary>
+    /// <summary>Sends a GraphQL operation to the API over HTTP.</summary>
     /// <param name="query">Operation text.</param>
     /// <param name="variables">Operation variables.</param>
     /// <returns>The parsed response body.</returns>
@@ -279,9 +247,7 @@ public class ApiSecurityFunctionalTest : IClassFixture<SecuredApiApplicationFact
         return JsonDocument.Parse(await response.Content.ReadAsStringAsync());
     }
 
-    /// <summary>
-    /// Returns the response data, failing with the errors when there are any.
-    /// </summary>
+    /// <summary>Returns the response data, failing with the errors when there are any.</summary>
     /// <param name="result">Parsed GraphQL response.</param>
     /// <returns>The <c>data</c> element.</returns>
     private static JsonElement Data(JsonDocument result)
@@ -290,9 +256,7 @@ public class ApiSecurityFunctionalTest : IClassFixture<SecuredApiApplicationFact
         return result.RootElement.GetProperty("data");
     }
 
-    /// <summary>
-    /// Returns the code of the first GraphQL error.
-    /// </summary>
+    /// <summary>Returns the code of the first GraphQL error.</summary>
     /// <param name="result">Parsed GraphQL response.</param>
     /// <returns>The error code, or <c>null</c> when the response has no errors.</returns>
     private static string? ErrorCode(JsonDocument result) =>
@@ -300,9 +264,7 @@ public class ApiSecurityFunctionalTest : IClassFixture<SecuredApiApplicationFact
             ? errors[0].GetProperty("extensions").GetProperty("code").GetString()
             : null;
 
-    /// <summary>
-    /// Creates a repository the user has the given push permission on.
-    /// </summary>
+    /// <summary>Creates a repository the user has the given push permission on.</summary>
     /// <param name="push">Whether the user can push.</param>
     /// <returns>The repository GitHub returns.</returns>
     private static Repository RepositoryWith(bool push)
@@ -313,9 +275,7 @@ public class ApiSecurityFunctionalTest : IClassFixture<SecuredApiApplicationFact
         return repository;
     }
 
-    /// <summary>
-    /// Creates an organization membership in the given state.
-    /// </summary>
+    /// <summary>Creates an organization membership in the given state.</summary>
     /// <param name="state">Membership state.</param>
     /// <returns>The membership GitHub returns.</returns>
     private static OrganizationMembership Membership(MembershipState state)

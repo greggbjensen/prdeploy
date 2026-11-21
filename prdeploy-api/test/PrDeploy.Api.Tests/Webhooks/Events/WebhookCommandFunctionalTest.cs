@@ -15,10 +15,7 @@ using PrDeploy.Api.Webhooks.Options;
 
 namespace PrDeploy.Api.Tests.Webhooks.Events;
 
-/// <summary>
-/// Sends signed GitHub webhooks to <c>POST /webhooks</c> and verifies comment commands end to end through the queue,
-/// worker, and dispatcher. Only the GitHub API is mocked.
-/// </summary>
+/// <summary>Sends signed GitHub webhooks to <c>POST /webhooks</c> and verifies comment commands end to end through the queue, worker, and dispatcher. Only the GitHub API is mocked.</summary>
 [Collection(ApiHostCollection.Name)]
 public class WebhookCommandFunctionalTest : IClassFixture<WebhookCommandFunctionalTest.WebhookApiApplicationFactory>
 {
@@ -28,9 +25,7 @@ public class WebhookCommandFunctionalTest : IClassFixture<WebhookCommandFunction
     private readonly WebhookApiApplicationFactory _factory;
     private readonly Mock<IGitHubClient> _github;
 
-    /// <summary>
-    /// Resets the GitHub mock: pull request 8 is in this repository and holds the dev lock.
-    /// </summary>
+    /// <summary>Resets the GitHub mock: pull request 8 is in this repository and holds the dev lock.</summary>
     /// <param name="factory">Shared API host configured to accept signed webhooks.</param>
     public WebhookCommandFunctionalTest(WebhookApiApplicationFactory factory)
     {
@@ -45,9 +40,7 @@ public class WebhookCommandFunctionalTest : IClassFixture<WebhookCommandFunction
             .ReturnsAsync(GitHubModels.PullRequest(PullNumber, labels: ["dev", "dev-lock"]));
     }
 
-    /// <summary>
-    /// Confirms a command from a user without write access is accepted by the endpoint but never acted on.
-    /// </summary>
+    /// <summary>Confirms a command from a user without write access is accepted by the endpoint but never acted on.</summary>
     [Fact]
     public async Task IssueComment_FromNonCollaborator_IsIgnored()
     {
@@ -63,9 +56,7 @@ public class WebhookCommandFunctionalTest : IClassFixture<WebhookCommandFunction
             It.IsAny<string[]>()), Times.Never);
     }
 
-    /// <summary>
-    /// Confirms a command from a user with write access runs.
-    /// </summary>
+    /// <summary>Confirms a command from a user with write access runs.</summary>
     [Fact]
     public async Task IssueComment_FromWriter_RunsCommand()
     {
@@ -83,9 +74,7 @@ public class WebhookCommandFunctionalTest : IClassFixture<WebhookCommandFunction
         await WaitAsync(freed.Task);
     }
 
-    /// <summary>
-    /// Confirms a webhook with a signature made from another secret is rejected before anything is queued.
-    /// </summary>
+    /// <summary>Confirms a webhook with a signature made from another secret is rejected before anything is queued.</summary>
     [Fact]
     public async Task IssueComment_WithInvalidSignature_IsUnauthorized()
     {
@@ -99,9 +88,7 @@ public class WebhookCommandFunctionalTest : IClassFixture<WebhookCommandFunction
             It.IsAny<string>()), Times.Never);
     }
 
-    /// <summary>
-    /// Sets up the permission GitHub reports for a user and signals when the check happens.
-    /// </summary>
+    /// <summary>Sets up the permission GitHub reports for a user and signals when the check happens.</summary>
     /// <param name="login">User whose permission is checked.</param>
     /// <param name="result">Returns the response, or throws to simulate a GitHub error.</param>
     /// <returns>A source completed when the permission is checked.</returns>
@@ -124,9 +111,7 @@ public class WebhookCommandFunctionalTest : IClassFixture<WebhookCommandFunction
         return checkedPermission;
     }
 
-    /// <summary>
-    /// Posts a signed issue comment webhook.
-    /// </summary>
+    /// <summary>Posts a signed issue comment webhook.</summary>
     /// <param name="author">Comment author login.</param>
     /// <param name="body">Comment text.</param>
     /// <returns>The HTTP status the endpoint returned.</returns>
@@ -138,9 +123,7 @@ public class WebhookCommandFunctionalTest : IClassFixture<WebhookCommandFunction
         return response.StatusCode;
     }
 
-    /// <summary>
-    /// Builds an issue comment webhook request signed with the given secret.
-    /// </summary>
+    /// <summary>Builds an issue comment webhook request signed with the given secret.</summary>
     /// <param name="author">Comment author login.</param>
     /// <param name="body">Comment text.</param>
     /// <param name="secret">Secret used to sign the payload.</param>
@@ -166,9 +149,7 @@ public class WebhookCommandFunctionalTest : IClassFixture<WebhookCommandFunction
         return request;
     }
 
-    /// <summary>
-    /// Waits for background webhook processing, failing after a timeout instead of hanging.
-    /// </summary>
+    /// <summary>Waits for background webhook processing, failing after a timeout instead of hanging.</summary>
     /// <param name="task">Task completed by the expected GitHub call.</param>
     private static async Task WaitAsync(Task task)
     {
@@ -179,19 +160,13 @@ public class WebhookCommandFunctionalTest : IClassFixture<WebhookCommandFunction
         await Task.Delay(TimeSpan.FromMilliseconds(Math.Min(200, stopwatch.ElapsedMilliseconds + 50)));
     }
 
-    /// <summary>
-    /// API host that accepts webhooks signed with <see cref="Secret"/> and gives the GitHub App the mocked client.
-    /// </summary>
+    /// <summary>API host that accepts webhooks signed with <see cref="Secret"/> and gives the GitHub App the mocked client.</summary>
     public sealed class WebhookApiApplicationFactory : DeployApiApplicationFactory
     {
-        /// <summary>
-        /// Gets the GitHub API mock used by the installation client.
-        /// </summary>
+        /// <summary>Gets the GitHub API mock used by the installation client.</summary>
         public Mock<IGitHubClient> GitHub { get; } = new() { DefaultValue = DefaultValue.Mock };
 
-        /// <summary>
-        /// Configures the webhook secret and replaces the installation client factory.
-        /// </summary>
+        /// <summary>Configures the webhook secret and replaces the installation client factory.</summary>
         /// <param name="builder">Host builder being configured.</param>
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
