@@ -3,10 +3,9 @@
     class="mat-elevation-z3 settings-left-nav"
     [multiple]="false"
     [hideSingleSelectionIndicator]="true"
-    (selectionChange)="settingsNavChange($event)"
-    #settingsNav>
+    (selectionChange)="settingsNavChange($event)">
     @for (tab of settingsTabs; track tab.id) {
-      <mat-list-option [value]="tab.id">
+      <mat-list-option [value]="tab.id" [selected]="tab.id === activeTabId">
         <div class="settings-menu-item{{ tab.id === activeTabId ? ' settings-nav-selected' : '' }}">
           <mat-icon>{{ tab.icon }}</mat-icon><span>{{ tab.text }} </span>
         </div>
@@ -15,7 +14,7 @@
   </mat-selection-list>
   <div class="settings-form">
     @if (settingsCompare) {
-      @switch (settingsNav.selectedOptions.selected[0].value) {
+      @switch (activeTabId) {
         @case ('services') {
           <app-services-form [services]="settingsCompare.services" [level]="level"></app-services-form>
         }

@@ -20,6 +20,8 @@ export class SettingsComponent {
   @ViewChild(SettingsFormComponent) settingsForm: SettingsFormComponent;
 
   level: SettingsLevel = 'owner';
+  /** Section id of the secondary left nav from the route, or undefined for the default section. */
+  section: string | undefined;
   selectedTabIndex = 0;
 
   constructor(
@@ -33,6 +35,7 @@ export class SettingsComponent {
         this.level = level;
         this.selectedTabIndex = level === 'owner' ? 0 : 1;
       }
+      this.section = params['section'];
     });
 
     this.repoManager.valueChanged$.pipe(takeUntilDestroyed()).subscribe(() => this.updateSettings());
@@ -40,7 +43,24 @@ export class SettingsComponent {
 
   selectedLevelChanged(event: MatTabChangeEvent): void {
     const level = event.index === 0 ? 'owner' : 'repo';
-    this._routeManager.navigate(['/', this.repoManager.owner, this.repoManager.repo, 'settings', level]);
+    this.navigateTo(level, this.section);
+  }
+
+  /** Updates the route when a section is picked in the secondary left nav. */
+  selectedSectionChanged(section: string): void {
+    if (section !== this.section) {
+      this.section = section;
+      this.navigateTo(this.level, section);
+    }
+  }
+
+  /** Navigates to the settings route for a level and optional section. */
+  private navigateTo(level: string, section?: string): void {
+    const commands = ['/', this.repoManager.owner, this.repoManager.repo, 'settings', level];
+    if (section) {
+      commands.push(section);
+    }
+    this._routeManager.navigate(commands);
   }
 
   updateSettings() {

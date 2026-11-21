@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import {
   BadgeSettingsCompare,
@@ -33,7 +33,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatListModule, MatSelectionList, MatSelectionListChange } from '@angular/material/list';
+import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { Tab } from 'src/app/shared/models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -68,7 +68,7 @@ class SetCompareValue<T> {
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './settings-form.component.scss'
 })
-export class SettingsFormComponent implements AfterViewInit {
+export class SettingsFormComponent {
   private static readonly DefaultEnvironmentColors = {
     default: '#fd7e14',
     dev: '#d4ac0d',
@@ -76,7 +76,8 @@ export class SettingsFormComponent implements AfterViewInit {
     prod: '#1d8348'
   };
 
-  @ViewChild(MatSelectionList) settingsNav: MatSelectionList;
+  /** Emits the section id whenever the user picks a section in the left nav. */
+  @Output() sectionChange = new EventEmitter<string>();
 
   settingsCompare: DeploySettingsCompare;
   hasEnvironments = false;
@@ -120,6 +121,11 @@ export class SettingsFormComponent implements AfterViewInit {
   activeTabId: string = 'environments';
   selectedEnvironment: string;
 
+  /** Section id from the route; unknown or missing ids fall back to the first section. */
+  @Input() set section(value: string | undefined) {
+    this.activeTabId = this.settingsTabs.some(t => t.id === value) ? value! : this.settingsTabs[0].id;
+  }
+
   private _level: SettingsLevel;
   @Input() set level(value: SettingsLevel) {
     this._level = value;
@@ -141,19 +147,13 @@ export class SettingsFormComponent implements AfterViewInit {
     this._repoManager.valueChanged$.pipe(takeUntilDestroyed()).subscribe(() => this.fetchSettings());
   }
 
-  ngAfterViewInit(): void {
-    const selectOption = this.settingsNav.options.find(o => o.value === this.activeTabId);
-    if (selectOption) {
-      this.settingsNav.selectedOptions.select(selectOption);
-    }
-  }
-
   selectedEnvironmentChange(environment: EnvironmentSettings) {
     this.selectedEnvironment = environment.name;
   }
 
   settingsNavChange(event: MatSelectionListChange) {
     this.activeTabId = event.options[0].value;
+    this.sectionChange.emit(this.activeTabId);
   }
 
   isSettingsNavSelected(tab: Tab) {

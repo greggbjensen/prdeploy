@@ -40,6 +40,37 @@ describe('SettingsFormComponent', () => {
     expect(ids).toEqual(['environments', 'services', 'deployment', 'slack', 'teams', 'jira']);
   });
 
+  it('selects the section from the route', () => {
+    const component = create();
+
+    component.section = 'slack';
+
+    expect(component.activeTabId).toBe('slack');
+  });
+
+  it('falls back to Environments for an unknown or missing section', () => {
+    const component = create();
+    component.section = 'slack';
+
+    component.section = 'bogus';
+    expect(component.activeTabId).toBe('environments');
+
+    component.section = 'jira';
+    component.section = undefined;
+    expect(component.activeTabId).toBe('environments');
+  });
+
+  it('emits the section id when a nav option is chosen', () => {
+    const component = create();
+    const emitted: string[] = [];
+    component.sectionChange.subscribe(id => emitted.push(id));
+
+    component.settingsNavChange({ options: [{ value: 'teams' }] } as never);
+
+    expect(component.activeTabId).toBe('teams');
+    expect(emitted).toEqual(['teams']);
+  });
+
   it('saves Teams webhook URLs and the notifications flag at the chosen level', () => {
     const component = create() as unknown as {
       setTeams(input: object, compare: object): void;

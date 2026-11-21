@@ -24,6 +24,13 @@ stream with `fetch` (so the bearer token can be sent), reconnects after 3 second
 dashboard matches statuses to environments by name, ignoring case. `SseParser` and the icon component have Karma specs;
 run them with `npm test -- --watch=false --browsers=ChromeHeadless`.
 
+# Settings: deep routing
+
+The Settings page is routed as `/:owner/:repo/settings/:level/:section`, where `level` is `owner` or `repo` and the
+optional `section` is a secondary left nav id: `environments`, `services`, `deployment`, `slack`, `teams`, or `jira`
+(for example `/acme/shop/settings/repo/slack`). Picking a section updates the URL, switching level keeps the section,
+and a missing or unknown section shows **Environments**.
+
 # Settings: adding services
 
 The **Add Service** dialog (Settings > Services) starts with a **Workflow** dropdown listing the YAML files in the
