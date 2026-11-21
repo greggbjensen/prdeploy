@@ -21,4 +21,4 @@ Within the pull request, engineers, QA, and the product owner can work together 
 
 ## Deploy Branch
 
-The deploy workflow is always dispatched on the pull request's own branch, so the version of the deploy workflow in that branch is the one that runs.  If the branch has been deleted, `/deploy` fails with a comment instead of deploying from another branch.  A `/rollback` to a pull request whose branch has since been deleted runs the deploy workflow from the default branch.
+The deploy workflow is always dispatched on the repository's default branch, so the configured workflow file always exists and the version of the deploy workflow on the default branch is the one that runs.  The pull request's code is still what is deployed, because its builds are passed to the workflow as `deploy_run_ids`.  Those builds and checks are found by the pull request's branch, so if the branch has been deleted, such as after the pull request was merged, `/deploy` fails with a comment before any environment labels, queues, or checks are changed.  A `/rollback` deploys the recorded stable builds, so it works even when the rolled-back pull request's branch has been deleted.

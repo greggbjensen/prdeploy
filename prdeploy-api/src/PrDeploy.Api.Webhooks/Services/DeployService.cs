@@ -410,6 +410,16 @@ public class DeployService
             return;
         }
 
+        // Check the branch before changing labels or running checks, which compare and find builds by branch name and
+        // fail with 404 when a pull request's branch was deleted, such as after it was merged. A rollback deploys the
+        // recorded stable builds, so it does not need the rolled-back pull request's branch.
+        if (!rollback && !await BranchExistsAsync(deployPullRequest.Head?.Ref))
+        {
+            await PostDeployFailedAsync(pullRequest.Number, environment, rollback,
+                $"Branch {deployPullRequest.Head?.Ref} for pull request #{deployPullRequest.Number} no longer exists.  Push the branch and try again.");
+            return;
+        }
+
         _logger.LogDebug("Removing pull request from queues for {Environment}.", environment);
         var availableEnvironments = await _pullRequestService.ProgressEnvironmentAsync(deployPullRequest,
             environment, retainLocks);
@@ -452,42 +462,36 @@ public class DeployService
             rollbackCount);
     }
 
-    /// <summary>Resolves the branch the deploy workflow is dispatched on, which is the deploy pull request's head branch.</summary>
-    /// <remarks>
-    /// Only a rollback falls back to the default branch, and only when the rolled-back pull request's branch has been
-    /// deleted. A normal deploy never silently runs on another branch. Errors other than a missing branch propagate.
-    /// </remarks>
-    /// <param name="deployPullRequest">Pull request whose head branch is deployed.</param>
-    /// <param name="rollback">Whether the deploy is a rollback to an earlier, possibly closed, pull request.</param>
-    /// <returns>The branch to dispatch on, or <see langword="null"/> when a normal deploy's branch no longer exists.</returns>
-    private async Task<string?> ResolveDispatchBranchAsync(PullRequest? deployPullRequest, bool rollback)
+    /// <summary>Checks whether a pull request's head branch still exists in this repository.</summary>
+    /// <remarks>Errors other than a missing branch propagate, so a failed lookup never counts as a deleted branch.</remarks>
+    /// <param name="branch">Head branch name of the pull request being deployed.</param>
+    /// <returns><c>true</c> when the branch exists; <c>false</c> when it is empty or GitHub reports it as not found.</returns>
+    private async Task<bool> BranchExistsAsync(string? branch)
     {
-        var branch = deployPullRequest?.Head?.Ref;
         if (string.IsNullOrEmpty(branch))
         {
-            return rollback ? _context.DefaultBranch : null;
+            return false;
         }
 
         try
         {
             await GitHub.Repository.Branch.Get(_context.Owner, _context.Repo, branch);
-            return branch;
-        }
-        catch (NotFoundException ex) when (rollback)
-        {
-            _logger.LogWarning(ex, "Rollback branch {Branch} no longer exists in {Owner}/{Repo}; using {DefaultBranch}.",
-                branch, _context.Owner, _context.Repo, _context.DefaultBranch);
-            return _context.DefaultBranch;
+            return true;
         }
         catch (NotFoundException ex)
         {
             _logger.LogWarning(ex, "Deploy branch {Branch} no longer exists in {Owner}/{Repo}.",
                 branch, _context.Owner, _context.Repo);
-            return null;
+            return false;
         }
     }
 
-    /// <summary>Performs the trigger deploy workflow operation.</summary>
+    /// <summary>Dispatches the configured deploy workflow on the repository's default branch with the builds to deploy and sync.</summary>
+    /// <remarks>
+    /// The workflow always runs from the default branch, so the configured workflow file is known to exist and the same
+    /// version runs for every pull request, including rollbacks to pull requests whose branches were deleted. The pull
+    /// request's builds are passed as run IDs, so the branch's code is still what is deployed.
+    /// </remarks>
     /// <param name="deployName">Text used as the deploy name.</param>
     /// <param name="environment">Deployment environment involved in the operation.</param>
     /// <param name="triggeringPullRequest">Object containing the triggering pull request data used by the operation.</param>
@@ -498,14 +502,6 @@ public class DeployService
         PullRequest triggeringPullRequest, PullRequest? deployPullRequest, bool rollback, int rollbackCount)
     {
         _logger.LogDebug("Triggering deploy: {DeployName}", deployName);
-
-        var branch = await ResolveDispatchBranchAsync(deployPullRequest, rollback);
-        if (branch == null)
-        {
-            await PostDeployFailedAsync(triggeringPullRequest.Number, environment, rollback,
-                $"Branch {deployPullRequest?.Head?.Ref} for pull request #{deployPullRequest?.Number} no longer exists.  Push the branch and try again.");
-            return;
-        }
 
         List<DeployedService> deployServices;
         List<DeployedService> syncServices;
@@ -550,8 +546,8 @@ public class DeployService
         var workflowFileName = Path.GetFileName(Settings.DeployWorkflow ?? string.Empty);
 
         _logger.LogInformation(
-            "Triggering {Workflow} with:\n    Deploy Run IDs: {DeployRunIds}\n    Sync Run IDs:   {SyncRunIds}",
-            workflowFileName, string.Join(",", deployRunIds), string.Join(",", syncRunIds));
+            "Triggering {Workflow} on {Branch} with:\n    Deploy Run IDs: {DeployRunIds}\n    Sync Run IDs:   {SyncRunIds}",
+            workflowFileName, _context.DefaultBranch, string.Join(",", deployRunIds), string.Join(",", syncRunIds));
 
         if (deployRunIds.Count == 0)
         {
@@ -562,7 +558,7 @@ public class DeployService
         try
         {
             await GitHub.Actions.Workflows.CreateDispatch(_context.Owner, _context.Repo, workflowFileName,
-                new CreateWorkflowDispatch(branch)
+                new CreateWorkflowDispatch(_context.DefaultBranch)
                 {
                     Inputs = new Dictionary<string, object>
                     {

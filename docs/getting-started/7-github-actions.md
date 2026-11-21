@@ -9,7 +9,7 @@ The deployment process keeps all environments in sync with production except wha
 ![GitHub Actions Workflows](../assets/images/screenshots/getting-started/github-actions-workflows.png)
 {: style="margin: 30px 0 30px 0; box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;"}
 
-In order for a repository to handle deployments, it must contain and workflow of `combined-deploy.yaml` with the following inputs:
+In order for a repository to handle deployments, it must contain and workflow of `combined-deploy.yaml` with the following inputs.  prdeploy always runs this workflow from the repository's default branch, so changes to it take effect once they are merged:
 
 ```yaml
 on:

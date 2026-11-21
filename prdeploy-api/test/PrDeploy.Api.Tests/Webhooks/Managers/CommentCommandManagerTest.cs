@@ -57,7 +57,7 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Equal([ReactionType.Rocket], _reactions);
         var (workflow, dispatch) = Assert.Single(_dispatches);
         Assert.Equal("combined-deploy.yaml", workflow);
-        Assert.Equal(Branch, dispatch.Ref);
+        Assert.Equal("main", dispatch.Ref);
         Assert.Equal(PullNumber.ToString(), dispatch.Inputs["pull_number"]);
         Assert.Equal("dev", dispatch.Inputs["environment"]);
         Assert.Equal("[dev] add-service-pr: This is a test commit message.", dispatch.Inputs["deploy_name"]);
@@ -155,7 +155,7 @@ public class CommentCommandManagerTest : IDisposable
 
         Assert.Equal([ReactionType.Confused], _reactions);
         var (_, dispatch) = Assert.Single(_dispatches);
-        Assert.Equal("stable-branch", dispatch.Ref);
+        Assert.Equal("main", dispatch.Ref);
         Assert.Equal("7", dispatch.Inputs["pull_number"]);
         Assert.Equal("111", dispatch.Inputs["deploy_run_ids"]);
         Assert.Equal("[prod ROLLBACK #8] add-service-pr: This is a test commit message.", dispatch.Inputs["deploy_name"]);
@@ -309,9 +309,23 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Equal("combined-deploy.yaml", workflow);
     }
 
-    /// <summary>Verifies a deploy whose pull request branch was deleted fails with a comment instead of dispatching on the default branch.</summary>
+    /// <summary>Verifies the deploy workflow is dispatched on the repository's configured default branch, where the workflow file is known to exist, rather than on the pull request branch.</summary>
     [Fact]
-    public async Task ProcessCommentAsync_DoesNotDeployDefaultBranchWhenPullRequestBranchIsMissing()
+    public async Task ProcessCommentAsync_DispatchesWorkflowOnConfiguredDefaultBranch()
+    {
+        _host.Context.DefaultBranch = "develop";
+        _host.SetupPullRequest(GitHubModels.PullRequest(PullNumber, Branch));
+
+        await _manager.ProcessCommentAsync(CommentId, "/deploy", IssueUrl, Author);
+
+        var (_, dispatch) = Assert.Single(_dispatches);
+        Assert.Equal("develop", dispatch.Ref);
+        Assert.Equal(PullNumber.ToString(), dispatch.Inputs["pull_number"]);
+    }
+
+    /// <summary>Verifies a deploy whose pull request branch was deleted fails with a comment, because its checks and builds are found by branch name.</summary>
+    [Fact]
+    public async Task ProcessCommentAsync_FailsWhenPullRequestBranchIsMissing()
     {
         _host.SetupPullRequest(GitHubModels.PullRequest(PullNumber, Branch));
         SetupMissingBranch(Branch);
@@ -323,9 +337,33 @@ public class CommentCommandManagerTest : IDisposable
             && c.Body.Contains($"Branch {Branch} for pull request #{PullNumber} no longer exists."));
     }
 
-    /// <summary>Verifies a failed branch lookup other than not-found propagates instead of deploying the default branch.</summary>
+    /// <summary>Verifies a deploy of a merged pull request whose branch was deleted, to an environment that requires the branch to be up to date, fails with a comment before comparing branches or changing labels.</summary>
+    /// <param name="command">Queued or forced deploy command.</param>
+    [Theory]
+    [InlineData("/deploy stage")]
+    [InlineData("/deploy stage --force")]
+    public async Task ProcessCommentAsync_FailsBeforeChecksWhenPullRequestBranchIsMissing(string command)
+    {
+        _host.Context.Settings.Environments!.Single(e => e.Name == "stage").RequireBranchUpToDate = true;
+        _host.SetupPullRequest(GitHubModels.PullRequest(PullNumber, Branch, labels: ["dev"], merged: true));
+        SetupMissingBranch(Branch);
+        var commits = _host.MockOf(_host.GitHub.Object.Repository.Commit);
+        commits.Setup(c => c.Compare(WebhookTestHost.Owner, WebhookTestHost.Repo, It.IsAny<string>(), Branch))
+            .ThrowsAsync(new NotFoundException("Not Found", System.Net.HttpStatusCode.NotFound));
+
+        await _manager.ProcessCommentAsync(CommentId, command, IssueUrl, Author);
+
+        Assert.Empty(_dispatches);
+        Assert.DoesNotContain(PullNumber, _labels.Keys);
+        commits.Verify(c => c.Compare(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()),
+            Times.Never);
+        Assert.Contains(_comments, c => c.Number == PullNumber
+            && c.Body.Contains($"Branch {Branch} for pull request #{PullNumber} no longer exists."));
+    }
+
+    /// <summary>Verifies a failed branch lookup other than not-found propagates instead of deploying.</summary>
     [Fact]
-    public async Task ProcessCommentAsync_DoesNotDeployDefaultBranchWhenBranchLookupFails()
+    public async Task ProcessCommentAsync_DoesNotDeployWhenBranchLookupFails()
     {
         _host.SetupPullRequest(GitHubModels.PullRequest(PullNumber, Branch));
         _host.MockOf(_host.GitHub.Object.Repository.Branch)
@@ -338,9 +376,9 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Empty(_dispatches);
     }
 
-    /// <summary>Verifies a rollback to a pull request whose branch was deleted dispatches on the default branch.</summary>
+    /// <summary>Verifies a rollback to a pull request whose branch was deleted still deploys, since it deploys the recorded stable builds from the default branch.</summary>
     [Fact]
-    public async Task ProcessCommentAsync_RollbackUsesDefaultBranchWhenRolledBackBranchIsMissing()
+    public async Task ProcessCommentAsync_RollbackDeploysWhenRolledBackBranchIsMissing()
     {
         _host.SetupPullRequest(GitHubModels.PullRequest(PullNumber, Branch, labels: ["prod", "prod-lock"]));
         _host.SetupPullRequest(GitHubModels.PullRequest(7, "stable-branch"));
@@ -357,6 +395,8 @@ public class CommentCommandManagerTest : IDisposable
         var (_, dispatch) = Assert.Single(_dispatches);
         Assert.Equal("main", dispatch.Ref);
         Assert.Equal("7", dispatch.Inputs["pull_number"]);
+        _host.MockOf(_host.GitHub.Object.Repository.Branch)
+            .Verify(c => c.Get(WebhookTestHost.Owner, WebhookTestHost.Repo, "stable-branch"), Times.Never);
     }
 
     /// <summary>Makes the GitHub branch lookup report the given branch as deleted.</summary>
