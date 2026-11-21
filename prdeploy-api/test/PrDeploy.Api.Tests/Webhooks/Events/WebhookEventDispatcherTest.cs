@@ -107,6 +107,84 @@ public class WebhookEventDispatcherTest
             """));
     }
 
+    /// <summary>Verifies the events prdeploy subscribes to are handled, including the new check run, deployment protection and head commit events, while others are ignored.</summary>
+    /// <param name="name">Event name.</param>
+    /// <param name="action">Event action.</param>
+    /// <param name="handled">Whether the event is handled.</param>
+    [Theory]
+    [InlineData("check_run", "requested_action", true)]
+    [InlineData("check_run", "completed", false)]
+    [InlineData("deployment_protection_rule", "requested", true)]
+    [InlineData("pull_request", "synchronize", true)]
+    [InlineData("pull_request", "reopened", true)]
+    [InlineData("pull_request", "labeled", false)]
+    public void IsHandled_IncludesGitHubIntegrationEvents(string name, string action, bool handled)
+    {
+        Assert.Equal(handled, Event(name, action, "\"x\": 1").IsHandled);
+    }
+
+    /// <summary>Verifies a new head commit publishes the prdeploy check without running the Jira flow.</summary>
+    [Fact]
+    public async Task DispatchAsync_PublishesCheckOnSynchronize()
+    {
+        await _deploymentStore.SetAsync(WebhookTestHost.Owner, "DEPLOY_SETTINGS", WebhookTestHost.CreateDefaultSettings());
+        Mock.Get(_github.Object.PullRequest)
+            .Setup(c => c.Get(WebhookTestHost.Owner, WebhookTestHost.Repo, 8))
+            .ReturnsAsync(GitHubModels.PullRequest(8));
+
+        await _dispatcher.DispatchAsync(Event("pull_request", "synchronize", """
+            "pull_request": { "number": 8, "head": { "ref": "feature-branch", "sha": "feature-branch-sha" },
+                              "base": { "ref": "main" }, "user": { "login": "u" }, "labels": [] }
+            """));
+
+        Mock.Get(_github.Object.Check.Run).Verify(c => c.Create(WebhookTestHost.Owner, WebhookTestHost.Repo,
+            It.Is<NewCheckRun>(r => r.Name == "prdeploy" && r.HeadSha == "feature-branch-sha")));
+        Mock.Get(_github.Object.PullRequest).Verify(c => c.Update(It.IsAny<string>(), It.IsAny<string>(),
+            It.IsAny<int>(), It.IsAny<PullRequestUpdate>()), Times.Never);
+    }
+
+    /// <summary>Verifies a pressed check run button is routed with its pull request and sender.</summary>
+    [Fact]
+    public async Task DispatchAsync_RoutesCheckRunRequestedAction()
+    {
+        await _deploymentStore.SetAsync(WebhookTestHost.Owner, "DEPLOY_SETTINGS", WebhookTestHost.CreateDefaultSettings());
+        Mock.Get(_github.Object.PullRequest)
+            .Setup(c => c.Get(WebhookTestHost.Owner, WebhookTestHost.Repo, 8))
+            .ReturnsAsync(GitHubModels.PullRequest(8, labels: ["dev", "dev-lock"]));
+        Mock.Get(_github.Object.Repository.Collaborator)
+            .Setup(c => c.ReviewPermission(WebhookTestHost.Owner, WebhookTestHost.Repo, "octocat"))
+            .ReturnsAsync(GitHubModels.FromJson<CollaboratorPermissionResponse>(
+                """{ "permission": "write", "role_name": "write" }"""));
+
+        await _dispatcher.DispatchAsync(Event("check_run", "requested_action", """
+            "check_run": { "name": "prdeploy", "external_id": "8", "pull_requests": [{ "number": 8 }] },
+            "requested_action": { "identifier": "free" },
+            "sender": { "login": "octocat" }
+            """));
+
+        Mock.Get(_github.Object.Issue.Labels).Verify(c => c.ReplaceAllForIssue(WebhookTestHost.Owner,
+            WebhookTestHost.Repo, 8, new[] { "dev" }));
+    }
+
+    /// <summary>Verifies a deployment protection rule request is answered for the run in its callback URL.</summary>
+    [Fact]
+    public async Task DispatchAsync_RoutesDeploymentProtectionRule()
+    {
+        await _deploymentStore.SetAsync(WebhookTestHost.Owner, "DEPLOY_SETTINGS", WebhookTestHost.CreateDefaultSettings());
+        Mock.Get(_github.Object.Actions.Workflows.Runs)
+            .Setup(c => c.Get(WebhookTestHost.Owner, WebhookTestHost.Repo, 5001))
+            .ReturnsAsync(GitHubModels.WorkflowRun(5001, "Nightly", ".github/workflows/e2e.yml"));
+
+        await _dispatcher.DispatchAsync(Event("deployment_protection_rule", "requested", """
+            "environment": "dev",
+            "deployment_callback_url": "https://api.github.com/repos/o/r/actions/runs/5001/deployment_protection_rule"
+            """));
+
+        Mock.Get(_github.Object.Connection).Verify(c => c.Post(
+            It.Is<Uri>(u => u.ToString().EndsWith("/actions/runs/5001/deployment_protection_rule")),
+            It.IsAny<object>(), It.IsAny<string>(), It.IsAny<CancellationToken>()));
+    }
+
     /// <summary>Performs the event operation and returns its result.</summary>
     /// <param name="name">Name used to identify the value or resource.</param>
     /// <param name="action">Text used as the action.</param>

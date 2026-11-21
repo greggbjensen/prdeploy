@@ -43,6 +43,7 @@ In order to be able to listen and respond to pull request events, we need to cre
 | Administration | Read-only      |
 | Checks         | Read and write |
 | Contents       | Read and write |
+| Deployments    | Read and write |
 | Issues         | Read-only      |
 | Metadata       | Read-only      |
 | Pull requests  | Read and write |
@@ -62,10 +63,14 @@ In order to be able to listen and respond to pull request events, we need to cre
 2. Subscribe to the following events:
 
 ```
+Check run
+Deployment protection rule
 Issue comment
 Pull request
 Workflow run
 ```
+
+**Checks** and **Deployments** let prdeploy show its own check run and deployment cards on pull requests, and **Check run** and **Deployment protection rule** events deliver its check run buttons and environment gates. See [GitHub integration](../github-integration.md). If you add them to an existing app, GitHub asks each installation to accept the new permissions before they take effect.
 
 3. **Where can this GitHub App be installed?** should be set to **Only on this account**.
 4. Click **Create GitHub App**.

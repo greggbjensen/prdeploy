@@ -159,6 +159,70 @@ public class PullRequestServiceTest : IDisposable
         Assert.Equal(["dev", "stage", "stage-lock"], labels);
     }
 
+    /// <summary>Verifies the environment and branch are parsed from deploy run names, including rollbacks and names without a branch.</summary>
+    /// <param name="runName">Deploy run name.</param>
+    /// <param name="environment">Expected environment.</param>
+    /// <param name="branch">Expected branch.</param>
+    [Theory]
+    [InlineData("[dev2] feature-branch: Fix the thing", "dev2", "feature-branch")]
+    [InlineData("[PROD ROLLBACK #12 2] release/1.2: Release", "prod", "release/1.2")]
+    [InlineData("[stage]", "stage", "")]
+    [InlineData("combined-deploy", "", "")]
+    [InlineData(null, "", "")]
+    public void ParseDeployRunName_ParsesEnvironmentAndBranch(string? runName, string environment, string branch)
+    {
+        Assert.Equal((environment, branch), PullRequestService.ParseDeployRunName(runName));
+    }
+
+    /// <summary>Verifies a dispatched deploy run, which GitHub links to no pull request, resolves to the pull request on its branch labelled with its environment.</summary>
+    [Fact]
+    public async Task ResolveDeployPullNumberAsync_PrefersPullRequestOnRunBranch()
+    {
+        _host.SetupDeployedPullRequests(
+            GitHubModels.PullRequest(7, "other-branch", labels: ["dev2"]),
+            GitHubModels.PullRequest(8, "feature-branch", labels: ["dev2", "dev2-lock"]),
+            GitHubModels.PullRequest(9, "feature-branch", labels: ["stage", "stage-lock"]));
+
+        var pullNumber = await _service.ResolveDeployPullNumberAsync(
+            GitHubModels.WorkflowRun(1, "[dev2] feature-branch: Fix"));
+
+        Assert.Equal(8, pullNumber);
+    }
+
+    /// <summary>Verifies the only pull request labelled with the environment is used when the run name has no branch.</summary>
+    [Fact]
+    public async Task ResolveDeployPullNumberAsync_UsesOnlyLabelledPullRequestWithoutBranch()
+    {
+        _host.SetupDeployedPullRequests(GitHubModels.PullRequest(8, labels: ["stage"]));
+
+        Assert.Equal(8, await _service.ResolveDeployPullNumberAsync(GitHubModels.WorkflowRun(1, "[stage]")));
+    }
+
+    /// <summary>Verifies no pull request is resolved when the name has no environment or several pull requests are ambiguous.</summary>
+    /// <param name="runName">Deploy run name.</param>
+    [Theory]
+    [InlineData("combined-deploy")]
+    [InlineData("[dev] unknown-branch: Fix")]
+    public async Task ResolveDeployPullNumberAsync_ReturnsZeroWhenUnresolved(string runName)
+    {
+        _host.SetupDeployedPullRequests(
+            GitHubModels.PullRequest(7, "a", labels: ["dev"]),
+            GitHubModels.PullRequest(8, "b", labels: ["dev"]));
+
+        Assert.Equal(0, await _service.ResolveDeployPullNumberAsync(GitHubModels.WorkflowRun(1, runName)));
+    }
+
+    /// <summary>Verifies changing a pull request's labels records it so its prdeploy check is refreshed.</summary>
+    [Fact]
+    public async Task FreeAsync_TracksPullRequestForCheckRefresh()
+    {
+        _host.CaptureLabels();
+
+        await _service.FreeAsync(GitHubModels.PullRequest(8, labels: ["dev", "dev-lock"]));
+
+        Assert.Equal([8], _host.Get<DeployCheckTracker>().PullNumbers);
+    }
+
     /// <summary>Releases resources owned by this instance.</summary>
     public void Dispose() => _host.Dispose();
 }

@@ -1,7 +1,7 @@
 # prdeploy-api
 
 GraphQL API supporting the web application for Engineers, QA, and Product Owners to be able to review and deploy services,
-as well as the GitHub App webhooks that respond to pull request, comment, and workflow run events.
+as well as the GitHub App webhooks that respond to pull request, comment, workflow run, check run, and deployment protection rule events.
 
 | Endpoint                | Purpose                                                                                    |
 | ----------------------- | ------------------------------------------------------------------------------------------ |
@@ -18,7 +18,7 @@ Each environment in the deploy settings can define `urls`, a list of `label` and
 
 Pull request users (`DeployUser`) include `avatarUrl` and `url` (the GitHub profile page), mapped from the GitHub user by `Map.DeployUser`.
 
-The deploy workflow `workflow_run` webhooks (`requested`, `completed`) publish a status per environment to an in-memory `DeployStatusBroadcaster`. `GET /api/deploy-status/{owner}/{repo}/events` streams the latest status of each environment on connect, then every change. Statuses are held in memory (like the webhook queue, this relies on a single API replica) so an environment shows a status after its first deploy run since the API started. Browsers cannot send an `Authorization` header with `EventSource`, so the portal reads the stream with `fetch`. Reverse proxies must not buffer it; the API sends `X-Accel-Buffering: no`.
+The deploy workflow `workflow_run` webhooks (`requested`, `completed`) publish a status per environment to an in-memory `DeployStatusBroadcaster`. Deploy runs are dispatched on the default branch, so GitHub links no pull request to them; `PullRequestService.ResolveDeployPullNumberAsync` finds it from the run name (`[environment] branch: title`) and the pull request labelled with that environment, preferring the one on that branch. `GET /api/deploy-status/{owner}/{repo}/events` streams the latest status of each environment on connect, then every change. Statuses are held in memory (like the webhook queue, this relies on a single API replica) so an environment shows a status after its first deploy run since the API started. Browsers cannot send an `Authorization` header with `EventSource`, so the portal reads the stream with `fetch`. Reverse proxies must not buffer it; the API sends `X-Accel-Buffering: no`.
 
 ## OpenAPI
 
@@ -70,7 +70,20 @@ Webhook processing only calls a Jira host or Slack webhook URL that is absolute 
 | `pull_request.opened`, `edited`            | Adds Jira issue links from the branch name, when enabled.               |
 | `pull_request.closed`                      | Frees environments, dequeues the next pull request, promotes to stable. |
 | `issue_comment.created`                    | Runs `/deploy`, `/free`, `/rollback`, and `/add` commands from users with write access. |
-| `workflow_run.requested`, `completed`      | Posts deploy status, triggers automation tests, retriggers deploys.     |
+| `pull_request.opened`, `reopened`, `synchronize` | Publishes the `prdeploy` check run on the new head commit.        |
+| `workflow_run.requested`, `completed`      | Posts deploy status, updates the GitHub Deployment, triggers automation tests, retriggers deploys. |
+| `check_run.requested_action`               | Runs the **Deploy**, **Redeploy**, **Free**, and **Leave queue** buttons on the `prdeploy` check run, for users with write access. |
+| `deployment_protection_rule.requested`     | Approves a deploy workflow job only when the pull request on its branch holds the environment lock. |
+
+#### GitHub integration
+
+These features make deploy state visible in GitHub's own pull request UI. Every GitHub call is best effort: an error, such as a missing permission, is logged at `Warning` and never stops the deploy.
+
+- **Check run** (`DeployCheckService`): one `prdeploy` check per head commit, with Markdown tables of environments, queues, and services, and up to three buttons. It is `in_progress` while deploying, `queued` while waiting in a queue, `failure` when the latest deploy failed, `success` when it succeeded, and `neutral` otherwise. Services that change labels, queues, or deploy status record the pull request in the scoped `DeployCheckTracker`; the dispatcher publishes each recorded check once after the event. A completed check cannot be reopened, so a new run replaces it when deploying starts again. When `GitHubApp:AppId` is set, only check runs created by that app are updated.
+- **Deployments** (`GitHubDeploymentService`): after the deploy workflow is dispatched, a deployment with task `deploy:prdeploy` is created for the pull request's head commit (with `auto_merge: false` and no required contexts) and set to `queued`. The deploy run then sets it to `in_progress`, and `success` (with the environment's first URL and `auto_inactive`) or `failure`. Rollbacks are recorded on the pull request that requested them.
+- **Deployment protection rule** (`DeploymentProtectionManager`): when the app is enabled as a protection rule on an environment, deploy workflow jobs are approved only when exactly one pull request holds the environment's lock label and the run name is for that environment and that pull request's branch (or is a prdeploy rollback). Other workflows are approved. The decision is posted to `POST /repos/{owner}/{repo}/actions/runs/{run_id}/deployment_protection_rule`.
+
+The check run buttons follow the comment command rules below: only users with write access can use them, and **Deploy** and **Redeploy** are refused for pull requests from forks.
 
 Comment commands only run when the comment author has `write`, `maintain`, or `admin` permission on the repository (`GET /repos/{owner}/{repo}/collaborators/{user}/permission`). Anyone who can read a repository, or any GitHub user on a public one, can comment, so commands from other users, bots, and apps are logged at `Warning` and ignored. `/deploy` and `/add` are also ignored for pull requests from forks, because deploys find checks and builds, and `/add` commits trigger files, by branch name in this repository (deploys fall back to the head commit SHA only when the branch no longer exists); a fork pull request taken off a queue is not deployed and gets a failure comment instead.
 

@@ -116,6 +116,29 @@ public class StatusManagerTest : IDisposable
         Assert.Equal("2.0.0", Assert.Single(stable.Services!).Version);
     }
 
+    /// <summary>Verifies a deploy run dispatched on the default branch, which GitHub links to no pull request, still publishes its status to the dashboard stream.</summary>
+    [Fact]
+    public async Task ProcessWorkflowRunAsync_PublishesStatusForDispatchedDeployRun()
+    {
+        var comments = _host.CaptureComments();
+        var pullRequest = GitHubModels.PullRequest(8, labels: ["dev2", "dev2-lock"]);
+        _host.SetupDeployedPullRequests(pullRequest);
+        _host.SetupPullRequest(pullRequest);
+        var run = GitHubModels.WorkflowRun(5001, "[dev2] feature-branch: Fix");
+        _host.MockOf(_host.GitHub.Object.Actions.Workflows.Runs)
+            .Setup(c => c.Get(WebhookTestHost.Owner, WebhookTestHost.Repo, 5001))
+            .ReturnsAsync(run);
+
+        await _manager.ProcessWorkflowRunAsync(run, StatusManager.RequestedAction);
+
+        var status = Assert.Single(_host.Get<PrDeploy.Api.Webhooks.Status.DeployStatusBroadcaster>()
+            .GetSnapshot(WebhookTestHost.Owner, WebhookTestHost.Repo));
+        Assert.Equal("dev2", status.Environment);
+        Assert.Equal(8, status.PullNumber);
+        Assert.Equal(PrDeploy.Api.Webhooks.Status.DeployWorkflowState.InProgress, status.State);
+        Assert.Equal(8, Assert.Single(comments).Number);
+    }
+
     /// <summary>Releases resources owned by this instance.</summary>
     public void Dispose() => _host.Dispose();
 }

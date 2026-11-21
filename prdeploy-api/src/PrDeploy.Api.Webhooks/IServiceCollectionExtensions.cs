@@ -48,6 +48,7 @@ public static class IServiceCollectionExtensions
 
         return services
             .AddScoped<WebhookContext>()
+            .AddScoped<DeployCheckTracker>()
             .AddScoped<EnvironmentUtil>()
             .AddSingleton<TemplateService>()
             .AddScoped<WebhookSettingsService>()
@@ -57,12 +58,16 @@ public static class IServiceCollectionExtensions
             .AddScoped<SlackService>()
             .AddScoped<JiraService>()
             .AddScoped<CheckService>()
+            .AddScoped<GitHubDeploymentService>()
             .AddScoped<DeployService>()
+            .AddScoped<DeployCheckService>()
             .AddScoped<StatusService>()
             .AddScoped<AutomationTestService>()
             .AddScoped<CommentCommandManager>()
             .AddScoped<JiraManager>()
-            .AddScoped<StatusManager>();
+            .AddScoped<StatusManager>()
+            .AddScoped<CheckRunActionManager>()
+            .AddScoped<DeploymentProtectionManager>();
     }
 
     /// <summary>Maps the endpoint configured as the GitHub App Webhook URL.</summary>

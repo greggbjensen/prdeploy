@@ -19,6 +19,8 @@ public class DeployService
     private readonly PullRequestService _pullRequestService;
     private readonly DeployStateService _deployStateService;
     private readonly EnvironmentUtil _environmentUtil;
+    private readonly GitHubDeploymentService _gitHubDeploymentService;
+    private readonly DeployCheckTracker _checkTracker;
     private readonly TimeProvider _timeProvider;
     private readonly ILogger<DeployService> _logger;
 
@@ -31,11 +33,14 @@ public class DeployService
     /// <param name="pullRequestService">Object containing the pull request service data used by the operation.</param>
     /// <param name="deployStateService">Object containing the deploy state service data used by the operation.</param>
     /// <param name="environmentUtil">Object containing the environment util data used by the operation.</param>
+    /// <param name="gitHubDeploymentService">Records dispatched deploys as GitHub Deployments.</param>
+    /// <param name="checkTracker">Records pull requests whose queue position changes, so their prdeploy check is refreshed.</param>
     /// <param name="timeProvider">Object containing the time provider data used by the operation.</param>
     /// <param name="logger">Logger used to report operational information and errors.</param>
     public DeployService(WebhookContext context, CheckService checkService, TemplateService templateService,
         SlackService slackService, IDeploymentStore deploymentStore, PullRequestService pullRequestService,
-        DeployStateService deployStateService, EnvironmentUtil environmentUtil, TimeProvider timeProvider,
+        DeployStateService deployStateService, EnvironmentUtil environmentUtil,
+        GitHubDeploymentService gitHubDeploymentService, DeployCheckTracker checkTracker, TimeProvider timeProvider,
         ILogger<DeployService> logger)
     {
         _context = context;
@@ -46,6 +51,8 @@ public class DeployService
         _pullRequestService = pullRequestService;
         _deployStateService = deployStateService;
         _environmentUtil = environmentUtil;
+        _gitHubDeploymentService = gitHubDeploymentService;
+        _checkTracker = checkTracker;
         _timeProvider = timeProvider;
         _logger = logger;
     }
@@ -304,6 +311,7 @@ public class DeployService
                 _logger.LogInformation("Removing pull request {PullNumber} from {Environment} queue.",
                     pullRequest.Number, normalizedEnvironment);
                 await SetQueuePullNumbersAsync(normalizedEnvironment, updatedPullNumbers);
+                _checkTracker.Track(pullRequest.Number);
             }
         });
 
@@ -540,7 +548,11 @@ public class DeployService
         {
             _logger.LogError(ex, "Unable to dispatch {Workflow}.", workflowFileName);
             await PostDeployFailedAsync(triggeringPullRequest.Number, environment, rollback, ex.Message);
+            return;
         }
+
+        await _gitHubDeploymentService.CreateQueuedAsync(triggeringPullRequest, environment, deployName,
+            workflowFileName, rollback);
     }
 
   /// <summary>Converts the supplied value to the deployed service.</summary>
@@ -606,11 +618,16 @@ public class DeployService
         await _slackService.PostMessageAsync(SlackChannel.Deploy, json);
     }
 
-    /// <summary>Adds the comment reaction to the associated collection.</summary>
-    /// <param name="commentId">Identifier of the GitHub comment associated with the request.</param>
+    /// <summary>Reacts to the comment that ran a command, so its author sees it was picked up.</summary>
+    /// <param name="commentId">Identifier of the GitHub comment; 0 when the request came from a check run button, which has no comment to react to.</param>
     /// <param name="reaction">Object containing the reaction data used by the operation.</param>
     private async Task AddCommentReactionAsync(long commentId, ReactionType reaction)
     {
+        if (commentId <= 0)
+        {
+            return;
+        }
+
         await GitHub.Reaction.IssueComment.Create(_context.Owner, _context.Repo, commentId, new NewReaction(reaction));
     }
 
@@ -730,6 +747,8 @@ public class DeployService
         var queueName = _environmentUtil.GetRequiredSettings(normalizedEnvironment).Queue;
         await _deploymentStore.SetAsync(_context.Owner, _context.Repo, queueName, pullNumbers);
 
+        // Every pull request left in the queue may have moved position.
+        _checkTracker.TrackAll(pullNumbers);
         _logger.LogInformation("Queue for {Environment} updated: {PullNumbers}", normalizedEnvironment,
             string.Join(", ", pullNumbers));
     }

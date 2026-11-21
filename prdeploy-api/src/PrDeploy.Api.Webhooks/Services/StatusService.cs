@@ -26,6 +26,8 @@ public class StatusService
     private readonly EnvironmentUtil _environmentUtil;
     private readonly IMemoryCache _cache;
     private readonly DeployStatusBroadcaster _broadcaster;
+    private readonly GitHubDeploymentService _gitHubDeploymentService;
+    private readonly DeployCheckTracker _checkTracker;
     private readonly TimeProvider _timeProvider;
     private readonly ILogger<StatusService> _logger;
 
@@ -39,11 +41,14 @@ public class StatusService
     /// <param name="environmentUtil">Object containing the environment util data used by the operation.</param>
     /// <param name="cache">Object containing the cache data used by the operation.</param>
     /// <param name="broadcaster">Publishes deploy workflow status to the dashboard stream.</param>
+    /// <param name="gitHubDeploymentService">Moves the pull request's GitHub Deployment through the run's states.</param>
+    /// <param name="checkTracker">Records the pull request so its prdeploy check shows the new deploy status.</param>
     /// <param name="timeProvider">Supplies the time stamped on published statuses.</param>
     /// <param name="logger">Logger used to report operational information and errors.</param>
     public StatusService(WebhookContext context, TemplateService templateService, SlackService slackService,
         CheckService checkService, DeployStateService deployStateService, PullRequestService pullRequestService,
         EnvironmentUtil environmentUtil, IMemoryCache cache, DeployStatusBroadcaster broadcaster,
+        GitHubDeploymentService gitHubDeploymentService, DeployCheckTracker checkTracker,
         TimeProvider timeProvider, ILogger<StatusService> logger)
     {
         _context = context;
@@ -55,6 +60,8 @@ public class StatusService
         _environmentUtil = environmentUtil;
         _cache = cache;
         _broadcaster = broadcaster;
+        _gitHubDeploymentService = gitHubDeploymentService;
+        _checkTracker = checkTracker;
         _timeProvider = timeProvider;
         _logger = logger;
     }
@@ -70,8 +77,8 @@ public class StatusService
 
         var conclusion = run.Conclusion?.StringValue;
         var environmentSettings = _environmentUtil.GetSettings(environment);
-        PublishStatus(environmentSettings?.Name ?? environment, DeployWorkflowStatus.FromConclusion(conclusion),
-            pullRequest.Number, run);
+        await PublishStatusAsync(environmentSettings?.Name ?? environment,
+            DeployWorkflowStatus.FromConclusion(conclusion), pullRequest.Number, run);
         if (environmentSettings == null || !ReportedConclusions.Contains(conclusion))
         {
             if (!string.IsNullOrEmpty(conclusion))
@@ -205,7 +212,7 @@ public class StatusService
             return;
         }
 
-        PublishStatus(environmentSettings.Name, DeployWorkflowState.InProgress, pullRequest.Number, run);
+        await PublishStatusAsync(environmentSettings.Name, DeployWorkflowState.InProgress, pullRequest.Number, run);
 
         var isRollback = _pullRequestService.IsRollback(updatedRun);
         var body = _templateService.Render(!isRollback ? TemplateService.DeployStarted : TemplateService.RollbackStarted,
@@ -239,12 +246,13 @@ public class StatusService
         }
     }
 
-    /// <summary>Publishes the deploy workflow status to connected dashboards. Does nothing when the environment is unknown or the state is not a final outcome.</summary>
+    /// <summary>Publishes the deploy workflow status to connected dashboards, the pull request's GitHub Deployment and its prdeploy check. Does nothing when the environment is unknown or the state is not a final outcome.</summary>
     /// <param name="environment">Environment name the workflow deploys to.</param>
     /// <param name="state">New state, or null when the run has no reportable state.</param>
     /// <param name="pullNumber">Pull request being deployed.</param>
     /// <param name="run">Workflow run the status comes from.</param>
-    private void PublishStatus(string? environment, DeployWorkflowState? state, int pullNumber, WorkflowRun run)
+    private async Task PublishStatusAsync(string? environment, DeployWorkflowState? state, int pullNumber,
+        WorkflowRun run)
     {
         if (string.IsNullOrEmpty(environment) || state == null)
         {
@@ -255,5 +263,7 @@ public class StatusService
             pullNumber, run.Id,
             !string.IsNullOrEmpty(run.HtmlUrl) ? run.HtmlUrl : $"{_context.RepositoryHtmlUrl}/actions/runs/{run.Id}",
             _timeProvider.GetUtcNow()));
+        _checkTracker.Track(pullNumber);
+        await _gitHubDeploymentService.UpdateFromRunAsync(pullNumber, environment, state.Value, run);
     }
 }

@@ -12,6 +12,8 @@ public record WebhookEvent(string Name, string Action, string DeliveryId, JsonEl
     public const string PullRequest = "pull_request";
     public const string IssueComment = "issue_comment";
     public const string WorkflowRun = "workflow_run";
+    public const string CheckRun = "check_run";
+    public const string DeploymentProtectionRule = "deployment_protection_rule";
     public const string Ping = "ping";
 
     private static readonly HashSet<string> HandledEvents =
@@ -19,9 +21,13 @@ public record WebhookEvent(string Name, string Action, string DeliveryId, JsonEl
         $"{PullRequest}.opened",
         $"{PullRequest}.edited",
         $"{PullRequest}.closed",
+        $"{PullRequest}.reopened",
+        $"{PullRequest}.synchronize",
         $"{IssueComment}.created",
         $"{WorkflowRun}.requested",
-        $"{WorkflowRun}.completed"
+        $"{WorkflowRun}.completed",
+        $"{CheckRun}.requested_action",
+        $"{DeploymentProtectionRule}.requested"
     ];
 
     /// <summary>Gets the is handled.</summary>

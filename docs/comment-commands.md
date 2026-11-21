@@ -19,6 +19,8 @@ Within the pull request, engineers, QA, and the product owner can work together 
 | `/rollback prod 2`                                   | Rollback a specific environment multiple versions in history.                                                                       |
 | `/add mydomain-api-service mydomain-app-main`        | Add services to be built and deployed with the pull request that have no code changes.                                              |
 
+The most common commands are also buttons on the pull request's `prdeploy` check, see [GitHub integration](./github-integration.md#prdeploy-check).
+
 ## Deploy Branch
 
 The deploy workflow is always dispatched on the repository's default branch, so the configured workflow file always exists and the version of the deploy workflow on the default branch is the one that runs.  The pull request's code is still what is deployed, because its builds are passed to the workflow as `deploy_run_ids`.  Those builds and checks are found by the pull request's branch.  If the branch has been deleted, such as after the pull request was merged, they are found by the pull request's head commit instead, so `/deploy` still works.  For an environment that requires the branch to be up to date, a merged pull request is compared by its merge commit; if the base branch has moved on since, there is no branch to update, so `/deploy` comments that the pull request is out of date instead of deploying.  A `/rollback` deploys the recorded stable builds, so it works even when the rolled-back pull request's branch has been deleted.

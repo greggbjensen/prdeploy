@@ -13,17 +13,20 @@ public partial class PullRequestService
 
     private readonly WebhookContext _context;
     private readonly EnvironmentUtil _environmentUtil;
+    private readonly DeployCheckTracker _checkTracker;
     private readonly ILogger<PullRequestService> _logger;
 
     /// <summary>Initializes the instance with its required dependencies.</summary>
     /// <param name="context">Request or application context used by the operation.</param>
     /// <param name="environmentUtil">Object containing the environment util data used by the operation.</param>
+    /// <param name="checkTracker">Records pull requests whose labels change, so their prdeploy check is refreshed.</param>
     /// <param name="logger">Logger used to report operational information and errors.</param>
     public PullRequestService(WebhookContext context, EnvironmentUtil environmentUtil,
-        ILogger<PullRequestService> logger)
+        DeployCheckTracker checkTracker, ILogger<PullRequestService> logger)
     {
         _context = context;
         _environmentUtil = environmentUtil;
+        _checkTracker = checkTracker;
         _logger = logger;
     }
 
@@ -362,9 +365,58 @@ public partial class PullRequestService
 
         await _context.GitHub.Issue.Labels.ReplaceAllForIssue(_context.Owner, _context.Repo, pullRequest.Number,
             updateLabels);
+        _checkTracker.Track(pullRequest.Number);
 
         return availableEnvironments;
     }
+
+    /// <summary>Finds the pull request a deploy workflow run is deploying when GitHub does not link one.</summary>
+    /// <remarks>
+    /// Deploy runs are dispatched on the default branch, so GitHub reports no pull requests for them. prdeploy labels
+    /// the pull request with the environment before it dispatches the run, and names the run
+    /// <c>[environment] branch: title</c>, so the pull request labelled with that environment, preferring the one
+    /// on that branch, is the one being deployed.
+    /// </remarks>
+    /// <param name="run">Deploy workflow run whose name holds the environment and branch.</param>
+    /// <returns>The pull request number, or 0 when the run name has no environment or no pull request has its label.</returns>
+    public async Task<int> ResolveDeployPullNumberAsync(WorkflowRun run)
+    {
+        var (environment, branch) = ParseDeployRunName(run.Name);
+        if (string.IsNullOrEmpty(environment))
+        {
+            _logger.LogDebug("Deploy run {RunId} name {RunName} has no environment.", run.Id, run.Name);
+            return 0;
+        }
+
+        var pulls = ListWithEnvironment(await ListDeployedAsync(), environment);
+        var match = pulls.Find(p => string.Equals(p.Head?.Ref, branch, StringComparison.Ordinal))
+                    ?? (pulls.Count == 1 ? pulls[0] : null);
+        if (match == null)
+        {
+            _logger.LogWarning("Unable to find the pull request deployed to {Environment} by run {RunId}; {Count} have the label.",
+                environment, run.Id, pulls.Count);
+            return 0;
+        }
+
+        _logger.LogDebug("Deploy run {RunId} resolved to pull request {PullNumber}.", run.Id, match.Number);
+        return match.Number;
+    }
+
+    /// <summary>Parses the environment and branch from a deploy run name of the form <c>[environment] branch: title</c>.</summary>
+    /// <param name="runName">Workflow run name set from the <c>deploy_name</c> input.</param>
+    /// <returns>The lowercase environment and the branch; each is empty when the name does not contain it.</returns>
+    internal static (string Environment, string Branch) ParseDeployRunName(string? runName)
+    {
+        var match = DeployRunNameRegex().Match(runName ?? string.Empty);
+        return match.Success
+            ? (match.Groups["environment"].Value.ToLowerInvariant(), match.Groups["branch"].Value)
+            : (string.Empty, string.Empty);
+    }
+
+    /// <summary>Matches a deploy run name, capturing the environment and, when present, the branch before the colon.</summary>
+    /// <returns>The compiled expression.</returns>
+    [GeneratedRegex(@"^\[(?<environment>\w+)[^\]]*\](?:\s+(?<branch>[^\s:]+):)?")]
+    private static partial Regex DeployRunNameRegex();
 
     /// <summary>Performs the environment title regex operation and returns its result.</summary>
     /// <returns>The regex produced by the operation.</returns>

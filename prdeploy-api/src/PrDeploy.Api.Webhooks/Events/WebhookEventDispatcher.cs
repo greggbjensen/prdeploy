@@ -65,6 +65,9 @@ public class WebhookEventDispatcher
             context.DefaultBranch = repoSettings.DefaultBranch;
 
             await RouteAsync(webhookEvent, services);
+
+            // Refresh the prdeploy check of every pull request whose deploy state the event changed.
+            await services.GetRequiredService<DeployCheckService>().PublishTrackedAsync();
         }
         catch (Exception ex)
         {
@@ -92,13 +95,22 @@ public class WebhookEventDispatcher
                 {
                     await services.GetRequiredService<StatusManager>().ProcessPullRequestClosedAsync(pullRequest);
                 }
-                else if (services.GetRequiredService<WebhookContext>().Settings.Jira?.AddIssuesEnabled != true)
+                else if (webhookEvent.Action is "opened" or "edited")
                 {
-                    _logger.LogDebug("Add JIRA issues is disabled.");
+                    if (services.GetRequiredService<WebhookContext>().Settings.Jira?.AddIssuesEnabled != true)
+                    {
+                        _logger.LogDebug("Add JIRA issues is disabled.");
+                    }
+                    else
+                    {
+                        await services.GetRequiredService<JiraManager>().AddJiraIssuesToPullRequestAsync(pullRequest);
+                    }
                 }
-                else
+
+                // New head commits need their own check run, so its buttons show in the merge box.
+                if (webhookEvent.Action is "opened" or "reopened" or "synchronize")
                 {
-                    await services.GetRequiredService<JiraManager>().AddJiraIssuesToPullRequestAsync(pullRequest);
+                    services.GetRequiredService<DeployCheckTracker>().Track(pullRequest.Number);
                 }
 
                 break;
@@ -131,8 +143,44 @@ public class WebhookEventDispatcher
                 await services.GetRequiredService<StatusManager>().ProcessWorkflowRunAsync(run, webhookEvent.Action);
                 break;
             }
+
+            case WebhookEvent.CheckRun:
+            {
+                var checkRun = payload.GetProperty("check_run");
+                var identifier = payload.GetProperty("requested_action").GetProperty("identifier").GetString();
+                var pullNumbers = checkRun.TryGetProperty("pull_requests", out var pulls)
+                                  && pulls.ValueKind == JsonValueKind.Array
+                    ? pulls.EnumerateArray().Select(p => p.GetProperty("number").GetInt32()).ToList()
+                    : [];
+                _logger.LogDebug("Received check run action {Identifier} on {CheckName}.", identifier,
+                    GetString(checkRun, "name"));
+
+                await services.GetRequiredService<CheckRunActionManager>().ProcessRequestedActionAsync(
+                    GetString(checkRun, "name"), identifier, GetString(checkRun, "external_id"), pullNumbers,
+                    payload.TryGetProperty("sender", out var sender) ? GetString(sender, "login") : null);
+                break;
+            }
+
+            case WebhookEvent.DeploymentProtectionRule:
+            {
+                var environment = GetString(payload, "environment");
+                _logger.LogDebug("Received a deployment protection rule request for {Environment}.", environment);
+
+                await services.GetRequiredService<DeploymentProtectionManager>().ProcessAsync(environment,
+                    GetString(payload, "deployment_callback_url"));
+                break;
+            }
         }
     }
+
+    /// <summary>Reads an optional string property from a payload object.</summary>
+    /// <param name="element">Payload object to read.</param>
+    /// <param name="name">Property name.</param>
+    /// <returns>The value, or null when the property is missing or not a string.</returns>
+    private static string? GetString(JsonElement element, string name) =>
+        element.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.String
+            ? value.GetString()
+            : null;
 
     /// <summary>Performs the deserialize operation and returns its result.</summary>
     /// <param name="element">Object containing the element data used by the operation.</param>

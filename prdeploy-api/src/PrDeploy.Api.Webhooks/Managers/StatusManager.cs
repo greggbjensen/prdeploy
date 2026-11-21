@@ -53,6 +53,12 @@ public class StatusManager
             pullNumber = _pullRequestService.GetRollbackPullNumber(run);
         }
 
+        if (pullNumber == 0 && IsDeployWorkflow(run.Path))
+        {
+            // Deploys are dispatched on the default branch, so GitHub links no pull request to the run.
+            pullNumber = await _pullRequestService.ResolveDeployPullNumberAsync(run);
+        }
+
         if (pullNumber == 0)
         {
             return;

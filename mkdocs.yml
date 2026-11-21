@@ -29,6 +29,7 @@ nav:
       - '6. prdeploy portal': 'getting-started/6-prdeploy-portal.md'
       - '7. GitHub Actions': 'getting-started/7-github-actions.md'
   - 'Comment commands': 'comment-commands.md'
+  - 'GitHub integration': 'github-integration.md'
   - 'prdeploy portal': 'prdeploy-portal.md'
   - 'Microservice deploy': 'microservice-deploy.md'
   - 'Slack notifications': 'slack-notifications.md'
