@@ -174,10 +174,23 @@ runtime:
           expect(res.status).to.equal(200);
           expect(res.body.errors).to.be.undefined;
         });
+
+        test("never returns credentials, only the mask", function () {
+          const compare = res.body.data.deploySettingsCompare;
+          const secrets = [compare.jira.password, compare.slack.token];
+          for (const secret of secrets) {
+            for (const value of [secret.owner, secret.repo]) {
+              expect(value === null || value === "********").to.equal(true);
+            }
+          }
+        });
 settings:
   encodeUrl: true
 docs: >-
   Compares owner-level defaults with repository-level deploy settings.
+
+  The Jira token, Slack bot token, and Slack and Teams webhook URLs are returned as `********` when
+  set, and `null` when not. Credentials are never returned.
 
 
   Client operation:

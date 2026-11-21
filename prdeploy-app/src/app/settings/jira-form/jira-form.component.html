@@ -10,7 +10,8 @@
         type="text"
         [(ngModel)]="jira.host[level]"
         [placeholder]="showOwner ? jira.host['owner'] : ''"
-        name="host" />
+        name="host"
+        [required]="level === 'owner' && !!jira.addIssuesEnabled['owner']" />
     </mat-form-field>
 
     <mat-form-field>
@@ -20,7 +21,8 @@
         type="text"
         [(ngModel)]="jira.username[level]"
         [placeholder]="showOwner ? jira.username['owner'] : ''"
-        name="username" />
+        name="username"
+        [required]="level === 'owner' && !!jira.addIssuesEnabled['owner']" />
     </mat-form-field>
 
     <mat-form-field class="form-field-2x">
@@ -31,7 +33,8 @@
         type="password"
         [(ngModel)]="jira.password[level]"
         [placeholder]="showOwner ? (jira.password['owner'] ? '********' : '') : ''"
-        name="password" />
+        name="password"
+        [required]="level === 'owner' && !!jira.addIssuesEnabled['owner']" />
       <button mat-icon-button matSuffix>
         <mat-icon>visibility</mat-icon>
       </button>

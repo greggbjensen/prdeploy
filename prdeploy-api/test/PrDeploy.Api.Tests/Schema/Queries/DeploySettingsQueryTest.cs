@@ -12,6 +12,7 @@ namespace PrDeploy.Api.Tests.Schema.Queries;
 /// <summary>
 /// Contains tests that verify deploy settings GraphQL query and mutation Any-scalar coercion behavior.
 /// </summary>
+[Collection(ApiHostCollection.Name)]
 public class DeploySettingsQueryTest : DeployApiTest
 {
     /// <summary>

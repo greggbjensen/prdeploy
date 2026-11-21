@@ -82,6 +82,38 @@ public class JiraServiceTest : IDisposable
     }
 
     /// <summary>
+    /// Verifies the expected behavior for this scenario: does not send credentials to a Jira host that is not a public
+    /// HTTPS address, such as a cloud metadata endpoint.
+    /// </summary>
+    /// <param name="host">Configured Jira host.</param>
+    [Theory]
+    [InlineData("http://myorg.atlassian.net")]
+    [InlineData("https://169.254.169.254/latest")]
+    [InlineData("https://127.0.0.1")]
+    [InlineData("https://localhost")]
+    public async Task ListAssociatedIssuesAsync_DoesNotCallDisallowedHost(string host)
+    {
+        _host.Context.Settings.Jira!.Host = host;
+
+        Assert.Empty(await _service.ListAssociatedIssuesAsync("SCRUM-1234-feature"));
+        Assert.Empty(_host.Http.Requests);
+    }
+
+    /// <summary>
+    /// Verifies the expected behavior for this scenario: a query string on the host cannot replace the API path.
+    /// </summary>
+    [Fact]
+    public async Task ListAssociatedIssuesAsync_IgnoresQueryOnHost()
+    {
+        _host.Context.Settings.Jira!.Host = "https://myorg.atlassian.net/jira?x=";
+
+        await _service.ListAssociatedIssuesAsync("SCRUM-1234-feature");
+
+        var (request, _) = Assert.Single(_host.Http.Requests);
+        Assert.Equal("https://myorg.atlassian.net/jira/rest/api/3/search/jql", request.RequestUri!.ToString());
+    }
+
+    /// <summary>
     /// Releases resources owned by this instance.
     /// </summary>
     public void Dispose() => _host.Dispose();

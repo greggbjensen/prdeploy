@@ -9,3 +9,4 @@ scripts/temp/
 prdeploy-api/src/PrDeploy.Api/appsettings.Development.yaml
 prdeploy-api/src/PrDeploy.Api/data/prdeploy.db
 prdeploy-api/src/PrDeploy.Api/data/prdeploy.wal
+.DS_Store

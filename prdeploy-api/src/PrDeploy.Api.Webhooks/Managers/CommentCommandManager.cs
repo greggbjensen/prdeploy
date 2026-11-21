@@ -29,10 +29,10 @@ public partial class CommentCommandManager
         _logger = logger;
         _commands =
         [
-            new("deploy", DeployRegex(), DeployCommandAsync),
-            new("free", FreeRegex(), FreeCommandAsync),
-            new("rollback", RollbackRegex(), RollbackCommandAsync),
-            new("add", AddRegex(), AddCommandAsync)
+            new("deploy", DeployRegex(), DeployCommandAsync, RequiresBranchInRepository: true),
+            new("free", FreeRegex(), FreeCommandAsync, RequiresBranchInRepository: false),
+            new("rollback", RollbackRegex(), RollbackCommandAsync, RequiresBranchInRepository: false),
+            new("add", AddRegex(), AddCommandAsync, RequiresBranchInRepository: true)
         ];
     }
 
@@ -42,7 +42,9 @@ public partial class CommentCommandManager
     /// <param name="commentId">Identifier of the GitHub comment associated with the request.</param>
     /// <param name="body">Text used as the body.</param>
     /// <param name="issueUrl">Text used as the issue URL.</param>
-    public async Task ProcessCommentAsync(long commentId, string? body, string? issueUrl)
+    /// <param name="author">Login of the comment author. Commands only run for users with write access, because
+    /// anyone who can read a repository (or any GitHub user, on a public one) can comment on its pull requests.</param>
+    public async Task ProcessCommentAsync(long commentId, string? body, string? issueUrl, string? author)
     {
         foreach (var command in _commands)
         {
@@ -60,9 +62,23 @@ public partial class CommentCommandManager
             }
 
             var pullNumber = int.Parse(issueMatch.Groups["issueNumber"].Value);
-            var pullRequest = await _pullRequestService.GetAsync(pullNumber);
             using var _ = _logger.BeginScope(new Dictionary<string, object> { ["PullNumber"] = pullNumber });
-            _logger.LogInformation("Running {Command} command.", command.Name);
+            if (!await _pullRequestService.CanWriteAsync(author))
+            {
+                _logger.LogWarning("Ignoring {Command} command from {Author}, who does not have write access.",
+                    command.Name, author);
+                return;
+            }
+
+            var pullRequest = await _pullRequestService.GetAsync(pullNumber);
+            if (command.RequiresBranchInRepository && !_pullRequestService.IsFromThisRepository(pullRequest))
+            {
+                _logger.LogWarning("Ignoring {Command} command for a pull request from {HeadRepository}.",
+                    command.Name, pullRequest.Head?.Repository?.FullName ?? "a deleted repository");
+                return;
+            }
+
+            _logger.LogInformation("Running {Command} command from {Author}.", command.Name, author);
             await command.Action(commandMatch, pullRequest, commentId);
             break;
         }
@@ -177,5 +193,8 @@ public partial class CommentCommandManager
     /// <param name="Name">Command name used in logs and user-facing feedback.</param>
     /// <param name="Pattern">Regular expression that recognizes the command and captures its arguments.</param>
     /// <param name="Action">Asynchronous handler invoked with the match, pull request, and comment identifier.</param>
-    private record CommentCommand(string Name, Regex Pattern, Func<Match, PullRequest, long, Task> Action);
+    /// <param name="RequiresBranchInRepository">Whether the command deploys or commits to the pull request branch by name,
+    /// so it must be refused for pull requests from forks.</param>
+    private record CommentCommand(string Name, Regex Pattern, Func<Match, PullRequest, long, Task> Action,
+        bool RequiresBranchInRepository);
 }

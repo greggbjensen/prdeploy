@@ -57,6 +57,12 @@ public partial class SlackService
             return;
         }
 
+        if (!OutboundUrl.TryCreate(webhookUrl, out var webhookUri))
+        {
+            _logger.LogWarning("The {Channel} Slack webhook URL is not an allowed HTTPS URL.", channel);
+            return;
+        }
+
         _logger.LogDebug("Sending Slack message to {Channel} channel:\n{Json}", channel, json);
         try
         {
@@ -69,7 +75,7 @@ public partial class SlackService
 
         try
         {
-            using var request = new HttpRequestMessage(HttpMethod.Post, webhookUrl);
+            using var request = new HttpRequestMessage(HttpMethod.Post, webhookUri);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             request.Content = new StringContent(json, Encoding.UTF8, "application/json");
 

@@ -42,6 +42,55 @@ public partial class PullRequestService
     }
 
     /// <summary>
+    /// Checks whether the pull request's head branch lives in the repository being deployed.
+    /// </summary>
+    /// <remarks>
+    /// Deploys dispatch workflows and commit trigger files by branch name in this repository. A pull request from a
+    /// fork (or whose fork was deleted) has a head branch name that may match an unrelated branch here, so it must
+    /// never be deployed by name.
+    /// </remarks>
+    /// <param name="pullRequest">Pull request to check.</param>
+    /// <returns><c>true</c> when the head repository is this repository; otherwise <c>false</c>.</returns>
+    public bool IsFromThisRepository(PullRequest pullRequest)
+    {
+        var headRepository = pullRequest.Head?.Repository?.FullName;
+        return string.Equals(headRepository, $"{_context.Owner}/{_context.Repo}", StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Checks whether a GitHub user can push to the repository, which is required to run deployment commands.
+    /// </summary>
+    /// <param name="login">Login of the user who wrote the command.</param>
+    /// <returns><c>true</c> when the user has write, maintain, or admin permission; otherwise <c>false</c>.</returns>
+    public async Task<bool> CanWriteAsync(string? login)
+    {
+        if (string.IsNullOrWhiteSpace(login))
+        {
+            return false;
+        }
+
+        try
+        {
+            var response = await _context.GitHub.Repository.Collaborator.ReviewPermission(_context.Owner,
+                _context.Repo, login);
+
+            // RoleName includes maintain and custom roles; Permission is the legacy admin/write/read/none value.
+            var role = response?.RoleName;
+            if (!string.IsNullOrEmpty(role))
+            {
+                return role is "admin" or "maintain" or "write";
+            }
+
+            return response?.Permission is "admin" or "write";
+        }
+        catch (NotFoundException)
+        {
+            // Users who are not collaborators, including bots and apps, return 404.
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Finds and returns the deployed.
     /// </summary>
     /// <returns>Items matching the supplied criteria.</returns>

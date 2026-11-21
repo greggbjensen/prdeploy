@@ -192,55 +192,10 @@ try
         app.MapApolloSandboxRedirect();
     }
 
-    var readyHealthCheckOptions = new HealthCheckOptions
-    {
-        Predicate = healthCheck => healthCheck.Tags.Contains("ready")
-    };
-    app.MapGet("/health/ready", async (HealthCheckService healthCheckService, HttpContext context) =>
-    {
-        var report = await healthCheckService.CheckHealthAsync(
-            readyHealthCheckOptions.Predicate,
-            context.RequestAborted);
-        context.Response.Headers.CacheControl = "no-store, no-cache";
-        context.Response.Headers.Pragma = "no-cache";
-        context.Response.Headers.Expires = "Thu, 01 Jan 1970 00:00:00 GMT";
-        return Results.Content(
-            report.Status.ToString(),
-            "text/plain",
-            statusCode: readyHealthCheckOptions.ResultStatusCodes[report.Status]);
-    })
-        .WithName("Readiness")
-        .WithSummary("Check application readiness")
-        .WithDescription("Returns 200 when the application is ready, or 503 otherwise.")
-        .WithMetadata(
-            new ProducesResponseTypeMetadata(StatusCodes.Status200OK, typeof(string), ["text/plain"]),
-            new ProducesResponseTypeMetadata(StatusCodes.Status503ServiceUnavailable, typeof(string), ["text/plain"]))
-        .AllowAnonymous();
-
-    var liveHealthCheckOptions = new HealthCheckOptions
-    {
-        Predicate = healthCheck => healthCheck.Tags.Contains("live")
-    };
-    app.MapGet("/health/live", async (HealthCheckService healthCheckService, HttpContext context) =>
-    {
-        var report = await healthCheckService.CheckHealthAsync(
-            liveHealthCheckOptions.Predicate,
-            context.RequestAborted);
-        context.Response.Headers.CacheControl = "no-store, no-cache";
-        context.Response.Headers.Pragma = "no-cache";
-        context.Response.Headers.Expires = "Thu, 01 Jan 1970 00:00:00 GMT";
-        return Results.Content(
-            report.Status.ToString(),
-            "text/plain",
-            statusCode: liveHealthCheckOptions.ResultStatusCodes[report.Status]);
-    })
-        .WithName("Liveness")
-        .WithSummary("Check application liveness")
-        .WithDescription("Returns 200 while the application is live, or 503 otherwise.")
-        .WithMetadata(
-            new ProducesResponseTypeMetadata(StatusCodes.Status200OK, typeof(string), ["text/plain"]),
-            new ProducesResponseTypeMetadata(StatusCodes.Status503ServiceUnavailable, typeof(string), ["text/plain"]))
-        .AllowAnonymous();
+    MapHealthCheck(app, "/health/ready", "ready", "Readiness", "Check application readiness",
+        "Returns 200 when the application is ready, or 503 otherwise.");
+    MapHealthCheck(app, "/health/live", "live", "Liveness", "Check application liveness",
+        "Returns 200 while the application is live, or 503 otherwise.");
 
     app.Run();
 }
@@ -271,5 +226,36 @@ public partial class Program
     public static string GetValue(IFormCollection form, string name)
     {
         return (form?.TryGetValue(name, out var value) == true ? value.FirstOrDefault() : string.Empty)!;
+    }
+    /// <summary>
+    /// Maps an anonymous, uncached plain-text health endpoint that runs the health checks carrying a tag.
+    /// </summary>
+    /// <param name="endpoints">Route builder the endpoint is added to.</param>
+    /// <param name="pattern">Route of the endpoint.</param>
+    /// <param name="tag">Health check tag to run, such as <c>ready</c> or <c>live</c>.</param>
+    /// <param name="name">OpenAPI operation name.</param>
+    /// <param name="summary">OpenAPI summary.</param>
+    /// <param name="description">OpenAPI description.</param>
+    private static void MapHealthCheck(IEndpointRouteBuilder endpoints, string pattern, string tag, string name,
+        string summary, string description)
+    {
+        var options = new HealthCheckOptions { Predicate = healthCheck => healthCheck.Tags.Contains(tag) };
+        endpoints.MapGet(pattern, async (HealthCheckService healthCheckService, HttpContext context) =>
+            {
+                var report = await healthCheckService.CheckHealthAsync(options.Predicate, context.RequestAborted);
+                context.Response.Headers.CacheControl = "no-store, no-cache";
+                context.Response.Headers.Pragma = "no-cache";
+                context.Response.Headers.Expires = "Thu, 01 Jan 1970 00:00:00 GMT";
+                return Results.Content(report.Status.ToString(), "text/plain",
+                    statusCode: options.ResultStatusCodes[report.Status]);
+            })
+            .WithName(name)
+            .WithSummary(summary)
+            .WithDescription(description)
+            .WithMetadata(
+                new ProducesResponseTypeMetadata(StatusCodes.Status200OK, typeof(string), ["text/plain"]),
+                new ProducesResponseTypeMetadata(StatusCodes.Status503ServiceUnavailable, typeof(string),
+                    ["text/plain"]))
+            .AllowAnonymous();
     }
 }

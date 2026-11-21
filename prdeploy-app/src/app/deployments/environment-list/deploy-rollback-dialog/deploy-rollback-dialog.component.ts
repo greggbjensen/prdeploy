@@ -16,7 +16,7 @@ import { DialogResult } from 'src/app/shared/models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatInputModule } from '@angular/material/input';
 
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MtxButtonModule } from '@ng-matero/extensions/button';
 
 @Component({
@@ -36,7 +36,8 @@ import { MtxButtonModule } from '@ng-matero/extensions/button';
 })
 export class DeployRollbackDialogComponent {
   form = new FormGroup({
-    rollbackCount: new FormControl(1)
+    // The API rolls back this many stable versions, so it must be a whole number of at least one.
+    rollbackCount: new FormControl(1, [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)])
   });
 
   processing = false;

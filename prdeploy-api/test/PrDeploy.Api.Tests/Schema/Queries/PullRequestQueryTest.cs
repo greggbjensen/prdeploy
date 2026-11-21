@@ -10,6 +10,7 @@ namespace PrDeploy.Api.Tests.Schema.Queries;
 /// <summary>
 /// Contains tests that verify pull request query behavior.
 /// </summary>
+[Collection(ApiHostCollection.Name)]
 public class PullRequestQueryTest : DeployApiTest
 {
     /// <summary>

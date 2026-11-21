@@ -120,8 +120,12 @@ public class WebhookEventDispatcher
                 _logger.LogDebug("Received a comment {Action} ({CommentId}):\n{Body}", webhookEvent.Action,
                     commentId, body);
 
+                var author = comment.TryGetProperty("user", out var user)
+                             && user.TryGetProperty("login", out var login)
+                    ? login.GetString()
+                    : null;
                 await services.GetRequiredService<CommentCommandManager>().ProcessCommentAsync(commentId, body,
-                    comment.GetProperty("issue_url").GetString());
+                    comment.GetProperty("issue_url").GetString(), author);
                 break;
             }
 

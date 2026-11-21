@@ -37,8 +37,12 @@ describe('TeamsFormComponent', () => {
     expect(element.textContent).toContain('Release URL');
   });
 
-  it('shows owner values as placeholders only at repo level', () => {
+  it('shows owner values as placeholders at repo level', () => {
     expect(create('repo').componentInstance.showOwner).toBeTrue();
+  });
+
+  // TestBed can only be configured once per spec, so each level is created in its own spec.
+  it('does not show owner placeholders at owner level', () => {
     expect(create('owner').componentInstance.showOwner).toBeFalse();
   });
 });

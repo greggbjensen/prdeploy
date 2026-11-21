@@ -29,6 +29,8 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
+        # Pull request builds do not push, so they do not need registry credentials.
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -49,6 +51,8 @@ jobs:
           context: ${{ inputs.service_name }}
 
       - name: Docker Hub description
+        # Only publish the README with a release, not from every pull request build.
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         uses: peter-evans/dockerhub-description@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}

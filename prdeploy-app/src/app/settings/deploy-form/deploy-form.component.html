@@ -18,7 +18,8 @@
         [(ngModel)]="settingsCompare.deployWorkflow[level]"
         [placeholder]="showOwner ? settingsCompare.deployWorkflow['owner'] : ''"
         [disabled]="loadingWorkflows"
-        name="githubWorkflow">
+        name="githubWorkflow"
+        [required]="level === 'owner'">
         <mat-option [value]="null">&nbsp;</mat-option>
         @for (workflow of workflowOptions; track workflow) {
           <mat-option [value]="workflow">{{ workflow }}</mat-option>
@@ -31,7 +32,8 @@
       <mat-select
         [placeholder]="showOwner ? settingsCompare.defaultEnvironment['owner'] : ''"
         [(ngModel)]="settingsCompare.defaultEnvironment[level]"
-        name="defaultEnvironment">
+        name="defaultEnvironment"
+        [required]="level === 'owner'">
         @for (environment of environments; track environment) {
           <mat-option [value]="environment">{{ environment }}</mat-option>
         }
@@ -43,7 +45,8 @@
       <mat-select
         [placeholder]="showOwner ? settingsCompare.releaseEnvironment['owner'] : ''"
         [(ngModel)]="settingsCompare.releaseEnvironment[level]"
-        name="releaseEnvironment">
+        name="releaseEnvironment"
+        [required]="level === 'owner'">
         @for (environment of environments; track environment) {
           <mat-option [value]="environment">{{ environment }}</mat-option>
         }

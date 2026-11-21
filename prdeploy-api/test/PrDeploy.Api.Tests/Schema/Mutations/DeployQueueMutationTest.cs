@@ -13,6 +13,7 @@ namespace PrDeploy.Api.Tests.Schema.Mutations;
 /// <summary>
 /// Contains tests that verify deploy queue mutation behavior.
 /// </summary>
+[Collection(ApiHostCollection.Name)]
 public class DeployQueueMutationTest : DeployApiTest
 {
     /// <summary>

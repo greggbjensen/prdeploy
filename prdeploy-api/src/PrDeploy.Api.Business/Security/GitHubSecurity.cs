@@ -1,6 +1,7 @@
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Octokit;
@@ -12,7 +13,7 @@ namespace PrDeploy.Api.Business.Security
     /// <summary>
     /// Represents git hub security data used by the application.
     /// </summary>
-    public class GitHubSecurity : IGitHubSecurity
+    public partial class GitHubSecurity : IGitHubSecurity
     {
         private static readonly TimeSpan AccessRefreshTimeSpan = TimeSpan.FromMinutes(10);
         private readonly IGitHubClient _client;
@@ -87,6 +88,12 @@ namespace PrDeploy.Api.Business.Security
         /// permission on the repository; otherwise, false.</returns>
         public async Task<bool> HasRepoAccessAsync(string owner, string repo)
         {
+            if (!IsValidRepoName(repo))
+            {
+                _logger.LogWarning("Rejected access check for invalid repository name {Repo}.", repo);
+                return false;
+            }
+
             var userToken = _securityContext.UserToken;
             if (string.IsNullOrEmpty(userToken))
             {
@@ -152,6 +159,12 @@ namespace PrDeploy.Api.Business.Security
         /// <returns>True when the owner is allowed and the user belongs to it; otherwise, false.</returns>
         public async Task<bool> HasOwnerAccessAsync(string owner)
         {
+            if (!IsValidOwnerName(owner))
+            {
+                _logger.LogWarning("Rejected access check for invalid owner name {Owner}.", owner);
+                return false;
+            }
+
             var userToken = _securityContext.UserToken;
             if (string.IsNullOrEmpty(userToken))
             {
@@ -178,6 +191,39 @@ namespace PrDeploy.Api.Business.Security
 
             return hasAccess;
         }
+
+        /// <summary>
+        /// Checks that an owner is a valid GitHub user or organization name.
+        /// </summary>
+        /// <remarks>
+        /// Owner and repository names are used in storage keys and GitHub API paths, so characters such as <c>/</c>
+        /// or <c>..</c> must be rejected before an access check could pass for a different resource.
+        /// </remarks>
+        /// <param name="owner">Owner name to check.</param>
+        /// <returns><c>true</c> when the name only contains characters GitHub allows.</returns>
+        public static bool IsValidOwnerName(string? owner) => owner != null && OwnerNameRegex().IsMatch(owner);
+
+        /// <summary>
+        /// Checks that a repository name is valid on GitHub and is not a relative path segment.
+        /// </summary>
+        /// <param name="repo">Repository name to check.</param>
+        /// <returns><c>true</c> when the name only contains characters GitHub allows.</returns>
+        public static bool IsValidRepoName(string? repo) =>
+            repo != null && repo != "." && repo != ".." && RepoNameRegex().IsMatch(repo);
+
+        /// <summary>
+        /// Matches GitHub owner names: alphanumerics and single hyphens, up to 39 characters.
+        /// </summary>
+        /// <returns>The compiled expression.</returns>
+        [GeneratedRegex("^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$")]
+        private static partial Regex OwnerNameRegex();
+
+        /// <summary>
+        /// Matches GitHub repository names: alphanumerics, '.', '_' and '-', up to 100 characters.
+        /// </summary>
+        /// <returns>The compiled expression.</returns>
+        [GeneratedRegex("^[A-Za-z0-9._-]{1,100}$")]
+        private static partial Regex RepoNameRegex();
 
         /// <summary>
         /// Determines whether GitHub reports write level permission for the authenticated user.

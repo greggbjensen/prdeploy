@@ -13,6 +13,7 @@ namespace PrDeploy.Api.Tests.Schema.Queries;
 /// <summary>
 /// Contains tests that verify deploy queue query behavior.
 /// </summary>
+[Collection(ApiHostCollection.Name)]
 public class DeployQueueQueryTest : DeployApiTest
 {
     /// <summary>

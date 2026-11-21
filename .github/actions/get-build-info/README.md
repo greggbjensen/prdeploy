@@ -53,3 +53,16 @@ The branch the pull request is from.
     deploy_run_ids: '5150198235,4683559959'
     sync_run_ids: '7921342161'
 ```
+
+## Development
+
+```bash
+npm install
+npm test          # Jest unit tests in __tests__/, with the GitHub API and runner mocked
+npm run lint
+npm run package   # ncc bundle to dist/, which action.yaml runs
+```
+
+`src/main.ts` only calls `run()` from `src/run.ts`, so tests can import and run the action without it starting on
+import. Blank or non-numeric entries in `deploy_run_ids` and `sync_run_ids` are ignored. The `actions - test`
+workflow type checks, lints, tests, and bundles the action on pull requests.

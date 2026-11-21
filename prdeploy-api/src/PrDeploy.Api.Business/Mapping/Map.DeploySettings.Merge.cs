@@ -168,10 +168,19 @@ public static partial class Map
             return;
         }
 
+        // Credentials are only inherited for the host they were configured for. Otherwise anyone who can edit a
+        // repository's settings could point the host at their own server and receive the owner's Jira token.
+        var sameHost = target.Host == null
+                       || string.Equals(target.Host.TrimEnd('/'), source.Host?.TrimEnd('/'),
+                           StringComparison.OrdinalIgnoreCase);
+
         target.AddIssuesEnabled ??= source.AddIssuesEnabled;
         target.Host ??= source.Host;
-        target.Username ??= source.Username;
-        target.Password ??= source.Password;
+        if (sameHost)
+        {
+            target.Username ??= source.Username;
+            target.Password ??= source.Password;
+        }
     }
 
     /// <summary>

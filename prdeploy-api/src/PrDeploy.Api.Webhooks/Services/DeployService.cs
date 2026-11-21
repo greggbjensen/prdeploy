@@ -219,6 +219,12 @@ public class DeployService
         long commentId)
     {
         await AddCommentReactionAsync(commentId, ReactionType.Plus1);
+        if (!_pullRequestService.IsFromThisRepository(pullRequest))
+        {
+            _logger.LogWarning("Refusing to add services to pull request {PullNumber} from another repository.",
+                pullRequest.Number);
+            return;
+        }
 
         // Add a file to the service folder and append a datestamp and branch name to trigger a build.
         var servicesNotFound = new List<string>();
@@ -421,6 +427,15 @@ public class DeployService
             }
 
             deployPullRequest = await _pullRequestService.GetAsync(deployState.PullNumber);
+        }
+
+        if (!_pullRequestService.IsFromThisRepository(deployPullRequest))
+        {
+            _logger.LogWarning("Refusing to deploy pull request {PullNumber} because its branch is not in this repository.",
+                deployPullRequest.Number);
+            await PostDeployFailedAsync(pullRequest.Number, environment, rollback,
+                "Pull requests from forks cannot be deployed.  Push the branch to this repository instead.");
+            return;
         }
 
         _logger.LogDebug("Removing pull request from queues for {Environment}.", environment);

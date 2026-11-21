@@ -20,6 +20,10 @@ on:
       - created
   workflow_dispatch:
 
+# The job only reads the repository; publishing uses Docker Hub credentials, not GITHUB_TOKEN.
+permissions:
+  contents: read
+
 jobs:
   helm:
     name: Build
@@ -71,8 +75,12 @@ jobs:
 
       - name: Push Helm charts
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        # Pass secrets through the environment so they are never expanded into the script text.
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
-          echo ${{ secrets.DOCKERHUB_TOKEN }} | helm registry login registry-1.docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+          echo "$DOCKERHUB_TOKEN" | helm registry login registry-1.docker.io -u "$DOCKERHUB_USERNAME" --password-stdin
           charts=$(find ./helm-charts -maxdepth 1 -name "*.tgz")
           for chart in $charts
           do

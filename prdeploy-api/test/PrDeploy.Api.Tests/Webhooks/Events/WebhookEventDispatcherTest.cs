@@ -54,10 +54,19 @@ public class WebhookEventDispatcherTest
         Mock.Get(_github.Object.PullRequest)
             .Setup(c => c.Get(WebhookTestHost.Owner, WebhookTestHost.Repo, 8))
             .ReturnsAsync(GitHubModels.PullRequest(8, labels: ["dev", "dev-lock"]));
+        Mock.Get(_github.Object.Repository.Collaborator)
+            .Setup(c => c.ReviewPermission(WebhookTestHost.Owner, WebhookTestHost.Repo, "octocat"))
+            .ReturnsAsync(GitHubModels.FromJson<CollaboratorPermissionResponse>(
+                """{ "permission": "write", "role_name": "write" }"""));
 
         await _dispatcher.DispatchAsync(Event("issue_comment", "created", """
-            "comment": { "id": 99, "body": "/free dev", "issue_url": "https://api.github.com/repos/o/r/issues/8" }
+            "comment": { "id": 99, "body": "/free dev", "user": { "login": "octocat" },
+                         "issue_url": "https://api.github.com/repos/o/r/issues/8" }
             """));
+
+        // The comment author's permission is checked before the command runs.
+        Mock.Get(_github.Object.Repository.Collaborator).Verify(c => c.ReviewPermission(WebhookTestHost.Owner,
+            WebhookTestHost.Repo, "octocat"));
 
         Mock.Get(_github.Object.Reaction.IssueComment).Verify(c => c.Create(WebhookTestHost.Owner,
             WebhookTestHost.Repo, 99, It.Is<NewReaction>(r => r.Content == ReactionType.Eyes)));

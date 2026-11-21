@@ -44,6 +44,11 @@ docs: >-
   sending; this changes deployment state.
 
 
+  The command posted to the pull request must be a single line of word arguments and `--` flags; an
+  environment or service name containing anything else, such as a newline, returns `BAD_REQUEST` and
+  nothing is posted. Comment commands only run for users with write access to the repository.
+
+
   Client operation:
   [deploy-environment-free.graphql](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-app/src/app/shared/graphql/prdeploy-api/mutations/deploy-environment-free.graphql).
 

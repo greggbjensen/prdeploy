@@ -17,6 +17,10 @@ on:
       - created
   workflow_dispatch:
 
+# Builds only read the repository; images are pushed with Docker Hub credentials, not GITHUB_TOKEN.
+permissions:
+  contents: read
+
 jobs:
   ci:
     name: CI

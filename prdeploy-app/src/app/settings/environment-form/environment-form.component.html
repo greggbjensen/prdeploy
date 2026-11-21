@@ -4,12 +4,18 @@
     <div class="field-section">
       <mat-form-field>
         <mat-label>Name</mat-label>
-        <input matInput type="text" [(ngModel)]="environment.name" name="name" [disabled]="!hasEnvironments" />
+        <input matInput type="text" [(ngModel)]="environment.name" name="name" required [disabled]="!hasEnvironments" />
       </mat-form-field>
 
       <mat-form-field>
         <mat-label>Queue</mat-label>
-        <input matInput type="text" [(ngModel)]="environment.queue" name="queue" [disabled]="!hasEnvironments" />
+        <input
+          matInput
+          type="text"
+          [(ngModel)]="environment.queue"
+          name="queue"
+          required
+          [disabled]="!hasEnvironments" />
       </mat-form-field>
 
       <mat-form-field>
@@ -93,6 +99,7 @@
           type="text"
           [(ngModel)]="environment.automationTest.workflow"
           name="automationTestWorkflow"
+          [required]="!!environment.automationTest.enabled"
           [disabled]="!hasEnvironments" />
       </mat-form-field>
     </div>

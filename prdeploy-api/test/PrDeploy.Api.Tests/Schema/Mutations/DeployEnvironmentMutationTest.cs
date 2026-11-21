@@ -10,6 +10,7 @@ namespace PrDeploy.Api.Tests.Schema.Mutations;
 /// <summary>
 /// Contains tests that verify deploy environment mutation behavior.
 /// </summary>
+[Collection(ApiHostCollection.Name)]
 public class DeployEnvironmentMutationTest : DeployApiTest
 {
     private const int FreePullNumber = 2871;

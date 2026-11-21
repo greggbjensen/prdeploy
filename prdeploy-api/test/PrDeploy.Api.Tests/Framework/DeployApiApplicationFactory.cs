@@ -40,6 +40,12 @@ public class DeployApiApplicationFactory : WebApplicationFactory<Program>
     public Action<IServiceCollection>? ConfigureTestServices { get; set; }
 
     /// <summary>
+    /// Gets whether the real repository and organization access checks run. When <c>false</c>, every caller is
+    /// allowed so tests can focus on other behavior; functional security tests override this and mock GitHub instead.
+    /// </summary>
+    protected virtual bool UseRealGitHubSecurity => false;
+
+    /// <summary>
     /// Configures the test host with isolated storage and any test-specific service overrides.
     /// </summary>
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -67,8 +73,12 @@ public class DeployApiApplicationFactory : WebApplicationFactory<Program>
                 options.DefaultChallengeScheme = "Test";
                 options.DefaultScheme = "Test";
             });
-            services.RemoveAll<IGitHubSecurity>();
-            services.AddSingleton<IGitHubSecurity, TestGitHubSecurity>();
+            if (!UseRealGitHubSecurity)
+            {
+                services.RemoveAll<IGitHubSecurity>();
+                services.AddSingleton<IGitHubSecurity, TestGitHubSecurity>();
+            }
+
             ConfigureTestServices?.Invoke(services);
         });
 

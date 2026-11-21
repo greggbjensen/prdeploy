@@ -56,10 +56,11 @@ public class DeploySettingsService : IDeploySettingsService
     {
         // Repository access is the requirement here; the owner defaults are only read for comparison,
         // so outside collaborators who are not organization members can still compare settings.
-        var repoSettings = await GetRepoSettingsAsync(input.Owner, input.Repo);
+        var repoSettings = await LoadRepoSettingsAsync(input.Owner, input.Repo);
         var ownerSettings = await LoadOwnerSettingsAsync(input.Owner);
 
-        var settingsCompare = Map.Compare(ownerSettings, repoSettings);
+        // Owner credentials are never returned, so outside collaborators cannot read the organization's tokens.
+        var settingsCompare = Map.Compare(Map.RedactSecrets(ownerSettings), Map.RedactSecrets(repoSettings));
         return settingsCompare!;
     }
 
@@ -85,7 +86,7 @@ public class DeploySettingsService : IDeploySettingsService
 
         _logger.LogDebug("Merging owner and repo settings for {Owner}/{Repo}.", owner, repo);
         var ownerSettings = await LoadOwnerSettingsAsync(owner);
-        repoSettings = await GetRepoSettingsAsync(owner, repo);
+        repoSettings = await LoadRepoSettingsAsync(owner, repo);
 
         // Override default with repo.
         Map.Merge(repoSettings, ownerSettings);
@@ -142,12 +143,22 @@ public class DeploySettingsService : IDeploySettingsService
     public async Task<List<EnvironmentSettings>> GetQueueEnvironmentsAsync(string owner, string repo)
     {
         var repoSettings = await GetMergedAsync(owner, repo);
+        // Copy the first environment of each queue, because the merged settings are cached and shared.
         var environmentSettings = repoSettings.Environments!
             .GroupBy(e => e.Queue).Select(g =>
             {
                 var environment = g.First();
-                environment.Name = NormalizeEnvironment(environment.Name);
-                return environment;
+                return new EnvironmentSettings
+                {
+                    Name = NormalizeEnvironment(environment.Name),
+                    Queue = environment.Queue,
+                    Url = environment.Url,
+                    Color = environment.Color,
+                    RequireApproval = environment.RequireApproval,
+                    RequireBranchUpToDate = environment.RequireBranchUpToDate,
+                    AutomationTest = environment.AutomationTest,
+                    ExcludeFromRollback = environment.ExcludeFromRollback
+                };
             }).ToList();
 
         return environmentSettings;
@@ -179,7 +190,7 @@ public class DeploySettingsService : IDeploySettingsService
     public async Task<DeploySettings> GetOwnerSettingsAsync(string owner)
     {
         await _gitHubSecurity.GuardOwnerAsync(owner);
-        return await LoadOwnerSettingsAsync(owner);
+        return Map.RedactSecrets(await LoadOwnerSettingsAsync(owner));
     }
 
     /// <summary>
@@ -214,6 +225,8 @@ public class DeploySettingsService : IDeploySettingsService
     {
         await _gitHubSecurity.GuardOwnerAsync(input.Owner);
 
+        Map.RestoreSecrets(input.Settings,
+            await _deploymentStore.GetAsync<DeploySettings?>(input.Owner, DeploySettingsKey));
         await _deploymentStore.SetAsync(input.Owner, DeploySettingsKey, input.Settings, true);
         _logger.LogInformation("Updated owner settings for {Owner}.", input.Owner);
 
@@ -224,12 +237,23 @@ public class DeploySettingsService : IDeploySettingsService
     }
 
     /// <summary>
-    /// Retrieves the repo settings.
+    /// Retrieves the repo settings with credentials masked.
     /// </summary>
     /// <param name="owner">Repository owner or organization whose values are addressed.</param>
     /// <param name="repo">Repository whose values are addressed.</param>
     /// <returns>Requested value, or its default when no value is available.</returns>
     public async Task<DeploySettings> GetRepoSettingsAsync(string owner, string repo)
+    {
+        return Map.RedactSecrets(await LoadRepoSettingsAsync(owner, repo));
+    }
+
+    /// <summary>
+    /// Loads the stored repository settings, including secrets, after checking repository access.
+    /// </summary>
+    /// <param name="owner">Owner of the repository.</param>
+    /// <param name="repo">Name of the repository.</param>
+    /// <returns>The stored settings, or empty settings that are saved when none exist.</returns>
+    private async Task<DeploySettings> LoadRepoSettingsAsync(string owner, string repo)
     {
         await _gitHubSecurity.GuardRepoAsync(owner, repo);
 
@@ -254,6 +278,8 @@ public class DeploySettingsService : IDeploySettingsService
     {
         await _gitHubSecurity.GuardRepoAsync(input.Owner, input.Repo);
 
+        Map.RestoreSecrets(input.Settings,
+            await _deploymentStore.GetAsync<DeploySettings?>(input.Owner, input.Repo, DeploySettingsKey));
         await _deploymentStore.SetAsync(input.Owner, input.Repo, DeploySettingsKey, input.Settings, true);
 
         _logger.LogInformation("Updated repo settings for {Owner}/{Repo}.", input.Owner, input.Repo);

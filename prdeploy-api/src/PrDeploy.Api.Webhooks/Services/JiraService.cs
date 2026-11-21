@@ -6,6 +6,8 @@ using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using PrDeploy.Api.Webhooks.Models;
 
+using PrDeploy.Api.Webhooks.Utils;
+
 namespace PrDeploy.Api.Webhooks.Services;
 
 /// <summary>
@@ -61,8 +63,15 @@ public partial class JiraService
                 throw new InvalidOperationException("Jira host is not configured.");
             }
 
+            // The host is sent Basic credentials, so it must be a public HTTPS address.
+            if (!OutboundUrl.TryCreate(jira.Host, out var hostUri))
+            {
+                throw new InvalidOperationException("Jira host must be an HTTPS URL that is not an internal address.");
+            }
+
             // SourceRef: https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-search/#api-rest-api-3-search-jql-post
-            using var request = new HttpRequestMessage(HttpMethod.Post, $"{jira.Host.TrimEnd('/')}/rest/api/3/search/jql");
+            using var request = new HttpRequestMessage(HttpMethod.Post,
+                new Uri(hostUri, $"{hostUri.AbsolutePath.TrimEnd('/')}/rest/api/3/search/jql"));
             var credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{jira.Username}:{jira.Password}"));
             request.Headers.Authorization = new AuthenticationHeaderValue("Basic", credentials);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

@@ -48,6 +48,9 @@ docs: >-
   Updates owner and repository deploy settings. The example omits `settings`; fill both complete
   settings objects carefully before sending to avoid changing configuration unintentionally.
 
+  Send `********` for a Jira token, Slack bot token, or Slack or Teams webhook URL to keep the stored
+  value, as the portal does with the masked values it reads. Any other value replaces it.
+
 
   Client operation:
   [deploy-settings-set.graphql](https://github.com/greggbjensen/prdeploy/blob/main/prdeploy-app/src/app/shared/graphql/prdeploy-api/mutations/deploy-settings-set.graphql).

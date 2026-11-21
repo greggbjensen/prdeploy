@@ -75,9 +75,9 @@ namespace PrDeploy.Api.Auth
 
             var claims = new List<Claim>
             {
-                // This claim is only present locally.
+                // This claim is only present locally. The decrypted token is not copied into sub, so code that
+                // enumerates standard claims, such as logging enrichers, cannot expose it.
                 new (PrDeployClaimNames.GitHubToken, gitHubToken),
-                new (JwtRegisteredClaimNames.Sub, gitHubToken),
                 new (JwtRegisteredClaimNames.Name, nameClaim.Value)
             };
             var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);

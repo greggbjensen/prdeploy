@@ -99,6 +99,22 @@ public static class GitHubMockExtensions
     }
 
     /// <summary>
+    /// Sets the repository permission GitHub reports for a user, which gates comment commands.
+    /// </summary>
+    /// <param name="host">Test host whose GitHub client is configured.</param>
+    /// <param name="login">User whose permission is configured.</param>
+    /// <param name="permission">Legacy permission: admin, write, read, or none.</param>
+    /// <param name="roleName">Role name, such as maintain or triage; defaults to the permission.</param>
+    public static void SetupCollaboratorPermission(this WebhookTestHost host, string login, string permission,
+        string? roleName = null)
+    {
+        host.MockOf(host.GitHub.Object.Repository.Collaborator)
+            .Setup(c => c.ReviewPermission(Owner, Repo, login))
+            .ReturnsAsync(GitHubModels.FromJson<CollaboratorPermissionResponse>(
+                System.Text.Json.JsonSerializer.Serialize(new { permission, role_name = roleName ?? permission })));
+    }
+
+    /// <summary>
     /// Captures the labels set on each pull request.
     /// </summary>
     public static Dictionary<long, string[]> CaptureLabels(this WebhookTestHost host)

@@ -45,8 +45,11 @@ describe('SettingsFormComponent', () => {
       setTeams(input: object, compare: object): void;
     };
     const compare = {
-      notificationsEnabled: { owner: true, repo: null },
-      webhooks: { deployUrl: { owner: 'https://owner/deploy', repo: null }, releaseUrl: { owner: null, repo: null } }
+      notificationsEnabled: { owner: true, repo: null as boolean | string | null },
+      webhooks: {
+        deployUrl: { owner: 'https://owner/deploy', repo: null as string | null },
+        releaseUrl: { owner: null as string | null, repo: null as string | null }
+      }
     };
     const input: { webhooks: object } = { webhooks: {} };
     const level = { compare, level: 'owner', hasValues: false };
@@ -65,8 +68,11 @@ describe('SettingsFormComponent', () => {
       setTeams(input: object, compare: object): void;
     };
     const compare = {
-      notificationsEnabled: { owner: null, repo: null },
-      webhooks: { deployUrl: { owner: null, repo: null }, releaseUrl: { owner: null, repo: 'https://repo/release' } }
+      notificationsEnabled: { owner: null as string | null, repo: null as string | null },
+      webhooks: {
+        deployUrl: { owner: null as string | null, repo: null as string | null },
+        releaseUrl: { owner: null as string | null, repo: 'https://repo/release' }
+      }
     };
     const level = { compare, level: 'repo', hasValues: false };
 
@@ -80,8 +86,11 @@ describe('SettingsFormComponent', () => {
       setTeams(input: object, compare: object): void;
     };
     const compare = {
-      notificationsEnabled: { owner: null, repo: null },
-      webhooks: { deployUrl: { owner: null, repo: null }, releaseUrl: { owner: null, repo: null } }
+      notificationsEnabled: { owner: null as string | null, repo: null as string | null },
+      webhooks: {
+        deployUrl: { owner: null as string | null, repo: null as string | null },
+        releaseUrl: { owner: null as string | null, repo: null as string | null }
+      }
     };
     const level = { compare, level: 'repo', hasValues: false };
 

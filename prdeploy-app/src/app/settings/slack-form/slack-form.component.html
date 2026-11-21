@@ -38,7 +38,8 @@
             type="text"
             [(ngModel)]="slack.webhooks.deployUrl[level]"
             [placeholder]="showOwner ? slack.webhooks.deployUrl['owner'] : ''"
-            name="webhooksDeployUrl" />
+            name="webhooksDeployUrl"
+            [required]="level === 'owner' && !!slack.notificationsEnabled['owner']" />
         </mat-form-field>
 
         <mat-form-field class="form-field-2x">
@@ -48,7 +49,8 @@
             type="text"
             [(ngModel)]="slack.webhooks.releaseUrl[level]"
             [placeholder]="showOwner ? slack.webhooks.releaseUrl['owner'] : ''"
-            name="webhooksReleaseUrl" />
+            name="webhooksReleaseUrl"
+            [required]="level === 'owner' && !!slack.notificationsEnabled['owner']" />
         </mat-form-field>
       </div>
     </div>

@@ -297,4 +297,43 @@ public class GitHubSecurityTest : IDisposable
         Assert.False(await security.HasRepoAccessAsync("o", "r"));
         Assert.False(await security.HasOwnerAccessAsync("o"));
     }
+
+    /// <summary>
+    /// Confirms names that are not valid on GitHub, including path segments that could change storage keys or API
+    /// paths, are denied without calling GitHub.
+    /// </summary>
+    /// <param name="owner">Owner name.</param>
+    /// <param name="repo">Repository name.</param>
+    [Theory]
+    [InlineData("o", "r/../other")]
+    [InlineData("o", "..")]
+    [InlineData("o", ".")]
+    [InlineData("o", "r%2F..")]
+    [InlineData("o", "")]
+    [InlineData("o/x", "r")]
+    [InlineData("-o", "r")]
+    [InlineData("", "r")]
+    public async Task HasRepoAccessAsync_InvalidName_ReturnsFalseWithoutLookup(string owner, string repo)
+    {
+        var security = CreateSecurity();
+
+        Assert.False(await security.HasRepoAccessAsync(owner, repo));
+        _github.Verify(g => g.Repository.Get(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _github.Verify(g => g.Organization.Member.GetOrganizationMembership(It.IsAny<string>(), It.IsAny<string>()),
+            Times.Never);
+    }
+
+    /// <summary>
+    /// Confirms valid GitHub names, including dots, underscores, and hyphens, pass name validation.
+    /// </summary>
+    /// <param name="owner">Owner name.</param>
+    /// <param name="repo">Repository name.</param>
+    [Theory]
+    [InlineData("my-org", "my_repo.js")]
+    [InlineData("o", ".github")]
+    public void NameValidation_AcceptsValidNames(string owner, string repo)
+    {
+        Assert.True(GitHubSecurity.IsValidOwnerName(owner));
+        Assert.True(GitHubSecurity.IsValidRepoName(repo));
+    }
 }

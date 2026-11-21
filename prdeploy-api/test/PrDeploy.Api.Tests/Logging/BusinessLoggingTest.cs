@@ -272,7 +272,8 @@ public class BusinessLoggingTest
         settings.Setup(s => s.GetQueueEnvironmentsAsync("o", "r")).ReturnsAsync(new List<EnvironmentSettings>());
         var logger = new CapturingLogger<DeployQueueService>();
         var service = new DeployQueueService(
-            new Mock<IGitHubClient>().Object, settings.Object, new Mock<IDeploymentStore>().Object, logger);
+            new Mock<IGitHubClient>().Object, settings.Object, new Mock<IDeploymentStore>().Object,
+            new Mock<IPullRequestService>().Object, new Mock<IGitHubSecurity>().Object, logger);
 
         await service.ListAsync(new RepoQueryInput { Owner = "o", Repo = "r" });
 

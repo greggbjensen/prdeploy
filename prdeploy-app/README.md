@@ -28,7 +28,23 @@ Slack webhooks. The values are only stored for now; no Teams notifications are s
 # Testing
 
 Specs live next to their components as `*.spec.ts` and run with `npm test`. The Karma and Jasmine packages are not
-currently declared in `package.json`, so install them before running the specs.
+currently declared in `package.json`, so install them before running the specs. The current `jasmine-core` major is not
+compatible with zone.js, so install these versions without changing `package.json`:
+
+```bash
+npm install --no-save karma@6 karma-jasmine@5 karma-chrome-launcher@3 jasmine-core@5.1 @types/jasmine@5 \
+  karma-jasmine-html-reporter@2 karma-coverage@2
+npm test -- --watch=false --browsers=ChromeHeadless
+```
+
+# Forms
+
+Mark every input the API or deployment flow depends on as required, so the field shows an asterisk and an error
+state. Reactive controls with `Validators.required` are marked automatically; template-driven inputs need `required`.
+Settings that a repository inherits from its owner are only required at the owner level, for example the deploy
+workflow, default and release environments, Jira host and credentials when Jira is enabled, and Slack webhook URLs
+when Slack notifications are enabled. Dialogs disable their submit button until the form is valid. Secrets come back
+from the API as `********`; saving that value keeps the stored secret.
 
 # Styles
 

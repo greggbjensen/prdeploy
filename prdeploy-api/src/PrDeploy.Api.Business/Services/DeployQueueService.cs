@@ -1,3 +1,4 @@
+using PrDeploy.Api.Business.Security.Interfaces;
 using Microsoft.Extensions.Logging;
 using PrDeploy.Api.Business.Services.Interfaces;
 using PrDeploy.Api.Models;
@@ -20,6 +21,8 @@ public class DeployQueueService : IDeployQueueService
     private readonly IGitHubClient _gitHubClient;
     private readonly IDeploySettingsService _deploySettingsService;
     private readonly IDeploymentStore _deploymentStore;
+    private readonly IPullRequestService _pullRequestService;
+    private readonly IGitHubSecurity _gitHubSecurity;
     private readonly ILogger<DeployQueueService> _logger;
 
     /// <summary>
@@ -28,13 +31,18 @@ public class DeployQueueService : IDeployQueueService
     /// <param name="gitHubClient">Object containing the git hub client data used by the operation.</param>
     /// <param name="deploySettingsService">Object containing the deploy settings service data used by the operation.</param>
     /// <param name="deploymentStore">Object containing the deployment store data used by the operation.</param>
+    /// <param name="pullRequestService">Service that posts deploy commands to pull requests.</param>
+    /// <param name="gitHubSecurity">Guard used to confirm the user can access the repository.</param>
     /// <param name="logger">Logger used to report operational activity.</param>
-    public DeployQueueService(IGitHubClient gitHubClient, IDeploySettingsService deploySettingsService, IDeploymentStore deploymentStore,
+    public DeployQueueService(IGitHubClient gitHubClient, IDeploySettingsService deploySettingsService,
+        IDeploymentStore deploymentStore, IPullRequestService pullRequestService, IGitHubSecurity gitHubSecurity,
         ILogger<DeployQueueService> logger)
     {
         _gitHubClient = gitHubClient;
         _deploySettingsService = deploySettingsService;
         _deploymentStore = deploymentStore;
+        _pullRequestService = pullRequestService;
+        _gitHubSecurity = gitHubSecurity;
         _logger = logger;
     }
 
@@ -45,6 +53,7 @@ public class DeployQueueService : IDeployQueueService
     /// <returns>The value after it has been stored or updated.</returns>
     public async Task<DeployQueue> UpdateAsync(DeployQueueUpdateInput input)
     {
+        await _gitHubSecurity.GuardRepoAsync(input.Owner, input.Repo);
         _logger.LogInformation("Updating {Environment} deploy queue in {Owner}/{Repo} to {Count} pull requests.",
             input.Environment, input.Owner, input.Repo, input.PullNumbers?.Count ?? 0);
         var value = new List<int>();
@@ -102,7 +111,7 @@ public class DeployQueueService : IDeployQueueService
             var command = environment.StartsWith(repoSettings.DefaultEnvironment!, StringComparison.OrdinalIgnoreCase)
                 ? @"/deploy"
                 : $@"/deploy {environment}";
-            var tasks = newNumbers.Select(n => AddPullRequestCommand(owner, repo, n, command)).ToArray();
+            var tasks = newNumbers.Select(n => _pullRequestService.AddCommentCommandAsync(owner, repo, n, command)).ToArray();
             await Task.WhenAll(tasks);
         }
     }
@@ -168,29 +177,5 @@ public class DeployQueueService : IDeployQueueService
     private async Task SetPullNumbersAsync(string owner, string repo, string queueName, List<int> value)
     {
         await _deploymentStore.SetAsync(owner, repo, queueName, value);
-    }
-
-    /// <summary>
-    /// Adds the pull request command to the associated collection.
-    /// </summary>
-    /// <param name="owner">Repository owner or organization whose values are addressed.</param>
-    /// <param name="repo">Repository whose values are addressed.</param>
-    /// <param name="pullNumber">Number identifying the pull request.</param>
-    /// <param name="command">Text used as the command.</param>
-    /// <returns>The status response produced by the operation.</returns>
-    private async Task<StatusResponse> AddPullRequestCommand(string owner, string repo, int pullNumber,
-        string command)
-    {
-        var comment = $@"
-{command}
-";
-        await _gitHubClient.Issue.Comment.Create(
-            owner,
-            repo,
-            pullNumber,
-            comment
-        );
-
-        return new StatusResponse();
     }
 }

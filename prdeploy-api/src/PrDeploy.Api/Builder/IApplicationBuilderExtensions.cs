@@ -14,7 +14,7 @@ namespace PrDeploy.Api.Builder
         /// <returns>The i application builder produced by the operation.</returns>
         public static IApplicationBuilder UseGraphQlStandards(this IApplicationBuilder app)
         {
-            return app.UseMiddleware<GraphQlStandardsMiddleware>(); ;
+            return app.UseMiddleware<GraphQlStandardsMiddleware>();
         }
     }
 }

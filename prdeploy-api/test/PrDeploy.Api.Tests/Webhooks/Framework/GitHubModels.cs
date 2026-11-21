@@ -28,9 +28,12 @@ public static class GitHubModels
     /// <param name="body">Text used as the body.</param>
     /// <param name="merged">Whether the merged option is enabled.</param>
     /// <param name="title">Text used as the title.</param>
+    /// <param name="headRepository">Full name of the repository holding the head branch; defaults to the test repository.
+    /// Pass another name to model a fork.</param>
     /// <returns>The pull request produced by the operation.</returns>
     public static PullRequest PullRequest(int number, string branch = "feature-branch", string login = "greggbjensen",
-        string[]? labels = null, string body = "", bool merged = false, string title = "My new feature")
+        string[]? labels = null, string body = "", bool merged = false, string title = "My new feature",
+        string headRepository = $"{WebhookTestHost.Owner}/{WebhookTestHost.Repo}")
     {
         var labelJson = string.Join(",", (labels ?? []).Select(l => $$"""{ "name": "{{l}}" }"""));
         return FromJson<PullRequest>($$"""
@@ -44,8 +47,8 @@ public static class GitHubModels
               "mergeable": true,
               "mergeable_state": "clean",
               "user": { "login": "{{login}}" },
-              "head": { "ref": "{{branch}}" },
-              "base": { "ref": "main" },
+              "head": { "ref": "{{branch}}", "repo": { "full_name": "{{headRepository}}" } },
+              "base": { "ref": "main", "repo": { "full_name": "{{WebhookTestHost.Owner}}/{{WebhookTestHost.Repo}}" } },
               "labels": [{{labelJson}}]
             }
             """);

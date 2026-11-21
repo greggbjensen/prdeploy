@@ -10,6 +10,7 @@ namespace PrDeploy.Api.Tests.Schema.Mutations;
 /// <summary>
 /// Contains tests that verify pull request mutation behavior.
 /// </summary>
+[Collection(ApiHostCollection.Name)]
 public class PullRequestMutationTest : DeployApiTest
 {
     private const int AddPullNumber = 2882;

@@ -37,6 +37,16 @@ Access is limited to the organizations listed in `GitHubAuth:AllowedOrganization
 - `ownerRepoAddEnabled` rejects a repository the user is not a contributor on (or whose owner they are not an allowed member of) with `success: false` and a `message`, and saves nothing. The add dialog shows that message and stays open.
 - Enabling or disabling a repository updates the full stored list, so repositories other users enabled are kept.
 - Granted checks are cached per token for 10 minutes. Denials are logged at `Information`; a failed GitHub call is logged at `Warning`, for example when an organization restricts OAuth app access.
+- Owner and repository names must be valid GitHub names (owner: letters, digits, and hyphens; repository: letters, digits, `.`, `_`, and `-`, and not `.` or `..`). Anything else, such as a name containing `/`, is denied before GitHub is called, because names are used in storage keys and API paths.
+- The deploy, free, rollback, queue, and add-services mutations post a slash command to the pull request as the user, after the repository check. The command must be a single line of word arguments and `--` flags; anything else, such as an environment containing a newline, returns `BAD_REQUEST` and nothing is posted.
+
+### Settings secrets
+
+The Jira token, Slack bot token, and Slack and Teams webhook URLs are never returned by the API. `repoSettings`, `ownerSettings`, and `deploySettingsCompare` return `********` for each one that is set (and `null` when it is not). When settings are saved, a value of `********` keeps the stored secret, so the portal can save the masked values it received; any other value replaces it.
+
+A repository can override owner settings, but Jira credentials are only inherited when the repository keeps the owner's Jira host. Pointing a repository at a different Jira host requires its own username and token, so repository contributors cannot send the owner's credentials to another server.
+
+Webhook processing only calls a Jira host or Slack webhook URL that is absolute `https` and is not a loopback, private, link-local (including cloud metadata), or unspecified IP address. Host names are not resolved, so this does not stop DNS rebinding; restrict outbound traffic from the API's network as well.
 
 ### Webhooks
 
@@ -49,8 +59,10 @@ Access is limited to the organizations listed in `GitHubAuth:AllowedOrganization
 | ------------------------------------------ | ----------------------------------------------------------------------- |
 | `pull_request.opened`, `edited`            | Adds Jira issue links from the branch name, when enabled.               |
 | `pull_request.closed`                      | Frees environments, dequeues the next pull request, promotes to stable. |
-| `issue_comment.created`                    | Runs `/deploy`, `/free`, `/rollback`, and `/add` commands.              |
+| `issue_comment.created`                    | Runs `/deploy`, `/free`, `/rollback`, and `/add` commands from users with write access. |
 | `workflow_run.requested`, `completed`      | Posts deploy status, triggers automation tests, retriggers deploys.     |
+
+Comment commands only run when the comment author has `write`, `maintain`, or `admin` permission on the repository (`GET /repos/{owner}/{repo}/collaborators/{user}/permission`). Anyone who can read a repository, or any GitHub user on a public one, can comment, so commands from other users, bots, and apps are logged at `Warning` and ignored. `/deploy` and `/add` are also ignored for pull requests from forks, because deploys dispatch workflows and commit trigger files by branch name in this repository; a fork pull request taken off a queue is not deployed and gets a failure comment instead.
 
 Because the queue and some caches are in memory, the API runs as a single replica.
 
@@ -112,6 +124,13 @@ Run all tests with `dotnet test`, or only the webhook tests with:
 ```bash
 dotnet test --filter "FullyQualifiedName~Webhooks"
 ```
+
+Prefer functional tests that call the API over HTTP and mock only external services:
+
+- **GraphQL and REST:** derive from `DeployApiTest`, or use `SecuredApiApplicationFactory` to run the real repository and organization access checks with a mocked GitHub client. `ApiSecurityFunctionalTest` shows the pattern: it posts GraphQL operations to `/graphql` and asserts the response and the GitHub calls.
+- **Webhooks:** `WebhookCommandFunctionalTest` posts signed payloads to `POST /webhooks` and waits for the background worker. `WebhookTestHost` runs the real webhook services with a mocked GitHub client and HTTP handler for focused scenarios.
+
+Every test class that starts the API host must be in the `[Collection(ApiHostCollection.Name)]` collection. Hosts replace the static Serilog bootstrap logger on startup, so starting two at once fails with "The logger is already frozen."
 
 ## Deployment
 

@@ -48,8 +48,11 @@ permissions:
 
 ```bash
 npm install
-npm test          # Jest unit tests in __tests__/
+npm test          # Jest unit tests in __tests__/, with the GitHub API and runner mocked
 npm run lint
 npm run build     # tsc to lib/
 npm run package   # ncc bundle to dist/ (commit dist/, action.yaml runs dist/index.js)
 ```
+
+`src/main.ts` only calls `run()` from `src/run.ts`, so tests can import and run the action without it starting on
+import. The `actions - test` workflow type checks, lints, tests, and bundles the action on pull requests.

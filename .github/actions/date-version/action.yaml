@@ -25,21 +25,4 @@ runs:
       RUN_ID: ${{ github.run_id }}
       USE_PRERELEASE: ${{ inputs.use_prerelease }}
       USE_FOUR_DIGITS: ${{ inputs.use_four_digits }}
-    run: |
-      version=""
-      if [ "$USE_FOUR_DIGITS" = "true" ]; then
-        version=$(date '+%Y.%-m.%-d%-H.%-M%-S')
-      elif [ "$USE_PRERELEASE" = "true" ]; then
-        dayVersion=$(date '+%Y.%-m.%-d')
-        version="$dayVersion-r$RUN_ID"
-      else
-        # Max digit is 66,535 so we convert seconds to 10th of a minute (0-9)
-        seconds=$(date '+%S')
-        minute10th=$(printf "%.0f" $(echo "($seconds/60.0)*9" | bc -l))
-        prefixVersion=$(date '+%Y.%-m%-d.%-H%-M')
-        version="$prefixVersion$minute10th"
-      fi
-
-      echo "VERSION: $version"
-      echo "version=$version" >> $GITHUB_OUTPUT
-      echo "VERSION=$version" >> $GITHUB_ENV
+    run: "$GITHUB_ACTION_PATH/date-version.sh"

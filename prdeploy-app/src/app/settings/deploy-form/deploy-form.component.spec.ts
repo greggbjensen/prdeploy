@@ -108,4 +108,51 @@ describe('DeployFormComponent', () => {
 
     expect(settings.prdeployPortalUrl['repo']).toBeNull();
   });
+
+  /** Renders the form at a settings level and returns the required state of each deployment select. */
+  function requiredSelects(level: 'owner' | 'repo'): Record<string, boolean> {
+    workflowsGql.fetch.and.returnValue(of({ data: { repositoryWorkflows: [] } }) as never);
+    TestBed.configureTestingModule({
+      imports: [DeployFormComponent, NoopAnimationsModule],
+      providers: [
+        { provide: RepositoryWorkflowsGQL, useValue: workflowsGql },
+        { provide: RepoManager, useValue: { owner: 'o', repo: 'r' } },
+        { provide: LoggingService, useValue: loggingService }
+      ]
+    });
+    const fixture = TestBed.createComponent(DeployFormComponent);
+    fixture.componentInstance.level = level;
+    fixture.componentInstance.settingsCompare = {
+      prdeployPortalUrl: { owner: 'https://portal.example.com' },
+      deployWorkflow: {},
+      defaultEnvironment: {},
+      releaseEnvironment: {},
+      environments: {},
+      badge: { statusColors: { error: {}, warn: {}, success: {}, info: {} } }
+    } as unknown as DeploySettingsCompare;
+    fixture.detectChanges();
+
+    const result: Record<string, boolean> = {};
+    for (const name of ['githubWorkflow', 'defaultEnvironment', 'releaseEnvironment']) {
+      const select: HTMLElement = fixture.nativeElement.querySelector(`mat-select[name="${name}"]`);
+      result[name] = select.getAttribute('aria-required') === 'true';
+    }
+    return result;
+  }
+
+  it('requires the deploy workflow and environments at owner level', () => {
+    expect(requiredSelects('owner')).toEqual({
+      githubWorkflow: true,
+      defaultEnvironment: true,
+      releaseEnvironment: true
+    });
+  });
+
+  it('does not require deployment overrides at repo level, where they are inherited', () => {
+    expect(requiredSelects('repo')).toEqual({
+      githubWorkflow: false,
+      defaultEnvironment: false,
+      releaseEnvironment: false
+    });
+  });
 });
