@@ -1,0 +1,29 @@
+info:
+  name: List build workflow service names
+  type: http
+  seq: 1
+http:
+  method: GET
+  url: "{{baseUrl}}/api/build-names/{{owner}}/{{repo}}"
+  auth:
+    type: bearer
+    token: "{{githubToken}}"
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+settings:
+  encodeUrl: true
+docs: |-
+  Read-only. Returns the build workflow to service name mappings (Settings → Services) that the `get-build-info` GitHub Action uses to name builds. Repository settings override owner settings, and services without a workflow are omitted.
+
+  Inputs: `owner` and `repo` variables.
+
+  Authentication: bearer `githubToken`, a GitHub token that can read `owner`/`repo` (a workflow's `GITHUB_TOKEN` or a personal token). This is not the portal `jwt`; the API proves access by reading the repository with the token.
+
+  Responses: 200 `[{ "workflow": "api-ci.yml", "name": "api" }]`, 401 missing bearer token, 403 token cannot read the repository.
+
+  Swagger/OpenAPI: [GET /api/build-names/{owner}/{repo}](http://localhost:4302/openapi/v1.json#/paths/~1api~1build-names~1{owner}~1{repo}/get)
+
+  Implementation: `prdeploy-api/src/PrDeploy.Api.Webhooks/Status/BuildNameEndpoints.cs`, `prdeploy-api/src/PrDeploy.Api.Webhooks/Services/BuildNameService.cs`.

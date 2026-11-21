@@ -20,6 +20,14 @@ Gets build data and a matrix for a set of deploy and sync run IDs.
 
 Run IDs of builds being synced with stable release.
 
+### `api_url`
+
+Base URL of the PR Deploy API, such as `https://prdeploy.example.com`. When set, each build is named after the service
+mapped to its workflow in the PR Deploy settings (Settings → Services), so `journosa-api-ci.yml` can be named
+`journosa-api`. The job's `GITHUB_TOKEN` is sent to `GET /api/build-names/{owner}/{repo}` to prove read access to the
+repository. When omitted, or when the lookup fails (a warning is logged), the name is the workflow file name without its
+extension or a trailing `-ci`/`-build`.
+
 ## Outputs
 
 ### `builds_json`
@@ -68,6 +76,7 @@ deploy_info:
         pull_number: ${{ inputs.pull_number }}
         deploy_run_ids: '5150198235,4683559959'
         sync_run_ids: '7921342161'
+        api_url: https://prdeploy.example.com
 ```
 
 ## Development

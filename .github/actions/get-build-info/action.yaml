@@ -14,6 +14,9 @@ inputs:
   sync_run_ids:
     required: false
     description: 'Run IDs of builds being synced with stable release.'
+  api_url:
+    required: false
+    description: 'Base URL of the PR Deploy API. When set, builds are named after the service mapped to their workflow in the PR Deploy settings.'
 runs:
   using: 'node24'
   main: 'dist/index.js'

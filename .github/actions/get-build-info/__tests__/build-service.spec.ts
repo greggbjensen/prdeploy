@@ -68,6 +68,16 @@ describe('BuildService.list', () => {
     });
   });
 
+  it('prefers the service name mapped in settings, ignoring workflow case', async () => {
+    const zip = artifactZip({ 'build-details.json': JSON.stringify({ version: '1' }) });
+    const { octokit } = createOctokit({ 1: apiRun }, ['build-details'], zip);
+
+    const [build] = await new BuildService(octokit, { 'api-build.yaml': 'journosa-api' }).list('o', 'r', [1]);
+
+    expect(build.name).toBe('journosa-api');
+    expect(build.workflow).toBe('api-build.yaml');
+  });
+
   it('uses the workflow file name without a -ci/-build suffix and does not warn', async () => {
     const zip = artifactZip({ 'build-details.json': JSON.stringify({ version: '1.0.0' }) });
     const run = { ...apiRun, path: '.github/workflows/combined-deploy.yaml' };

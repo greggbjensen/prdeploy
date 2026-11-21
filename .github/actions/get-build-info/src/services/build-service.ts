@@ -5,7 +5,14 @@ import { Build, BuildDetails } from '../models';
 import AdmZip from 'adm-zip';
 
 export class BuildService {
-  constructor(private _octokit: Octokit) {}
+  /**
+   * @param _octokit GitHub client used to read workflow runs and artifacts.
+   * @param _serviceNames Service names keyed by lowercase workflow file name, from the PR Deploy settings.
+   */
+  constructor(
+    private _octokit: Octokit,
+    private _serviceNames: Record<string, string> = {}
+  ) {}
 
   async list(owner: string, repo: string, runIds: number[]): Promise<Build[]> {
     core.info(`Listing builds for run IDs: ${runIds.join(', ')}`);
@@ -26,8 +33,12 @@ export class BuildService {
     const title = result.data.display_title;
     const url = result.data.html_url;
     const workflow = path.basename(workflowPath);
-    // The build name is the workflow file name without its extension or a trailing -ci/-build suffix.
-    const name = workflow.replace(/\.ya?ml$/i, '').replace(/-(ci|build)$/i, '') || workflowPath;
+    // The build name is the service mapped to the workflow in settings; otherwise the workflow file name without its
+    // extension or a trailing -ci/-build suffix.
+    const name =
+      this._serviceNames[workflow.toLowerCase()] ||
+      workflow.replace(/\.ya?ml$/i, '').replace(/-(ci|build)$/i, '') ||
+      workflowPath;
 
     const version = await this.extractVersion(owner, repo, runId);
 

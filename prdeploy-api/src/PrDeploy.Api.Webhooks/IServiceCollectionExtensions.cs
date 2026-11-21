@@ -51,6 +51,7 @@ public static class IServiceCollectionExtensions
             .AddScoped<EnvironmentUtil>()
             .AddSingleton<TemplateService>()
             .AddScoped<WebhookSettingsService>()
+            .AddScoped<BuildNameService>()
             .AddScoped<DeployStateService>()
             .AddScoped<PullRequestService>()
             .AddScoped<SlackService>()

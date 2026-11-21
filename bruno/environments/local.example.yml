@@ -7,6 +7,10 @@ variables:
     value: ""
     enabled: true
     secret: true
+  - name: githubToken
+    value: ""
+    enabled: true
+    secret: true
   - name: owner
     value: ""
     enabled: true

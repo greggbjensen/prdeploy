@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { BuildService, PullRequestService } from './services';
+import { BuildService, PullRequestService, ServiceNameService } from './services';
 import { Octokit } from '@octokit/rest';
 import { SummaryWriter } from './summary-writer';
 import _ from 'lodash';
@@ -59,9 +59,11 @@ export async function run(): Promise<void> {
     const allRunIds = _.uniq(deployRunIds.concat(syncRunIds));
 
     const octokit = github.getOctokit(token) as unknown as Octokit;
-    const buildService = new BuildService(octokit);
     const owner = github.context.repo.owner;
     const repo = github.context.repo.repo;
+    const apiUrl: string = core.getInput('api_url', { required: false });
+    const serviceNames = await new ServiceNameService(apiUrl, token).list(owner, repo);
+    const buildService = new BuildService(octokit, serviceNames);
     const builds = await buildService.list(owner, repo, allRunIds);
 
     core.info('Builds found:');

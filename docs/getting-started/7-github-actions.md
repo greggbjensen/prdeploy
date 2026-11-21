@@ -67,7 +67,10 @@ jobs:
           pull_number: ${{ inputs.pull_number }}
           deploy_run_ids: ${{ inputs.deploy_run_ids }}
           sync_run_ids: ${{ inputs.sync_run_ids }}
+          api_url: https://prdeploy.example.com  # optional, your PR Deploy API
 ```
+
+When `api_url` is set, each build is named after the service mapped to its workflow under **Settings → Services**, so `journosa-api-ci.yml` is named `journosa-api` in `builds_json` and `builds_matrix_json`. Without it, the name is the workflow file name without its extension or a trailing `-ci`/`-build`.
 
 ## Build Workflow
 

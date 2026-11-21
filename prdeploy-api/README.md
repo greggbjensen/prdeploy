@@ -8,6 +8,7 @@ as well as the GitHub App webhooks that respond to pull request, comment, and wo
 | `/graphql`              | GraphQL API for the prdeploy portal, authenticated as the signed in GitHub user.           |
 | `/api/oauth/*`          | GitHub OAuth token proxy and user info for the portal.                                     |
 | `/api/deploy-status/{owner}/{repo}/events` | Server-Sent Events stream of deploy workflow status (`InProgress`, `Successful`, `Failure`) for the portal Deployments dashboard. |
+| `/api/build-names/{owner}/{repo}` | Workflow-to-service name mappings for the `get-build-info` action. Anonymous route authenticated by a GitHub token (e.g. `GITHUB_TOKEN`) that can read the repository, not the portal JWT. |
 | `/webhooks`             | GitHub App webhook URL, authenticated by the webhook secret signature.                     |
 | `/health/live`, `ready` | Kubernetes health checks.                                                                  |
 

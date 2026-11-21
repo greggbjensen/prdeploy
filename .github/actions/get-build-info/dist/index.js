@@ -1,490 +1,6 @@
 require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 8065:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.describeError = exports.REQUIRED_PERMISSIONS = exports.getRunIds = void 0;
-exports.run = run;
-const core = __importStar(__nccwpck_require__(7484));
-const github = __importStar(__nccwpck_require__(3228));
-const services_1 = __nccwpck_require__(9001);
-const summary_writer_1 = __nccwpck_require__(5722);
-const lodash_1 = __importDefault(__nccwpck_require__(2356));
-/**
- * Parses a comma-separated list of workflow run IDs, ignoring blank and non-numeric entries so a trailing comma or
- * stray space never produces a `NaN` run ID.
- */
-const getRunIds = (idsValue) => {
-    return (idsValue !== null && idsValue !== void 0 ? idsValue : '')
-        .split(',')
-        .map(r => r.trim())
-        .filter(r => /^\d+$/.test(r))
-        .map(r => parseInt(r, 10));
-};
-exports.getRunIds = getRunIds;
-/** Permissions the workflow token needs to read build runs, their artifacts, and the pull request. */
-exports.REQUIRED_PERMISSIONS = 'actions: read, contents: read, and pull-requests: read';
-/**
- * Describes an error for the action failure message. GitHub reports a token missing a permission as
- * "Resource not accessible by integration", so that message gets the permissions the job needs.
- */
-const describeError = (error) => {
-    const status = error.status;
-    if (status === 403 && /Resource not accessible by integration/i.test(error.message)) {
-        return (`${error.message}. The job's GITHUB_TOKEN needs ${exports.REQUIRED_PERMISSIONS} permissions; ` +
-            'add them under the job running this action, since a workflow-level permissions block applies to every job.');
-    }
-    return error.message;
-};
-exports.describeError = describeError;
-/**
- * Lists the builds for the deploy and sync run IDs, writes the job summary, and sets the action outputs:
- * `builds_json`, `builds_matrix_json`, `builds_count`, and `pull_branch`. Any error fails the action.
- */
-function run() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const token = core.getInput('token', { required: true });
-            const pullNumberValue = core.getInput('pull_number', {
-                required: true
-            });
-            const pullNumber = parseInt(pullNumberValue, 10);
-            const deployRunIdsValue = core.getInput('deploy_run_ids', {
-                required: false
-            });
-            const deployRunIds = (0, exports.getRunIds)(deployRunIdsValue);
-            const syncRunIdsValue = core.getInput('sync_run_ids', {
-                required: false
-            });
-            const syncRunIds = (0, exports.getRunIds)(syncRunIdsValue);
-            const allRunIds = lodash_1.default.uniq(deployRunIds.concat(syncRunIds));
-            const octokit = github.getOctokit(token);
-            const buildService = new services_1.BuildService(octokit);
-            const owner = github.context.repo.owner;
-            const repo = github.context.repo.repo;
-            const builds = yield buildService.list(owner, repo, allRunIds);
-            core.info('Builds found:');
-            for (const build of builds) {
-                core.info(`  ${build.name} (${build.version})`);
-            }
-            const deployBuilds = builds.filter(b => deployRunIds.includes(b.runId));
-            core.info('Deploy builds:');
-            for (const build of deployBuilds) {
-                core.info(`  ${build.name} (${build.version})`);
-            }
-            const pullRequestService = new services_1.PullRequestService(octokit);
-            const pullRequest = yield pullRequestService.get(owner, repo, pullNumber);
-            const writer = new summary_writer_1.SummaryWriter();
-            yield writer.write(pullRequest, deployBuilds);
-            // Output cannot be an object as far as I have found so we need to set it as JSON.
-            const buildSummaries = builds.map(({ runId, name, version, workflow }) => ({
-                runId,
-                name,
-                version,
-                workflow
-            }));
-            const buildsJson = JSON.stringify(buildSummaries);
-            const buildsMatrixJson = JSON.stringify(builds.map(b => b.name));
-            core.setOutput('builds_json', buildsJson);
-            core.setOutput('builds_matrix_json', buildsMatrixJson);
-            core.setOutput('builds_count', builds.length);
-            core.setOutput('pull_branch', pullRequest.head);
-        }
-        catch (error) {
-            if (error instanceof Error) {
-                core.setFailed((0, exports.describeError)(error));
-            }
-        }
-    });
-}
-
-
-/***/ }),
-
-/***/ 4867:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BuildService = void 0;
-const core = __importStar(__nccwpck_require__(7484));
-const path = __importStar(__nccwpck_require__(6928));
-const adm_zip_1 = __importDefault(__nccwpck_require__(1316));
-class BuildService {
-    constructor(_octokit) {
-        this._octokit = _octokit;
-    }
-    list(owner, repo, runIds) {
-        return __awaiter(this, void 0, void 0, function* () {
-            core.info(`Listing builds for run IDs: ${runIds.join(', ')}`);
-            const builds = yield Promise.all(runIds.map((r) => __awaiter(this, void 0, void 0, function* () { return yield this.extractBuild(owner, repo, r); })));
-            return builds;
-        });
-    }
-    extractBuild(owner, repo, runId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            core.info(`Getting the workflow run with ID: ${runId}`);
-            const result = yield this._octokit.rest.actions.getWorkflowRun({
-                owner,
-                repo,
-                run_id: runId
-            });
-            const workflowPath = result.data.path;
-            const title = result.data.display_title;
-            const url = result.data.html_url;
-            const workflow = path.basename(workflowPath);
-            // The build name is the workflow file name without its extension or a trailing -ci/-build suffix.
-            const name = workflow.replace(/\.ya?ml$/i, '').replace(/-(ci|build)$/i, '') || workflowPath;
-            const version = yield this.extractVersion(owner, repo, runId);
-            return {
-                runId,
-                name,
-                version,
-                title,
-                url,
-                workflow
-            };
-        });
-    }
-    extractVersion(owner, repo, runId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let version = '';
-            try {
-                // SourceRef: https://github.com/dawidd6/action-download-artifact/blob/master/main.js
-                core.info(`Listing artifacts from Run ID: ${runId} `);
-                const response = yield this._octokit.rest.actions.listWorkflowRunArtifacts({
-                    owner,
-                    repo,
-                    run_id: runId
-                });
-                const detailsArtifact = response.data.artifacts.find(a => a.name === 'build-details');
-                if (!detailsArtifact) {
-                    throw new Error('Artifact build-details not found on triggering workflow.');
-                }
-                const zip = yield this._octokit.rest.actions.downloadArtifact({
-                    owner,
-                    repo,
-                    artifact_id: detailsArtifact.id,
-                    archive_format: 'zip'
-                });
-                const adm = new adm_zip_1.default(Buffer.from(zip.data));
-                const entry = adm.getEntry('build-details.json');
-                if (!entry) {
-                    throw new Error('Artifact build-details did not contain build-details.json.');
-                }
-                const json = entry.getData().toString('utf8');
-                const build = JSON.parse(json);
-                version = build.version;
-            }
-            catch (err) {
-                core.warning('The build-details.json file does not exist, make sure your build uses the build-details action');
-                core.warning(err.message);
-            }
-            return version;
-        });
-    }
-}
-exports.BuildService = BuildService;
-
-
-/***/ }),
-
-/***/ 9001:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-__exportStar(__nccwpck_require__(4867), exports);
-__exportStar(__nccwpck_require__(136), exports);
-
-
-/***/ }),
-
-/***/ 136:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.PullRequestService = void 0;
-const core = __importStar(__nccwpck_require__(7484));
-class PullRequestService {
-    constructor(_octokit) {
-        this._octokit = _octokit;
-    }
-    get(owner, repo, prNumber) {
-        return __awaiter(this, void 0, void 0, function* () {
-            core.info(`Finding pull request: ${prNumber}`);
-            const pullResponse = yield this._octokit.rest.pulls.get({
-                owner,
-                repo,
-                pull_number: prNumber
-            });
-            const pull = pullResponse.data;
-            return pull
-                ? {
-                    prNumber,
-                    title: pull.title,
-                    url: pull.html_url,
-                    body: pull.body,
-                    head: pull.head.ref,
-                    base: pull.base.ref
-                }
-                : null;
-        });
-    }
-}
-exports.PullRequestService = PullRequestService;
-
-
-/***/ }),
-
-/***/ 5722:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SummaryWriter = void 0;
-const core = __importStar(__nccwpck_require__(7484));
-const lodash_1 = __importDefault(__nccwpck_require__(2356));
-class SummaryWriter {
-    write(pull, deployBuilds) {
-        return __awaiter(this, void 0, void 0, function* () {
-            core.info('Writing deploy builds.');
-            // Ensure alphabetical order.
-            core.summary.addHeading('Deploy Services', SummaryWriter.HeadingLevel);
-            if (deployBuilds && deployBuilds.length > 0) {
-                const sortedBuilds = lodash_1.default.sortBy(deployBuilds, d => d.name);
-                core.summary.addRaw(`
-| Name     | Version  | Run ID    |
-|----------|----------|-----------|`);
-                for (const build of sortedBuilds) {
-                    core.summary.addRaw(`
-| ${build.name} | ${build.version} | [${build.runId}](${build.url}) |`);
-                }
-                core.summary.addRaw(`
-`);
-            }
-            else {
-                core.summary.addRaw(`
-
-*No builds found*
-`);
-            }
-            core.info('Writing pull request.');
-            core.summary.addRaw(`
-## [#${pull.prNumber}](${pull.url}) ${pull.title}
-
-${pull.body ? pull.body : ''}
-`);
-            yield core.summary.write();
-        });
-    }
-}
-exports.SummaryWriter = SummaryWriter;
-SummaryWriter.HeadingLevel = 2;
-
-
-/***/ }),
-
 /***/ 4914:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -53580,6 +53096,593 @@ module.exports = {
 
 /***/ }),
 
+/***/ 9786:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.describeError = exports.REQUIRED_PERMISSIONS = exports.getRunIds = void 0;
+exports.run = run;
+const core = __importStar(__nccwpck_require__(7484));
+const github = __importStar(__nccwpck_require__(3228));
+const services_1 = __nccwpck_require__(6496);
+const summary_writer_1 = __nccwpck_require__(4511);
+const lodash_1 = __importDefault(__nccwpck_require__(2356));
+/**
+ * Parses a comma-separated list of workflow run IDs, ignoring blank and non-numeric entries so a trailing comma or
+ * stray space never produces a `NaN` run ID.
+ */
+const getRunIds = (idsValue) => {
+    return (idsValue !== null && idsValue !== void 0 ? idsValue : '')
+        .split(',')
+        .map(r => r.trim())
+        .filter(r => /^\d+$/.test(r))
+        .map(r => parseInt(r, 10));
+};
+exports.getRunIds = getRunIds;
+/** Permissions the workflow token needs to read build runs, their artifacts, and the pull request. */
+exports.REQUIRED_PERMISSIONS = 'actions: read, contents: read, and pull-requests: read';
+/**
+ * Describes an error for the action failure message. GitHub reports a token missing a permission as
+ * "Resource not accessible by integration", so that message gets the permissions the job needs.
+ */
+const describeError = (error) => {
+    const status = error.status;
+    if (status === 403 && /Resource not accessible by integration/i.test(error.message)) {
+        return (`${error.message}. The job's GITHUB_TOKEN needs ${exports.REQUIRED_PERMISSIONS} permissions; ` +
+            'add them under the job running this action, since a workflow-level permissions block applies to every job.');
+    }
+    return error.message;
+};
+exports.describeError = describeError;
+/**
+ * Lists the builds for the deploy and sync run IDs, writes the job summary, and sets the action outputs:
+ * `builds_json`, `builds_matrix_json`, `builds_count`, and `pull_branch`. Any error fails the action.
+ */
+function run() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const token = core.getInput('token', { required: true });
+            const pullNumberValue = core.getInput('pull_number', {
+                required: true
+            });
+            const pullNumber = parseInt(pullNumberValue, 10);
+            const deployRunIdsValue = core.getInput('deploy_run_ids', {
+                required: false
+            });
+            const deployRunIds = (0, exports.getRunIds)(deployRunIdsValue);
+            const syncRunIdsValue = core.getInput('sync_run_ids', {
+                required: false
+            });
+            const syncRunIds = (0, exports.getRunIds)(syncRunIdsValue);
+            const allRunIds = lodash_1.default.uniq(deployRunIds.concat(syncRunIds));
+            const octokit = github.getOctokit(token);
+            const owner = github.context.repo.owner;
+            const repo = github.context.repo.repo;
+            const apiUrl = core.getInput('api_url', { required: false });
+            const serviceNames = yield new services_1.ServiceNameService(apiUrl, token).list(owner, repo);
+            const buildService = new services_1.BuildService(octokit, serviceNames);
+            const builds = yield buildService.list(owner, repo, allRunIds);
+            core.info('Builds found:');
+            for (const build of builds) {
+                core.info(`  ${build.name} (${build.version})`);
+            }
+            const deployBuilds = builds.filter(b => deployRunIds.includes(b.runId));
+            core.info('Deploy builds:');
+            for (const build of deployBuilds) {
+                core.info(`  ${build.name} (${build.version})`);
+            }
+            const pullRequestService = new services_1.PullRequestService(octokit);
+            const pullRequest = yield pullRequestService.get(owner, repo, pullNumber);
+            const writer = new summary_writer_1.SummaryWriter();
+            yield writer.write(pullRequest, deployBuilds);
+            // Output cannot be an object as far as I have found so we need to set it as JSON.
+            const buildSummaries = builds.map(({ runId, name, version, workflow }) => ({
+                runId,
+                name,
+                version,
+                workflow
+            }));
+            const buildsJson = JSON.stringify(buildSummaries);
+            const buildsMatrixJson = JSON.stringify(builds.map(b => b.name));
+            core.setOutput('builds_json', buildsJson);
+            core.setOutput('builds_matrix_json', buildsMatrixJson);
+            core.setOutput('builds_count', builds.length);
+            core.setOutput('pull_branch', pullRequest.head);
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                core.setFailed((0, exports.describeError)(error));
+            }
+        }
+    });
+}
+
+
+/***/ }),
+
+/***/ 150:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BuildService = void 0;
+const core = __importStar(__nccwpck_require__(7484));
+const path = __importStar(__nccwpck_require__(6928));
+const adm_zip_1 = __importDefault(__nccwpck_require__(1316));
+class BuildService {
+    /**
+     * @param _octokit GitHub client used to read workflow runs and artifacts.
+     * @param _serviceNames Service names keyed by lowercase workflow file name, from the PR Deploy settings.
+     */
+    constructor(_octokit, _serviceNames = {}) {
+        this._octokit = _octokit;
+        this._serviceNames = _serviceNames;
+    }
+    list(owner, repo, runIds) {
+        return __awaiter(this, void 0, void 0, function* () {
+            core.info(`Listing builds for run IDs: ${runIds.join(', ')}`);
+            const builds = yield Promise.all(runIds.map((r) => __awaiter(this, void 0, void 0, function* () { return yield this.extractBuild(owner, repo, r); })));
+            return builds;
+        });
+    }
+    extractBuild(owner, repo, runId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            core.info(`Getting the workflow run with ID: ${runId}`);
+            const result = yield this._octokit.rest.actions.getWorkflowRun({
+                owner,
+                repo,
+                run_id: runId
+            });
+            const workflowPath = result.data.path;
+            const title = result.data.display_title;
+            const url = result.data.html_url;
+            const workflow = path.basename(workflowPath);
+            // The build name is the service mapped to the workflow in settings; otherwise the workflow file name without its
+            // extension or a trailing -ci/-build suffix.
+            const name = this._serviceNames[workflow.toLowerCase()] ||
+                workflow.replace(/\.ya?ml$/i, '').replace(/-(ci|build)$/i, '') ||
+                workflowPath;
+            const version = yield this.extractVersion(owner, repo, runId);
+            return {
+                runId,
+                name,
+                version,
+                title,
+                url,
+                workflow
+            };
+        });
+    }
+    extractVersion(owner, repo, runId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let version = '';
+            try {
+                // SourceRef: https://github.com/dawidd6/action-download-artifact/blob/master/main.js
+                core.info(`Listing artifacts from Run ID: ${runId} `);
+                const response = yield this._octokit.rest.actions.listWorkflowRunArtifacts({
+                    owner,
+                    repo,
+                    run_id: runId
+                });
+                const detailsArtifact = response.data.artifacts.find(a => a.name === 'build-details');
+                if (!detailsArtifact) {
+                    throw new Error('Artifact build-details not found on triggering workflow.');
+                }
+                const zip = yield this._octokit.rest.actions.downloadArtifact({
+                    owner,
+                    repo,
+                    artifact_id: detailsArtifact.id,
+                    archive_format: 'zip'
+                });
+                const adm = new adm_zip_1.default(Buffer.from(zip.data));
+                const entry = adm.getEntry('build-details.json');
+                if (!entry) {
+                    throw new Error('Artifact build-details did not contain build-details.json.');
+                }
+                const json = entry.getData().toString('utf8');
+                const build = JSON.parse(json);
+                version = build.version;
+            }
+            catch (err) {
+                core.warning('The build-details.json file does not exist, make sure your build uses the build-details action');
+                core.warning(err.message);
+            }
+            return version;
+        });
+    }
+}
+exports.BuildService = BuildService;
+
+
+/***/ }),
+
+/***/ 6496:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+__exportStar(__nccwpck_require__(150), exports);
+__exportStar(__nccwpck_require__(2207), exports);
+__exportStar(__nccwpck_require__(5189), exports);
+
+
+/***/ }),
+
+/***/ 2207:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PullRequestService = void 0;
+const core = __importStar(__nccwpck_require__(7484));
+class PullRequestService {
+    constructor(_octokit) {
+        this._octokit = _octokit;
+    }
+    get(owner, repo, prNumber) {
+        return __awaiter(this, void 0, void 0, function* () {
+            core.info(`Finding pull request: ${prNumber}`);
+            const pullResponse = yield this._octokit.rest.pulls.get({
+                owner,
+                repo,
+                pull_number: prNumber
+            });
+            const pull = pullResponse.data;
+            return pull
+                ? {
+                    prNumber,
+                    title: pull.title,
+                    url: pull.html_url,
+                    body: pull.body,
+                    head: pull.head.ref,
+                    base: pull.base.ref
+                }
+                : null;
+        });
+    }
+}
+exports.PullRequestService = PullRequestService;
+
+
+/***/ }),
+
+/***/ 5189:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ServiceNameService = void 0;
+const core = __importStar(__nccwpck_require__(7484));
+/** Looks up the service names mapped to build workflows in the PR Deploy settings. */
+class ServiceNameService {
+    /**
+     * @param _apiUrl Base URL of the PR Deploy API; when blank, no lookup is made.
+     * @param _token GitHub token sent as the bearer token, which the API uses to confirm access to the repository.
+     */
+    constructor(_apiUrl, _token) {
+        this._apiUrl = _apiUrl;
+        this._token = _token;
+    }
+    /**
+     * Gets the mapped service names keyed by lowercase workflow file name. A failed lookup only warns and returns an
+     * empty map, so builds fall back to names derived from the workflow file name instead of failing the deploy.
+     */
+    list(owner, repo) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const apiUrl = this._apiUrl.trim().replace(/\/+$/, '');
+            if (!apiUrl) {
+                return {};
+            }
+            try {
+                const url = `${apiUrl}/api/build-names/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`;
+                core.info(`Getting service names from ${url}`);
+                const response = yield fetch(url, { headers: { Authorization: `Bearer ${this._token}` } });
+                if (!response.ok) {
+                    throw new Error(`The PR Deploy API returned ${response.status}.`);
+                }
+                const names = (yield response.json());
+                return Object.fromEntries(names.map(n => [n.workflow.toLowerCase(), n.name]));
+            }
+            catch (err) {
+                core.warning(`Unable to get service names from the PR Deploy API, using workflow file names: ${err.message}`);
+                return {};
+            }
+        });
+    }
+}
+exports.ServiceNameService = ServiceNameService;
+
+
+/***/ }),
+
+/***/ 4511:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.SummaryWriter = void 0;
+const core = __importStar(__nccwpck_require__(7484));
+const lodash_1 = __importDefault(__nccwpck_require__(2356));
+class SummaryWriter {
+    write(pull, deployBuilds) {
+        return __awaiter(this, void 0, void 0, function* () {
+            core.info('Writing deploy builds.');
+            // Ensure alphabetical order.
+            core.summary.addHeading('Deploy Services', SummaryWriter.HeadingLevel);
+            if (deployBuilds && deployBuilds.length > 0) {
+                const sortedBuilds = lodash_1.default.sortBy(deployBuilds, d => d.name);
+                core.summary.addRaw(`
+| Name     | Version  | Run ID    |
+|----------|----------|-----------|`);
+                for (const build of sortedBuilds) {
+                    core.summary.addRaw(`
+| ${build.name} | ${build.version} | [${build.runId}](${build.url}) |`);
+                }
+                core.summary.addRaw(`
+`);
+            }
+            else {
+                core.summary.addRaw(`
+
+*No builds found*
+`);
+            }
+            core.info('Writing pull request.');
+            core.summary.addRaw(`
+## [#${pull.prNumber}](${pull.url}) ${pull.title}
+
+${pull.body ? pull.body : ''}
+`);
+            yield core.summary.write();
+        });
+    }
+}
+exports.SummaryWriter = SummaryWriter;
+SummaryWriter.HeadingLevel = 2;
+
+
+/***/ }),
+
 /***/ 2613:
 /***/ ((module) => {
 
@@ -58824,7 +58927,7 @@ var __webpack_exports__ = {};
 var exports = __webpack_exports__;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const run_1 = __nccwpck_require__(8065);
+const run_1 = __nccwpck_require__(9786);
 // Entry point the runner executes; the logic lives in run.ts so it can be tested without running on import.
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 (0, run_1.run)();

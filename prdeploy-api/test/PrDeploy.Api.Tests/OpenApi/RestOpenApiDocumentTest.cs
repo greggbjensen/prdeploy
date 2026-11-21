@@ -53,6 +53,7 @@ public class RestOpenApiDocumentTest(DeployApiApplicationFactory factory) : Depl
         AssertEndpoint(paths, "/api/oauth/userinfo", "get", "Get the authenticated user's profile");
         AssertEndpoint(paths, "/webhooks", "post", "Receive a GitHub App webhook");
         AssertEndpoint(paths, "/api/deploy-status/{owner}/{repo}/events", "get", "Stream deployment workflow status");
+        AssertEndpoint(paths, "/api/build-names/{owner}/{repo}", "get", "List build workflow service names");
         AssertEndpoint(paths, "/health/ready", "get", "Check application readiness");
         AssertEndpoint(paths, "/health/live", "get", "Check application liveness");
     }

@@ -186,6 +186,9 @@ try
     // Live deployment workflow status for the portal dashboard (Server-Sent Events).
     app.MapDeployStatusEvents();
 
+    // Workflow to service name mapping for the get-build-info action, authenticated by a GitHub token.
+    app.MapBuildNames();
+
     app.MapGraphQL().WithOptions(options =>
     {
         options.Tool.Enable = false; // Use Apollo Sandbox instead of Banana Cake Pop.
