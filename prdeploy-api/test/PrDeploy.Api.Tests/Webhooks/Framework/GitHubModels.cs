@@ -56,7 +56,7 @@ public static class GitHubModels
     /// <param name="pullNumber">Number identifying the pull request.</param>
     /// <param name="runAttempt">Numeric value used for the run attempt.</param>
     /// <returns>The workflow run produced by the operation.</returns>
-    public static WorkflowRun WorkflowRun(long id, string name, string path = ".github/workflows/deploy.yml",
+    public static WorkflowRun WorkflowRun(long id, string name, string path = ".github/workflows/combined-deploy.yaml",
         string? conclusion = null, int? pullNumber = null, int runAttempt = 1)
     {
         var pulls = pullNumber.HasValue ? $$"""[{ "number": {{pullNumber}} }]""" : "[]";

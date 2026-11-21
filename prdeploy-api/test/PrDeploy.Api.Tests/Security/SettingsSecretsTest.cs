@@ -22,7 +22,7 @@ public class SettingsSecretsTest
         Assert.Equal(Map.SecretMask, redacted.Teams.Webhooks.ReleaseUrl);
         Assert.Equal("https://x.atlassian.net", redacted.Jira.Host);
         Assert.Equal("x@myorg.com", redacted.Jira.Username);
-        Assert.Equal("deploy.yml", redacted.DeployWorkflow);
+        Assert.Equal("combined-deploy.yaml", redacted.DeployWorkflow);
         Assert.Equal("x-jira-token", source.Jira!.Password);
         Assert.Equal("xoxb-x", source.Slack!.Token);
     }
@@ -86,7 +86,7 @@ public class SettingsSecretsTest
     /// <returns>The populated settings.</returns>
     private static DeploySettings WithSecrets(string prefix) => new()
     {
-        DeployWorkflow = "deploy.yml",
+        DeployWorkflow = "combined-deploy.yaml",
         Environments = [],
         Jira = new JiraSettings
         {

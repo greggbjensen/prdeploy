@@ -76,7 +76,7 @@ public sealed class WebhookTestHost : IDisposable
     /// <summary>Same environments as the original Node.js webhooks test settings.</summary>
     public static DeploySettings CreateDefaultSettings() => new()
     {
-        DeployWorkflow = "deploy.yml",
+        DeployWorkflow = "combined-deploy.yaml",
         Environments =
         [
             Environment("dev", "DEV_PR_QUEUE", "#d4ac0d"),

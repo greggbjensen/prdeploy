@@ -89,7 +89,7 @@ public class CheckServiceTest : IDisposable
             ("Tests", "completed", "failure", 3),
             ("Lint", "completed", "success", 4));
         _host.SetupBuildRun(1, ".github/workflows/app-build.yml");
-        _host.SetupBuildRun(2, ".github/workflows/deploy.yml");
+        _host.SetupBuildRun(2, ".github/workflows/combined-deploy.yaml");
         _host.SetupBuildRun(3, ".github/workflows/tests.yml");
 
         var checks = await _service.ListIncompletePullChecksAsync(GitHubModels.PullRequest(1));

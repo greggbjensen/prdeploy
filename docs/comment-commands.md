@@ -18,3 +18,7 @@ Within the pull request, engineers, QA, and the product owner can work together 
 | `/rollback prod`<br>`/rollback stage`                | Rollback a specific environment to the previous version. You must have a lock on an environment to roll it back.                    |
 | `/rollback prod 2`                                   | Rollback a specific environment multiple versions in history.                                                                       |
 | `/add mydomain-api-service mydomain-app-main`        | Add services to be built and deployed with the pull request that have no code changes.                                              |
+
+## Deploy Branch
+
+The deploy workflow is always dispatched on the pull request's own branch, so the version of the deploy workflow in that branch is the one that runs.  If the branch has been deleted, `/deploy` fails with a comment instead of deploying from another branch.  A `/rollback` to a pull request whose branch has since been deleted runs the deploy workflow from the default branch.

@@ -56,7 +56,7 @@ public class CommentCommandManagerTest : IDisposable
 
         Assert.Equal([ReactionType.Rocket], _reactions);
         var (workflow, dispatch) = Assert.Single(_dispatches);
-        Assert.Equal("deploy.yml", workflow);
+        Assert.Equal("combined-deploy.yaml", workflow);
         Assert.Equal(Branch, dispatch.Ref);
         Assert.Equal(PullNumber.ToString(), dispatch.Inputs["pull_number"]);
         Assert.Equal("dev", dispatch.Inputs["environment"]);
@@ -155,6 +155,7 @@ public class CommentCommandManagerTest : IDisposable
 
         Assert.Equal([ReactionType.Confused], _reactions);
         var (_, dispatch) = Assert.Single(_dispatches);
+        Assert.Equal("stable-branch", dispatch.Ref);
         Assert.Equal("7", dispatch.Inputs["pull_number"]);
         Assert.Equal("111", dispatch.Inputs["deploy_run_ids"]);
         Assert.Equal("[prod ROLLBACK #8] add-service-pr: This is a test commit message.", dispatch.Inputs["deploy_name"]);
@@ -294,6 +295,76 @@ public class CommentCommandManagerTest : IDisposable
         Assert.Empty(_dispatches);
         Assert.Contains(_comments, c => c.Number == 9 && c.Body.Contains("Pull requests from forks cannot be deployed."));
     }
+
+    /// <summary>Verifies a deploy workflow configured as a repository path is dispatched by file name, since GitHub returns 404 for paths.</summary>
+    [Fact]
+    public async Task ProcessCommentAsync_DispatchesWorkflowByFileNameWhenConfiguredAsPath()
+    {
+        _host.Context.Settings.DeployWorkflow = ".github/workflows/combined-deploy.yaml";
+        _host.SetupPullRequest(GitHubModels.PullRequest(PullNumber, Branch));
+
+        await _manager.ProcessCommentAsync(CommentId, "/deploy", IssueUrl, Author);
+
+        var (workflow, _) = Assert.Single(_dispatches);
+        Assert.Equal("combined-deploy.yaml", workflow);
+    }
+
+    /// <summary>Verifies a deploy whose pull request branch was deleted fails with a comment instead of dispatching on the default branch.</summary>
+    [Fact]
+    public async Task ProcessCommentAsync_DoesNotDeployDefaultBranchWhenPullRequestBranchIsMissing()
+    {
+        _host.SetupPullRequest(GitHubModels.PullRequest(PullNumber, Branch));
+        SetupMissingBranch(Branch);
+
+        await _manager.ProcessCommentAsync(CommentId, "/deploy", IssueUrl, Author);
+
+        Assert.Empty(_dispatches);
+        Assert.Contains(_comments, c => c.Number == PullNumber
+            && c.Body.Contains($"Branch {Branch} for pull request #{PullNumber} no longer exists."));
+    }
+
+    /// <summary>Verifies a failed branch lookup other than not-found propagates instead of deploying the default branch.</summary>
+    [Fact]
+    public async Task ProcessCommentAsync_DoesNotDeployDefaultBranchWhenBranchLookupFails()
+    {
+        _host.SetupPullRequest(GitHubModels.PullRequest(PullNumber, Branch));
+        _host.MockOf(_host.GitHub.Object.Repository.Branch)
+            .Setup(c => c.Get(WebhookTestHost.Owner, WebhookTestHost.Repo, Branch))
+            .ThrowsAsync(new ApiException("Server error", System.Net.HttpStatusCode.InternalServerError));
+
+        await Assert.ThrowsAsync<ApiException>(() =>
+            _manager.ProcessCommentAsync(CommentId, "/deploy", IssueUrl, Author));
+
+        Assert.Empty(_dispatches);
+    }
+
+    /// <summary>Verifies a rollback to a pull request whose branch was deleted dispatches on the default branch.</summary>
+    [Fact]
+    public async Task ProcessCommentAsync_RollbackUsesDefaultBranchWhenRolledBackBranchIsMissing()
+    {
+        _host.SetupPullRequest(GitHubModels.PullRequest(PullNumber, Branch, labels: ["prod", "prod-lock"]));
+        _host.SetupPullRequest(GitHubModels.PullRequest(7, "stable-branch"));
+        SetupMissingBranch("stable-branch");
+        await _host.DeploymentStore.SetAsync(WebhookTestHost.Owner, WebhookTestHost.Repo, "DEPLOY_STATE_STABLE",
+            new PrDeploy.Api.Models.DeployEnvironments.DeployState
+            {
+                PullNumber = 7,
+                Services = [new() { Name = "app", RunId = 111, Version = "1.0.0" }]
+            });
+
+        await _manager.ProcessCommentAsync(CommentId, "/rollback", IssueUrl, Author);
+
+        var (_, dispatch) = Assert.Single(_dispatches);
+        Assert.Equal("main", dispatch.Ref);
+        Assert.Equal("7", dispatch.Inputs["pull_number"]);
+    }
+
+    /// <summary>Makes the GitHub branch lookup report the given branch as deleted.</summary>
+    /// <param name="branch">Branch name that GitHub reports as not found.</param>
+    private void SetupMissingBranch(string branch) =>
+        _host.MockOf(_host.GitHub.Object.Repository.Branch)
+            .Setup(c => c.Get(WebhookTestHost.Owner, WebhookTestHost.Repo, branch))
+            .ThrowsAsync(new NotFoundException("Branch not found", System.Net.HttpStatusCode.NotFound));
 
     /// <summary>Releases resources owned by this instance.</summary>
     public void Dispose() => _host.Dispose();

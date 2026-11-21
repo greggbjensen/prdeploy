@@ -70,12 +70,12 @@ describe('BuildService.list', () => {
 
   it('falls back to the workflow path and warns when the pattern does not match', async () => {
     const zip = artifactZip({ 'build-details.json': JSON.stringify({ version: '1.0.0' }) });
-    const run = { ...apiRun, path: '.github/workflows/deploy.yml' };
+    const run = { ...apiRun, path: '.github/workflows/combined-deploy.yaml' };
     const { octokit } = createOctokit({ 2: run }, ['build-details'], zip);
 
     const [build] = await new BuildService(octokit).list('o', 'r', '/([^/]+?)-build.ya?ml', [2]);
 
-    expect(build.name).toBe('.github/workflows/deploy.yml');
+    expect(build.name).toBe('.github/workflows/combined-deploy.yaml');
     expect(core.warning).toHaveBeenCalledWith(expect.stringContaining('did not match workflow path'));
   });
 

@@ -452,6 +452,41 @@ public class DeployService
             rollbackCount);
     }
 
+    /// <summary>Resolves the branch the deploy workflow is dispatched on, which is the deploy pull request's head branch.</summary>
+    /// <remarks>
+    /// Only a rollback falls back to the default branch, and only when the rolled-back pull request's branch has been
+    /// deleted. A normal deploy never silently runs on another branch. Errors other than a missing branch propagate.
+    /// </remarks>
+    /// <param name="deployPullRequest">Pull request whose head branch is deployed.</param>
+    /// <param name="rollback">Whether the deploy is a rollback to an earlier, possibly closed, pull request.</param>
+    /// <returns>The branch to dispatch on, or <see langword="null"/> when a normal deploy's branch no longer exists.</returns>
+    private async Task<string?> ResolveDispatchBranchAsync(PullRequest? deployPullRequest, bool rollback)
+    {
+        var branch = deployPullRequest?.Head?.Ref;
+        if (string.IsNullOrEmpty(branch))
+        {
+            return rollback ? _context.DefaultBranch : null;
+        }
+
+        try
+        {
+            await GitHub.Repository.Branch.Get(_context.Owner, _context.Repo, branch);
+            return branch;
+        }
+        catch (NotFoundException ex) when (rollback)
+        {
+            _logger.LogWarning(ex, "Rollback branch {Branch} no longer exists in {Owner}/{Repo}; using {DefaultBranch}.",
+                branch, _context.Owner, _context.Repo, _context.DefaultBranch);
+            return _context.DefaultBranch;
+        }
+        catch (NotFoundException ex)
+        {
+            _logger.LogWarning(ex, "Deploy branch {Branch} no longer exists in {Owner}/{Repo}.",
+                branch, _context.Owner, _context.Repo);
+            return null;
+        }
+    }
+
     /// <summary>Performs the trigger deploy workflow operation.</summary>
     /// <param name="deployName">Text used as the deploy name.</param>
     /// <param name="environment">Deployment environment involved in the operation.</param>
@@ -464,24 +499,12 @@ public class DeployService
     {
         _logger.LogDebug("Triggering deploy: {DeployName}", deployName);
 
-        // If PR branch does not exist, use default.  This is for rollback on closed PRs.
-        var branch = deployPullRequest?.Head?.Ref;
-        if (!string.IsNullOrEmpty(branch))
+        var branch = await ResolveDispatchBranchAsync(deployPullRequest, rollback);
+        if (branch == null)
         {
-            try
-            {
-                await GitHub.Repository.Branch.Get(_context.Owner, _context.Repo, branch);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Unable to find branch {Branch} in {Owner}/{Repo}; using {DefaultBranch}.",
-                    branch, _context.Owner, _context.Repo, _context.DefaultBranch);
-                branch = _context.DefaultBranch;
-            }
-        }
-        else
-        {
-            branch = _context.DefaultBranch;
+            await PostDeployFailedAsync(triggeringPullRequest.Number, environment, rollback,
+                $"Branch {deployPullRequest?.Head?.Ref} for pull request #{deployPullRequest?.Number} no longer exists.  Push the branch and try again.");
+            return;
         }
 
         List<DeployedService> deployServices;
@@ -522,9 +545,13 @@ public class DeployService
 
         var deployRunIds = deployServices.Select(s => s.RunId).ToList();
         var syncRunIds = syncServices.Select(s => s.RunId).ToList();
+
+        // The dispatch endpoint accepts a workflow ID or file name only; a ".github/workflows/..." path returns 404.
+        var workflowFileName = Path.GetFileName(Settings.DeployWorkflow ?? string.Empty);
+
         _logger.LogInformation(
             "Triggering {Workflow} with:\n    Deploy Run IDs: {DeployRunIds}\n    Sync Run IDs:   {SyncRunIds}",
-            Settings.DeployWorkflow, string.Join(",", deployRunIds), string.Join(",", syncRunIds));
+            workflowFileName, string.Join(",", deployRunIds), string.Join(",", syncRunIds));
 
         if (deployRunIds.Count == 0)
         {
@@ -532,22 +559,20 @@ public class DeployService
             return;
         }
 
-        var workflowFileName = DeploySettings.GetWorkflowPath(Settings.DeployWorkflow ?? string.Empty);
-
         try
         {
-              await GitHub.Actions.Workflows.CreateDispatch(_context.Owner, _context.Repo, workflowFileName,
-              new CreateWorkflowDispatch(branch)
-              {
-                Inputs = new Dictionary<string, object>
+            await GitHub.Actions.Workflows.CreateDispatch(_context.Owner, _context.Repo, workflowFileName,
+                new CreateWorkflowDispatch(branch)
                 {
-                  ["pull_number"] = deployPullRequest?.Number.ToString() ?? string.Empty,
-                  ["environment"] = environment,
-                  ["deploy_name"] = deployName,
-                  ["deploy_run_ids"] = string.Join(",", deployRunIds),
-                  ["sync_run_ids"] = string.Join(",", syncRunIds)
-                }
-              });
+                    Inputs = new Dictionary<string, object>
+                    {
+                        ["pull_number"] = deployPullRequest?.Number.ToString() ?? string.Empty,
+                        ["environment"] = environment,
+                        ["deploy_name"] = deployName,
+                        ["deploy_run_ids"] = string.Join(",", deployRunIds),
+                        ["sync_run_ids"] = string.Join(",", syncRunIds)
+                    }
+                });
         }
         catch (Exception ex)
         {

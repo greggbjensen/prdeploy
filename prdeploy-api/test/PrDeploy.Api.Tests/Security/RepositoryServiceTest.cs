@@ -49,14 +49,14 @@ public class RepositoryServiceTest
         SetupFolder(
             (".github/workflows/web-build.yaml", ContentType.File),
             (".github/workflows/Api-ci.yml", ContentType.File),
-            (".github/workflows/deploy.yml", ContentType.File),
+            (".github/workflows/combined-deploy.yaml", ContentType.File),
             (".github/workflows/nested.yaml", ContentType.Dir),
             (".github/workflows/notes.txt", ContentType.File));
 
         var result = await ListAsync();
 
         Assert.Equal(
-            [".github/workflows/Api-ci.yml", ".github/workflows/deploy.yml", ".github/workflows/web-build.yaml"],
+            [".github/workflows/Api-ci.yml", ".github/workflows/combined-deploy.yaml", ".github/workflows/web-build.yaml"],
             result);
         _security.Verify(s => s.GuardRepoAsync("o", "r"), Times.Once);
     }

@@ -21,7 +21,7 @@ public class StatusManagerTest : IDisposable
     /// <param name="path">Path used to locate the resource.</param>
     /// <param name="expected">Whether the expected option is enabled.</param>
     [Theory]
-    [InlineData(".github/workflows/deploy.yml", true)]
+    [InlineData(".github/workflows/combined-deploy.yaml", true)]
     [InlineData(".github/workflows/DEPLOY.yml", true)]
     [InlineData(".github/workflows/app-build.yml", false)]
     [InlineData(null, false)]
